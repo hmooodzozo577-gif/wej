@@ -1,0 +1,85 @@
+name: Security checks
+
+# Runs the hardening guarantees on every change so they cannot quietly regress.
+#
+# The build itself carries two of the checks: vite.config.ts fails the build if
+# any emitted asset references another origin, and injects the
+# Content-Security-Policy. This workflow adds the dependency audit and asserts
+# the policy actually reached the artifact that would be deployed.
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'app/**'
+      - '.github/workflows/security.yml'
+  pull_request:
+    paths:
+      - 'app/**'
+      - '.github/workflows/security.yml'
+
+# Read-only: this workflow inspects the code, it never publishes anything.
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # The job needs no credentials; leaving the token in .git/config would
+          # expose it to anything that runs during install or build.
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        # `npm ci` installs exactly the locked tree, so a tampered or drifted
+        # package.json cannot pull in something the lockfile never approved.
+        run: npm ci --ignore-scripts
+
+      - name: Lint
+        working-directory: app
+        run: npm run lint
+
+      - name: Unit and security tests
+        working-directory: app
+        # Includes the SVG allowlist tests and the injection-surface test that
+        # fails if an unguarded dangerouslySetInnerHTML, eval or fetch appears.
+        run: npm test
+
+      - name: Build
+        working-directory: app
+        # Fails if the bundle references any origin other than its own.
+        run: npm run build
+
+      - name: Assert the Content-Security-Policy shipped
+        working-directory: app
+        run: |
+          set -euo pipefail
+          html=dist/index.html
+          for directive in "default-src 'none'" "script-src 'self'" "connect-src 'none'" "object-src 'none'" "base-uri 'none'"; do
+            grep -qF "$directive" "$html" || { echo "::error::CSP is missing: $directive"; exit 1; }
+          done
+          if grep -qE "script-src[^;\"]*unsafe-(inline|eval)" "$html"; then
+            echo "::error::script-src allows unsafe-inline or unsafe-eval"
+            exit 1
+          fi
+          test -f dist/_headers || { echo "::error::dist/_headers was not generated"; exit 1; }
+          echo "Content-Security-Policy and _headers verified."
+
+      - name: Audit dependencies
+        working-directory: app
+        run: npm audit --audit-level=moderate

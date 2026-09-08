@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "test": "vitest run",
+    "preview": "vite preview",
+    "verify": "npm run lint && npm run test && npm run build && npm audit --audit-level=moderate",
+    "security:check": "npm run build && node scripts/security-check.mjs",
+    "fonts:refresh": "node scripts/fetch-fonts.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

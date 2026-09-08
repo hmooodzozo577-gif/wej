@@ -2,6 +2,7 @@
 // same path data (data/icons.ts), aria-hidden by default (decorative, always
 // paired with visible text in this app, matching the original).
 import { ICON } from '../data/icons';
+import { safeSvgFragment } from '../security/svgGuard';
 
 export function Icon({
   name,
@@ -23,7 +24,9 @@ export function Icon({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      dangerouslySetInnerHTML={{ __html: ICON[name] }}
+      // safeSvgFragment() re-checks the icon markup against the SVG allowlist
+      // before it reaches the DOM; anything unrecognised renders as nothing.
+      dangerouslySetInnerHTML={{ __html: safeSvgFragment(ICON[name]) }}
     />
   );
 }
