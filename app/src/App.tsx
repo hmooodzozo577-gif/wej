@@ -11,7 +11,7 @@ import { Explore } from './routes/Explore';
 function App() {
   return (
     <AppStateProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/wej">
         <Routes>
           <Route element={<RootLayout />}>
             <Route path="/" element={<Home />} />
