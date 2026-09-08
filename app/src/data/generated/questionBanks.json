@@ -1,0 +1,2299 @@
+{
+  "tourism": [
+    {
+      "id": "budget",
+      "weight": 12,
+      "kind": "target",
+      "destKey": "costLevel",
+      "scale": 4,
+      "text": {
+        "en": "What's your approximate budget?",
+        "ar": "ما هي ميزانيتك التقريبية؟"
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Low",
+            "ar": "منخفضة"
+          },
+          "desc": {
+            "en": "Up to 5,000 SAR",
+            "ar": "حتى 5,000 ريال"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Medium",
+            "ar": "متوسطة"
+          },
+          "desc": {
+            "en": "5,000 – 10,000 SAR",
+            "ar": "5,000 – 10,000 ريال"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "High",
+            "ar": "مرتفعة"
+          },
+          "desc": {
+            "en": "10,000 – 20,000 SAR",
+            "ar": "10,000 – 20,000 ريال"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "Luxury",
+            "ar": "فاخرة"
+          },
+          "desc": {
+            "en": "More than 20,000 SAR",
+            "ar": "أكثر من 20,000 ريال"
+          }
+        }
+      ]
+    },
+    {
+      "id": "climate",
+      "weight": 8,
+      "kind": "climate",
+      "destKey": "climate",
+      "text": {
+        "en": "What type of weather do you prefer?",
+        "ar": "ما نوع الطقس الذي تفضله؟"
+      },
+      "options": [
+        {
+          "value": "hot",
+          "label": {
+            "en": "☀️ Hot & Sunny",
+            "ar": "☀️ حار ومشمس"
+          },
+          "desc": {
+            "en": "Warm temperatures and plenty of sunshine.",
+            "ar": "أجواء دافئة وأشعة شمس وفيرة."
+          }
+        },
+        {
+          "value": "mild",
+          "label": {
+            "en": "🌤️ Mild & Comfortable",
+            "ar": "🌤️ معتدل ومريح"
+          },
+          "desc": {
+            "en": "Pleasant temperatures without extreme heat or cold.",
+            "ar": "درجات حرارة لطيفة بلا حر أو برد شديدين."
+          }
+        },
+        {
+          "value": "cold",
+          "label": {
+            "en": "❄️ Cold",
+            "ar": "❄️ بارد"
+          },
+          "desc": {
+            "en": "Cool temperatures and colder weather.",
+            "ar": "أجواء باردة ومنعشة."
+          }
+        },
+        {
+          "value": "rainy",
+          "label": {
+            "en": "🌧️ Rainy & Changeable",
+            "ar": "🌧️ ممطر ومتغيّر"
+          },
+          "desc": {
+            "en": "I enjoy varied weather and occasional rain.",
+            "ar": "أستمتع بتنوع الطقس وهطول الأمطار أحياناً."
+          }
+        }
+      ]
+    },
+    {
+      "id": "naturecity",
+      "weight": 10,
+      "kind": "target",
+      "destKey": "urban",
+      "scale": 100,
+      "text": {
+        "en": "What do you prefer?",
+        "ar": "ما الذي تفضله؟"
+      },
+      "options": [
+        {
+          "value": 15,
+          "label": {
+            "en": "🌲 Nature",
+            "ar": "🌲 الطبيعة"
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "⚖️ A Mix of Both",
+            "ar": "⚖️ مزيج من الاثنين"
+          }
+        },
+        {
+          "value": 90,
+          "label": {
+            "en": "🏙️ Cities",
+            "ar": "🏙️ المدن"
+          }
+        }
+      ]
+    },
+    {
+      "id": "beaches",
+      "weight": 10,
+      "kind": "target",
+      "destKey": "beaches",
+      "scale": 100,
+      "text": {
+        "en": "What type of destination do you prefer?",
+        "ar": "ما نوع الوجهة التي تفضلها؟"
+      },
+      "options": [
+        {
+          "value": 90,
+          "label": {
+            "en": "🏖️ Beaches & Relaxation",
+            "ar": "🏖️ الشواطئ والاسترخاء"
+          },
+          "desc": {
+            "en": "I enjoy the sea, coastal destinations, and relaxing environments.",
+            "ar": "أستمتع بالبحر والوجهات الساحلية والأجواء المريحة."
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "🌍 Both",
+            "ar": "🌍 كلاهما"
+          },
+          "desc": {
+            "en": "I enjoy both and don't have a strong preference.",
+            "ar": "أستمتع بكليهما ولا تفضيل قوي لدي."
+          }
+        },
+        {
+          "value": 10,
+          "label": {
+            "en": "🏔️ Mountains & Nature",
+            "ar": "🏔️ الجبال والطبيعة"
+          },
+          "desc": {
+            "en": "I prefer mountains, natural landscapes, and outdoor experiences.",
+            "ar": "أفضل الجبال والمناظر الطبيعية والتجارب في الهواء الطلق."
+          }
+        }
+      ]
+    },
+    {
+      "id": "adventure",
+      "weight": 8,
+      "kind": "target",
+      "destKey": "adventure",
+      "scale": 100,
+      "text": {
+        "en": "How do you prefer to spend your time?",
+        "ar": "كيف تفضل قضاء وقتك؟"
+      },
+      "options": [
+        {
+          "value": 90,
+          "label": {
+            "en": "🧭 Adventure & Activities",
+            "ar": "🧭 المغامرة والأنشطة"
+          },
+          "desc": {
+            "en": "I enjoy new experiences, activities, movement, and exploration.",
+            "ar": "أستمتع بالتجارب الجديدة والأنشطة والحركة والاستكشاف."
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "⚖️ A Mix of Both",
+            "ar": "⚖️ مزيج من الاثنين"
+          },
+          "desc": {
+            "en": "I want a combination of adventure and relaxation.",
+            "ar": "أريد مزيجاً من المغامرة والاسترخاء."
+          }
+        },
+        {
+          "value": 10,
+          "label": {
+            "en": "🧘 Rest & Relaxation",
+            "ar": "🧘 الراحة والاسترخاء"
+          },
+          "desc": {
+            "en": "I prefer peaceful environments, relaxation, resorts, and quiet experiences.",
+            "ar": "أفضل الأجواء الهادئة والاسترخاء والمنتجعات والتجارب الساكنة."
+          }
+        }
+      ]
+    },
+    {
+      "id": "nightlife",
+      "weight": 7,
+      "kind": "importance",
+      "destKey": "nightlife",
+      "text": {
+        "en": "How important is nightlife to you?",
+        "ar": "ما أهمية الحياة الليلية بالنسبة لك؟"
+      },
+      "options": [
+        {
+          "value": 10,
+          "label": {
+            "en": "Not important",
+            "ar": "غير مهمة"
+          }
+        },
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "مهمة نوعاً ما"
+          }
+        },
+        {
+          "value": 70,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "weight": 10,
+      "kind": "importance",
+      "destKey": "safety",
+      "text": {
+        "en": "How important is safety to you?",
+        "ar": "ما أهمية الأمان بالنسبة لك؟"
+      },
+      "options": [
+        {
+          "value": 30,
+          "label": {
+            "en": "Not a priority",
+            "ar": "ليست أولوية"
+          }
+        },
+        {
+          "value": 60,
+          "label": {
+            "en": "Somewhat important",
+            "ar": "مهمة نوعاً ما"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "My top priority",
+            "ar": "أولويتي القصوى"
+          }
+        }
+      ]
+    },
+    {
+      "id": "culture",
+      "weight": 10,
+      "kind": "importance",
+      "destKey": "culture",
+      "text": {
+        "en": "How interested are you in culture & history?",
+        "ar": "ما مدى اهتمامك بالثقافة والتاريخ؟"
+      },
+      "options": [
+        {
+          "value": 20,
+          "label": {
+            "en": "Not really",
+            "ar": "ليس كثيراً"
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "A little",
+            "ar": "قليلاً"
+          }
+        },
+        {
+          "value": 80,
+          "label": {
+            "en": "Very interested",
+            "ar": "مهتم جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "It's my main reason to travel",
+            "ar": "هو سبب سفري الرئيسي"
+          }
+        }
+      ]
+    }
+  ],
+  "work": [
+    {
+      "id": "field",
+      "weight": 0,
+      "kind": "flavor",
+      "text": {
+        "en": "What's your professional field?",
+        "ar": "ما هو مجالك المهني؟"
+      },
+      "options": [
+        {
+          "value": "tech",
+          "label": {
+            "en": "Technology",
+            "ar": "التقنية"
+          }
+        },
+        {
+          "value": "finance",
+          "label": {
+            "en": "Finance & Business",
+            "ar": "المالية والأعمال"
+          }
+        },
+        {
+          "value": "creative",
+          "label": {
+            "en": "Creative & Design",
+            "ar": "الإبداع والتصميم"
+          }
+        },
+        {
+          "value": "other",
+          "label": {
+            "en": "Other",
+            "ar": "آخر"
+          }
+        }
+      ]
+    },
+    {
+      "id": "salary",
+      "weight": 12,
+      "kind": "target",
+      "destKey": "salary",
+      "scale": 100,
+      "text": {
+        "en": "What salary level are you aiming for?",
+        "ar": "ما مستوى الراتب الذي تطمح إليه؟"
+      },
+      "options": [
+        {
+          "value": 35,
+          "label": {
+            "en": "Modest, cost matters more",
+            "ar": "متواضع، التكلفة أهم"
+          }
+        },
+        {
+          "value": 60,
+          "label": {
+            "en": "Comfortable",
+            "ar": "مريح"
+          }
+        },
+        {
+          "value": 80,
+          "label": {
+            "en": "High",
+            "ar": "مرتفع"
+          }
+        },
+        {
+          "value": 95,
+          "label": {
+            "en": "Top-tier",
+            "ar": "من أعلى المستويات"
+          }
+        }
+      ]
+    },
+    {
+      "id": "colTolerance",
+      "weight": 10,
+      "kind": "target",
+      "destKey": "costLevel",
+      "scale": 4,
+      "text": {
+        "en": "How much cost of living can you tolerate?",
+        "ar": "ما مدى تحملك لتكلفة المعيشة؟"
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Low only",
+            "ar": "منخفضة فقط"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Medium",
+            "ar": "متوسطة"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "High is fine",
+            "ar": "المرتفعة مقبولة"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "No limit",
+            "ar": "لا حدود"
+          }
+        }
+      ]
+    },
+    {
+      "id": "language",
+      "weight": 8,
+      "kind": "importance",
+      "destKey": "english",
+      "text": {
+        "en": "How important is working in English?",
+        "ar": "ما أهمية العمل باللغة الإنجليزية؟"
+      },
+      "options": [
+        {
+          "value": 20,
+          "label": {
+            "en": "Not important",
+            "ar": "غير مهمة"
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "Helpful",
+            "ar": "مفيدة"
+          }
+        },
+        {
+          "value": 80,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "jobmarket",
+      "weight": 13,
+      "kind": "importance",
+      "destKey": "jobMarket",
+      "text": {
+        "en": "How important are abundant job opportunities?",
+        "ar": "ما أهمية وفرة الفرص الوظيفية؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Critical",
+            "ar": "حاسمة"
+          }
+        }
+      ]
+    },
+    {
+      "id": "wlb",
+      "weight": 10,
+      "kind": "importance",
+      "destKey": "qol",
+      "text": {
+        "en": "How important is work-life balance?",
+        "ar": "ما أهمية التوازن بين العمل والحياة؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Non-negotiable",
+            "ar": "غير قابلة للتفاوض"
+          }
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "weight": 8,
+      "kind": "importance",
+      "destKey": "safety",
+      "text": {
+        "en": "How important is safety in your new city?",
+        "ar": "ما أهمية الأمان في مدينتك الجديدة؟"
+      },
+      "options": [
+        {
+          "value": 30,
+          "label": {
+            "en": "Not a priority",
+            "ar": "ليست أولوية"
+          }
+        },
+        {
+          "value": 60,
+          "label": {
+            "en": "Somewhat important",
+            "ar": "مهمة نوعاً ما"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Top priority",
+            "ar": "أولوية قصوى"
+          }
+        }
+      ]
+    },
+    {
+      "id": "growth",
+      "weight": 14,
+      "kind": "importance",
+      "destKey": "careerGrowth",
+      "text": {
+        "en": "How important is long-term career growth?",
+        "ar": "ما أهمية النمو الوظيفي على المدى الطويل؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "My main goal",
+            "ar": "هدفي الرئيسي"
+          }
+        }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "id": "field",
+      "weight": 0,
+      "kind": "flavor",
+      "text": {
+        "en": "What field would you like to study?",
+        "ar": "ما التخصص الذي تود دراسته؟"
+      },
+      "options": [
+        {
+          "value": "stem",
+          "label": {
+            "en": "STEM & Engineering",
+            "ar": "العلوم والهندسة"
+          }
+        },
+        {
+          "value": "business",
+          "label": {
+            "en": "Business",
+            "ar": "إدارة الأعمال"
+          }
+        },
+        {
+          "value": "arts",
+          "label": {
+            "en": "Arts & Humanities",
+            "ar": "الآداب والفنون"
+          }
+        },
+        {
+          "value": "medicine",
+          "label": {
+            "en": "Medicine",
+            "ar": "الطب"
+          }
+        }
+      ]
+    },
+    {
+      "id": "tuition",
+      "weight": 18,
+      "kind": "target",
+      "destKey": "tuition",
+      "scale": 4,
+      "text": {
+        "en": "What is your tuition budget?",
+        "ar": "ما ميزانيتك للرسوم الدراسية؟"
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Low / free tuition",
+            "ar": "منخفضة أو مجانية"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Medium",
+            "ar": "متوسطة"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "High",
+            "ar": "مرتفعة"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "No limit",
+            "ar": "لا حدود"
+          }
+        }
+      ]
+    },
+    {
+      "id": "uniRank",
+      "weight": 17,
+      "kind": "importance",
+      "destKey": "uniRank",
+      "text": {
+        "en": "How important is university ranking?",
+        "ar": "ما أهمية تصنيف الجامعة؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Not very",
+            "ar": "ليست مهمة جداً"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Somewhat important",
+            "ar": "مهمة نوعاً ما"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Must be top-tier",
+            "ar": "يجب أن تكون من الأعلى"
+          }
+        }
+      ]
+    },
+    {
+      "id": "language",
+      "weight": 12,
+      "kind": "importance",
+      "destKey": "english",
+      "text": {
+        "en": "How important is studying in English?",
+        "ar": "ما أهمية الدراسة باللغة الإنجليزية؟"
+      },
+      "options": [
+        {
+          "value": 20,
+          "label": {
+            "en": "Not important",
+            "ar": "غير مهمة"
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "Helpful",
+            "ar": "مفيدة"
+          }
+        },
+        {
+          "value": 80,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "weight": 13,
+      "kind": "importance",
+      "destKey": "safety",
+      "text": {
+        "en": "How important is campus & city safety?",
+        "ar": "ما أهمية الأمان في الحرم الجامعي والمدينة؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Top priority",
+            "ar": "أولوية قصوى"
+          }
+        }
+      ]
+    },
+    {
+      "id": "col",
+      "weight": 15,
+      "kind": "target",
+      "destKey": "costLevel",
+      "scale": 4,
+      "text": {
+        "en": "What cost of living can you afford?",
+        "ar": "ما تكلفة المعيشة التي يمكنك تحملها؟"
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Low",
+            "ar": "منخفضة"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Medium",
+            "ar": "متوسطة"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "High",
+            "ar": "مرتفعة"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "No limit",
+            "ar": "لا حدود"
+          }
+        }
+      ]
+    }
+  ],
+  "medical": [
+    {
+      "id": "category",
+      "weight": 0,
+      "kind": "flavor",
+      "text": {
+        "en": "What treatment category are you considering?",
+        "ar": "ما فئة العلاج التي تفكر بها؟"
+      },
+      "options": [
+        {
+          "value": "surgery",
+          "label": {
+            "en": "Surgery",
+            "ar": "جراحة"
+          }
+        },
+        {
+          "value": "dental",
+          "label": {
+            "en": "Dental care",
+            "ar": "رعاية أسنان"
+          }
+        },
+        {
+          "value": "wellness",
+          "label": {
+            "en": "Wellness & checkups",
+            "ar": "عافية وفحوصات"
+          }
+        },
+        {
+          "value": "specialist",
+          "label": {
+            "en": "Specialist treatment",
+            "ar": "علاج تخصصي"
+          }
+        }
+      ]
+    },
+    {
+      "id": "quality",
+      "weight": 25,
+      "kind": "importance",
+      "destKey": "healthcare",
+      "text": {
+        "en": "How important is overall healthcare quality?",
+        "ar": "ما أهمية جودة الرعاية الصحية عموماً؟"
+      },
+      "options": [
+        {
+          "value": 50,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 75,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 90,
+          "label": {
+            "en": "Extremely important",
+            "ar": "مهمة للغاية"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Non-negotiable",
+            "ar": "غير قابلة للتفاوض"
+          }
+        }
+      ]
+    },
+    {
+      "id": "budget",
+      "weight": 17,
+      "kind": "target",
+      "destKey": "costLevel",
+      "scale": 4,
+      "text": {
+        "en": "What is your treatment budget?",
+        "ar": "ما ميزانيتك للعلاج؟"
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Low",
+            "ar": "منخفضة"
+          },
+          "desc": {
+            "en": "Up to 5,000 SAR",
+            "ar": "حتى 5,000 ريال"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Medium",
+            "ar": "متوسطة"
+          },
+          "desc": {
+            "en": "5,000 – 10,000 SAR",
+            "ar": "5,000 – 10,000 ريال"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "High",
+            "ar": "مرتفعة"
+          },
+          "desc": {
+            "en": "10,000 – 20,000 SAR",
+            "ar": "10,000 – 20,000 ريال"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "Luxury",
+            "ar": "فاخرة"
+          },
+          "desc": {
+            "en": "More than 20,000 SAR",
+            "ar": "أكثر من 20,000 ريال"
+          }
+        }
+      ]
+    },
+    {
+      "id": "waiting",
+      "weight": 18,
+      "kind": "importance",
+      "destKey": "waiting",
+      "text": {
+        "en": "How important is a short waiting time?",
+        "ar": "ما أهمية قصر فترة الانتظار؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "I need care fast",
+            "ar": "أحتاج للعلاج بسرعة"
+          }
+        }
+      ]
+    },
+    {
+      "id": "language",
+      "weight": 8,
+      "kind": "importance",
+      "destKey": "english",
+      "text": {
+        "en": "How important is English-speaking staff?",
+        "ar": "ما أهمية توفر طاقم يتحدث الإنجليزية؟"
+      },
+      "options": [
+        {
+          "value": 20,
+          "label": {
+            "en": "Not important",
+            "ar": "غير مهمة"
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "Helpful",
+            "ar": "مفيدة"
+          }
+        },
+        {
+          "value": 80,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "weight": 7,
+      "kind": "importance",
+      "destKey": "safety",
+      "text": {
+        "en": "How important is overall safety?",
+        "ar": "ما أهمية الأمان العام؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Top priority",
+            "ar": "أولوية قصوى"
+          }
+        }
+      ]
+    }
+  ],
+  "immigration": [
+    {
+      "id": "budget",
+      "weight": 8,
+      "kind": "target",
+      "destKey": "costLevel",
+      "scale": 4,
+      "text": {
+        "en": "What is your relocation budget?",
+        "ar": "ما ميزانيتك للانتقال؟"
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Low",
+            "ar": "منخفضة"
+          },
+          "desc": {
+            "en": "Up to 5,000 SAR",
+            "ar": "حتى 5,000 ريال"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Medium",
+            "ar": "متوسطة"
+          },
+          "desc": {
+            "en": "5,000 – 10,000 SAR",
+            "ar": "5,000 – 10,000 ريال"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "High",
+            "ar": "مرتفعة"
+          },
+          "desc": {
+            "en": "10,000 – 20,000 SAR",
+            "ar": "10,000 – 20,000 ريال"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "Luxury",
+            "ar": "فاخرة"
+          },
+          "desc": {
+            "en": "More than 20,000 SAR",
+            "ar": "أكثر من 20,000 ريال"
+          }
+        }
+      ]
+    },
+    {
+      "id": "jobs",
+      "weight": 11,
+      "kind": "importance",
+      "destKey": "jobMarket",
+      "text": {
+        "en": "How important are job opportunities?",
+        "ar": "ما أهمية الفرص الوظيفية؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "salary",
+      "weight": 7,
+      "kind": "target",
+      "destKey": "salary",
+      "scale": 100,
+      "text": {
+        "en": "What salary level do you expect?",
+        "ar": "ما مستوى الراتب الذي تتوقعه؟"
+      },
+      "options": [
+        {
+          "value": 35,
+          "label": {
+            "en": "Modest",
+            "ar": "متواضع"
+          }
+        },
+        {
+          "value": 60,
+          "label": {
+            "en": "Comfortable",
+            "ar": "مريح"
+          }
+        },
+        {
+          "value": 80,
+          "label": {
+            "en": "High",
+            "ar": "مرتفع"
+          }
+        },
+        {
+          "value": 95,
+          "label": {
+            "en": "Top-tier",
+            "ar": "من أعلى المستويات"
+          }
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "weight": 15,
+      "kind": "importance",
+      "destKey": "safety",
+      "text": {
+        "en": "How important is safety for your family?",
+        "ar": "ما أهمية الأمان لعائلتك؟"
+      },
+      "options": [
+        {
+          "value": 50,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 75,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 90,
+          "label": {
+            "en": "Extremely important",
+            "ar": "مهمة للغاية"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Top priority",
+            "ar": "أولوية قصوى"
+          }
+        }
+      ]
+    },
+    {
+      "id": "qol",
+      "weight": 13,
+      "kind": "importance",
+      "destKey": "qol",
+      "text": {
+        "en": "How important is overall quality of life?",
+        "ar": "ما أهمية جودة الحياة العامة؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "friendly",
+      "weight": 15,
+      "kind": "importance",
+      "destKey": "immiFriendly",
+      "text": {
+        "en": "How important is immigration friendliness?",
+        "ar": "ما أهمية سهولة إجراءات الهجرة؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lang",
+      "weight": 6,
+      "kind": "importance",
+      "destKey": "english",
+      "text": {
+        "en": "How important is an English-speaking environment?",
+        "ar": "ما أهمية وجود بيئة ناطقة بالإنجليزية؟"
+      },
+      "options": [
+        {
+          "value": 20,
+          "label": {
+            "en": "Not important",
+            "ar": "غير مهمة"
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "Helpful",
+            "ar": "مفيدة"
+          }
+        },
+        {
+          "value": 80,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "family",
+      "weight": 4,
+      "kind": "importance",
+      "destKey": "qol",
+      "text": {
+        "en": "Are you relocating with family?",
+        "ar": "هل ستنتقل مع عائلتك؟"
+      },
+      "options": [
+        {
+          "value": 20,
+          "label": {
+            "en": "No, just me",
+            "ar": "لا، وحدي فقط"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Yes, with family",
+            "ar": "نعم، مع العائلة"
+          }
+        }
+      ]
+    }
+  ],
+  "investment": [
+    {
+      "id": "sector",
+      "weight": 0,
+      "kind": "flavor",
+      "text": {
+        "en": "What sector interests you most?",
+        "ar": "ما القطاع الأكثر اهتماماً بالنسبة لك؟"
+      },
+      "options": [
+        {
+          "value": "realestate",
+          "label": {
+            "en": "Real Estate",
+            "ar": "العقارات"
+          }
+        },
+        {
+          "value": "tech",
+          "label": {
+            "en": "Technology",
+            "ar": "التقنية"
+          }
+        },
+        {
+          "value": "trade",
+          "label": {
+            "en": "Trade & Retail",
+            "ar": "التجارة والبيع بالتجزئة"
+          }
+        },
+        {
+          "value": "tourism",
+          "label": {
+            "en": "Tourism & Hospitality",
+            "ar": "السياحة والضيافة"
+          }
+        }
+      ]
+    },
+    {
+      "id": "budget",
+      "weight": 13,
+      "kind": "target",
+      "destKey": "costLevel",
+      "scale": 4,
+      "text": {
+        "en": "What is your investment scale?",
+        "ar": "ما حجم استثمارك؟"
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Small",
+            "ar": "صغير"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Medium",
+            "ar": "متوسط"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "Large",
+            "ar": "كبير"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "Major / institutional",
+            "ar": "كبير جداً / مؤسسي"
+          }
+        }
+      ]
+    },
+    {
+      "id": "bizease",
+      "weight": 17,
+      "kind": "importance",
+      "destKey": "bizEase",
+      "text": {
+        "en": "How important is ease of doing business?",
+        "ar": "ما أهمية سهولة ممارسة الأعمال؟"
+      },
+      "options": [
+        {
+          "value": 50,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 75,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 90,
+          "label": {
+            "en": "Extremely important",
+            "ar": "مهمة للغاية"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "growth",
+      "weight": 16,
+      "kind": "importance",
+      "destKey": "growth",
+      "text": {
+        "en": "How important is growth potential?",
+        "ar": "ما أهمية إمكانات النمو؟"
+      },
+      "options": [
+        {
+          "value": 50,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 75,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 90,
+          "label": {
+            "en": "Extremely important",
+            "ar": "مهمة للغاية"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stability",
+      "weight": 17,
+      "kind": "importance",
+      "destKey": "stability",
+      "text": {
+        "en": "How important is market & political stability?",
+        "ar": "ما أهمية الاستقرار السياسي والاقتصادي؟"
+      },
+      "options": [
+        {
+          "value": 50,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 75,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 90,
+          "label": {
+            "en": "Extremely important",
+            "ar": "مهمة للغاية"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "weight": 12,
+      "kind": "importance",
+      "destKey": "safety",
+      "text": {
+        "en": "How important is general safety?",
+        "ar": "ما أهمية الأمان العام؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Top priority",
+            "ar": "أولوية قصوى"
+          }
+        }
+      ]
+    }
+  ],
+  "wellness": [
+    {
+      "id": "budget",
+      "weight": 12,
+      "kind": "target",
+      "destKey": "costLevel",
+      "scale": 4,
+      "text": {
+        "en": "What is your budget?",
+        "ar": "ما ميزانيتك؟"
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Low",
+            "ar": "منخفضة"
+          },
+          "desc": {
+            "en": "Up to 5,000 SAR",
+            "ar": "حتى 5,000 ريال"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Medium",
+            "ar": "متوسطة"
+          },
+          "desc": {
+            "en": "5,000 – 10,000 SAR",
+            "ar": "5,000 – 10,000 ريال"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "High",
+            "ar": "مرتفعة"
+          },
+          "desc": {
+            "en": "10,000 – 20,000 SAR",
+            "ar": "10,000 – 20,000 ريال"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "Luxury",
+            "ar": "فاخرة"
+          },
+          "desc": {
+            "en": "More than 20,000 SAR",
+            "ar": "أكثر من 20,000 ريال"
+          }
+        }
+      ]
+    },
+    {
+      "id": "climate",
+      "weight": 10,
+      "kind": "climate",
+      "destKey": "climate",
+      "text": {
+        "en": "What type of weather do you prefer?",
+        "ar": "ما نوع الطقس الذي تفضله؟"
+      },
+      "options": [
+        {
+          "value": "hot",
+          "label": {
+            "en": "☀️ Hot & Sunny",
+            "ar": "☀️ حار ومشمس"
+          },
+          "desc": {
+            "en": "Warm temperatures and plenty of sunshine.",
+            "ar": "أجواء دافئة وأشعة شمس وفيرة."
+          }
+        },
+        {
+          "value": "mild",
+          "label": {
+            "en": "🌤️ Mild & Comfortable",
+            "ar": "🌤️ معتدل ومريح"
+          },
+          "desc": {
+            "en": "Pleasant temperatures without extreme heat or cold.",
+            "ar": "درجات حرارة لطيفة بلا حر أو برد شديدين."
+          }
+        },
+        {
+          "value": "cold",
+          "label": {
+            "en": "❄️ Cold",
+            "ar": "❄️ بارد"
+          },
+          "desc": {
+            "en": "Cool temperatures and colder weather.",
+            "ar": "أجواء باردة ومنعشة."
+          }
+        },
+        {
+          "value": "rainy",
+          "label": {
+            "en": "🌧️ Rainy & Changeable",
+            "ar": "🌧️ ممطر ومتغيّر"
+          },
+          "desc": {
+            "en": "I enjoy varied weather and occasional rain.",
+            "ar": "أستمتع بتنوع الطقس وهطول الأمطار أحياناً."
+          }
+        }
+      ]
+    },
+    {
+      "id": "nature",
+      "weight": 13,
+      "kind": "importance",
+      "destKey": "nature",
+      "text": {
+        "en": "How important is being surrounded by nature?",
+        "ar": "ما أهمية التواجد وسط الطبيعة؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "beachesw",
+      "weight": 8,
+      "kind": "importance",
+      "destKey": "beaches",
+      "text": {
+        "en": "How important are beaches to you?",
+        "ar": "ما أهمية الشواطئ بالنسبة لك؟"
+      },
+      "options": [
+        {
+          "value": 20,
+          "label": {
+            "en": "Not important",
+            "ar": "غير مهمة"
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "Nice to have",
+            "ar": "جميلة لكن ليست أساسية"
+          }
+        },
+        {
+          "value": 80,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "spa",
+      "weight": 17,
+      "kind": "importance",
+      "destKey": "spa",
+      "text": {
+        "en": "How important are spa & wellness facilities?",
+        "ar": "ما أهمية مرافق السبا والعافية؟"
+      },
+      "options": [
+        {
+          "value": 50,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 75,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 90,
+          "label": {
+            "en": "Extremely important",
+            "ar": "مهمة للغاية"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "quiet",
+      "weight": 10,
+      "kind": "importance",
+      "destKey": "quiet",
+      "text": {
+        "en": "How important is peace & quiet?",
+        "ar": "ما أهمية الهدوء والسكينة؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "weight": 5,
+      "kind": "importance",
+      "destKey": "safety",
+      "text": {
+        "en": "How important is safety?",
+        "ar": "ما أهمية الأمان؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Top priority",
+            "ar": "أولوية قصوى"
+          }
+        }
+      ]
+    }
+  ],
+  "other": [
+    {
+      "id": "budget",
+      "weight": 25,
+      "kind": "target",
+      "destKey": "costLevel",
+      "scale": 4,
+      "text": {
+        "en": "What's your approximate budget?",
+        "ar": "ما هي ميزانيتك التقريبية؟"
+      },
+      "options": [
+        {
+          "value": 1,
+          "label": {
+            "en": "Low",
+            "ar": "منخفضة"
+          },
+          "desc": {
+            "en": "Up to 5,000 SAR",
+            "ar": "حتى 5,000 ريال"
+          }
+        },
+        {
+          "value": 2,
+          "label": {
+            "en": "Medium",
+            "ar": "متوسطة"
+          },
+          "desc": {
+            "en": "5,000 – 10,000 SAR",
+            "ar": "5,000 – 10,000 ريال"
+          }
+        },
+        {
+          "value": 3,
+          "label": {
+            "en": "High",
+            "ar": "مرتفعة"
+          },
+          "desc": {
+            "en": "10,000 – 20,000 SAR",
+            "ar": "10,000 – 20,000 ريال"
+          }
+        },
+        {
+          "value": 4,
+          "label": {
+            "en": "Luxury",
+            "ar": "فاخرة"
+          },
+          "desc": {
+            "en": "More than 20,000 SAR",
+            "ar": "أكثر من 20,000 ريال"
+          }
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "weight": 25,
+      "kind": "importance",
+      "destKey": "safety",
+      "text": {
+        "en": "How important is safety?",
+        "ar": "ما أهمية الأمان؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Top priority",
+            "ar": "أولوية قصوى"
+          }
+        }
+      ]
+    },
+    {
+      "id": "climate",
+      "weight": 15,
+      "kind": "climate",
+      "destKey": "climate",
+      "text": {
+        "en": "What type of weather do you prefer?",
+        "ar": "ما نوع الطقس الذي تفضله؟"
+      },
+      "options": [
+        {
+          "value": "hot",
+          "label": {
+            "en": "☀️ Hot & Sunny",
+            "ar": "☀️ حار ومشمس"
+          },
+          "desc": {
+            "en": "Warm temperatures and plenty of sunshine.",
+            "ar": "أجواء دافئة وأشعة شمس وفيرة."
+          }
+        },
+        {
+          "value": "mild",
+          "label": {
+            "en": "🌤️ Mild & Comfortable",
+            "ar": "🌤️ معتدل ومريح"
+          },
+          "desc": {
+            "en": "Pleasant temperatures without extreme heat or cold.",
+            "ar": "درجات حرارة لطيفة بلا حر أو برد شديدين."
+          }
+        },
+        {
+          "value": "cold",
+          "label": {
+            "en": "❄️ Cold",
+            "ar": "❄️ بارد"
+          },
+          "desc": {
+            "en": "Cool temperatures and colder weather.",
+            "ar": "أجواء باردة ومنعشة."
+          }
+        },
+        {
+          "value": "rainy",
+          "label": {
+            "en": "🌧️ Rainy & Changeable",
+            "ar": "🌧️ ممطر ومتغيّر"
+          },
+          "desc": {
+            "en": "I enjoy varied weather and occasional rain.",
+            "ar": "أستمتع بتنوع الطقس وهطول الأمطار أحياناً."
+          }
+        }
+      ]
+    },
+    {
+      "id": "naturecity",
+      "weight": 10,
+      "kind": "target",
+      "destKey": "urban",
+      "scale": 100,
+      "text": {
+        "en": "What do you prefer?",
+        "ar": "ما الذي تفضله؟"
+      },
+      "options": [
+        {
+          "value": 15,
+          "label": {
+            "en": "🌲 Nature",
+            "ar": "🌲 الطبيعة"
+          }
+        },
+        {
+          "value": 50,
+          "label": {
+            "en": "⚖️ A Mix of Both",
+            "ar": "⚖️ مزيج من الاثنين"
+          }
+        },
+        {
+          "value": 90,
+          "label": {
+            "en": "🏙️ Cities",
+            "ar": "🏙️ المدن"
+          }
+        }
+      ]
+    },
+    {
+      "id": "qol",
+      "weight": 10,
+      "kind": "importance",
+      "destKey": "qol",
+      "text": {
+        "en": "How important is overall quality of life?",
+        "ar": "ما أهمية جودة الحياة العامة؟"
+      },
+      "options": [
+        {
+          "value": 40,
+          "label": {
+            "en": "Somewhat",
+            "ar": "نوعاً ما"
+          }
+        },
+        {
+          "value": 65,
+          "label": {
+            "en": "Important",
+            "ar": "مهمة"
+          }
+        },
+        {
+          "value": 85,
+          "label": {
+            "en": "Very important",
+            "ar": "مهمة جداً"
+          }
+        },
+        {
+          "value": 100,
+          "label": {
+            "en": "Essential",
+            "ar": "أساسية"
+          }
+        }
+      ]
+    }
+  ]
+}

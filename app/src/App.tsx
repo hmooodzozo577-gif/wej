@@ -1,14 +1,30 @@
-// Placeholder root component. Phase 1 (project scaffolding) only — the real
-// app shell, routing, and views are introduced in later phases per the
-// approved implementation plan. No Wejhaty content/logic lives here yet.
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AppStateProvider } from './state/AppStateContext';
+import { RootLayout } from './components/layout/RootLayout';
+import { Home } from './routes/Home';
+import { PurposeSelect } from './routes/PurposeSelect';
+import { Quiz } from './routes/Quiz';
+import { Results } from './routes/Results';
+import { Destination } from './routes/Destination';
+import { Explore } from './routes/Explore';
+
 function App() {
   return (
-    <main style={{ fontFamily: 'sans-serif', padding: '2rem' }}>
-      <h1>Wejhaty — React scaffold</h1>
-      <p>Phase 1 complete: Vite + React + TypeScript project structure is set up.</p>
-      <p>Views, routing, data, and the recommendation engine are added in later phases.</p>
-    </main>
-  )
+    <AppStateProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<RootLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/purpose" element={<PurposeSelect />} />
+            <Route path="/quiz/:purpose" element={<Quiz />} />
+            <Route path="/results" element={<Results />} />
+            <Route path="/destination/:id" element={<Destination />} />
+            <Route path="/explore" element={<Explore />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AppStateProvider>
+  );
 }
 
-export default App
+export default App;
