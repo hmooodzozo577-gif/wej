@@ -1,0 +1,11 @@
+/* Minimal placeholder reset for Phase 1. The real Wejhaty design system
+   (CSS custom properties, typography, components) is ported faithfully
+   from wejhaty.html in Phase 6/7 — nothing from the Vite default template's
+   palette is meant to survive past this scaffold. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
