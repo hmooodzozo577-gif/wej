@@ -1,6 +1,19 @@
 {
-  "description": "Impeccable design detector: immediate-tier checks after Edit/Write on UI files, full-rule deep pass on Stop.",
+  "description": "Impeccable design detector: immediate-tier checks after Edit/Write on UI files, full-rule deep pass on Stop. Superpowers session-start bootstrap: injects the using-superpowers skill at session start (project-local hook, since /plugin is unavailable in Claude Code Web).",
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CLAUDE_PLUGIN_ROOT=\"${CLAUDE_PROJECT_DIR}/.claude\" \"${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start\"",
+            "timeout": 10,
+            "statusMessage": "Loading Superpowers"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
