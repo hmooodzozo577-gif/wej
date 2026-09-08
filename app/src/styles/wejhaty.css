@@ -1,0 +1,18 @@
+/* The exact CSS design system from wejhaty.html, extracted verbatim (see
+   scripts/extract-source.mjs) — no redesign, no token changes, no rule
+   changes. Do not hand-edit wejhaty.generated.css; re-run the extraction
+   script if the original CSS ever changes. */
+@import './wejhaty.generated.css';
+
+/* --- React-port parity addition (not a redesign) ---------------------------
+   The original's clickable "cards" (.dest-card, .top-pick) were plain <div>s
+   with a JS click handler — no ambient link styling to worry about. In React
+   they're implemented as react-router <Link> (an <a> element), which is the
+   idiomatic way to make a card a real, keyboard-and-middle-click-friendly
+   navigation target under this architecture. The only visual side effect of
+   that tag change is the browser's default underline on anchors, which never
+   existed in the original; this restores the original's no-underline look. */
+.dest-card,
+.top-pick {
+  text-decoration: none;
+}

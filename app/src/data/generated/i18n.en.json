@@ -1,0 +1,158 @@
+{
+  "dir": "ltr",
+  "htmlLang": "en",
+  "nav": {
+    "home": "Home",
+    "how": "How It Works",
+    "explore": "Destinations",
+    "quiz": "Start Quiz",
+    "cta": "Start Now"
+  },
+  "brand": "Wejhaty",
+  "footer": "Demo prototype — destination information is sample data and should not be used as official travel, immigration, medical, education, or investment advice.",
+  "hero": {
+    "eyebrow": "A smart matching engine — no account needed",
+    "h1": "Find the Destination That’s Right for You",
+    "lead": "Answer a few questions and our local matching engine ranks the best destinations worldwide based on what actually matters to you.",
+    "cta": "Start the Quiz",
+    "cta2": "Explore Destinations",
+    "stat1n": "30+",
+    "stat1l": "destinations worldwide",
+    "stat2n": "8",
+    "stat2l": "life purposes",
+    "stat3n": "0%",
+    "stat3l": "sign-up required"
+  },
+  "how": {
+    "eyebrow": "The process",
+    "title": "How Wejhaty Works",
+    "sub": "Three simple steps between you and a destination list ranked for your priorities.",
+    "s1t": "Tell us your purpose",
+    "s1d": "Choose what you’re looking for: tourism, work, education, medical care, immigration, investment, wellness, or something else.",
+    "s2t": "Answer a few questions",
+    "s2d": "Questions adapt to your purpose, with a clear progress bar and the ability to go back anytime.",
+    "s3t": "Discover your best matches",
+    "s3d": "We show your top 5 destinations with a match percentage and a clear explanation for every recommendation."
+  },
+  "purposes": {
+    "title": "Choose Your Purpose",
+    "sub": "The questions you’re asked change based on your choice, so recommendations stay relevant.",
+    "tourism": {
+      "n": "Tourism & Vacation",
+      "d": "Trips, adventure, relaxation and cultural discovery"
+    },
+    "work": {
+      "n": "Work & Career",
+      "d": "Job opportunities, salary and career growth"
+    },
+    "education": {
+      "n": "Education",
+      "d": "Universities, scholarships and study costs"
+    },
+    "medical": {
+      "n": "Medical Treatment",
+      "d": "Healthcare quality and medical technology"
+    },
+    "immigration": {
+      "n": "Immigration & Relocation",
+      "d": "Quality of life and long-term settling ease"
+    },
+    "investment": {
+      "n": "Investment",
+      "d": "Business environment, growth and stability"
+    },
+    "wellness": {
+      "n": "Relaxation & Wellness",
+      "d": "Spas, quiet and beautiful nature"
+    },
+    "other": {
+      "n": "Other",
+      "d": "A general exploration based on your core priorities"
+    }
+  },
+  "disclaimer": "Demo prototype — destination information is sample data, not up-to-date official statistics, and should not be used as official travel, immigration, medical, education, or investment advice.",
+  "quiz": {
+    "question": "Question",
+    "of": "of",
+    "back": "Back",
+    "next": "Next",
+    "seeResults": "See Results",
+    "validation": "Please select an answer before continuing",
+    "startQuiz": "Start Quiz",
+    "changePurpose": "Change Purpose"
+  },
+  "results": {
+    "title": "Your Best Matches",
+    "sub": "Destinations ranked from your answers — the higher the percentage, the better the fit.",
+    "match": "Match",
+    "whyTitle": "Why this destination fits you",
+    "viewDetails": "View Details",
+    "startAgain": "Start Again",
+    "exploreAll": "Browse All Destinations",
+    "rank1": "Top Match",
+    "top5": "Top 5 Destinations",
+    "cost": "Cost",
+    "safety": "Safety",
+    "climate": "Climate",
+    "visa": "Visa Difficulty"
+  },
+  "detail": {
+    "back": "Back to Results",
+    "startAgain": "Start Again",
+    "overview": "Overview",
+    "why": "Why It Matches You",
+    "cities": "Major Cities",
+    "strengths": "Strengths",
+    "weaknesses": "Worth Considering",
+    "bestFor": "Best Suited For",
+    "cost": "Cost Level",
+    "safety": "Safety Level",
+    "climateL": "Climate",
+    "language": "Language",
+    "visa": "Visa Difficulty",
+    "livingCost": "Avg. Living Cost",
+    "region": "Region",
+    "match": "Match Score",
+    "browse": "General browsing (no quiz taken)"
+  },
+  "explore": {
+    "title": "Explore Destinations",
+    "sub": "Browse every demo destination in our database — no quiz required.",
+    "search": "Search a destination or city…",
+    "region": "Region",
+    "purpose": "Purpose",
+    "cost": "Cost",
+    "allRegions": "All Regions",
+    "allPurposes": "All Purposes",
+    "allCosts": "All Levels",
+    "results": "destinations",
+    "noResults": "No matching destinations",
+    "noResultsSub": "Try adjusting your filters or search term.",
+    "clearFilters": "Reset Filters"
+  },
+  "costLevels": [
+    "Low",
+    "Medium",
+    "High",
+    "Luxury"
+  ],
+  "climateLabels": {
+    "tropical": "Tropical",
+    "mediterranean": "Mediterranean",
+    "temperate": "Temperate",
+    "cold": "Cold",
+    "desert": "Desert"
+  },
+  "visaLabels": {
+    "easy": "Easy",
+    "moderate": "Moderate",
+    "hard": "Hard"
+  },
+  "regionLabels": {
+    "Asia": "Asia",
+    "Europe": "Europe",
+    "MiddleEast": "Middle East",
+    "NAmerica": "North America",
+    "Oceania": "Oceania"
+  }
+}

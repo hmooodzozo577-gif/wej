@@ -1,0 +1,42 @@
+[
+  {
+    "id": "tourism",
+    "icon": "compass",
+    "pScoreKey": "pTourism"
+  },
+  {
+    "id": "work",
+    "icon": "briefcase",
+    "pScoreKey": "pWork"
+  },
+  {
+    "id": "education",
+    "icon": "cap",
+    "pScoreKey": "pEdu"
+  },
+  {
+    "id": "medical",
+    "icon": "cross",
+    "pScoreKey": "pMed"
+  },
+  {
+    "id": "immigration",
+    "icon": "map",
+    "pScoreKey": "pImmi"
+  },
+  {
+    "id": "investment",
+    "icon": "trending",
+    "pScoreKey": "pInvest"
+  },
+  {
+    "id": "wellness",
+    "icon": "leaf",
+    "pScoreKey": "pWellness"
+  },
+  {
+    "id": "other",
+    "icon": "sparkle",
+    "pScoreKey": null
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "hot": {
+    "desert": 100,
+    "tropical": 90,
+    "mediterranean": 60,
+    "temperate": 35,
+    "cold": 10
+  },
+  "mild": {
+    "mediterranean": 100,
+    "temperate": 90,
+    "tropical": 55,
+    "desert": 45,
+    "cold": 35
+  },
+  "cold": {
+    "cold": 100,
+    "temperate": 45,
+    "mediterranean": 20,
+    "tropical": 5,
+    "desert": 10
+  },
+  "rainy": {
+    "temperate": 95,
+    "cold": 60,
+    "mediterranean": 45,
+    "tropical": 60,
+    "desert": 15
+  }
+}
