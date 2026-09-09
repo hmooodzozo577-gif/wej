@@ -14,6 +14,13 @@
 // `durationMinutes`/`stops` on FlightOffer, additive fields populated
 // from the real Amadeus integration now wired up in travelService.ts —
 // the existing fields/shape from Phase 13.2 are unchanged.
+//
+// Phase 13.4a addition: `FlightEstimate` below. It is deliberately NOT a
+// field on FlightOffer/TravelSearchRequest/TravelSearchResult — those
+// stay exactly as Phase 13.2/13.3 left them. FlightEstimate is a
+// separate, standalone shape for flightEstimate.ts's client-side,
+// no-network distance/duration estimate, usable independently of (and
+// before) any real searchFlights() call.
 
 /** A minimal airport reference for travel purposes. Distinct from (but
  *  structurally compatible with) data/types.ts's AirportLocation — this
@@ -87,3 +94,15 @@ export type TravelSearchResult =
   | { status: 'invalid_request'; fields: string[] }
   | { status: 'unavailable'; reason: string }
   | { status: 'error'; message: string };
+
+/** Phase 13.4a — a rough, offline, deterministic distance/duration
+ *  estimate between two points (see flightEstimate.ts). `distanceKm` is
+ *  the great-circle distance (kilometers, one decimal place);
+ *  `durationMinutes` is a straight-line-speed-plus-fixed-overhead
+ *  estimate, NOT a real flight time from any provider — never to be
+ *  confused with a real FlightOffer.durationMinutes, which comes from an
+ *  actual Amadeus itinerary. */
+export interface FlightEstimate {
+  distanceKm: number;
+  durationMinutes: number;
+}

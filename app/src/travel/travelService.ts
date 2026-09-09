@@ -13,7 +13,15 @@
 // successful result — a network failure, a malformed Worker response, or
 // the Worker endpoint simply not being configured all map to a safe
 // 'error'/'unavailable' result, never to invented flight data.
+//
+// Phase 13.4a: re-exports flightEstimate.ts's distance/duration estimate
+// so this stays the one module components import from for anything
+// travel-related — the estimate logic itself lives in flightEstimate.ts
+// (kept separate since it's pure/synchronous and has nothing to do with
+// the Worker), but nothing about searchFlights() itself changes.
 import type { Airport, FlightOffer, TravelSearchRequest, TravelSearchResult, TravelSegment } from './types';
+
+export { estimateFlight, estimateDistanceKm, estimateDurationMinutes } from './flightEstimate';
 
 const IATA_RE = /^[A-Z]{3}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
