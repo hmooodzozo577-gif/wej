@@ -7,7 +7,7 @@
 // travelService.test.ts's env-dependent module) so these tests don't
 // depend on the real committed snapshot's exact current contents.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { classifyPriceLevelIndex } from './travelCostIndex';
+import { classifyPriceLevelIndex, formatPriceLevelIndex } from './travelCostIndex';
 
 // classifyPriceLevelIndex's thresholds are re-asserted here as bare
 // numeric literals (not imported — travelCostIndex.ts intentionally
@@ -37,6 +37,25 @@ describe('Phase 13.5c — classifyPriceLevelIndex (frontend copy of the threshol
   });
   it('is deterministic', () => {
     expect(classifyPriceLevelIndex(100)).toBe(classifyPriceLevelIndex(100));
+  });
+});
+
+describe('Phase 13.5c — formatPriceLevelIndex (display-only rounding)', () => {
+  it('rounds to the nearest whole number', () => {
+    expect(formatPriceLevelIndex(64.8679639072763)).toBe('65');
+    expect(formatPriceLevelIndex(68.2338709881342)).toBe('68');
+    expect(formatPriceLevelIndex(100)).toBe('100');
+  });
+  it('never fabricates precision the source does not have (a whole-number string, not a decimal)', () => {
+    expect(formatPriceLevelIndex(45.5)).not.toContain('.');
+  });
+  it('is deterministic', () => {
+    expect(formatPriceLevelIndex(72.4)).toBe(formatPriceLevelIndex(72.4));
+  });
+  it('does not alter classification, which always uses the unrounded source value', () => {
+    // 59.6 rounds for DISPLAY to 60, but its real (unrounded) classification is still 'low'.
+    expect(formatPriceLevelIndex(59.6)).toBe('60');
+    expect(classifyPriceLevelIndex(59.6)).toBe('low');
   });
 });
 

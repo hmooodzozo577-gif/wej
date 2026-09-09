@@ -15,7 +15,7 @@
 // the source dataset doesn't actually cover.
 import { useEffect, useState } from 'react';
 import { useI18n } from '../state/hooks';
-import { classifyPriceLevelIndex, getTravelCostIndex } from '../data/travelCostIndex';
+import { classifyPriceLevelIndex, formatPriceLevelIndex, getTravelCostIndex } from '../data/travelCostIndex';
 import type { CatalogEntry, TravelCostIndexEntry } from '../data/types';
 import { Icon } from './Icon';
 
@@ -52,10 +52,16 @@ export function TravelCostIndexInfo({ destination }: { destination: CatalogEntry
       <div className="info-grid">
         <div className="info-item">
           <div className="label">{tc.indexLabel}</div>
+          <div className="value">{formatPriceLevelIndex(entry.priceLevelIndex)}</div>
+        </div>
+        <div className="info-item">
+          <div className="label">{tc.tierLabel}</div>
           <div className="value">{tc.tiers[tier]}</div>
         </div>
       </div>
-      <p style={{ marginTop: 8 }}>{tc.sourcePeriodLabel.replace('{year}', entry.sourcePeriod)}</p>
+      <p style={{ marginTop: 8 }}>{tc.baselineNote}</p>
+      <p style={{ marginTop: 6 }}>{tc.relative[tier]}</p>
+      <p style={{ marginTop: 6 }}>{tc.sourcePeriodLabel.replace('{year}', entry.sourcePeriod)}</p>
       <p style={{ marginTop: 6 }}>{tc.disclaimer}</p>
     </div>
   );

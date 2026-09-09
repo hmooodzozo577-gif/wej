@@ -82,14 +82,23 @@ export const EN: I18nDict = {
   // not part of the original wejhaty.html copy.
   travelCost: {
     title: 'Travel Cost Index',
-    indexLabel: 'Relative price level',
+    indexLabel: 'Price Level Index',
+    baselineNote: 'United States = 100',
+    tierLabel: 'Relative to the United States',
     tiers: {
       low: 'Low',
       moderate: 'Moderate',
       high: 'High',
       veryHigh: 'Very high',
     },
-    sourcePeriodLabel: 'Data: {year} (World Bank)',
-    disclaimer: 'A general price-level estimate for this country, not a hotel price, food price, or live booking figure.',
+    relative: {
+      low: 'Relatively lower than the United States',
+      moderate: 'Roughly similar to the United States',
+      high: 'Relatively higher than the United States',
+      veryHigh: 'Substantially higher than the United States',
+    },
+    sourcePeriodLabel: 'Source data: {year} (World Bank)',
+    disclaimer:
+      'A general relative price-level estimate — not a currency amount, hotel price, food price, daily budget, or live booking figure.',
   },
 };

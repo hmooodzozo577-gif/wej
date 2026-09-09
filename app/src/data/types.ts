@@ -503,9 +503,21 @@ export type TravelCostTier = 'low' | 'moderate' | 'high' | 'veryHigh';
  *  equivalent. */
 export interface TravelCostStrings {
   title: string;
+  /** Label shown above the actual numeric priceLevelIndex value. */
   indexLabel: string;
+  /** Fixed baseline explanation, e.g. "United States = 100". Not
+   *  interpolated — the source indicator's baseline never changes. */
+  baselineNote: string;
+  /** Label shown above the short tier word (tiers below). */
+  tierLabel: string;
   tiers: Record<TravelCostTier, string>;
-  /** e.g. "Data: {year}" — {year} replaced with sourcePeriod. */
+  /** Fuller relative-to-baseline sentence per tier, e.g. "Relatively
+   *  lower than the United States" — shown alongside the short tier
+   *  word, not instead of it. */
+  relative: Record<TravelCostTier, string>;
+  /** e.g. "Source data: {year}" — {year} replaced with sourcePeriod
+   *  (the economic OBSERVATION period), never snapshotUpdatedAt (when
+   *  Wejhaty last refreshed the snapshot) — see travelCostIndex.ts. */
   sourcePeriodLabel: string;
   disclaimer: string;
 }

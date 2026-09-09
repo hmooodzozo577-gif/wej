@@ -36,6 +36,17 @@ export function classifyPriceLevelIndex(priceLevelIndex: number): TravelCostTier
   return 'veryHigh';
 }
 
+/** Presentation-only rounding for the numeric value the UI displays.
+ *  The source (PA.NUS.GDP.PLI) carries many decimal places that don't
+ *  represent real precision at this indicator's own level of accuracy
+ *  (it's itself an ICP-derived estimate) — rounding to the nearest
+ *  whole number is a transparent formatting choice for display, never
+ *  a fabricated figure: the full-precision value stays in the snapshot
+ *  and is what classifyPriceLevelIndex() uses, unrounded. */
+export function formatPriceLevelIndex(priceLevelIndex: number): string {
+  return String(Math.round(priceLevelIndex));
+}
+
 let snapshotPromise: Promise<TravelCostSnapshot | null> | null = null;
 
 function loadSnapshot(): Promise<TravelCostSnapshot | null> {
