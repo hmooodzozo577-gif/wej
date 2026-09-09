@@ -7,7 +7,16 @@
 import type { LocationCoords, LocationStatus } from '../state/types';
 
 export type GeolocationOutcome =
-  | { ok: true; coords: LocationCoords }
+  | {
+      ok: true;
+      coords: LocationCoords;
+      /** Meters, as reported by the browser (position.coords.accuracy). Not
+       *  otherwise used by resolution — carried through only so the debug
+       *  panel (LocationPersonalize.tsx, ?debugLocation=1) can show it. */
+      accuracy: number;
+      /** position.timestamp (ms since epoch), same reason as accuracy above. */
+      timestamp: number;
+    }
   | { ok: false; status: Exclude<LocationStatus, 'idle' | 'requesting' | 'granted'> };
 
 const TIMEOUT_MS = 10000;
@@ -26,7 +35,11 @@ export function requestBrowserLocation(): Promise<GeolocationOutcome> {
       (position) => {
         resolve({
           ok: true,
+          // Passed through exactly as the browser reports them — no
+          // rounding, no reordering, no derived/copied value.
           coords: { lat: position.coords.latitude, lng: position.coords.longitude },
+          accuracy: position.coords.accuracy,
+          timestamp: position.timestamp,
         });
       },
       (error) => {

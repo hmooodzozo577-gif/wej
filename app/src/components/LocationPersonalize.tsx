@@ -11,14 +11,49 @@
 // derived from state.location.coords, doesn't need to survive route
 // changes, and keeping it local avoids adding new reducer/action surface
 // for what's fundamentally a render concern.
+//
+// Diagnostic instrumentation (temporary, for the "still Eritrea on a real
+// device" investigation): with ?debugLocation=1 in the URL, a DEBUG panel
+// shows the exact raw browser geolocation result (lat/lng/accuracy/
+// timestamp) side by side with what was actually handed to
+// resolveCurrentCountry(), plus straight-line distances to a few relevant
+// countries — so a real report can be diagnosed from the values the
+// browser actually gave the app, not guessed at. No behavior change
+// without the flag; normal users never see this.
 import { useCallback, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { requestBrowserLocation } from '../geo/geolocation';
-import { nearbyCountries, resolveCurrentCountry, type CountryResolution } from '../data/geo';
+import { haversineKm, nearbyCountries, resolveCurrentCountry, type CountryResolution } from '../data/geo';
+import { WORLD_CATALOG, countryInfoOf } from '../data/worldCatalog';
 import { nameOf } from '../data/destinationText';
 import { FlagChip } from './flags/FlagIcon';
 import { Icon } from './Icon';
+
+interface LocationDebugInfo {
+  browserLat: number;
+  browserLng: number;
+  accuracy: number;
+  timestamp: number;
+  // What was actually passed into resolveCurrentCountry() — captured
+  // separately from the browser values above so a future divergence
+  // between the two (a copy/mutation bug) would be visible here rather
+  // than assumed away.
+  resolverLat: number;
+  resolverLng: number;
+}
+
+// The 4 countries this specific investigation is about (Eritrea/Yemen/
+// Djibouti as candidates a nearest-centroid approach could plausibly have
+// picked for a point near Abha, vs. Saudi Arabia itself). Fixed to exactly
+// these 4 deliberately — this is a debug display for one investigation,
+// not a general-purpose "distance to every country" feature.
+const DEBUG_REFERENCE_COUNTRIES: { label: string; iso2: string }[] = [
+  { label: 'Saudi Arabia', iso2: 'SA' },
+  { label: 'Eritrea', iso2: 'ER' },
+  { label: 'Yemen', iso2: 'YE' },
+  { label: 'Djibouti', iso2: 'DJ' },
+];
 
 export function LocationPersonalize() {
   const { state, dispatch } = useAppState();
@@ -26,34 +61,64 @@ export function LocationPersonalize() {
   const loc = t.location;
   const { status, coords } = state.location;
 
+  const [searchParams] = useSearchParams();
+  const debugEnabled = searchParams.get('debugLocation') === '1';
+
   const [resolution, setResolution] = useState<CountryResolution | undefined>(undefined);
   const [resolving, setResolving] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<LocationDebugInfo | null>(null);
 
   const handleRequest = useCallback(() => {
     dispatch({ type: 'LOCATION_REQUEST' });
     setResolution(undefined);
+    setDebugInfo(null);
     requestBrowserLocation().then(async (geoResult) => {
       if (!geoResult.ok) {
         dispatch({ type: 'LOCATION_FAILED', status: geoResult.status });
         return;
       }
-      dispatch({ type: 'LOCATION_GRANTED', coords: geoResult.coords });
+      const browserCoords = geoResult.coords;
+      dispatch({ type: 'LOCATION_GRANTED', coords: browserCoords });
+      if (debugEnabled) {
+        setDebugInfo({
+          browserLat: browserCoords.lat,
+          browserLng: browserCoords.lng,
+          accuracy: geoResult.accuracy,
+          timestamp: geoResult.timestamp,
+          // Same object passed straight through below with no copy — this
+          // is literally the resolver's input, not a re-derivation of it.
+          resolverLat: browserCoords.lat,
+          resolverLng: browserCoords.lng,
+        });
+      }
       setResolving(true);
-      const result = await resolveCurrentCountry(geoResult.coords);
+      const result = await resolveCurrentCountry(browserCoords);
       setResolution(result);
       setResolving(false);
     });
-  }, [dispatch]);
+  }, [dispatch, debugEnabled]);
 
   const handleReset = useCallback(() => {
     dispatch({ type: 'LOCATION_RESET' });
     setResolution(undefined);
+    setDebugInfo(null);
   }, [dispatch]);
 
   // Recomputed only when coords actually change, not on every render.
   // nearbyCountries() is unchanged by the Phase 12 fix — still sync,
   // still centroid-distance ranking, which is the correct tool for "nearby".
   const nearby = useMemo(() => (coords ? nearbyCountries(coords, 6) : []), [coords]);
+
+  const debugDistances = useMemo(() => {
+    if (!debugInfo) return [];
+    const from = { lat: debugInfo.resolverLat, lng: debugInfo.resolverLng };
+    return DEBUG_REFERENCE_COUNTRIES.map(({ label, iso2 }) => {
+      const entry = WORLD_CATALOG.find((c) => c.countryCode === iso2);
+      const info = entry ? countryInfoOf(entry.id) : undefined;
+      const distanceKm = info ? haversineKm(from, info.latlng) : undefined;
+      return { label, iso2, distanceKm };
+    });
+  }, [debugInfo]);
 
   const canRequest = status === 'idle' || status === 'denied' || status === 'unavailable' || status === 'timeout';
   // One message per terminal non-'granted' status; undefined while idle/requesting/granted.
@@ -106,6 +171,31 @@ export function LocationPersonalize() {
             {loc.reset}
           </button>
         </>
+      ) : null}
+
+      {debugEnabled && debugInfo ? (
+        <div style={{ marginTop: 16, padding: 12, border: '1px dashed currentColor', fontSize: '0.82rem' }}>
+          <strong>DEBUG — Location Debug</strong>
+          <p style={{ marginTop: 8 }}>Browser latitude: {debugInfo.browserLat.toFixed(6)}</p>
+          <p style={{ marginTop: 4 }}>Browser longitude: {debugInfo.browserLng.toFixed(6)}</p>
+          <p style={{ marginTop: 4 }}>Accuracy: {Math.round(debugInfo.accuracy)} m</p>
+          <p style={{ marginTop: 4 }}>Timestamp: {new Date(debugInfo.timestamp).toISOString()}</p>
+          <p style={{ marginTop: 8 }}>Resolver latitude: {debugInfo.resolverLat.toFixed(6)}</p>
+          <p style={{ marginTop: 4 }}>Resolver longitude: {debugInfo.resolverLng.toFixed(6)}</p>
+          <p style={{ marginTop: 4 }}>
+            Latitude match: {debugInfo.browserLat === debugInfo.resolverLat ? 'yes' : 'NO — MISMATCH'}
+          </p>
+          <p style={{ marginTop: 4 }}>
+            Longitude match: {debugInfo.browserLng === debugInfo.resolverLng ? 'yes' : 'NO — MISMATCH'}
+          </p>
+          <p style={{ marginTop: 8 }}>Resolved country: {resolution ? nameOf(resolution.result.entry, 'en') : '—'}</p>
+          <p style={{ marginTop: 4 }}>Resolution method: {resolution?.method ?? '—'}</p>
+          {debugDistances.map((d) => (
+            <p key={d.iso2} style={{ marginTop: 4 }}>
+              Distance to {d.label} centroid: {d.distanceKm !== undefined ? `${d.distanceKm.toFixed(1)} km` : 'n/a'}
+            </p>
+          ))}
+        </div>
       ) : null}
     </div>
   );
