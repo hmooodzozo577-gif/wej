@@ -37,16 +37,28 @@ describe('Phase 13.5c — Travel Cost Index section reachability on the real Des
   it('renders the real dynamic index on the full-destination branch (japan / JP, covered by the real snapshot)', async () => {
     renderAt('/destination/japan');
     await waitFor(() => expect(screen.getByText('معلومات الدولة')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('مؤشر تكلفة السفر')).toBeInTheDocument());
-    const text = document.body.textContent ?? '';
-    expect(text).not.toMatch(/\$\d/);
+    const heading = await screen.findByText('مؤشر تكلفة السفر');
+    // Scoped to THIS card's own DOM subtree, not the whole page: since
+    // Tourism Insights (Phase 13.5d) legitimately renders its own real
+    // USD receipts figures elsewhere on the same destination page, a
+    // page-wide "no $" assertion would be a false positive against a
+    // different, correctly-labeled feature — this only asserts the
+    // Travel Cost Index card itself never shows one.
+    const card = heading.closest('.detail-card');
+    expect(card?.textContent ?? '').not.toMatch(/\$\d/);
   });
 
   it('renders the real dynamic index on the basic-country branch (Egypt / EG, covered by the real snapshot)', async () => {
     renderAt('/destination/eg');
     await waitFor(() => expect(screen.getByText('معلومات الدولة')).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('مؤشر تكلفة السفر')).toBeInTheDocument());
-    const text = document.body.textContent ?? '';
-    expect(text).not.toMatch(/\$\d/);
+    const heading = await screen.findByText('مؤشر تكلفة السفر');
+    // Scoped to THIS card's own DOM subtree, not the whole page: since
+    // Tourism Insights (Phase 13.5d) legitimately renders its own real
+    // USD receipts figures elsewhere on the same destination page, a
+    // page-wide "no $" assertion would be a false positive against a
+    // different, correctly-labeled feature — this only asserts the
+    // Travel Cost Index card itself never shows one.
+    const card = heading.closest('.detail-card');
+    expect(card?.textContent ?? '').not.toMatch(/\$\d/);
   });
 });

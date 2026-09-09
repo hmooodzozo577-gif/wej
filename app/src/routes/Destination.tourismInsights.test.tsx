@@ -1,10 +1,7 @@
 // Phase 13.5d — TourismInsights reachability on the real Destination
-// route, both branches. The real committed snapshot is empty
-// (entries: []) until the live ingestion run lands real data, so this
-// currently (accurately) asserts no crash + no rendering — same
-// pattern Destination.travelCostIndex.test.tsx used before its real
-// snapshot existed; update this once tourismInsights.json has real
-// coverage for these two probe countries.
+// route, both branches. The real committed snapshot now has real
+// coverage for Japan (JP, full-destination branch); Egypt (EG, basic-
+// country branch) is also covered by the real snapshot's 187 entries.
 import { describe, expect, it } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -24,17 +21,15 @@ function renderAt(path: string) {
 }
 
 describe('Phase 13.5d — Tourism Insights section reachability on the real Destination route', () => {
-  it('does not crash on the full-destination branch (japan)', async () => {
+  it('renders the real tourism data on the full-destination branch (japan / JP, covered)', async () => {
     renderAt('/destination/japan');
     await waitFor(() => expect(screen.getByText('معلومات الدولة')).toBeInTheDocument());
-    // No assertion on presence/absence of "مؤشرات السياحة" here — whether
-    // it renders depends on the real snapshot's actual current coverage
-    // for JP, which this test intentionally doesn't hardcode an
-    // expectation about (see module doc comment).
+    await waitFor(() => expect(screen.getByText('مؤشرات السياحة')).toBeInTheDocument());
   });
 
-  it('does not crash on the basic-country branch (Egypt, eg)', async () => {
+  it('renders the real tourism data on the basic-country branch (Egypt, eg, covered)', async () => {
     renderAt('/destination/eg');
     await waitFor(() => expect(screen.getByText('معلومات الدولة')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('مؤشرات السياحة')).toBeInTheDocument());
   });
 });
