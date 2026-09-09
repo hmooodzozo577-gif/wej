@@ -48,4 +48,21 @@ export const EN: I18nDict = {
     timeout: 'The location request took too long.',
     unsupported: 'Your browser does not support location services.',
   },
+  // Phase 13.6 — Full Travel Integration. Like location above, not part
+  // of the original wejhaty.html copy.
+  travel: {
+    title: 'Travel',
+    loading: 'Looking up travel info…',
+    needLocation: 'Share your location to see travel distance and duration to this destination.',
+    setLocationCta: 'Set your location',
+    distanceLabel: 'Distance',
+    distanceUnit: 'km',
+    durationLabel: 'Flight time',
+    durationUnit: { h: 'h', m: 'm' },
+    estimateNote: 'Estimated straight-line distance and flight time — not a real fare or booking.',
+    priceLabel: 'Price',
+    stopsLabel: 'Stops',
+    nonStop: 'Non-stop',
+    offerFoundNote: 'Real flight offer from our travel search — informational only, not a booking.',
+  },
 };

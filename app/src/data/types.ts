@@ -402,6 +402,30 @@ export interface LocationStrings {
   unsupported: string;
 }
 
+/** Phase 13.6 — Full Travel Integration strings. Like LocationStrings,
+ *  this feature has no wejhaty.html equivalent, so it's added directly in
+ *  data/i18n/ar.ts / en.ts rather than sourced from the generated JSON. */
+export interface TravelStrings {
+  title: string;
+  loading: string;
+  needLocation: string;
+  setLocationCta: string;
+  distanceLabel: string;
+  distanceUnit: string;
+  durationLabel: string;
+  /** { h: string; m: string } — short hour/minute unit suffixes, e.g.
+   *  { h: 'h', m: 'm' } or the Arabic equivalents. */
+  durationUnit: { h: string; m: string };
+  /** Shown under a fallback distance/duration estimate — must always make
+   *  clear this is a straight-line estimate, never a real fare. */
+  estimateNote: string;
+  priceLabel: string;
+  stopsLabel: string;
+  nonStop: string;
+  /** Shown under a real, Worker-returned offer. */
+  offerFoundNote: string;
+}
+
 export interface I18nDict {
   dir: 'rtl' | 'ltr';
   htmlLang: 'ar' | 'en';
@@ -417,6 +441,7 @@ export interface I18nDict {
   detail: DetailStrings;
   explore: ExploreStrings;
   location: LocationStrings;
+  travel: TravelStrings;
   costLevels: [string, string, string, string];
   climateLabels: Record<ClimateKind, string>;
   visaLabels: Record<VisaDifficulty, string>;

@@ -28,6 +28,7 @@ import type {
 } from '../data/types';
 import { FlagBanner, FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
+import { TravelInfo } from '../components/TravelInfo';
 import { regionGradientCss } from '../components/regionGradient';
 import { buildWhyText } from '../engine';
 
@@ -196,6 +197,7 @@ export function Destination() {
                 </div>
               </div>
               {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
+              <TravelInfo destination={d} />
             </div>
           </div>
         </div>
@@ -349,6 +351,7 @@ export function Destination() {
               <p>{cities}</p>
             </div>
             {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
+            <TravelInfo destination={d} />
           </div>
         </div>
       </div>
