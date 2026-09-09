@@ -1,13 +1,18 @@
 // Regression tests for the excludedCountries.ts mechanism, exercised here
-// with its current QA test fixture (Monaco, mc/MC/MCO — see that file). To
-// revert to the full 195/165 catalog, empty EXCLUDED_COUNTRIES there; these
-// tests are written against the config, not a hard-coded country, so they
-// stay meaningful either way.
+// with its current configured exclusion (Israel, IL/ISR — see that file).
+// To revert to the full 195-country catalog, remove Israel from
+// EXCLUDED_COUNTRIES there; these tests are written against the config,
+// not a hard-coded country, so they remain meaningful either way.
+
 import { describe, expect, it } from 'vitest';
 import { WORLD_CATALOG, countryInfoOf } from './worldCatalog';
 import { BASIC_COUNTRIES } from './basicCountries';
 import { DESTINATIONS } from './destinations';
-import { EXCLUDED_COUNTRIES, isExcludedIso2, isExcludedIso3 } from './excludedCountries';
+import {
+  EXCLUDED_COUNTRIES,
+  isExcludedIso2,
+  isExcludedIso3,
+} from './excludedCountries';
 
 describe('excludedCountries — country-exclusion mechanism', () => {
   it('has at least one configured entry for this QA test', () => {
@@ -33,6 +38,7 @@ describe('excludedCountries — country-exclusion mechanism', () => {
     for (const entry of WORLD_CATALOG) {
       const info = countryInfoOf(entry.id);
       if (!info) continue;
+
       for (const excluded of EXCLUDED_COUNTRIES) {
         expect(
           info.borders.includes(excluded.iso3),
@@ -42,12 +48,25 @@ describe('excludedCountries — country-exclusion mechanism', () => {
     }
   });
 
-  it('France (a real neighbor of the QA test country) keeps its other borders intact', () => {
-    const info = countryInfoOf('france'); // one of the 30 original destinations — see destinations.json
+  it('remaining countries keep their valid borders intact', () => {
+    const info = countryInfoOf('france');
+
     expect(info).toBeDefined();
-    // Still has its real neighbors...
-    expect(info!.borders).toEqual(expect.arrayContaining(['DEU', 'ESP', 'ITA', 'CHE', 'BEL', 'LUX', 'AND']));
-    // ...but not an excluded one.
+
+    // France should retain its other valid neighbors.
+    expect(info!.borders).toEqual(
+      expect.arrayContaining([
+        'DEU',
+        'ESP',
+        'ITA',
+        'CHE',
+        'BEL',
+        'LUX',
+        'AND',
+      ]),
+    );
+
+    // But no excluded country may remain in its borders.
     for (const excluded of EXCLUDED_COUNTRIES) {
       expect(info!.borders).not.toContain(excluded.iso3);
     }
@@ -57,6 +76,7 @@ describe('excludedCountries — country-exclusion mechanism', () => {
     expect(isExcludedIso2('FR')).toBe(false);
     expect(isExcludedIso2('EG')).toBe(false);
     expect(isExcludedIso3('FRA')).toBe(false);
+
     for (const excluded of EXCLUDED_COUNTRIES) {
       expect(isExcludedIso2(excluded.iso2)).toBe(true);
       expect(isExcludedIso3(excluded.iso3)).toBe(true);
