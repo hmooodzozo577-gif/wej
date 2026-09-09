@@ -53,6 +53,13 @@ export default {
   if(!['GET','HEAD'].includes(request.method))return json({error:'method_not_allowed'},405);
   const key=url.pathname==='/'?'/index.html':url.pathname;
   const asset=ASSETS[key];if(!asset)return new Response('Not found',{status:404,headers:common});
+  // Static scripts and styles are identical for every visitor and carry no user data, so they may be
+  // stored and revalidated. no-cache still forces a conditional request, so a deploy is never served stale.
+  if(asset.etag&&/\.(?:js|css)$/.test(key)){
+   const headers={...common,'Content-Type':asset.type,'Cache-Control':'no-cache','ETag':asset.etag};
+   if(request.headers.get('If-None-Match')===asset.etag)return new Response(null,{status:304,headers});
+   return new Response(request.method==='HEAD'?null:asset.body,{headers});
+  }
   return new Response(request.method==='HEAD'?null:asset.body,{headers:{...common,'Content-Type':asset.type}});
  }
 };
