@@ -1,18 +1,27 @@
 # Cloudflare Worker configuration for Wejhaty's travel API backend.
 #
-# NOT DEPLOYED as part of Phase 13.2 — this file only documents the
-# intended configuration so a future step (13.3+) can run
-# `npx wrangler deploy` once Amadeus integration actually begins. Deploying
-# this Worker requires a Cloudflare account and `wrangler login`/API token,
+# NOT DEPLOYED as part of this change (Phase 13.3 implements the real
+# Amadeus integration but does not deploy it — see ../README.md and the
+# final report for the exact manual deployment step). Deploying this
+# Worker requires a Cloudflare account and `wrangler login`/API token,
 # neither of which this task sets up.
 name = "wejhaty-travel-worker"
 main = "src/index.ts"
 compatibility_date = "2026-09-01"
 
-# No [vars] section: this Worker takes no plaintext configuration values.
-# The one secret it will eventually need (AMADEUS_API_KEY, Phase 13.3) is
-# NEVER set here — see ../SECRETS.md. Secrets are configured out-of-band
-# via `wrangler secret put AMADEUS_API_KEY`, which stores the value
-# encrypted in Cloudflare's platform and injects it into `env` at runtime
-# only; it is never written to this file, this repository, or any build
-# output.
+# Non-secret configuration only. 'production' opts into Amadeus' live API;
+# anything else (including leaving this unset) uses the test/sandbox API
+# — see ./src/amadeus.ts's resolveAmadeusBaseUrl(). This is intentionally
+# NOT a secret: it's a plain mode switch, not a credential, and keeping it
+# in [vars] (rather than alongside the two real secrets below) makes an
+# accidental production switch visible in a diff of this committed file.
+[vars]
+AMADEUS_ENV = "test"
+
+# The two real secrets (AMADEUS_API_KEY, AMADEUS_API_SECRET) are NEVER set
+# here — see ../SECRETS.md. They are configured out-of-band via:
+#   npx wrangler secret put AMADEUS_API_KEY
+#   npx wrangler secret put AMADEUS_API_SECRET
+# which stores each value encrypted in Cloudflare's platform and injects
+# it into `env` at runtime only; neither is ever written to this file,
+# this repository, or any build output.

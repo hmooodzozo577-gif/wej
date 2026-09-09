@@ -1,23 +1,30 @@
-// Phase 13.2 (Part B) — Cloudflare Worker foundation for the future travel
-// API backend. This step intentionally does NOT call Amadeus (or any
-// other provider): POST /api/travel/flights validates the request shape
-// and returns an explicit "not implemented yet" response. No API key is
-// required, read, or referenced by value anywhere in this Worker in this
-// step — see ../SECRETS.md for how a real Amadeus credential will be
-// configured in Phase 13.3, entirely as a Cloudflare Worker secret, never
-// committed to this repository.
+// Phase 13.2 foundation, Phase 13.3 (this change) — real Amadeus for
+// Developers Flight Offers Search integration, entirely server-side. This
+// is still the ONLY file that turns an HTTP request into a response;
+// all actual provider communication lives in ./amadeus.ts (kept separate
+// so it can be unit-tested with a mocked fetch, and so this file's job
+// stays limited to HTTP concerns: CORS, method/path routing, request
+// validation, and mapping amadeus.ts's typed results/errors to a safe
+// client-facing JSON contract).
+//
+// No API key is ever read outside ./amadeus.ts, logged, or included in
+// any response this file returns — see ../SECRETS.md for how
+// AMADEUS_API_KEY/AMADEUS_API_SECRET are configured as Worker secrets.
 //
 // Structurally separate from app/ (the Vite/GitHub Pages frontend): this
 // directory has its own package.json/tsconfig, is never imported by the
 // frontend, and is not touched by .github/workflows/deploy-pages.yml
-// (which only watches app/**). Nothing in this directory is deployed by
-// this task — see ../README.md.
-export interface Env {
-  // Placeholder type for the future Amadeus credential (Phase 13.3). This
-  // Worker never reads it in this step, and no value — real or
-  // placeholder — is set anywhere in this repository.
-  // AMADEUS_API_KEY?: string;
-}
+// (which only watches app/**).
+import {
+  AmadeusAuthError,
+  AmadeusMalformedResponseError,
+  AmadeusProviderError,
+  AmadeusTimeoutError,
+  searchAmadeusFlightOffers,
+  type Env as AmadeusEnv,
+} from './amadeus';
+
+export type Env = AmadeusEnv;
 
 // Restricted to the exact GitHub Pages origin this app is deployed to —
 // deliberately never '*'. A request from any other Origin gets no
@@ -50,18 +57,24 @@ export interface FlightSearchRequestBody {
   destination: string;
   departureDate: string;
   returnDate?: string;
-  passengers: number;
+  /** Optional in the wire contract (defaults to 1 — see
+   *  validateFlightSearchRequest) even though the frontend's own
+   *  TravelSearchRequest type always supplies it; this keeps the Worker's
+   *  own contract tolerant of a caller that omits it. */
+  passengers?: number;
 }
 
 const IATA_RE = /^[A-Z]{3}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const DEFAULT_PASSENGERS = 1;
 
 /** Validates the POST /api/travel/flights request body shape. Returns a
  *  list of field-level problems (empty array = valid). Deliberately
  *  checks only SHAPE (types, formats, basic sanity like origin !==
- *  destination) — it has no way to know whether an airport code or date
- *  is real/available, since that requires an actual provider call this
- *  step does not make. */
+ *  destination, returnDate >= departureDate) — it has no way to know
+ *  whether an airport code or date is real/available/has actual flights,
+ *  since that requires the actual Amadeus call this function runs
+ *  before. Nothing here ever contacts Amadeus. */
 export function validateFlightSearchRequest(body: unknown): string[] {
   const errors: string[] = [];
   if (typeof body !== 'object' || body === null || Array.isArray(body)) {
@@ -81,17 +94,49 @@ export function validateFlightSearchRequest(body: unknown): string[] {
   if (typeof b.departureDate !== 'string' || !DATE_RE.test(b.departureDate)) {
     errors.push('departureDate must be an ISO date string (YYYY-MM-DD).');
   }
-  if (b.returnDate !== undefined && (typeof b.returnDate !== 'string' || !DATE_RE.test(b.returnDate))) {
-    errors.push('returnDate must be an ISO date string (YYYY-MM-DD) if provided.');
+  if (b.returnDate !== undefined) {
+    if (typeof b.returnDate !== 'string' || !DATE_RE.test(b.returnDate)) {
+      errors.push('returnDate must be an ISO date string (YYYY-MM-DD) if provided.');
+    } else if (
+      typeof b.departureDate === 'string' &&
+      DATE_RE.test(b.departureDate) &&
+      b.returnDate < b.departureDate
+    ) {
+      // Safe to compare as plain strings: both are validated YYYY-MM-DD
+      // (zero-padded ISO dates sort lexicographically the same as
+      // chronologically), so no Date parsing/timezone ambiguity.
+      errors.push('returnDate must not be before departureDate.');
+    }
   }
-  if (typeof b.passengers !== 'number' || !Number.isInteger(b.passengers) || b.passengers < 1 || b.passengers > 9) {
-    errors.push('passengers must be an integer between 1 and 9.');
+  if (b.passengers !== undefined) {
+    if (typeof b.passengers !== 'number' || !Number.isInteger(b.passengers) || b.passengers < 1 || b.passengers > 9) {
+      errors.push('passengers must be an integer between 1 and 9 if provided.');
+    }
   }
 
   return errors;
 }
 
-export async function handleRequest(request: Request, _env: Env): Promise<Response> {
+function normalizeRequest(body: FlightSearchRequestBody) {
+  return {
+    origin: body.origin,
+    destination: body.destination,
+    departureDate: body.departureDate,
+    returnDate: body.returnDate,
+    passengers: body.passengers ?? DEFAULT_PASSENGERS,
+  };
+}
+
+// Deliberately a 2-argument (request, env) signature, matching the real
+// Cloudflare Workers `fetch(request, env, ctx)` handler contract closely
+// enough that `export default { fetch: handleRequest }` below works
+// unmodified as the real entry point (JS allows a function to ignore the
+// `ctx` argument the runtime passes). Tests that need to mock the
+// Amadeus HTTP calls this function eventually makes do so via
+// `vi.stubGlobal('fetch', ...)` — see index.test.ts — rather than a
+// parameter here, specifically so this signature never has to diverge
+// from what Cloudflare actually calls in production.
+export async function handleRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const origin = request.headers.get('Origin');
 
@@ -119,19 +164,46 @@ export async function handleRequest(request: Request, _env: Env): Promise<Respon
     return json({ error: 'invalid_request', message: 'Request failed validation.', fields: fieldErrors }, 400, origin);
   }
 
-  // Phase 13.2 scope gate: no provider is called yet, and this Worker
-  // never fabricates flight data. This is a real, stable contract callers
-  // can already build against — a safe "not implemented" response, never
-  // a fake successful offer — while actual Amadeus integration is
-  // deferred to Phase 13.3 under separate explicit authorization.
-  return json(
-    {
-      error: 'not_implemented',
-      message: 'Flight search is not available yet. Provider integration is planned for a later phase.',
-    },
-    501,
-    origin,
-  );
+  const normalized = normalizeRequest(body as FlightSearchRequestBody);
+
+  try {
+    const result = await searchAmadeusFlightOffers(env, normalized);
+    // Success — real, normalized offers (possibly an empty array when
+    // Amadeus genuinely has no matching flights; that is a valid search
+    // outcome, never treated as an error, and never padded with
+    // fabricated offers to look non-empty).
+    return json({ offers: result.offers }, 200, origin);
+  } catch (err) {
+    return json(...mapAmadeusErrorToResponseArgs(err), origin);
+  }
+}
+
+/** Maps a thrown error from ./amadeus.ts to a safe (status, body) pair.
+ *  Every branch here returns a short, generic, non-provider-internal
+ *  message: never the upstream response body, never a stack trace, and
+ *  — since these errors are constructed in amadeus.ts without ever
+ *  interpolating a credential or token value — never a secret. An
+ *  unrecognized error type still falls through to a generic 500 rather
+ *  than rethrowing (which would let the Workers runtime's own default
+ *  error page, and whatever detail it includes, reach the browser). */
+function mapAmadeusErrorToResponseArgs(err: unknown): [body: unknown, status: number] {
+  if (err instanceof AmadeusTimeoutError) {
+    return [{ error: 'provider_timeout', message: 'The flight search provider took too long to respond.' }, 504];
+  }
+  if (err instanceof AmadeusAuthError) {
+    // A misconfigured/rejected credential is an operational problem on
+    // this Worker's side, never the browser's fault — surfaced as an
+    // upstream/gateway failure, not a 401 (which would incorrectly imply
+    // the BROWSER needs to authenticate).
+    return [{ error: 'provider_error', message: 'The flight search provider is temporarily unavailable.' }, 502];
+  }
+  if (err instanceof AmadeusProviderError) {
+    return [{ error: 'provider_error', message: 'The flight search provider returned an error.' }, 502];
+  }
+  if (err instanceof AmadeusMalformedResponseError) {
+    return [{ error: 'provider_error', message: 'The flight search provider returned an unexpected response.' }, 502];
+  }
+  return [{ error: 'internal_error', message: 'An unexpected error occurred.' }, 500];
 }
 
 export default {

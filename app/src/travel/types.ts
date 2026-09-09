@@ -9,6 +9,11 @@
 // Deliberately minimal (Task B4: "minimum viable, not over-engineered") —
 // only what's needed to describe a flight search request/result. No
 // hotels, no booking, no pricing rules beyond a single total amount.
+//
+// Phase 13.3 addition: `airlineCode` on TravelSegment and
+// `durationMinutes`/`stops` on FlightOffer, additive fields populated
+// from the real Amadeus integration now wired up in travelService.ts —
+// the existing fields/shape from Phase 13.2 are unchanged.
 
 /** A minimal airport reference for travel purposes. Distinct from (but
  *  structurally compatible with) data/types.ts's AirportLocation — this
@@ -29,6 +34,9 @@ export interface TravelSegment {
   departureTime: string;
   /** ISO 8601 date-time. */
   arrivalTime: string;
+  /** IATA airline code, e.g. "SV". Empty string if the provider didn't
+   *  supply one — never fabricated. */
+  airlineCode: string;
   /** Airline/operator display name, when known. */
   carrierName?: string;
 }
@@ -40,11 +48,16 @@ export interface FlightOfferPrice {
 }
 
 /** One bookable flight offer, already normalized — never a raw provider
- *  payload. `segments` is ordered outbound-then-return when a round trip. */
+ *  payload. `segments` is ordered outbound-then-return when a round trip.
+ *  `durationMinutes`/`stops` (Phase 13.3) summarize the whole trip: total
+ *  flown duration across all itineraries, and total connections (segment
+ *  boundaries that aren't the start of a new itinerary). */
 export interface FlightOffer {
   id: string;
   segments: TravelSegment[];
   price: FlightOfferPrice;
+  durationMinutes: number;
+  stops: number;
 }
 
 /** What a caller asks travelService.searchFlights() for. IATA codes only
