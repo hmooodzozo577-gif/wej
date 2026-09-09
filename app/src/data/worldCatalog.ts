@@ -6,7 +6,8 @@
 // DESTINATIONS directly and are entirely unaffected by this file existing.
 import { DESTINATIONS } from './destinations';
 import { BASIC_COUNTRIES } from './basicCountries';
-import type { CatalogEntry, Continent } from './types';
+import { countryInfoByIso2 } from './countryInfo';
+import type { CatalogEntry, Continent, CountryInfo } from './types';
 
 export const WORLD_CATALOG: CatalogEntry[] = [...DESTINATIONS, ...BASIC_COUNTRIES];
 
@@ -14,4 +15,14 @@ export const WORLD_CATALOG: CatalogEntry[] = [...DESTINATIONS, ...BASIC_COUNTRIE
  *  (Region is a subset of Continent) — this just picks the right field. */
 export function continentOf(entry: CatalogEntry): Continent {
   return entry.recommendationReady ? entry.region : entry.continent;
+}
+
+/** Phase 11 Step 1 — looks up build-time Country Information for any catalog
+ *  entry (full destination or basic country alike) by its catalog id, via
+ *  its countryCode (ISO 3166-1 alpha-2). Both CatalogEntry variants carry
+ *  countryCode, so one lookup covers all 195. */
+export function countryInfoOf(id: string): CountryInfo | undefined {
+  const entry = WORLD_CATALOG.find((c) => c.id === id);
+  if (!entry) return undefined;
+  return countryInfoByIso2(entry.countryCode);
 }

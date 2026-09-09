@@ -25,7 +25,10 @@ function renderAt(path: string) {
 describe('Phase 10 — F. destination routing', () => {
   it('existing destination route still renders (e.g. japan)', () => {
     renderAt('/destination/japan');
-    expect(screen.getByText('اليابان')).toBeInTheDocument();
+    // Matched on the heading specifically: Phase 11's Country Information
+    // card also shows "اليابان" as Japan's official name (identical to its
+    // common name here), so the plain text is no longer unique on the page.
+    expect(screen.getByRole('heading', { level: 1, name: 'اليابان' })).toBeInTheDocument();
   });
 
   it('every one of the original 30 destinations opens without crashing', () => {

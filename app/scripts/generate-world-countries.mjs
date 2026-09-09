@@ -137,3 +137,62 @@ console.log(`Wrote ${Object.keys(newFlags).length} new flag SVGs to generated/ba
 const total = existingCodes.size + basicCountries.length;
 console.log(`Total world catalog size: ${total} (expected 195)`);
 if (total !== 195) throw new Error('Total catalog size mismatch');
+
+// ---- 9. Phase 11 Step 1 — build-time Country Information dataset ----
+// Additional, purely informational fields for ALL 195 catalog countries
+// (the 30 existing destinations too, not just the 165 basic countries),
+// keyed by ISO 3166-1 alpha-2 so lookups work uniformly for both. Sourced
+// from the same already-installed `world-countries` package — no live API,
+// no runtime network call, no new dependency. Deliberately excludes
+// population and timezones (only available from the live REST Countries
+// API, out of scope per the Phase 11 architecture decision), and excludes
+// any field already present on CatalogEntry (capital, continent, subregion,
+// nameEn/Ar, flag) to avoid duplication.
+function callingCodeOf(c) {
+  const idd = c.idd;
+  if (!idd?.root) return null;
+  // A single suffix unambiguously completes the code (e.g. root "+3" +
+  // suffix "3" = "+33" for France). Multiple suffixes usually mean the root
+  // itself IS the shared calling code (e.g. NANP's "+1" for US/Canada, or
+  // "+7" for Russia/Kazakhstan) — combining with an arbitrary suffix would
+  // fabricate a specific one, so use the root alone in that case.
+  if (Array.isArray(idd.suffixes) && idd.suffixes.length === 1) {
+    return idd.root + idd.suffixes[0];
+  }
+  return idd.root;
+}
+
+const countryInfo = {};
+for (const c of world195) {
+  if (!c.name.official) throw new Error(`Missing official name for ${c.name.common}`);
+  if (!c.translations?.ara?.official) throw new Error(`Missing Arabic official name for ${c.name.common}`);
+  if (c.area == null) throw new Error(`Missing area for ${c.name.common}`);
+  const callingCode = callingCodeOf(c);
+  if (!callingCode) throw new Error(`Missing calling code for ${c.name.common}`);
+
+  countryInfo[c.cca2] = {
+    iso2: c.cca2,
+    officialNameEn: c.name.official,
+    officialNameAr: c.translations.ara.official,
+    areaKm2: c.area,
+    currencies: Object.entries(c.currencies ?? {}).map(([code, v]) => ({
+      code,
+      name: v.name,
+      symbol: v.symbol,
+    })),
+    languagesEn: Object.values(c.languages ?? {}),
+    callingCode,
+    borders: c.borders ?? [],
+  };
+}
+
+const countryInfoCount = Object.keys(countryInfo).length;
+if (countryInfoCount !== 195) {
+  throw new Error(`Expected 195 country info records, got ${countryInfoCount}`);
+}
+
+fs.writeFileSync(
+  path.join(outDir, 'countryInfo.json'),
+  JSON.stringify(countryInfo, null, 2) + '\n',
+);
+console.log(`Wrote ${countryInfoCount} country info records to generated/countryInfo.json`);

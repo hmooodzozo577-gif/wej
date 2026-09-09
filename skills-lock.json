@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "skills/caveman/SKILL.md",
       "computedHash": "fa7c0951349ae3782a20e55c6d1e72e4c23585b7932bb5e021c17c4f8f055a07"
+    },
+    "strategic-compact": {
+      "source": "affaan-m/everything-claude-code",
+      "sourceType": "github",
+      "skillPath": "skills/strategic-compact/SKILL.md",
+      "computedHash": "6ac2f97bfa282fc9b2d1e4cdf0f395dfb1cffe47660b6a3e30cbc2099feb7a04"
     }
   }
 }

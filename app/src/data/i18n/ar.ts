@@ -22,5 +22,13 @@ export const AR: I18nDict = {
     capital: 'العاصمة',
     notRecommendationReady:
       'لا تتوفر بعد بيانات كافية لتضمين هذه الوجهة في محرك التوصيات — ستُضاف في مرحلة قادمة.',
+    countryInfo: 'معلومات الدولة',
+    officialName: 'الاسم الرسمي',
+    area: 'المساحة',
+    areaUnit: 'كم²',
+    currency: 'العملة',
+    languages: 'اللغات',
+    callingCode: 'رمز الاتصال',
+    borders: 'الدول المجاورة',
   },
 };

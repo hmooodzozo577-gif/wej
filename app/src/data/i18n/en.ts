@@ -19,5 +19,13 @@ export const EN: I18nDict = {
     capital: 'Capital',
     notRecommendationReady:
       "There isn't enough data yet to include this destination in the recommendation engine — it will be added in a later phase.",
+    countryInfo: 'Country Information',
+    officialName: 'Official Name',
+    area: 'Area',
+    areaUnit: 'km²',
+    currency: 'Currency',
+    languages: 'Languages',
+    callingCode: 'Calling Code',
+    borders: 'Borders',
   },
 };

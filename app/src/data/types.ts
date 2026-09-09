@@ -119,6 +119,38 @@ export interface BasicCountry extends CountryBase {
  *  with `entry.recommendationReady` before accessing recommendation fields. */
 export type CatalogEntry = Destination | BasicCountry;
 
+// --- Phase 11 Step 1: build-time Country Information -----------------------
+// Additive, purely informational data for ALL 195 catalog entries (the 30
+// existing destinations too, not just the 165 basic countries), sourced at
+// build time from the already-installed `world-countries` package — no
+// runtime network call. Deliberately excludes population/timezones (only
+// available from a live API, out of scope for this step) and excludes any
+// field already on CatalogEntry (capital, continent, subregion, nameEn/Ar,
+// flag) to avoid duplication. Keyed by ISO 3166-1 alpha-2 (countryCode),
+// which both Destination and BasicCountry already carry, so one dataset
+// covers both without retrofitting new fields onto either.
+export interface CountryInfoCurrency {
+  /** ISO 4217 code, e.g. "JPY". */
+  code: string;
+  name: string;
+  symbol?: string;
+}
+
+export interface CountryInfo {
+  /** ISO 3166-1 alpha-2, uppercase — matches CatalogEntry.countryCode. */
+  iso2: string;
+  officialNameEn: string;
+  officialNameAr: string;
+  areaKm2: number;
+  /** Empty array for countries with no reported official currency (rare). */
+  currencies: CountryInfoCurrency[];
+  languagesEn: string[];
+  /** E.164-style calling code with leading "+", e.g. "+81". */
+  callingCode: string;
+  /** ISO 3166-1 alpha-3 codes of bordering countries; empty for islands / no land border. */
+  borders: string[];
+}
+
 export type PurposeId =
   | 'tourism'
   | 'work'
@@ -266,6 +298,15 @@ export interface DetailStrings {
   /** Phase 10 additions, for the graceful basic-country detail state. */
   capital: string;
   notRecommendationReady: string;
+  /** Phase 11 Step 1 additions, for the Country Information section. */
+  countryInfo: string;
+  officialName: string;
+  area: string;
+  areaUnit: string;
+  currency: string;
+  languages: string;
+  callingCode: string;
+  borders: string;
 }
 
 export interface ExploreStrings {

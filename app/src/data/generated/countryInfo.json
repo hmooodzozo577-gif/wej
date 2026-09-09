@@ -1,0 +1,4537 @@
+{
+  "AF": {
+    "iso2": "AF",
+    "officialNameEn": "Islamic Republic of Afghanistan",
+    "officialNameAr": "جمهورية أففانستان الإسلامية",
+    "areaKm2": 652230,
+    "currencies": [
+      {
+        "code": "AFN",
+        "name": "Afghan afghani",
+        "symbol": "؋"
+      }
+    ],
+    "languagesEn": [
+      "Dari",
+      "Pashto",
+      "Turkmen"
+    ],
+    "callingCode": "+93",
+    "borders": [
+      "IRN",
+      "PAK",
+      "TKM",
+      "UZB",
+      "TJK",
+      "CHN"
+    ]
+  },
+  "AO": {
+    "iso2": "AO",
+    "officialNameEn": "Republic of Angola",
+    "officialNameAr": "أنغولا",
+    "areaKm2": 1246700,
+    "currencies": [
+      {
+        "code": "AOA",
+        "name": "Angolan kwanza",
+        "symbol": "Kz"
+      }
+    ],
+    "languagesEn": [
+      "Portuguese"
+    ],
+    "callingCode": "+244",
+    "borders": [
+      "COG",
+      "COD",
+      "ZMB",
+      "NAM"
+    ]
+  },
+  "AL": {
+    "iso2": "AL",
+    "officialNameEn": "Republic of Albania",
+    "officialNameAr": "جمهورية ألبانيا",
+    "areaKm2": 28748,
+    "currencies": [
+      {
+        "code": "ALL",
+        "name": "Albanian lek",
+        "symbol": "L"
+      }
+    ],
+    "languagesEn": [
+      "Albanian"
+    ],
+    "callingCode": "+355",
+    "borders": [
+      "MNE",
+      "GRC",
+      "MKD",
+      "UNK"
+    ]
+  },
+  "AD": {
+    "iso2": "AD",
+    "officialNameEn": "Principality of Andorra",
+    "officialNameAr": "إمارة أندورا",
+    "areaKm2": 468,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Catalan"
+    ],
+    "callingCode": "+376",
+    "borders": [
+      "FRA",
+      "ESP"
+    ]
+  },
+  "AE": {
+    "iso2": "AE",
+    "officialNameEn": "United Arab Emirates",
+    "officialNameAr": "الإمارات العربية المتحدة",
+    "areaKm2": 83600,
+    "currencies": [
+      {
+        "code": "AED",
+        "name": "United Arab Emirates dirham",
+        "symbol": "د.إ"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+971",
+    "borders": [
+      "OMN",
+      "SAU"
+    ]
+  },
+  "AR": {
+    "iso2": "AR",
+    "officialNameEn": "Argentine Republic",
+    "officialNameAr": "جمهورية الأرجنتين",
+    "areaKm2": 2780400,
+    "currencies": [
+      {
+        "code": "ARS",
+        "name": "Argentine peso",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Guaraní",
+      "Spanish"
+    ],
+    "callingCode": "+54",
+    "borders": [
+      "BOL",
+      "BRA",
+      "CHL",
+      "PRY",
+      "URY"
+    ]
+  },
+  "AM": {
+    "iso2": "AM",
+    "officialNameEn": "Republic of Armenia",
+    "officialNameAr": "جمهورية أرمينيا",
+    "areaKm2": 29743,
+    "currencies": [
+      {
+        "code": "AMD",
+        "name": "Armenian dram",
+        "symbol": "֏"
+      }
+    ],
+    "languagesEn": [
+      "Armenian"
+    ],
+    "callingCode": "+374",
+    "borders": [
+      "AZE",
+      "GEO",
+      "IRN",
+      "TUR"
+    ]
+  },
+  "AG": {
+    "iso2": "AG",
+    "officialNameEn": "Antigua and Barbuda",
+    "officialNameAr": "أنتيغوا وباربودا",
+    "areaKm2": 442,
+    "currencies": [
+      {
+        "code": "XCD",
+        "name": "Eastern Caribbean dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1268",
+    "borders": []
+  },
+  "AU": {
+    "iso2": "AU",
+    "officialNameEn": "Commonwealth of Australia",
+    "officialNameAr": "كومونولث أستراليا",
+    "areaKm2": 7692024,
+    "currencies": [
+      {
+        "code": "AUD",
+        "name": "Australian dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+61",
+    "borders": []
+  },
+  "AT": {
+    "iso2": "AT",
+    "officialNameEn": "Republic of Austria",
+    "officialNameAr": "جمهورية النمسا",
+    "areaKm2": 83871,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Austro-Bavarian German"
+    ],
+    "callingCode": "+43",
+    "borders": [
+      "CZE",
+      "DEU",
+      "HUN",
+      "ITA",
+      "LIE",
+      "SVK",
+      "SVN",
+      "CHE"
+    ]
+  },
+  "AZ": {
+    "iso2": "AZ",
+    "officialNameEn": "Republic of Azerbaijan",
+    "officialNameAr": "جمهورية أذربيجان",
+    "areaKm2": 86600,
+    "currencies": [
+      {
+        "code": "AZN",
+        "name": "Azerbaijani manat",
+        "symbol": "₼"
+      }
+    ],
+    "languagesEn": [
+      "Azerbaijani",
+      "Russian"
+    ],
+    "callingCode": "+994",
+    "borders": [
+      "ARM",
+      "GEO",
+      "IRN",
+      "RUS",
+      "TUR"
+    ]
+  },
+  "BI": {
+    "iso2": "BI",
+    "officialNameEn": "Republic of Burundi",
+    "officialNameAr": "جمهورية بوروندي",
+    "areaKm2": 27834,
+    "currencies": [
+      {
+        "code": "BIF",
+        "name": "Burundian franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French",
+      "Kirundi"
+    ],
+    "callingCode": "+257",
+    "borders": [
+      "COD",
+      "RWA",
+      "TZA"
+    ]
+  },
+  "BE": {
+    "iso2": "BE",
+    "officialNameEn": "Kingdom of Belgium",
+    "officialNameAr": "مملكة بلجيكا",
+    "areaKm2": 30528,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "German",
+      "French",
+      "Dutch"
+    ],
+    "callingCode": "+32",
+    "borders": [
+      "FRA",
+      "DEU",
+      "LUX",
+      "NLD"
+    ]
+  },
+  "BJ": {
+    "iso2": "BJ",
+    "officialNameEn": "Republic of Benin",
+    "officialNameAr": "جمهورية بنين",
+    "areaKm2": 112622,
+    "currencies": [
+      {
+        "code": "XOF",
+        "name": "West African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+229",
+    "borders": [
+      "BFA",
+      "NER",
+      "NGA",
+      "TGO"
+    ]
+  },
+  "BF": {
+    "iso2": "BF",
+    "officialNameEn": "Burkina Faso",
+    "officialNameAr": "بوركينا فاسو",
+    "areaKm2": 272967,
+    "currencies": [
+      {
+        "code": "XOF",
+        "name": "West African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+226",
+    "borders": [
+      "BEN",
+      "CIV",
+      "GHA",
+      "MLI",
+      "NER",
+      "TGO"
+    ]
+  },
+  "BD": {
+    "iso2": "BD",
+    "officialNameEn": "People's Republic of Bangladesh",
+    "officialNameAr": "جمهورية بنغلاديش الشعبية",
+    "areaKm2": 147570,
+    "currencies": [
+      {
+        "code": "BDT",
+        "name": "Bangladeshi taka",
+        "symbol": "৳"
+      }
+    ],
+    "languagesEn": [
+      "Bengali"
+    ],
+    "callingCode": "+880",
+    "borders": [
+      "MMR",
+      "IND"
+    ]
+  },
+  "BG": {
+    "iso2": "BG",
+    "officialNameEn": "Republic of Bulgaria",
+    "officialNameAr": "جمهورية بلغاريا",
+    "areaKm2": 110879,
+    "currencies": [
+      {
+        "code": "BGN",
+        "name": "Bulgarian lev",
+        "symbol": "лв"
+      }
+    ],
+    "languagesEn": [
+      "Bulgarian"
+    ],
+    "callingCode": "+359",
+    "borders": [
+      "GRC",
+      "MKD",
+      "ROU",
+      "SRB",
+      "TUR"
+    ]
+  },
+  "BH": {
+    "iso2": "BH",
+    "officialNameEn": "Kingdom of Bahrain",
+    "officialNameAr": "مملكة البحرين",
+    "areaKm2": 765,
+    "currencies": [
+      {
+        "code": "BHD",
+        "name": "Bahraini dinar",
+        "symbol": ".د.ب"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+973",
+    "borders": []
+  },
+  "BS": {
+    "iso2": "BS",
+    "officialNameEn": "Commonwealth of the Bahamas",
+    "officialNameAr": "كومنولث جزر البهاما",
+    "areaKm2": 13943,
+    "currencies": [
+      {
+        "code": "BSD",
+        "name": "Bahamian dollar",
+        "symbol": "$"
+      },
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1242",
+    "borders": []
+  },
+  "BA": {
+    "iso2": "BA",
+    "officialNameEn": "Bosnia and Herzegovina",
+    "officialNameAr": "البوسنة والهرسك",
+    "areaKm2": 51209,
+    "currencies": [
+      {
+        "code": "BAM",
+        "name": "Bosnia and Herzegovina convertible mark",
+        "symbol": "KM"
+      }
+    ],
+    "languagesEn": [
+      "Bosnian",
+      "Croatian",
+      "Serbian"
+    ],
+    "callingCode": "+387",
+    "borders": [
+      "HRV",
+      "MNE",
+      "SRB"
+    ]
+  },
+  "BY": {
+    "iso2": "BY",
+    "officialNameEn": "Republic of Belarus",
+    "officialNameAr": "جمهورية بيلاروسيا",
+    "areaKm2": 207600,
+    "currencies": [
+      {
+        "code": "BYN",
+        "name": "Belarusian ruble",
+        "symbol": "Br"
+      }
+    ],
+    "languagesEn": [
+      "Belarusian",
+      "Russian"
+    ],
+    "callingCode": "+375",
+    "borders": [
+      "LVA",
+      "LTU",
+      "POL",
+      "RUS",
+      "UKR"
+    ]
+  },
+  "BZ": {
+    "iso2": "BZ",
+    "officialNameEn": "Belize",
+    "officialNameAr": "بليز",
+    "areaKm2": 22966,
+    "currencies": [
+      {
+        "code": "BZD",
+        "name": "Belize dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Belizean Creole",
+      "English",
+      "Spanish"
+    ],
+    "callingCode": "+501",
+    "borders": [
+      "GTM",
+      "MEX"
+    ]
+  },
+  "BO": {
+    "iso2": "BO",
+    "officialNameEn": "Plurinational State of Bolivia",
+    "officialNameAr": "دولة بوليفيا المتعددة القوميات",
+    "areaKm2": 1098581,
+    "currencies": [
+      {
+        "code": "BOB",
+        "name": "Bolivian boliviano",
+        "symbol": "Bs."
+      }
+    ],
+    "languagesEn": [
+      "Aymara",
+      "Guaraní",
+      "Quechua",
+      "Spanish"
+    ],
+    "callingCode": "+591",
+    "borders": [
+      "ARG",
+      "BRA",
+      "CHL",
+      "PRY",
+      "PER"
+    ]
+  },
+  "BR": {
+    "iso2": "BR",
+    "officialNameEn": "Federative Republic of Brazil",
+    "officialNameAr": "جمهورية البرازيل الاتحادية",
+    "areaKm2": 8515767,
+    "currencies": [
+      {
+        "code": "BRL",
+        "name": "Brazilian real",
+        "symbol": "R$"
+      }
+    ],
+    "languagesEn": [
+      "Portuguese"
+    ],
+    "callingCode": "+55",
+    "borders": [
+      "ARG",
+      "BOL",
+      "COL",
+      "GUF",
+      "GUY",
+      "PRY",
+      "PER",
+      "SUR",
+      "URY",
+      "VEN"
+    ]
+  },
+  "BB": {
+    "iso2": "BB",
+    "officialNameEn": "Barbados",
+    "officialNameAr": "باربادوس",
+    "areaKm2": 430,
+    "currencies": [
+      {
+        "code": "BBD",
+        "name": "Barbadian dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1246",
+    "borders": []
+  },
+  "BN": {
+    "iso2": "BN",
+    "officialNameEn": "Nation of Brunei, Abode of Peace",
+    "officialNameAr": "بروناي دار السلام",
+    "areaKm2": 5765,
+    "currencies": [
+      {
+        "code": "BND",
+        "name": "Brunei dollar",
+        "symbol": "$"
+      },
+      {
+        "code": "SGD",
+        "name": "Singapore dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Malay"
+    ],
+    "callingCode": "+673",
+    "borders": [
+      "MYS"
+    ]
+  },
+  "BT": {
+    "iso2": "BT",
+    "officialNameEn": "Kingdom of Bhutan",
+    "officialNameAr": "مملكة بوتان",
+    "areaKm2": 38394,
+    "currencies": [
+      {
+        "code": "BTN",
+        "name": "Bhutanese ngultrum",
+        "symbol": "Nu."
+      },
+      {
+        "code": "INR",
+        "name": "Indian rupee",
+        "symbol": "₹"
+      }
+    ],
+    "languagesEn": [
+      "Dzongkha"
+    ],
+    "callingCode": "+975",
+    "borders": [
+      "CHN",
+      "IND"
+    ]
+  },
+  "BW": {
+    "iso2": "BW",
+    "officialNameEn": "Republic of Botswana",
+    "officialNameAr": "جمهورية بوتسوانا",
+    "areaKm2": 582000,
+    "currencies": [
+      {
+        "code": "BWP",
+        "name": "Botswana pula",
+        "symbol": "P"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Tswana"
+    ],
+    "callingCode": "+267",
+    "borders": [
+      "NAM",
+      "ZAF",
+      "ZMB",
+      "ZWE"
+    ]
+  },
+  "CF": {
+    "iso2": "CF",
+    "officialNameEn": "Central African Republic",
+    "officialNameAr": "جمهورية أفريقيا الوسطى",
+    "areaKm2": 622984,
+    "currencies": [
+      {
+        "code": "XAF",
+        "name": "Central African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French",
+      "Sango"
+    ],
+    "callingCode": "+236",
+    "borders": [
+      "CMR",
+      "TCD",
+      "COD",
+      "COG",
+      "SSD",
+      "SDN"
+    ]
+  },
+  "CA": {
+    "iso2": "CA",
+    "officialNameEn": "Canada",
+    "officialNameAr": "كندا",
+    "areaKm2": 9984670,
+    "currencies": [
+      {
+        "code": "CAD",
+        "name": "Canadian dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "French"
+    ],
+    "callingCode": "+1",
+    "borders": [
+      "USA"
+    ]
+  },
+  "CH": {
+    "iso2": "CH",
+    "officialNameEn": "Swiss Confederation",
+    "officialNameAr": "الاتحاد السويسري",
+    "areaKm2": 41284,
+    "currencies": [
+      {
+        "code": "CHF",
+        "name": "Swiss franc",
+        "symbol": "Fr."
+      }
+    ],
+    "languagesEn": [
+      "French",
+      "Swiss German",
+      "Italian",
+      "Romansh"
+    ],
+    "callingCode": "+41",
+    "borders": [
+      "AUT",
+      "FRA",
+      "ITA",
+      "LIE",
+      "DEU"
+    ]
+  },
+  "CL": {
+    "iso2": "CL",
+    "officialNameEn": "Republic of Chile",
+    "officialNameAr": "جمهورية تشيلي",
+    "areaKm2": 756102,
+    "currencies": [
+      {
+        "code": "CLP",
+        "name": "Chilean peso",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+56",
+    "borders": [
+      "ARG",
+      "BOL",
+      "PER"
+    ]
+  },
+  "CN": {
+    "iso2": "CN",
+    "officialNameEn": "People's Republic of China",
+    "officialNameAr": "جمهورية الصين الشعبية",
+    "areaKm2": 9706961,
+    "currencies": [
+      {
+        "code": "CNY",
+        "name": "Chinese yuan",
+        "symbol": "¥"
+      }
+    ],
+    "languagesEn": [
+      "Chinese"
+    ],
+    "callingCode": "+86",
+    "borders": [
+      "AFG",
+      "BTN",
+      "MMR",
+      "HKG",
+      "IND",
+      "KAZ",
+      "NPL",
+      "PRK",
+      "KGZ",
+      "LAO",
+      "MAC",
+      "MNG",
+      "PAK",
+      "RUS",
+      "TJK",
+      "VNM"
+    ]
+  },
+  "CI": {
+    "iso2": "CI",
+    "officialNameEn": "Republic of Côte d'Ivoire",
+    "officialNameAr": "جمهورية ساحل العاج",
+    "areaKm2": 322463,
+    "currencies": [
+      {
+        "code": "XOF",
+        "name": "West African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+225",
+    "borders": [
+      "BFA",
+      "GHA",
+      "GIN",
+      "LBR",
+      "MLI"
+    ]
+  },
+  "CM": {
+    "iso2": "CM",
+    "officialNameEn": "Republic of Cameroon",
+    "officialNameAr": "جمهورية الكاميرون",
+    "areaKm2": 475442,
+    "currencies": [
+      {
+        "code": "XAF",
+        "name": "Central African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "French"
+    ],
+    "callingCode": "+237",
+    "borders": [
+      "CAF",
+      "TCD",
+      "COG",
+      "GNQ",
+      "GAB",
+      "NGA"
+    ]
+  },
+  "CD": {
+    "iso2": "CD",
+    "officialNameEn": "Democratic Republic of the Congo",
+    "officialNameAr": "جمهورية الكونغو الديمقراطية",
+    "areaKm2": 2344858,
+    "currencies": [
+      {
+        "code": "CDF",
+        "name": "Congolese franc",
+        "symbol": "FC"
+      }
+    ],
+    "languagesEn": [
+      "French",
+      "Kikongo",
+      "Lingala",
+      "Tshiluba",
+      "Swahili"
+    ],
+    "callingCode": "+243",
+    "borders": [
+      "AGO",
+      "BDI",
+      "CAF",
+      "COG",
+      "RWA",
+      "SSD",
+      "TZA",
+      "UGA",
+      "ZMB"
+    ]
+  },
+  "CG": {
+    "iso2": "CG",
+    "officialNameEn": "Republic of the Congo",
+    "officialNameAr": "جمهورية الكونغو",
+    "areaKm2": 342000,
+    "currencies": [
+      {
+        "code": "XAF",
+        "name": "Central African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French",
+      "Kikongo",
+      "Lingala"
+    ],
+    "callingCode": "+242",
+    "borders": [
+      "AGO",
+      "CMR",
+      "CAF",
+      "COD",
+      "GAB"
+    ]
+  },
+  "CO": {
+    "iso2": "CO",
+    "officialNameEn": "Republic of Colombia",
+    "officialNameAr": "جمهورية كولومبيا",
+    "areaKm2": 1141748,
+    "currencies": [
+      {
+        "code": "COP",
+        "name": "Colombian peso",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+57",
+    "borders": [
+      "BRA",
+      "ECU",
+      "PAN",
+      "PER",
+      "VEN"
+    ]
+  },
+  "KM": {
+    "iso2": "KM",
+    "officialNameEn": "Union of the Comoros",
+    "officialNameAr": "الإتحاد القمري",
+    "areaKm2": 1862,
+    "currencies": [
+      {
+        "code": "KMF",
+        "name": "Comorian franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "French",
+      "Comorian"
+    ],
+    "callingCode": "+269",
+    "borders": []
+  },
+  "CV": {
+    "iso2": "CV",
+    "officialNameEn": "Republic of Cabo Verde",
+    "officialNameAr": "جمهورية كابو فيردي",
+    "areaKm2": 4033,
+    "currencies": [
+      {
+        "code": "CVE",
+        "name": "Cape Verdean escudo",
+        "symbol": "Esc"
+      }
+    ],
+    "languagesEn": [
+      "Portuguese"
+    ],
+    "callingCode": "+238",
+    "borders": []
+  },
+  "CR": {
+    "iso2": "CR",
+    "officialNameEn": "Republic of Costa Rica",
+    "officialNameAr": "جمهورية كوستاريكا",
+    "areaKm2": 51100,
+    "currencies": [
+      {
+        "code": "CRC",
+        "name": "Costa Rican colón",
+        "symbol": "₡"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+506",
+    "borders": [
+      "NIC",
+      "PAN"
+    ]
+  },
+  "CU": {
+    "iso2": "CU",
+    "officialNameEn": "Republic of Cuba",
+    "officialNameAr": "جمهورية كوبا",
+    "areaKm2": 109884,
+    "currencies": [
+      {
+        "code": "CUC",
+        "name": "Cuban convertible peso",
+        "symbol": "$"
+      },
+      {
+        "code": "CUP",
+        "name": "Cuban peso",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+53",
+    "borders": []
+  },
+  "CY": {
+    "iso2": "CY",
+    "officialNameEn": "Republic of Cyprus",
+    "officialNameAr": "جمهورية قبرص",
+    "areaKm2": 9251,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Greek",
+      "Turkish"
+    ],
+    "callingCode": "+357",
+    "borders": []
+  },
+  "CZ": {
+    "iso2": "CZ",
+    "officialNameEn": "Czech Republic",
+    "officialNameAr": "جمهورية التشيك",
+    "areaKm2": 78865,
+    "currencies": [
+      {
+        "code": "CZK",
+        "name": "Czech koruna",
+        "symbol": "Kč"
+      }
+    ],
+    "languagesEn": [
+      "Czech",
+      "Slovak"
+    ],
+    "callingCode": "+420",
+    "borders": [
+      "AUT",
+      "DEU",
+      "POL",
+      "SVK"
+    ]
+  },
+  "DE": {
+    "iso2": "DE",
+    "officialNameEn": "Federal Republic of Germany",
+    "officialNameAr": "جمهورية ألمانيا الاتحادية",
+    "areaKm2": 357114,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "German"
+    ],
+    "callingCode": "+49",
+    "borders": [
+      "AUT",
+      "BEL",
+      "CZE",
+      "DNK",
+      "FRA",
+      "LUX",
+      "NLD",
+      "POL",
+      "CHE"
+    ]
+  },
+  "DJ": {
+    "iso2": "DJ",
+    "officialNameEn": "Republic of Djibouti",
+    "officialNameAr": "جمهورية جيبوتي",
+    "areaKm2": 23200,
+    "currencies": [
+      {
+        "code": "DJF",
+        "name": "Djiboutian franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "French"
+    ],
+    "callingCode": "+253",
+    "borders": [
+      "ERI",
+      "ETH",
+      "SOM"
+    ]
+  },
+  "DM": {
+    "iso2": "DM",
+    "officialNameEn": "Commonwealth of Dominica",
+    "officialNameAr": "كومونولث دومينيكا",
+    "areaKm2": 751,
+    "currencies": [
+      {
+        "code": "XCD",
+        "name": "Eastern Caribbean dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1767",
+    "borders": []
+  },
+  "DK": {
+    "iso2": "DK",
+    "officialNameEn": "Kingdom of Denmark",
+    "officialNameAr": "مملكة الدنمارك",
+    "areaKm2": 43094,
+    "currencies": [
+      {
+        "code": "DKK",
+        "name": "Danish krone",
+        "symbol": "kr"
+      }
+    ],
+    "languagesEn": [
+      "Danish"
+    ],
+    "callingCode": "+45",
+    "borders": [
+      "DEU"
+    ]
+  },
+  "DO": {
+    "iso2": "DO",
+    "officialNameEn": "Dominican Republic",
+    "officialNameAr": "جمهورية الدومينيكان",
+    "areaKm2": 48671,
+    "currencies": [
+      {
+        "code": "DOP",
+        "name": "Dominican peso",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+1",
+    "borders": [
+      "HTI"
+    ]
+  },
+  "DZ": {
+    "iso2": "DZ",
+    "officialNameEn": "People's Democratic Republic of Algeria",
+    "officialNameAr": "الجمهورية الديمقراطية الشعبية الجزائرية",
+    "areaKm2": 2381741,
+    "currencies": [
+      {
+        "code": "DZD",
+        "name": "Algerian dinar",
+        "symbol": "د.ج"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+213",
+    "borders": [
+      "TUN",
+      "LBY",
+      "NER",
+      "ESH",
+      "MRT",
+      "MLI",
+      "MAR"
+    ]
+  },
+  "EC": {
+    "iso2": "EC",
+    "officialNameEn": "Republic of Ecuador",
+    "officialNameAr": "جمهورية الإكوادور",
+    "areaKm2": 276841,
+    "currencies": [
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+593",
+    "borders": [
+      "COL",
+      "PER"
+    ]
+  },
+  "EG": {
+    "iso2": "EG",
+    "officialNameEn": "Arab Republic of Egypt",
+    "officialNameAr": "جمهورية مصر العربية",
+    "areaKm2": 1002450,
+    "currencies": [
+      {
+        "code": "EGP",
+        "name": "Egyptian pound",
+        "symbol": "£"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+20",
+    "borders": [
+      "ISR",
+      "LBY",
+      "PSE",
+      "SDN"
+    ]
+  },
+  "ER": {
+    "iso2": "ER",
+    "officialNameEn": "State of Eritrea",
+    "officialNameAr": "دولة إريتريا",
+    "areaKm2": 117600,
+    "currencies": [
+      {
+        "code": "ERN",
+        "name": "Eritrean nakfa",
+        "symbol": "Nfk"
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "English",
+      "Tigrinya"
+    ],
+    "callingCode": "+291",
+    "borders": [
+      "DJI",
+      "ETH",
+      "SDN"
+    ]
+  },
+  "ES": {
+    "iso2": "ES",
+    "officialNameEn": "Kingdom of Spain",
+    "officialNameAr": "مملكة إسبانيا",
+    "areaKm2": 505992,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+34",
+    "borders": [
+      "AND",
+      "FRA",
+      "GIB",
+      "PRT",
+      "MAR"
+    ]
+  },
+  "EE": {
+    "iso2": "EE",
+    "officialNameEn": "Republic of Estonia",
+    "officialNameAr": "جمهورية إستونيا",
+    "areaKm2": 45227,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Estonian"
+    ],
+    "callingCode": "+372",
+    "borders": [
+      "LVA",
+      "RUS"
+    ]
+  },
+  "ET": {
+    "iso2": "ET",
+    "officialNameEn": "Federal Democratic Republic of Ethiopia",
+    "officialNameAr": "جمهورية إثيوبيا الفدرالية الديموقراطية",
+    "areaKm2": 1104300,
+    "currencies": [
+      {
+        "code": "ETB",
+        "name": "Ethiopian birr",
+        "symbol": "Br"
+      }
+    ],
+    "languagesEn": [
+      "Amharic"
+    ],
+    "callingCode": "+251",
+    "borders": [
+      "DJI",
+      "ERI",
+      "KEN",
+      "SOM",
+      "SSD",
+      "SDN"
+    ]
+  },
+  "FI": {
+    "iso2": "FI",
+    "officialNameEn": "Republic of Finland",
+    "officialNameAr": "جمهورية فنلندا",
+    "areaKm2": 338424,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Finnish",
+      "Swedish"
+    ],
+    "callingCode": "+358",
+    "borders": [
+      "NOR",
+      "SWE",
+      "RUS"
+    ]
+  },
+  "FJ": {
+    "iso2": "FJ",
+    "officialNameEn": "Republic of Fiji",
+    "officialNameAr": "جمهورية جزر فيجي",
+    "areaKm2": 18272,
+    "currencies": [
+      {
+        "code": "FJD",
+        "name": "Fijian dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Fijian",
+      "Fiji Hindi"
+    ],
+    "callingCode": "+679",
+    "borders": []
+  },
+  "FR": {
+    "iso2": "FR",
+    "officialNameEn": "French Republic",
+    "officialNameAr": "الجمهورية الفرنسية",
+    "areaKm2": 551695,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+33",
+    "borders": [
+      "AND",
+      "BEL",
+      "DEU",
+      "ITA",
+      "LUX",
+      "MCO",
+      "ESP",
+      "CHE"
+    ]
+  },
+  "FM": {
+    "iso2": "FM",
+    "officialNameEn": "Federated States of Micronesia",
+    "officialNameAr": "ولايات ميكرونيسيا المتحدة",
+    "areaKm2": 702,
+    "currencies": [],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+691",
+    "borders": []
+  },
+  "GA": {
+    "iso2": "GA",
+    "officialNameEn": "Gabonese Republic",
+    "officialNameAr": "جمهورية الغابون",
+    "areaKm2": 267668,
+    "currencies": [
+      {
+        "code": "XAF",
+        "name": "Central African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+241",
+    "borders": [
+      "CMR",
+      "COG",
+      "GNQ"
+    ]
+  },
+  "GB": {
+    "iso2": "GB",
+    "officialNameEn": "United Kingdom of Great Britain and Northern Ireland",
+    "officialNameAr": "المملكة المتحدة لبريطانيا العظمى وايرلندا الشمالية",
+    "areaKm2": 242900,
+    "currencies": [
+      {
+        "code": "GBP",
+        "name": "British pound",
+        "symbol": "£"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+44",
+    "borders": [
+      "IRL"
+    ]
+  },
+  "GE": {
+    "iso2": "GE",
+    "officialNameEn": "Georgia",
+    "officialNameAr": "جورجيا",
+    "areaKm2": 69700,
+    "currencies": [
+      {
+        "code": "GEL",
+        "name": "lari",
+        "symbol": "₾"
+      }
+    ],
+    "languagesEn": [
+      "Georgian"
+    ],
+    "callingCode": "+995",
+    "borders": [
+      "ARM",
+      "AZE",
+      "RUS",
+      "TUR"
+    ]
+  },
+  "GH": {
+    "iso2": "GH",
+    "officialNameEn": "Republic of Ghana",
+    "officialNameAr": "جمهورية غانا",
+    "areaKm2": 238533,
+    "currencies": [
+      {
+        "code": "GHS",
+        "name": "Ghanaian cedi",
+        "symbol": "₵"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+233",
+    "borders": [
+      "BFA",
+      "CIV",
+      "TGO"
+    ]
+  },
+  "GN": {
+    "iso2": "GN",
+    "officialNameEn": "Republic of Guinea",
+    "officialNameAr": "جمهورية غينيا",
+    "areaKm2": 245857,
+    "currencies": [
+      {
+        "code": "GNF",
+        "name": "Guinean franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+224",
+    "borders": [
+      "CIV",
+      "GNB",
+      "LBR",
+      "MLI",
+      "SEN",
+      "SLE"
+    ]
+  },
+  "GM": {
+    "iso2": "GM",
+    "officialNameEn": "Republic of the Gambia",
+    "officialNameAr": "جمهورية غامبيا",
+    "areaKm2": 10689,
+    "currencies": [
+      {
+        "code": "GMD",
+        "name": "dalasi",
+        "symbol": "D"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+220",
+    "borders": [
+      "SEN"
+    ]
+  },
+  "GW": {
+    "iso2": "GW",
+    "officialNameEn": "Republic of Guinea-Bissau",
+    "officialNameAr": "جمهورية غينيا بيساو",
+    "areaKm2": 36125,
+    "currencies": [
+      {
+        "code": "XOF",
+        "name": "West African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "Portuguese",
+      "Upper Guinea Creole"
+    ],
+    "callingCode": "+245",
+    "borders": [
+      "GIN",
+      "SEN"
+    ]
+  },
+  "GQ": {
+    "iso2": "GQ",
+    "officialNameEn": "Republic of Equatorial Guinea",
+    "officialNameAr": "جمهورية غينيا الاستوائية",
+    "areaKm2": 28051,
+    "currencies": [
+      {
+        "code": "XAF",
+        "name": "Central African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French",
+      "Portuguese",
+      "Spanish"
+    ],
+    "callingCode": "+240",
+    "borders": [
+      "CMR",
+      "GAB"
+    ]
+  },
+  "GR": {
+    "iso2": "GR",
+    "officialNameEn": "Hellenic Republic",
+    "officialNameAr": "الجمهورية الهيلينية",
+    "areaKm2": 131990,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Greek"
+    ],
+    "callingCode": "+30",
+    "borders": [
+      "ALB",
+      "BGR",
+      "TUR",
+      "MKD"
+    ]
+  },
+  "GD": {
+    "iso2": "GD",
+    "officialNameEn": "Grenada",
+    "officialNameAr": "غرينادا",
+    "areaKm2": 344,
+    "currencies": [
+      {
+        "code": "XCD",
+        "name": "Eastern Caribbean dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1473",
+    "borders": []
+  },
+  "GT": {
+    "iso2": "GT",
+    "officialNameEn": "Republic of Guatemala",
+    "officialNameAr": "جمهورية غواتيمالا",
+    "areaKm2": 108889,
+    "currencies": [
+      {
+        "code": "GTQ",
+        "name": "Guatemalan quetzal",
+        "symbol": "Q"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+502",
+    "borders": [
+      "BLZ",
+      "SLV",
+      "HND",
+      "MEX"
+    ]
+  },
+  "GY": {
+    "iso2": "GY",
+    "officialNameEn": "Co-operative Republic of Guyana",
+    "officialNameAr": "جمهورية غيانا التعاونية",
+    "areaKm2": 214969,
+    "currencies": [
+      {
+        "code": "GYD",
+        "name": "Guyanese dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+592",
+    "borders": [
+      "BRA",
+      "SUR",
+      "VEN"
+    ]
+  },
+  "HN": {
+    "iso2": "HN",
+    "officialNameEn": "Republic of Honduras",
+    "officialNameAr": "جمهورية هندوراس",
+    "areaKm2": 112492,
+    "currencies": [
+      {
+        "code": "HNL",
+        "name": "Honduran lempira",
+        "symbol": "L"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+504",
+    "borders": [
+      "GTM",
+      "SLV",
+      "NIC"
+    ]
+  },
+  "HR": {
+    "iso2": "HR",
+    "officialNameEn": "Republic of Croatia",
+    "officialNameAr": "جمهورية كرواتيا",
+    "areaKm2": 56594,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Croatian"
+    ],
+    "callingCode": "+385",
+    "borders": [
+      "BIH",
+      "HUN",
+      "MNE",
+      "SRB",
+      "SVN"
+    ]
+  },
+  "HT": {
+    "iso2": "HT",
+    "officialNameEn": "Republic of Haiti",
+    "officialNameAr": "جمهورية هايتي",
+    "areaKm2": 27750,
+    "currencies": [
+      {
+        "code": "HTG",
+        "name": "Haitian gourde",
+        "symbol": "G"
+      }
+    ],
+    "languagesEn": [
+      "French",
+      "Haitian Creole"
+    ],
+    "callingCode": "+509",
+    "borders": [
+      "DOM"
+    ]
+  },
+  "HU": {
+    "iso2": "HU",
+    "officialNameEn": "Hungary",
+    "officialNameAr": "الجمهورية المجرية",
+    "areaKm2": 93028,
+    "currencies": [
+      {
+        "code": "HUF",
+        "name": "Hungarian forint",
+        "symbol": "Ft"
+      }
+    ],
+    "languagesEn": [
+      "Hungarian"
+    ],
+    "callingCode": "+36",
+    "borders": [
+      "AUT",
+      "HRV",
+      "ROU",
+      "SRB",
+      "SVK",
+      "SVN",
+      "UKR"
+    ]
+  },
+  "ID": {
+    "iso2": "ID",
+    "officialNameEn": "Republic of Indonesia",
+    "officialNameAr": "جمهورية إندونيسيا",
+    "areaKm2": 1904569,
+    "currencies": [
+      {
+        "code": "IDR",
+        "name": "Indonesian rupiah",
+        "symbol": "Rp"
+      }
+    ],
+    "languagesEn": [
+      "Indonesian"
+    ],
+    "callingCode": "+62",
+    "borders": [
+      "TLS",
+      "MYS",
+      "PNG"
+    ]
+  },
+  "IN": {
+    "iso2": "IN",
+    "officialNameEn": "Republic of India",
+    "officialNameAr": "جمهورية الهند",
+    "areaKm2": 3287590,
+    "currencies": [
+      {
+        "code": "INR",
+        "name": "Indian rupee",
+        "symbol": "₹"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Hindi",
+      "Tamil"
+    ],
+    "callingCode": "+91",
+    "borders": [
+      "BGD",
+      "BTN",
+      "MMR",
+      "CHN",
+      "NPL",
+      "PAK"
+    ]
+  },
+  "IE": {
+    "iso2": "IE",
+    "officialNameEn": "Republic of Ireland",
+    "officialNameAr": "جمهورية أيرلندا",
+    "areaKm2": 70273,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Irish"
+    ],
+    "callingCode": "+353",
+    "borders": [
+      "GBR"
+    ]
+  },
+  "IR": {
+    "iso2": "IR",
+    "officialNameEn": "Islamic Republic of Iran",
+    "officialNameAr": "جمهورية إيران الإسلامية",
+    "areaKm2": 1648195,
+    "currencies": [
+      {
+        "code": "IRR",
+        "name": "Iranian rial",
+        "symbol": "﷼"
+      }
+    ],
+    "languagesEn": [
+      "Persian (Farsi)"
+    ],
+    "callingCode": "+98",
+    "borders": [
+      "AFG",
+      "ARM",
+      "AZE",
+      "IRQ",
+      "PAK",
+      "TUR",
+      "TKM"
+    ]
+  },
+  "IQ": {
+    "iso2": "IQ",
+    "officialNameEn": "Republic of Iraq",
+    "officialNameAr": "جمهورية العراق",
+    "areaKm2": 438317,
+    "currencies": [
+      {
+        "code": "IQD",
+        "name": "Iraqi dinar",
+        "symbol": "ع.د"
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "Aramaic",
+      "Sorani"
+    ],
+    "callingCode": "+964",
+    "borders": [
+      "IRN",
+      "JOR",
+      "KWT",
+      "SAU",
+      "SYR",
+      "TUR"
+    ]
+  },
+  "IS": {
+    "iso2": "IS",
+    "officialNameEn": "Iceland",
+    "officialNameAr": "آيسلندا",
+    "areaKm2": 103000,
+    "currencies": [
+      {
+        "code": "ISK",
+        "name": "Icelandic króna",
+        "symbol": "kr"
+      }
+    ],
+    "languagesEn": [
+      "Icelandic"
+    ],
+    "callingCode": "+354",
+    "borders": []
+  },
+  "IL": {
+    "iso2": "IL",
+    "officialNameEn": "State of Israel",
+    "officialNameAr": "دولة إسرائيل",
+    "areaKm2": 20770,
+    "currencies": [
+      {
+        "code": "ILS",
+        "name": "Israeli new shekel",
+        "symbol": "₪"
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "Hebrew"
+    ],
+    "callingCode": "+972",
+    "borders": [
+      "EGY",
+      "JOR",
+      "LBN",
+      "PSE",
+      "SYR"
+    ]
+  },
+  "IT": {
+    "iso2": "IT",
+    "officialNameEn": "Italian Republic",
+    "officialNameAr": "الجمهورية الإيطالية",
+    "areaKm2": 301336,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Italian"
+    ],
+    "callingCode": "+39",
+    "borders": [
+      "AUT",
+      "FRA",
+      "SMR",
+      "SVN",
+      "CHE",
+      "VAT"
+    ]
+  },
+  "JM": {
+    "iso2": "JM",
+    "officialNameEn": "Jamaica",
+    "officialNameAr": "جامايكا",
+    "areaKm2": 10991,
+    "currencies": [
+      {
+        "code": "JMD",
+        "name": "Jamaican dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Jamaican Patois"
+    ],
+    "callingCode": "+1876",
+    "borders": []
+  },
+  "JO": {
+    "iso2": "JO",
+    "officialNameEn": "Hashemite Kingdom of Jordan",
+    "officialNameAr": "المملكة الأردنية الهاشمية",
+    "areaKm2": 89342,
+    "currencies": [
+      {
+        "code": "JOD",
+        "name": "Jordanian dinar",
+        "symbol": "د.ا"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+962",
+    "borders": [
+      "IRQ",
+      "ISR",
+      "PSE",
+      "SAU",
+      "SYR"
+    ]
+  },
+  "JP": {
+    "iso2": "JP",
+    "officialNameEn": "Japan",
+    "officialNameAr": "اليابان",
+    "areaKm2": 377930,
+    "currencies": [
+      {
+        "code": "JPY",
+        "name": "Japanese yen",
+        "symbol": "¥"
+      }
+    ],
+    "languagesEn": [
+      "Japanese"
+    ],
+    "callingCode": "+81",
+    "borders": []
+  },
+  "KZ": {
+    "iso2": "KZ",
+    "officialNameEn": "Republic of Kazakhstan",
+    "officialNameAr": "جمهورية كازاخستان",
+    "areaKm2": 2724900,
+    "currencies": [
+      {
+        "code": "KZT",
+        "name": "Kazakhstani tenge",
+        "symbol": "₸"
+      }
+    ],
+    "languagesEn": [
+      "Kazakh",
+      "Russian"
+    ],
+    "callingCode": "+7",
+    "borders": [
+      "CHN",
+      "KGZ",
+      "RUS",
+      "TKM",
+      "UZB"
+    ]
+  },
+  "KE": {
+    "iso2": "KE",
+    "officialNameEn": "Republic of Kenya",
+    "officialNameAr": "جمهورية كينيا",
+    "areaKm2": 580367,
+    "currencies": [
+      {
+        "code": "KES",
+        "name": "Kenyan shilling",
+        "symbol": "Sh"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Swahili"
+    ],
+    "callingCode": "+254",
+    "borders": [
+      "ETH",
+      "SOM",
+      "SSD",
+      "TZA",
+      "UGA"
+    ]
+  },
+  "KG": {
+    "iso2": "KG",
+    "officialNameEn": "Kyrgyz Republic",
+    "officialNameAr": "الجمهورية القيرغيزية",
+    "areaKm2": 199951,
+    "currencies": [
+      {
+        "code": "KGS",
+        "name": "Kyrgyzstani som",
+        "symbol": "с"
+      }
+    ],
+    "languagesEn": [
+      "Kyrgyz",
+      "Russian"
+    ],
+    "callingCode": "+996",
+    "borders": [
+      "CHN",
+      "KAZ",
+      "TJK",
+      "UZB"
+    ]
+  },
+  "KH": {
+    "iso2": "KH",
+    "officialNameEn": "Kingdom of Cambodia",
+    "officialNameAr": "مملكة كمبوديا",
+    "areaKm2": 181035,
+    "currencies": [
+      {
+        "code": "KHR",
+        "name": "Cambodian riel",
+        "symbol": "៛"
+      },
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Khmer"
+    ],
+    "callingCode": "+855",
+    "borders": [
+      "LAO",
+      "THA",
+      "VNM"
+    ]
+  },
+  "KI": {
+    "iso2": "KI",
+    "officialNameEn": "Independent and Sovereign Republic of Kiribati",
+    "officialNameAr": "جمهورية كيريباتي",
+    "areaKm2": 811,
+    "currencies": [
+      {
+        "code": "AUD",
+        "name": "Australian dollar",
+        "symbol": "$"
+      },
+      {
+        "code": "KID",
+        "name": "Kiribati dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Gilbertese"
+    ],
+    "callingCode": "+686",
+    "borders": []
+  },
+  "KN": {
+    "iso2": "KN",
+    "officialNameEn": "Federation of Saint Christopher and Nevis",
+    "officialNameAr": "اتحاد القديس كريستوفر ونيفيس",
+    "areaKm2": 261,
+    "currencies": [
+      {
+        "code": "XCD",
+        "name": "Eastern Caribbean dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1869",
+    "borders": []
+  },
+  "KR": {
+    "iso2": "KR",
+    "officialNameEn": "Republic of Korea",
+    "officialNameAr": "جمهورية كوريا",
+    "areaKm2": 100210,
+    "currencies": [
+      {
+        "code": "KRW",
+        "name": "South Korean won",
+        "symbol": "₩"
+      }
+    ],
+    "languagesEn": [
+      "Korean"
+    ],
+    "callingCode": "+82",
+    "borders": [
+      "PRK"
+    ]
+  },
+  "KW": {
+    "iso2": "KW",
+    "officialNameEn": "State of Kuwait",
+    "officialNameAr": "دولة الكويت",
+    "areaKm2": 17818,
+    "currencies": [
+      {
+        "code": "KWD",
+        "name": "Kuwaiti dinar",
+        "symbol": "د.ك"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+965",
+    "borders": [
+      "IRQ",
+      "SAU"
+    ]
+  },
+  "LA": {
+    "iso2": "LA",
+    "officialNameEn": "Lao People's Democratic Republic",
+    "officialNameAr": "جمهورية لاوس الديمقراطية الشعبية",
+    "areaKm2": 236800,
+    "currencies": [
+      {
+        "code": "LAK",
+        "name": "Lao kip",
+        "symbol": "₭"
+      }
+    ],
+    "languagesEn": [
+      "Lao"
+    ],
+    "callingCode": "+856",
+    "borders": [
+      "MMR",
+      "KHM",
+      "CHN",
+      "THA",
+      "VNM"
+    ]
+  },
+  "LB": {
+    "iso2": "LB",
+    "officialNameEn": "Lebanese Republic",
+    "officialNameAr": "الجمهورية اللبنانية",
+    "areaKm2": 10452,
+    "currencies": [
+      {
+        "code": "LBP",
+        "name": "Lebanese pound",
+        "symbol": "ل.ل"
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "French"
+    ],
+    "callingCode": "+961",
+    "borders": [
+      "ISR",
+      "SYR"
+    ]
+  },
+  "LR": {
+    "iso2": "LR",
+    "officialNameEn": "Republic of Liberia",
+    "officialNameAr": "جمهورية ليبيريا",
+    "areaKm2": 111369,
+    "currencies": [
+      {
+        "code": "LRD",
+        "name": "Liberian dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+231",
+    "borders": [
+      "GIN",
+      "CIV",
+      "SLE"
+    ]
+  },
+  "LY": {
+    "iso2": "LY",
+    "officialNameEn": "State of Libya",
+    "officialNameAr": "دولة ليبيا",
+    "areaKm2": 1759540,
+    "currencies": [
+      {
+        "code": "LYD",
+        "name": "Libyan dinar",
+        "symbol": "ل.د"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+218",
+    "borders": [
+      "DZA",
+      "TCD",
+      "EGY",
+      "NER",
+      "SDN",
+      "TUN"
+    ]
+  },
+  "LC": {
+    "iso2": "LC",
+    "officialNameEn": "Saint Lucia",
+    "officialNameAr": "سانت لوسيا",
+    "areaKm2": 616,
+    "currencies": [
+      {
+        "code": "XCD",
+        "name": "Eastern Caribbean dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1758",
+    "borders": []
+  },
+  "LI": {
+    "iso2": "LI",
+    "officialNameEn": "Principality of Liechtenstein",
+    "officialNameAr": "إمارة ليختنشتاين",
+    "areaKm2": 160,
+    "currencies": [
+      {
+        "code": "CHF",
+        "name": "Swiss franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "German"
+    ],
+    "callingCode": "+423",
+    "borders": [
+      "AUT",
+      "CHE"
+    ]
+  },
+  "LK": {
+    "iso2": "LK",
+    "officialNameEn": "Democratic Socialist Republic of Sri Lanka",
+    "officialNameAr": "جمهورية سريلانكا الديمقراطية الشعبية",
+    "areaKm2": 65610,
+    "currencies": [
+      {
+        "code": "LKR",
+        "name": "Sri Lankan rupee",
+        "symbol": "Rs  රු"
+      }
+    ],
+    "languagesEn": [
+      "Sinhala",
+      "Tamil"
+    ],
+    "callingCode": "+94",
+    "borders": [
+      "IND"
+    ]
+  },
+  "LS": {
+    "iso2": "LS",
+    "officialNameEn": "Kingdom of Lesotho",
+    "officialNameAr": "مملكة ليسوتو",
+    "areaKm2": 30355,
+    "currencies": [
+      {
+        "code": "LSL",
+        "name": "Lesotho loti",
+        "symbol": "L"
+      },
+      {
+        "code": "ZAR",
+        "name": "South African rand",
+        "symbol": "R"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Sotho"
+    ],
+    "callingCode": "+266",
+    "borders": [
+      "ZAF"
+    ]
+  },
+  "LT": {
+    "iso2": "LT",
+    "officialNameEn": "Republic of Lithuania",
+    "officialNameAr": "جمهورية ليتوانيا",
+    "areaKm2": 65300,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Lithuanian"
+    ],
+    "callingCode": "+370",
+    "borders": [
+      "BLR",
+      "LVA",
+      "POL",
+      "RUS"
+    ]
+  },
+  "LU": {
+    "iso2": "LU",
+    "officialNameEn": "Grand Duchy of Luxembourg",
+    "officialNameAr": "دوقية لوكسمبورغ",
+    "areaKm2": 2586,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "German",
+      "French",
+      "Luxembourgish"
+    ],
+    "callingCode": "+352",
+    "borders": [
+      "BEL",
+      "FRA",
+      "DEU"
+    ]
+  },
+  "LV": {
+    "iso2": "LV",
+    "officialNameEn": "Republic of Latvia",
+    "officialNameAr": "جمهورية لاتفيا",
+    "areaKm2": 64559,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Latvian"
+    ],
+    "callingCode": "+371",
+    "borders": [
+      "BLR",
+      "EST",
+      "LTU",
+      "RUS"
+    ]
+  },
+  "MA": {
+    "iso2": "MA",
+    "officialNameEn": "Kingdom of Morocco",
+    "officialNameAr": "المملكة المغربية",
+    "areaKm2": 446550,
+    "currencies": [
+      {
+        "code": "MAD",
+        "name": "Moroccan dirham",
+        "symbol": "د.م."
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "Berber"
+    ],
+    "callingCode": "+212",
+    "borders": [
+      "DZA",
+      "ESH",
+      "ESP"
+    ]
+  },
+  "MC": {
+    "iso2": "MC",
+    "officialNameEn": "Principality of Monaco",
+    "officialNameAr": "إمارة موناكو",
+    "areaKm2": 2.02,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+377",
+    "borders": [
+      "FRA"
+    ]
+  },
+  "MD": {
+    "iso2": "MD",
+    "officialNameEn": "Republic of Moldova",
+    "officialNameAr": "جمهورية مولدوڤا",
+    "areaKm2": 33846,
+    "currencies": [
+      {
+        "code": "MDL",
+        "name": "Moldovan leu",
+        "symbol": "L"
+      }
+    ],
+    "languagesEn": [
+      "Moldavian"
+    ],
+    "callingCode": "+373",
+    "borders": [
+      "ROU",
+      "UKR"
+    ]
+  },
+  "MG": {
+    "iso2": "MG",
+    "officialNameEn": "Republic of Madagascar",
+    "officialNameAr": "جمهورية مدغشقر",
+    "areaKm2": 587041,
+    "currencies": [
+      {
+        "code": "MGA",
+        "name": "Malagasy ariary",
+        "symbol": "Ar"
+      }
+    ],
+    "languagesEn": [
+      "French",
+      "Malagasy"
+    ],
+    "callingCode": "+261",
+    "borders": []
+  },
+  "MV": {
+    "iso2": "MV",
+    "officialNameEn": "Republic of the Maldives",
+    "officialNameAr": "جمهورية المالديف",
+    "areaKm2": 300,
+    "currencies": [
+      {
+        "code": "MVR",
+        "name": "Maldivian rufiyaa",
+        "symbol": ".ރ"
+      }
+    ],
+    "languagesEn": [
+      "Maldivian"
+    ],
+    "callingCode": "+960",
+    "borders": []
+  },
+  "MX": {
+    "iso2": "MX",
+    "officialNameEn": "United Mexican States",
+    "officialNameAr": "الولايات المتحدة المكسيكية",
+    "areaKm2": 1964375,
+    "currencies": [
+      {
+        "code": "MXN",
+        "name": "Mexican peso",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+52",
+    "borders": [
+      "BLZ",
+      "GTM",
+      "USA"
+    ]
+  },
+  "MH": {
+    "iso2": "MH",
+    "officialNameEn": "Republic of the Marshall Islands",
+    "officialNameAr": "جمهورية جزر مارشال",
+    "areaKm2": 181,
+    "currencies": [
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Marshallese"
+    ],
+    "callingCode": "+692",
+    "borders": []
+  },
+  "MK": {
+    "iso2": "MK",
+    "officialNameEn": "Republic of North Macedonia",
+    "officialNameAr": "جمهورية شمال مقدونيا",
+    "areaKm2": 25713,
+    "currencies": [
+      {
+        "code": "MKD",
+        "name": "denar",
+        "symbol": "den"
+      }
+    ],
+    "languagesEn": [
+      "Macedonian"
+    ],
+    "callingCode": "+389",
+    "borders": [
+      "ALB",
+      "BGR",
+      "GRC",
+      "UNK",
+      "SRB"
+    ]
+  },
+  "ML": {
+    "iso2": "ML",
+    "officialNameEn": "Republic of Mali",
+    "officialNameAr": "جمهورية مالي",
+    "areaKm2": 1240192,
+    "currencies": [
+      {
+        "code": "XOF",
+        "name": "West African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+223",
+    "borders": [
+      "DZA",
+      "BFA",
+      "GIN",
+      "CIV",
+      "MRT",
+      "NER",
+      "SEN"
+    ]
+  },
+  "MT": {
+    "iso2": "MT",
+    "officialNameEn": "Republic of Malta",
+    "officialNameAr": "جمهورية مالطا",
+    "areaKm2": 316,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Maltese"
+    ],
+    "callingCode": "+356",
+    "borders": []
+  },
+  "MM": {
+    "iso2": "MM",
+    "officialNameEn": "Republic of the Union of Myanmar",
+    "officialNameAr": "جمهورية اتحاد ميانمار",
+    "areaKm2": 676578,
+    "currencies": [
+      {
+        "code": "MMK",
+        "name": "Burmese kyat",
+        "symbol": "Ks"
+      }
+    ],
+    "languagesEn": [
+      "Burmese"
+    ],
+    "callingCode": "+95",
+    "borders": [
+      "BGD",
+      "CHN",
+      "IND",
+      "LAO",
+      "THA"
+    ]
+  },
+  "ME": {
+    "iso2": "ME",
+    "officialNameEn": "Montenegro",
+    "officialNameAr": "الجبل الاسود",
+    "areaKm2": 13812,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Montenegrin"
+    ],
+    "callingCode": "+382",
+    "borders": [
+      "ALB",
+      "BIH",
+      "HRV",
+      "UNK",
+      "SRB"
+    ]
+  },
+  "MN": {
+    "iso2": "MN",
+    "officialNameEn": "Mongolia",
+    "officialNameAr": "جمهورية منغوليا",
+    "areaKm2": 1564110,
+    "currencies": [
+      {
+        "code": "MNT",
+        "name": "Mongolian tögrög",
+        "symbol": "₮"
+      }
+    ],
+    "languagesEn": [
+      "Mongolian"
+    ],
+    "callingCode": "+976",
+    "borders": [
+      "CHN",
+      "RUS"
+    ]
+  },
+  "MZ": {
+    "iso2": "MZ",
+    "officialNameEn": "Republic of Mozambique",
+    "officialNameAr": "جمهورية موزمبيق",
+    "areaKm2": 801590,
+    "currencies": [
+      {
+        "code": "MZN",
+        "name": "Mozambican metical",
+        "symbol": "MT"
+      }
+    ],
+    "languagesEn": [
+      "Portuguese"
+    ],
+    "callingCode": "+258",
+    "borders": [
+      "MWI",
+      "ZAF",
+      "SWZ",
+      "TZA",
+      "ZMB",
+      "ZWE"
+    ]
+  },
+  "MR": {
+    "iso2": "MR",
+    "officialNameEn": "Islamic Republic of Mauritania",
+    "officialNameAr": "الجمهورية الإسلامية الموريتانية",
+    "areaKm2": 1030700,
+    "currencies": [
+      {
+        "code": "MRU",
+        "name": "Mauritanian ouguiya",
+        "symbol": "UM"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+222",
+    "borders": [
+      "DZA",
+      "MLI",
+      "SEN",
+      "ESH"
+    ]
+  },
+  "MU": {
+    "iso2": "MU",
+    "officialNameEn": "Republic of Mauritius",
+    "officialNameAr": "جمهورية موريشيوس",
+    "areaKm2": 2040,
+    "currencies": [
+      {
+        "code": "MUR",
+        "name": "Mauritian rupee",
+        "symbol": "₨"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "French",
+      "Mauritian Creole"
+    ],
+    "callingCode": "+230",
+    "borders": []
+  },
+  "MW": {
+    "iso2": "MW",
+    "officialNameEn": "Republic of Malawi",
+    "officialNameAr": "جمهورية مالاوي",
+    "areaKm2": 118484,
+    "currencies": [
+      {
+        "code": "MWK",
+        "name": "Malawian kwacha",
+        "symbol": "MK"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Chewa"
+    ],
+    "callingCode": "+265",
+    "borders": [
+      "MOZ",
+      "TZA",
+      "ZMB"
+    ]
+  },
+  "MY": {
+    "iso2": "MY",
+    "officialNameEn": "Malaysia",
+    "officialNameAr": "ماليزيا",
+    "areaKm2": 330803,
+    "currencies": [
+      {
+        "code": "MYR",
+        "name": "Malaysian ringgit",
+        "symbol": "RM"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Malay"
+    ],
+    "callingCode": "+60",
+    "borders": [
+      "BRN",
+      "IDN",
+      "THA"
+    ]
+  },
+  "NA": {
+    "iso2": "NA",
+    "officialNameEn": "Republic of Namibia",
+    "officialNameAr": "جمهورية ناميبيا",
+    "areaKm2": 825615,
+    "currencies": [
+      {
+        "code": "NAD",
+        "name": "Namibian dollar",
+        "symbol": "$"
+      },
+      {
+        "code": "ZAR",
+        "name": "South African rand",
+        "symbol": "R"
+      }
+    ],
+    "languagesEn": [
+      "Afrikaans",
+      "German",
+      "English",
+      "Herero",
+      "Khoekhoe",
+      "Kwangali",
+      "Lozi",
+      "Ndonga",
+      "Tswana"
+    ],
+    "callingCode": "+264",
+    "borders": [
+      "AGO",
+      "BWA",
+      "ZAF",
+      "ZMB"
+    ]
+  },
+  "NE": {
+    "iso2": "NE",
+    "officialNameEn": "Republic of Niger",
+    "officialNameAr": "جمهورية النيجر",
+    "areaKm2": 1267000,
+    "currencies": [
+      {
+        "code": "XOF",
+        "name": "West African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+227",
+    "borders": [
+      "DZA",
+      "BEN",
+      "BFA",
+      "TCD",
+      "LBY",
+      "MLI",
+      "NGA"
+    ]
+  },
+  "NG": {
+    "iso2": "NG",
+    "officialNameEn": "Federal Republic of Nigeria",
+    "officialNameAr": "جمهورية نيجيريا الاتحادية",
+    "areaKm2": 923768,
+    "currencies": [
+      {
+        "code": "NGN",
+        "name": "Nigerian naira",
+        "symbol": "₦"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+234",
+    "borders": [
+      "BEN",
+      "CMR",
+      "TCD",
+      "NER"
+    ]
+  },
+  "NI": {
+    "iso2": "NI",
+    "officialNameEn": "Republic of Nicaragua",
+    "officialNameAr": "جمهورية نيكاراغوا",
+    "areaKm2": 130373,
+    "currencies": [
+      {
+        "code": "NIO",
+        "name": "Nicaraguan córdoba",
+        "symbol": "C$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+505",
+    "borders": [
+      "CRI",
+      "HND"
+    ]
+  },
+  "NL": {
+    "iso2": "NL",
+    "officialNameEn": "Kingdom of the Netherlands",
+    "officialNameAr": "هولندا",
+    "areaKm2": 41850,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Dutch"
+    ],
+    "callingCode": "+31",
+    "borders": [
+      "BEL",
+      "DEU"
+    ]
+  },
+  "NO": {
+    "iso2": "NO",
+    "officialNameEn": "Kingdom of Norway",
+    "officialNameAr": "مملكة النرويج",
+    "areaKm2": 323802,
+    "currencies": [
+      {
+        "code": "NOK",
+        "name": "Norwegian krone",
+        "symbol": "kr"
+      }
+    ],
+    "languagesEn": [
+      "Norwegian Nynorsk",
+      "Norwegian Bokmål",
+      "Sami"
+    ],
+    "callingCode": "+47",
+    "borders": [
+      "FIN",
+      "SWE",
+      "RUS"
+    ]
+  },
+  "NP": {
+    "iso2": "NP",
+    "officialNameEn": "Federal Democratic Republic of Nepal",
+    "officialNameAr": "جمهورية نيبال الديمقراطية الاتحادية",
+    "areaKm2": 147181,
+    "currencies": [
+      {
+        "code": "NPR",
+        "name": "Nepalese rupee",
+        "symbol": "₨"
+      }
+    ],
+    "languagesEn": [
+      "Nepali"
+    ],
+    "callingCode": "+977",
+    "borders": [
+      "CHN",
+      "IND"
+    ]
+  },
+  "NR": {
+    "iso2": "NR",
+    "officialNameEn": "Republic of Nauru",
+    "officialNameAr": "جمهورية ناورو",
+    "areaKm2": 21,
+    "currencies": [
+      {
+        "code": "AUD",
+        "name": "Australian dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Nauru"
+    ],
+    "callingCode": "+674",
+    "borders": []
+  },
+  "NZ": {
+    "iso2": "NZ",
+    "officialNameEn": "New Zealand",
+    "officialNameAr": "نيوزيلندا",
+    "areaKm2": 270467,
+    "currencies": [
+      {
+        "code": "NZD",
+        "name": "New Zealand dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Māori",
+      "New Zealand Sign Language"
+    ],
+    "callingCode": "+64",
+    "borders": []
+  },
+  "OM": {
+    "iso2": "OM",
+    "officialNameEn": "Sultanate of Oman",
+    "officialNameAr": "سلطنة عمان",
+    "areaKm2": 309500,
+    "currencies": [
+      {
+        "code": "OMR",
+        "name": "Omani rial",
+        "symbol": "ر.ع."
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+968",
+    "borders": [
+      "SAU",
+      "ARE",
+      "YEM"
+    ]
+  },
+  "PK": {
+    "iso2": "PK",
+    "officialNameEn": "Islamic Republic of Pakistan",
+    "officialNameAr": "جمهورية باكستان الإسلامية",
+    "areaKm2": 881912,
+    "currencies": [
+      {
+        "code": "PKR",
+        "name": "Pakistani rupee",
+        "symbol": "₨"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Urdu"
+    ],
+    "callingCode": "+92",
+    "borders": [
+      "AFG",
+      "CHN",
+      "IND",
+      "IRN"
+    ]
+  },
+  "PA": {
+    "iso2": "PA",
+    "officialNameEn": "Republic of Panama",
+    "officialNameAr": "جمهورية بنما",
+    "areaKm2": 75417,
+    "currencies": [
+      {
+        "code": "PAB",
+        "name": "Panamanian balboa",
+        "symbol": "B/."
+      },
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+507",
+    "borders": [
+      "COL",
+      "CRI"
+    ]
+  },
+  "PE": {
+    "iso2": "PE",
+    "officialNameEn": "Republic of Peru",
+    "officialNameAr": "جمهورية بيرو",
+    "areaKm2": 1285216,
+    "currencies": [
+      {
+        "code": "PEN",
+        "name": "Peruvian sol",
+        "symbol": "S/."
+      }
+    ],
+    "languagesEn": [
+      "Aymara",
+      "Quechua",
+      "Spanish"
+    ],
+    "callingCode": "+51",
+    "borders": [
+      "BOL",
+      "BRA",
+      "CHL",
+      "COL",
+      "ECU"
+    ]
+  },
+  "PH": {
+    "iso2": "PH",
+    "officialNameEn": "Republic of the Philippines",
+    "officialNameAr": "جمهورية الفلبين",
+    "areaKm2": 342353,
+    "currencies": [
+      {
+        "code": "PHP",
+        "name": "Philippine peso",
+        "symbol": "₱"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Filipino"
+    ],
+    "callingCode": "+63",
+    "borders": []
+  },
+  "PW": {
+    "iso2": "PW",
+    "officialNameEn": "Republic of Palau",
+    "officialNameAr": "جمهورية بالاو",
+    "areaKm2": 459,
+    "currencies": [
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Palauan"
+    ],
+    "callingCode": "+680",
+    "borders": []
+  },
+  "PG": {
+    "iso2": "PG",
+    "officialNameEn": "Independent State of Papua New Guinea",
+    "officialNameAr": "دولة بابوا غينيا الجديدة",
+    "areaKm2": 462840,
+    "currencies": [
+      {
+        "code": "PGK",
+        "name": "Papua New Guinean kina",
+        "symbol": "K"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Hiri Motu",
+      "Tok Pisin"
+    ],
+    "callingCode": "+675",
+    "borders": [
+      "IDN"
+    ]
+  },
+  "PL": {
+    "iso2": "PL",
+    "officialNameEn": "Republic of Poland",
+    "officialNameAr": "الجمهورية البولندية",
+    "areaKm2": 312679,
+    "currencies": [
+      {
+        "code": "PLN",
+        "name": "Polish złoty",
+        "symbol": "zł"
+      }
+    ],
+    "languagesEn": [
+      "Polish"
+    ],
+    "callingCode": "+48",
+    "borders": [
+      "BLR",
+      "CZE",
+      "DEU",
+      "LTU",
+      "RUS",
+      "SVK",
+      "UKR"
+    ]
+  },
+  "KP": {
+    "iso2": "KP",
+    "officialNameEn": "Democratic People's Republic of Korea",
+    "officialNameAr": "جمهورية كوريا الديمقراطية الشعبية",
+    "areaKm2": 120538,
+    "currencies": [
+      {
+        "code": "KPW",
+        "name": "North Korean won",
+        "symbol": "₩"
+      }
+    ],
+    "languagesEn": [
+      "Korean"
+    ],
+    "callingCode": "+850",
+    "borders": [
+      "CHN",
+      "KOR",
+      "RUS"
+    ]
+  },
+  "PT": {
+    "iso2": "PT",
+    "officialNameEn": "Portuguese Republic",
+    "officialNameAr": "الجمهورية البرتغالية",
+    "areaKm2": 92090,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Portuguese"
+    ],
+    "callingCode": "+351",
+    "borders": [
+      "ESP"
+    ]
+  },
+  "PY": {
+    "iso2": "PY",
+    "officialNameEn": "Republic of Paraguay",
+    "officialNameAr": "جمهورية باراغواي",
+    "areaKm2": 406752,
+    "currencies": [
+      {
+        "code": "PYG",
+        "name": "Paraguayan guaraní",
+        "symbol": "₲"
+      }
+    ],
+    "languagesEn": [
+      "Guaraní",
+      "Spanish"
+    ],
+    "callingCode": "+595",
+    "borders": [
+      "ARG",
+      "BOL",
+      "BRA"
+    ]
+  },
+  "QA": {
+    "iso2": "QA",
+    "officialNameEn": "State of Qatar",
+    "officialNameAr": "دولة قطر",
+    "areaKm2": 11586,
+    "currencies": [
+      {
+        "code": "QAR",
+        "name": "Qatari riyal",
+        "symbol": "ر.ق"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+974",
+    "borders": [
+      "SAU"
+    ]
+  },
+  "RO": {
+    "iso2": "RO",
+    "officialNameEn": "Romania",
+    "officialNameAr": "رومانيا",
+    "areaKm2": 238391,
+    "currencies": [
+      {
+        "code": "RON",
+        "name": "Romanian leu",
+        "symbol": "lei"
+      }
+    ],
+    "languagesEn": [
+      "Romanian"
+    ],
+    "callingCode": "+40",
+    "borders": [
+      "BGR",
+      "HUN",
+      "MDA",
+      "SRB",
+      "UKR"
+    ]
+  },
+  "RU": {
+    "iso2": "RU",
+    "officialNameEn": "Russian Federation",
+    "officialNameAr": "روسيا الاتحادية",
+    "areaKm2": 17098242,
+    "currencies": [
+      {
+        "code": "RUB",
+        "name": "Russian ruble",
+        "symbol": "₽"
+      }
+    ],
+    "languagesEn": [
+      "Russian"
+    ],
+    "callingCode": "+7",
+    "borders": [
+      "AZE",
+      "BLR",
+      "CHN",
+      "EST",
+      "FIN",
+      "GEO",
+      "KAZ",
+      "PRK",
+      "LVA",
+      "LTU",
+      "MNG",
+      "NOR",
+      "POL",
+      "UKR"
+    ]
+  },
+  "RW": {
+    "iso2": "RW",
+    "officialNameEn": "Republic of Rwanda",
+    "officialNameAr": "جمهورية رواندا",
+    "areaKm2": 26338,
+    "currencies": [
+      {
+        "code": "RWF",
+        "name": "Rwandan franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "French",
+      "Kinyarwanda"
+    ],
+    "callingCode": "+250",
+    "borders": [
+      "BDI",
+      "COD",
+      "TZA",
+      "UGA"
+    ]
+  },
+  "SA": {
+    "iso2": "SA",
+    "officialNameEn": "Kingdom of Saudi Arabia",
+    "officialNameAr": "المملكة العربية السعودية",
+    "areaKm2": 2149690,
+    "currencies": [
+      {
+        "code": "SAR",
+        "name": "Saudi riyal",
+        "symbol": "ر.س"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+966",
+    "borders": [
+      "IRQ",
+      "JOR",
+      "KWT",
+      "OMN",
+      "QAT",
+      "ARE",
+      "YEM"
+    ]
+  },
+  "SD": {
+    "iso2": "SD",
+    "officialNameEn": "Republic of the Sudan",
+    "officialNameAr": "جمهورية السودان",
+    "areaKm2": 1886068,
+    "currencies": [
+      {
+        "code": "SDG",
+        "name": "Sudanese pound",
+        "symbol": "PT"
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "English"
+    ],
+    "callingCode": "+249",
+    "borders": [
+      "CAF",
+      "TCD",
+      "EGY",
+      "ERI",
+      "ETH",
+      "LBY",
+      "SSD"
+    ]
+  },
+  "SN": {
+    "iso2": "SN",
+    "officialNameEn": "Republic of Senegal",
+    "officialNameAr": "جمهورية السنغال",
+    "areaKm2": 196722,
+    "currencies": [
+      {
+        "code": "XOF",
+        "name": "West African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+221",
+    "borders": [
+      "GMB",
+      "GIN",
+      "GNB",
+      "MLI",
+      "MRT"
+    ]
+  },
+  "SG": {
+    "iso2": "SG",
+    "officialNameEn": "Republic of Singapore",
+    "officialNameAr": "جمهورية سنغافورة",
+    "areaKm2": 710,
+    "currencies": [
+      {
+        "code": "SGD",
+        "name": "Singapore dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Malay",
+      "Tamil",
+      "Chinese"
+    ],
+    "callingCode": "+65",
+    "borders": []
+  },
+  "SB": {
+    "iso2": "SB",
+    "officialNameEn": "Solomon Islands",
+    "officialNameAr": "جزر سليمان",
+    "areaKm2": 28896,
+    "currencies": [
+      {
+        "code": "SBD",
+        "name": "Solomon Islands dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+677",
+    "borders": []
+  },
+  "SL": {
+    "iso2": "SL",
+    "officialNameEn": "Republic of Sierra Leone",
+    "officialNameAr": "جمهورية سيراليون",
+    "areaKm2": 71740,
+    "currencies": [
+      {
+        "code": "SLL",
+        "name": "Sierra Leonean leone",
+        "symbol": "Le"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+232",
+    "borders": [
+      "GIN",
+      "LBR"
+    ]
+  },
+  "SV": {
+    "iso2": "SV",
+    "officialNameEn": "Republic of El Salvador",
+    "officialNameAr": "جمهورية السلفادور",
+    "areaKm2": 21041,
+    "currencies": [
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+503",
+    "borders": [
+      "GTM",
+      "HND"
+    ]
+  },
+  "SM": {
+    "iso2": "SM",
+    "officialNameEn": "Most Serene Republic of San Marino",
+    "officialNameAr": "جمهورية سان مارينو",
+    "areaKm2": 61,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Italian"
+    ],
+    "callingCode": "+378",
+    "borders": [
+      "ITA"
+    ]
+  },
+  "SO": {
+    "iso2": "SO",
+    "officialNameEn": "Federal Republic of Somalia",
+    "officialNameAr": "جمهورية الصومال الفيدرالية",
+    "areaKm2": 637657,
+    "currencies": [
+      {
+        "code": "SOS",
+        "name": "Somali shilling",
+        "symbol": "Sh"
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "Somali"
+    ],
+    "callingCode": "+252",
+    "borders": [
+      "DJI",
+      "ETH",
+      "KEN"
+    ]
+  },
+  "RS": {
+    "iso2": "RS",
+    "officialNameEn": "Republic of Serbia",
+    "officialNameAr": "جمهورية صيربيا",
+    "areaKm2": 88361,
+    "currencies": [
+      {
+        "code": "RSD",
+        "name": "Serbian dinar",
+        "symbol": "дин."
+      }
+    ],
+    "languagesEn": [
+      "Serbian"
+    ],
+    "callingCode": "+381",
+    "borders": [
+      "BIH",
+      "BGR",
+      "HRV",
+      "HUN",
+      "UNK",
+      "MKD",
+      "MNE",
+      "ROU"
+    ]
+  },
+  "SS": {
+    "iso2": "SS",
+    "officialNameEn": "Republic of South Sudan",
+    "officialNameAr": "جمهورية جنوب السودان",
+    "areaKm2": 619745,
+    "currencies": [
+      {
+        "code": "SSP",
+        "name": "South Sudanese pound",
+        "symbol": "£"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+211",
+    "borders": [
+      "CAF",
+      "COD",
+      "ETH",
+      "KEN",
+      "SDN",
+      "UGA"
+    ]
+  },
+  "ST": {
+    "iso2": "ST",
+    "officialNameEn": "Democratic Republic of São Tomé and Príncipe",
+    "officialNameAr": "جمهورية ساو تومي وبرينسيب الديمقراطية",
+    "areaKm2": 964,
+    "currencies": [
+      {
+        "code": "STN",
+        "name": "São Tomé and Príncipe dobra",
+        "symbol": "Db"
+      }
+    ],
+    "languagesEn": [
+      "Portuguese"
+    ],
+    "callingCode": "+239",
+    "borders": []
+  },
+  "SR": {
+    "iso2": "SR",
+    "officialNameEn": "Republic of Suriname",
+    "officialNameAr": "جمهورية سورينام",
+    "areaKm2": 163820,
+    "currencies": [
+      {
+        "code": "SRD",
+        "name": "Surinamese dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Dutch"
+    ],
+    "callingCode": "+597",
+    "borders": [
+      "BRA",
+      "GUF",
+      "GUY"
+    ]
+  },
+  "SK": {
+    "iso2": "SK",
+    "officialNameEn": "Slovak Republic",
+    "officialNameAr": "جمهورية سلوفاكيا",
+    "areaKm2": 49037,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Slovak"
+    ],
+    "callingCode": "+421",
+    "borders": [
+      "AUT",
+      "CZE",
+      "HUN",
+      "POL",
+      "UKR"
+    ]
+  },
+  "SI": {
+    "iso2": "SI",
+    "officialNameEn": "Republic of Slovenia",
+    "officialNameAr": "جمهورية سلوفينيا",
+    "areaKm2": 20273,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Slovene"
+    ],
+    "callingCode": "+386",
+    "borders": [
+      "AUT",
+      "HRV",
+      "ITA",
+      "HUN"
+    ]
+  },
+  "SE": {
+    "iso2": "SE",
+    "officialNameEn": "Kingdom of Sweden",
+    "officialNameAr": "مملكة السويد",
+    "areaKm2": 450295,
+    "currencies": [
+      {
+        "code": "SEK",
+        "name": "Swedish krona",
+        "symbol": "kr"
+      }
+    ],
+    "languagesEn": [
+      "Swedish"
+    ],
+    "callingCode": "+46",
+    "borders": [
+      "FIN",
+      "NOR"
+    ]
+  },
+  "SZ": {
+    "iso2": "SZ",
+    "officialNameEn": "Kingdom of Eswatini",
+    "officialNameAr": "مملكة إسواتيني",
+    "areaKm2": 17364,
+    "currencies": [
+      {
+        "code": "SZL",
+        "name": "Swazi lilangeni",
+        "symbol": "L"
+      },
+      {
+        "code": "ZAR",
+        "name": "South African rand",
+        "symbol": "R"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Swazi"
+    ],
+    "callingCode": "+268",
+    "borders": [
+      "MOZ",
+      "ZAF"
+    ]
+  },
+  "SC": {
+    "iso2": "SC",
+    "officialNameEn": "Republic of Seychelles",
+    "officialNameAr": "جمهورية سيشل",
+    "areaKm2": 452,
+    "currencies": [
+      {
+        "code": "SCR",
+        "name": "Seychellois rupee",
+        "symbol": "₨"
+      }
+    ],
+    "languagesEn": [
+      "Seychellois Creole",
+      "English",
+      "French"
+    ],
+    "callingCode": "+248",
+    "borders": []
+  },
+  "SY": {
+    "iso2": "SY",
+    "officialNameEn": "Syrian Arab Republic",
+    "officialNameAr": "الجمهورية العربية السورية",
+    "areaKm2": 185180,
+    "currencies": [
+      {
+        "code": "SYP",
+        "name": "Syrian pound",
+        "symbol": "£"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+963",
+    "borders": [
+      "IRQ",
+      "ISR",
+      "JOR",
+      "LBN",
+      "TUR"
+    ]
+  },
+  "TD": {
+    "iso2": "TD",
+    "officialNameEn": "Republic of Chad",
+    "officialNameAr": "جمهورية تشاد",
+    "areaKm2": 1284000,
+    "currencies": [
+      {
+        "code": "XAF",
+        "name": "Central African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "Arabic",
+      "French"
+    ],
+    "callingCode": "+235",
+    "borders": [
+      "CMR",
+      "CAF",
+      "LBY",
+      "NER",
+      "NGA",
+      "SDN"
+    ]
+  },
+  "TG": {
+    "iso2": "TG",
+    "officialNameEn": "Togolese Republic",
+    "officialNameAr": "جمهورية توغو",
+    "areaKm2": 56785,
+    "currencies": [
+      {
+        "code": "XOF",
+        "name": "West African CFA franc",
+        "symbol": "Fr"
+      }
+    ],
+    "languagesEn": [
+      "French"
+    ],
+    "callingCode": "+228",
+    "borders": [
+      "BEN",
+      "BFA",
+      "GHA"
+    ]
+  },
+  "TH": {
+    "iso2": "TH",
+    "officialNameEn": "Kingdom of Thailand",
+    "officialNameAr": "مملكة تايلند",
+    "areaKm2": 513120,
+    "currencies": [
+      {
+        "code": "THB",
+        "name": "Thai baht",
+        "symbol": "฿"
+      }
+    ],
+    "languagesEn": [
+      "Thai"
+    ],
+    "callingCode": "+66",
+    "borders": [
+      "MMR",
+      "KHM",
+      "LAO",
+      "MYS"
+    ]
+  },
+  "TJ": {
+    "iso2": "TJ",
+    "officialNameEn": "Republic of Tajikistan",
+    "officialNameAr": "جمهورية طاجيكستان",
+    "areaKm2": 143100,
+    "currencies": [
+      {
+        "code": "TJS",
+        "name": "Tajikistani somoni",
+        "symbol": "ЅМ"
+      }
+    ],
+    "languagesEn": [
+      "Russian",
+      "Tajik"
+    ],
+    "callingCode": "+992",
+    "borders": [
+      "AFG",
+      "CHN",
+      "KGZ",
+      "UZB"
+    ]
+  },
+  "TM": {
+    "iso2": "TM",
+    "officialNameEn": "Turkmenistan",
+    "officialNameAr": "تركمانستان",
+    "areaKm2": 488100,
+    "currencies": [
+      {
+        "code": "TMT",
+        "name": "Turkmenistan manat",
+        "symbol": "m"
+      }
+    ],
+    "languagesEn": [
+      "Russian",
+      "Turkmen"
+    ],
+    "callingCode": "+993",
+    "borders": [
+      "AFG",
+      "IRN",
+      "KAZ",
+      "UZB"
+    ]
+  },
+  "TL": {
+    "iso2": "TL",
+    "officialNameEn": "Democratic Republic of Timor-Leste",
+    "officialNameAr": "جمهورية تيمور الشرقية الديمقراطية",
+    "areaKm2": 14874,
+    "currencies": [
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Portuguese",
+      "Tetum"
+    ],
+    "callingCode": "+670",
+    "borders": [
+      "IDN"
+    ]
+  },
+  "TO": {
+    "iso2": "TO",
+    "officialNameEn": "Kingdom of Tonga",
+    "officialNameAr": "مملكة تونغا",
+    "areaKm2": 747,
+    "currencies": [
+      {
+        "code": "TOP",
+        "name": "Tongan paʻanga",
+        "symbol": "T$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Tongan"
+    ],
+    "callingCode": "+676",
+    "borders": []
+  },
+  "TT": {
+    "iso2": "TT",
+    "officialNameEn": "Republic of Trinidad and Tobago",
+    "officialNameAr": "جمهورية ترينيداد وتوباغو",
+    "areaKm2": 5130,
+    "currencies": [
+      {
+        "code": "TTD",
+        "name": "Trinidad and Tobago dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1868",
+    "borders": []
+  },
+  "TN": {
+    "iso2": "TN",
+    "officialNameEn": "Tunisian Republic",
+    "officialNameAr": "الجمهورية التونسية",
+    "areaKm2": 163610,
+    "currencies": [
+      {
+        "code": "TND",
+        "name": "Tunisian dinar",
+        "symbol": "د.ت"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+216",
+    "borders": [
+      "DZA",
+      "LBY"
+    ]
+  },
+  "TR": {
+    "iso2": "TR",
+    "officialNameEn": "Republic of Türkiye",
+    "officialNameAr": "الجمهورية التركية",
+    "areaKm2": 783562,
+    "currencies": [
+      {
+        "code": "TRY",
+        "name": "Turkish lira",
+        "symbol": "₺"
+      }
+    ],
+    "languagesEn": [
+      "Turkish"
+    ],
+    "callingCode": "+90",
+    "borders": [
+      "ARM",
+      "AZE",
+      "BGR",
+      "GEO",
+      "GRC",
+      "IRN",
+      "IRQ",
+      "SYR"
+    ]
+  },
+  "TV": {
+    "iso2": "TV",
+    "officialNameEn": "Tuvalu",
+    "officialNameAr": "توفالو",
+    "areaKm2": 26,
+    "currencies": [
+      {
+        "code": "AUD",
+        "name": "Australian dollar",
+        "symbol": "$"
+      },
+      {
+        "code": "TVD",
+        "name": "Tuvaluan dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Tuvaluan"
+    ],
+    "callingCode": "+688",
+    "borders": []
+  },
+  "TZ": {
+    "iso2": "TZ",
+    "officialNameEn": "United Republic of Tanzania",
+    "officialNameAr": "جمهورية تنزانيا الاتحادية",
+    "areaKm2": 945087,
+    "currencies": [
+      {
+        "code": "TZS",
+        "name": "Tanzanian shilling",
+        "symbol": "Sh"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Swahili"
+    ],
+    "callingCode": "+255",
+    "borders": [
+      "BDI",
+      "COD",
+      "KEN",
+      "MWI",
+      "MOZ",
+      "RWA",
+      "UGA",
+      "ZMB"
+    ]
+  },
+  "UG": {
+    "iso2": "UG",
+    "officialNameEn": "Republic of Uganda",
+    "officialNameAr": "جمهورية أوغندا",
+    "areaKm2": 241550,
+    "currencies": [
+      {
+        "code": "UGX",
+        "name": "Ugandan shilling",
+        "symbol": "Sh"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Swahili"
+    ],
+    "callingCode": "+256",
+    "borders": [
+      "COD",
+      "KEN",
+      "RWA",
+      "SSD",
+      "TZA"
+    ]
+  },
+  "UA": {
+    "iso2": "UA",
+    "officialNameEn": "Ukraine",
+    "officialNameAr": "أوكرانيا",
+    "areaKm2": 603500,
+    "currencies": [
+      {
+        "code": "UAH",
+        "name": "Ukrainian hryvnia",
+        "symbol": "₴"
+      }
+    ],
+    "languagesEn": [
+      "Ukrainian"
+    ],
+    "callingCode": "+380",
+    "borders": [
+      "BLR",
+      "HUN",
+      "MDA",
+      "POL",
+      "ROU",
+      "RUS",
+      "SVK"
+    ]
+  },
+  "UY": {
+    "iso2": "UY",
+    "officialNameEn": "Oriental Republic of Uruguay",
+    "officialNameAr": "جمهورية الأوروغواي الشرقية",
+    "areaKm2": 181034,
+    "currencies": [
+      {
+        "code": "UYU",
+        "name": "Uruguayan peso",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+598",
+    "borders": [
+      "ARG",
+      "BRA"
+    ]
+  },
+  "US": {
+    "iso2": "US",
+    "officialNameEn": "United States of America",
+    "officialNameAr": "الولايات المتحدة الامريكية",
+    "areaKm2": 9372610,
+    "currencies": [
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1",
+    "borders": [
+      "CAN",
+      "MEX"
+    ]
+  },
+  "UZ": {
+    "iso2": "UZ",
+    "officialNameEn": "Republic of Uzbekistan",
+    "officialNameAr": "جمهورية أوزباكستان",
+    "areaKm2": 447400,
+    "currencies": [
+      {
+        "code": "UZS",
+        "name": "Uzbekistani soʻm",
+        "symbol": "so'm"
+      }
+    ],
+    "languagesEn": [
+      "Russian",
+      "Uzbek"
+    ],
+    "callingCode": "+998",
+    "borders": [
+      "AFG",
+      "KAZ",
+      "KGZ",
+      "TJK",
+      "TKM"
+    ]
+  },
+  "VC": {
+    "iso2": "VC",
+    "officialNameEn": "Saint Vincent and the Grenadines",
+    "officialNameAr": "سانت فينسنت والغرينادين",
+    "areaKm2": 389,
+    "currencies": [
+      {
+        "code": "XCD",
+        "name": "Eastern Caribbean dollar",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+1784",
+    "borders": []
+  },
+  "VE": {
+    "iso2": "VE",
+    "officialNameEn": "Bolivarian Republic of Venezuela",
+    "officialNameAr": "جمهورية فنزويلا البوليفارية",
+    "areaKm2": 916445,
+    "currencies": [
+      {
+        "code": "VES",
+        "name": "Venezuelan bolívar soberano",
+        "symbol": "Bs.S."
+      }
+    ],
+    "languagesEn": [
+      "Spanish"
+    ],
+    "callingCode": "+58",
+    "borders": [
+      "BRA",
+      "COL",
+      "GUY"
+    ]
+  },
+  "VN": {
+    "iso2": "VN",
+    "officialNameEn": "Socialist Republic of Vietnam",
+    "officialNameAr": "جمهورية فيتنام الاشتراكية",
+    "areaKm2": 331212,
+    "currencies": [
+      {
+        "code": "VND",
+        "name": "Vietnamese đồng",
+        "symbol": "₫"
+      }
+    ],
+    "languagesEn": [
+      "Vietnamese"
+    ],
+    "callingCode": "+84",
+    "borders": [
+      "KHM",
+      "CHN",
+      "LAO"
+    ]
+  },
+  "VU": {
+    "iso2": "VU",
+    "officialNameEn": "Republic of Vanuatu",
+    "officialNameAr": "جمهورية فانواتو",
+    "areaKm2": 12189,
+    "currencies": [
+      {
+        "code": "VUV",
+        "name": "Vanuatu vatu",
+        "symbol": "Vt"
+      }
+    ],
+    "languagesEn": [
+      "Bislama",
+      "English",
+      "French"
+    ],
+    "callingCode": "+678",
+    "borders": []
+  },
+  "WS": {
+    "iso2": "WS",
+    "officialNameEn": "Independent State of Samoa",
+    "officialNameAr": "دولة ساموا المستقلة",
+    "areaKm2": 2842,
+    "currencies": [
+      {
+        "code": "WST",
+        "name": "Samoan tālā",
+        "symbol": "T"
+      }
+    ],
+    "languagesEn": [
+      "English",
+      "Samoan"
+    ],
+    "callingCode": "+685",
+    "borders": []
+  },
+  "YE": {
+    "iso2": "YE",
+    "officialNameEn": "Republic of Yemen",
+    "officialNameAr": "الجمهورية اليمنية",
+    "areaKm2": 527968,
+    "currencies": [
+      {
+        "code": "YER",
+        "name": "Yemeni rial",
+        "symbol": "﷼"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+967",
+    "borders": [
+      "OMN",
+      "SAU"
+    ]
+  },
+  "ZA": {
+    "iso2": "ZA",
+    "officialNameEn": "Republic of South Africa",
+    "officialNameAr": "جمهورية جنوب أفريقيا",
+    "areaKm2": 1221037,
+    "currencies": [
+      {
+        "code": "ZAR",
+        "name": "South African rand",
+        "symbol": "R"
+      }
+    ],
+    "languagesEn": [
+      "Afrikaans",
+      "English",
+      "Southern Ndebele",
+      "Northern Sotho",
+      "Southern Sotho",
+      "Swazi",
+      "Tswana",
+      "Tsonga",
+      "Venda",
+      "Xhosa",
+      "Zulu"
+    ],
+    "callingCode": "+27",
+    "borders": [
+      "BWA",
+      "LSO",
+      "MOZ",
+      "NAM",
+      "SWZ",
+      "ZWE"
+    ]
+  },
+  "ZM": {
+    "iso2": "ZM",
+    "officialNameEn": "Republic of Zambia",
+    "officialNameAr": "جمهورية زامبيا",
+    "areaKm2": 752612,
+    "currencies": [
+      {
+        "code": "ZMW",
+        "name": "Zambian kwacha",
+        "symbol": "ZK"
+      }
+    ],
+    "languagesEn": [
+      "English"
+    ],
+    "callingCode": "+260",
+    "borders": [
+      "AGO",
+      "BWA",
+      "COD",
+      "MWI",
+      "MOZ",
+      "NAM",
+      "TZA",
+      "ZWE"
+    ]
+  },
+  "ZW": {
+    "iso2": "ZW",
+    "officialNameEn": "Republic of Zimbabwe",
+    "officialNameAr": "جمهورية زيمبابوي",
+    "areaKm2": 390757,
+    "currencies": [
+      {
+        "code": "BWP",
+        "name": "Botswana pula",
+        "symbol": "P"
+      },
+      {
+        "code": "CNY",
+        "name": "Chinese yuan",
+        "symbol": "¥"
+      },
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      },
+      {
+        "code": "GBP",
+        "name": "British pound",
+        "symbol": "£"
+      },
+      {
+        "code": "INR",
+        "name": "Indian rupee",
+        "symbol": "₹"
+      },
+      {
+        "code": "JPY",
+        "name": "Japanese yen",
+        "symbol": "¥"
+      },
+      {
+        "code": "USD",
+        "name": "United States dollar",
+        "symbol": "$"
+      },
+      {
+        "code": "ZAR",
+        "name": "South African rand",
+        "symbol": "Rs"
+      },
+      {
+        "code": "ZWB",
+        "name": "Zimbabwean bonds",
+        "symbol": "$"
+      }
+    ],
+    "languagesEn": [
+      "Chibarwe",
+      "English",
+      "Kalanga",
+      "Khoisan",
+      "Ndau",
+      "Northern Ndebele",
+      "Chewa",
+      "Shona",
+      "Sotho",
+      "Tonga",
+      "Tswana",
+      "Tsonga",
+      "Venda",
+      "Xhosa",
+      "Zimbabwean Sign Language"
+    ],
+    "callingCode": "+263",
+    "borders": [
+      "BWA",
+      "MOZ",
+      "ZAF",
+      "ZMB"
+    ]
+  },
+  "PS": {
+    "iso2": "PS",
+    "officialNameEn": "State of Palestine",
+    "officialNameAr": "دولة فلسطين",
+    "areaKm2": 6220,
+    "currencies": [
+      {
+        "code": "EGP",
+        "name": "Egyptian pound",
+        "symbol": "E£"
+      },
+      {
+        "code": "ILS",
+        "name": "Israeli new shekel",
+        "symbol": "₪"
+      },
+      {
+        "code": "JOD",
+        "name": "Jordanian dinar",
+        "symbol": "JD"
+      }
+    ],
+    "languagesEn": [
+      "Arabic"
+    ],
+    "callingCode": "+970",
+    "borders": [
+      "ISR",
+      "EGY",
+      "JOR"
+    ]
+  },
+  "VA": {
+    "iso2": "VA",
+    "officialNameEn": "Vatican City State",
+    "officialNameAr": "دولة مدينة الفاتيكان",
+    "areaKm2": 0.44,
+    "currencies": [
+      {
+        "code": "EUR",
+        "name": "Euro",
+        "symbol": "€"
+      }
+    ],
+    "languagesEn": [
+      "Italian",
+      "Latin"
+    ],
+    "callingCode": "+3",
+    "borders": [
+      "ITA"
+    ]
+  }
+}

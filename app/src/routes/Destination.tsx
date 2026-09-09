@@ -7,7 +7,7 @@
 // instead of fabricating an overview/strengths/cost/etc. it doesn't have.
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
-import { WORLD_CATALOG, continentOf } from '../data/worldCatalog';
+import { WORLD_CATALOG, continentOf, countryInfoOf } from '../data/worldCatalog';
 import {
   citiesOf,
   costLabel,
@@ -18,7 +18,7 @@ import {
   strengthsOf,
   weaknessesOf,
 } from '../data/destinationText';
-import type { Destination as DestinationType, PurposeId } from '../data/types';
+import type { CountryInfo, Destination as DestinationType, DetailStrings, Lang, PurposeId } from '../data/types';
 import { FlagBanner, FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
 import { regionGradientCss } from '../components/regionGradient';
@@ -34,6 +34,61 @@ const PURPOSE_SCORE_KEYS: [PurposeId, keyof DestinationType][] = [
   ['investment', 'pInvest'],
   ['wellness', 'pWellness'],
 ];
+
+// Phase 11 Step 1 — compact, build-time Country Information card. Shared by
+// both the basic-country branch and the full-destination branch below, so
+// all 195 catalog entries get it identically. Omits any row whose data is
+// empty (e.g. no reported currency, no land border) instead of showing a
+// blank value.
+function CountryInfoCard({ info, dt, lang }: { info: CountryInfo; dt: DetailStrings; lang: Lang }) {
+  const currencyText = info.currencies
+    .map((c) => (c.symbol ? `${c.name} (${c.symbol})` : c.name))
+    .join(' · ');
+  const languagesText = info.languagesEn.join(' · ');
+  const bordersText = info.borders.join(' · ');
+
+  return (
+    <div className="detail-card">
+      <h3>
+        <Icon name="globe" size={18} /> {dt.countryInfo}
+      </h3>
+      <div className="info-grid">
+        <div className="info-item">
+          <div className="label">{dt.officialName}</div>
+          <div className="value">{lang === 'ar' ? info.officialNameAr : info.officialNameEn}</div>
+        </div>
+        <div className="info-item">
+          <div className="label">{dt.area}</div>
+          <div className="value">
+            {info.areaKm2.toLocaleString('en-US')} {dt.areaUnit}
+          </div>
+        </div>
+        {currencyText ? (
+          <div className="info-item">
+            <div className="label">{dt.currency}</div>
+            <div className="value">{currencyText}</div>
+          </div>
+        ) : null}
+        {languagesText ? (
+          <div className="info-item">
+            <div className="label">{dt.languages}</div>
+            <div className="value">{languagesText}</div>
+          </div>
+        ) : null}
+        <div className="info-item">
+          <div className="label">{dt.callingCode}</div>
+          <div className="value">{info.callingCode}</div>
+        </div>
+        {bordersText ? (
+          <div className="info-item">
+            <div className="label">{dt.borders}</div>
+            <div className="value">{bordersText}</div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
 
 export function Destination() {
   const { id } = useParams<{ id: string }>();
@@ -53,6 +108,7 @@ export function Destination() {
 
   const dt = t.detail;
   const continent = continentOf(d);
+  const info = countryInfoOf(d.id);
 
   const goBackBasic = () => navigate('/explore');
   const startAgain = () => {
@@ -114,6 +170,7 @@ export function Destination() {
                   ) : null}
                 </div>
               </div>
+              {info ? <CountryInfoCard info={info} dt={dt} lang={lang} /> : null}
             </div>
           </div>
         </div>
@@ -266,6 +323,7 @@ export function Destination() {
               </h3>
               <p>{cities}</p>
             </div>
+            {info ? <CountryInfoCard info={info} dt={dt} lang={lang} /> : null}
           </div>
         </div>
       </div>
