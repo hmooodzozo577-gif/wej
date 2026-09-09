@@ -39,7 +39,7 @@ export const EN: I18nDict = {
     reset: 'Clear',
     requesting: 'Requesting your location…',
     resolving: 'Finding your country…',
-    currentCountry: 'Your current country',
+    currentLocation: 'Current location',
     nearestCountry: 'Nearest catalog country (approximate)',
     approxNote: 'This is an approximate straight-line estimate, not a real travel distance or border detection.',
     nearbyTitle: 'Nearby countries',

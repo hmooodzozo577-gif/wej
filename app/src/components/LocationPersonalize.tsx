@@ -1,8 +1,8 @@
 // Phase 12 — Location Personalization. A single self-contained card: a
 // "Use My Location" action, permission/status feedback, and — once
-// granted — the resolved current country plus a short row of
-// nearby-country links. Reuses existing detail-card / meta-chip visual
-// language; no new styling introduced.
+// granted — the resolved current location (city + country, or country
+// only) plus a short row of nearby-country links. Reuses existing
+// detail-card / meta-chip visual language; no new styling introduced.
 //
 // Phase 12 fix: current-country resolution now goes through
 // resolveCurrentCountry() (real point-in-polygon, async — see data/geo.ts),
@@ -12,19 +12,27 @@
 // changes, and keeping it local avoids adding new reducer/action surface
 // for what's fundamentally a render concern.
 //
-// Diagnostic instrumentation (temporary, for the "still Eritrea on a real
-// device" investigation): with ?debugLocation=1 in the URL, a DEBUG panel
-// shows the exact raw browser geolocation result (lat/lng/accuracy/
-// timestamp) side by side with what was actually handed to
-// resolveCurrentCountry(), plus straight-line distances to a few relevant
-// countries — so a real report can be diagnosed from the values the
-// browser actually gave the app, not guessed at. No behavior change
-// without the flag; normal users never see this.
+// City-level personalization (this change): once the country is resolved
+// via a real boundary match, resolveNearestCity() (data/cities.ts, a
+// module entirely separate from geo.ts — the boundary resolver itself is
+// untouched) finds the nearest known major city WITHIN that same country,
+// using the real browser coordinates. If no qualifying city is close
+// enough, the UI cleanly falls back to country-only — never a guess.
+//
+// Nearby-countries fix (this change): the already-resolved current
+// country is structurally excluded from the nearby list by countryCode
+// (never by matching the localized display string), after fetching one
+// extra candidate to keep the visible list at its usual length.
+//
+// Diagnostic instrumentation (?debugLocation=1): unchanged from the prior
+// investigation — still shows the raw browser result alongside what was
+// passed to the resolver. See geo/geolocation.ts / this file's DEBUG panel.
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { requestBrowserLocation } from '../geo/geolocation';
 import { haversineKm, nearbyCountries, resolveCurrentCountry, type CountryResolution } from '../data/geo';
+import { resolveNearestCity, type CityResolution } from '../data/cities';
 import { WORLD_CATALOG, countryInfoOf } from '../data/worldCatalog';
 import { nameOf } from '../data/destinationText';
 import { FlagChip } from './flags/FlagIcon';
@@ -65,12 +73,14 @@ export function LocationPersonalize() {
   const debugEnabled = searchParams.get('debugLocation') === '1';
 
   const [resolution, setResolution] = useState<CountryResolution | undefined>(undefined);
+  const [cityResolution, setCityResolution] = useState<CityResolution | undefined>(undefined);
   const [resolving, setResolving] = useState(false);
   const [debugInfo, setDebugInfo] = useState<LocationDebugInfo | null>(null);
 
   const handleRequest = useCallback(() => {
     dispatch({ type: 'LOCATION_REQUEST' });
     setResolution(undefined);
+    setCityResolution(undefined);
     setDebugInfo(null);
     requestBrowserLocation().then(async (geoResult) => {
       if (!geoResult.ok) {
@@ -94,6 +104,13 @@ export function LocationPersonalize() {
       setResolving(true);
       const result = await resolveCurrentCountry(browserCoords);
       setResolution(result);
+      // City resolution only follows a real boundary match — compounding
+      // it on top of the already-approximate centroid fallback would
+      // stack two approximations, so that case stays country-only.
+      if (result?.method === 'boundary') {
+        const city = await resolveNearestCity(browserCoords, result.result.entry.countryCode);
+        setCityResolution(city);
+      }
       setResolving(false);
     });
   }, [dispatch, debugEnabled]);
@@ -101,13 +118,23 @@ export function LocationPersonalize() {
   const handleReset = useCallback(() => {
     dispatch({ type: 'LOCATION_RESET' });
     setResolution(undefined);
+    setCityResolution(undefined);
     setDebugInfo(null);
   }, [dispatch]);
 
-  // Recomputed only when coords actually change, not on every render.
-  // nearbyCountries() is unchanged by the Phase 12 fix — still sync,
-  // still centroid-distance ranking, which is the correct tool for "nearby".
-  const nearby = useMemo(() => (coords ? nearbyCountries(coords, 6) : []), [coords]);
+  // Recomputed only when coords/resolution actually change, not on every
+  // render. nearbyCountries() itself is unchanged by either Phase 12 fix —
+  // still sync, still centroid-distance ranking, which is the correct tool
+  // for "nearby". One extra candidate is fetched so removing the current
+  // country (structurally, by countryCode — never by localized name)
+  // still leaves the usual number of results.
+  const nearby = useMemo(() => {
+    if (!coords) return [];
+    const candidates = nearbyCountries(coords, 7);
+    const currentCode = resolution?.result.entry.countryCode;
+    const filtered = currentCode ? candidates.filter((n) => n.entry.countryCode !== currentCode) : candidates;
+    return filtered.slice(0, 6);
+  }, [coords, resolution]);
 
   const debugDistances = useMemo(() => {
     if (!debugInfo) return [];
@@ -150,10 +177,23 @@ export function LocationPersonalize() {
 
       {status === 'granted' && resolution ? (
         <>
-          <p style={{ marginTop: 10 }}>
-            {resolution.method === 'boundary' ? loc.currentCountry : loc.nearestCountry}:{' '}
-            <FlagChip dest={resolution.result.entry} width={20} height={15} /> {nameOf(resolution.result.entry, lang)}
-          </p>
+          {resolution.method === 'boundary' ? (
+            <p style={{ marginTop: 10 }}>
+              {loc.currentLocation}:{' '}
+              {cityResolution ? (
+                <>
+                  📍 {lang === 'ar' ? cityResolution.city.nameAr : cityResolution.city.nameEn}
+                  {lang === 'ar' ? '، ' : ', '}
+                </>
+              ) : null}
+              <FlagChip dest={resolution.result.entry} width={20} height={15} /> {nameOf(resolution.result.entry, lang)}
+            </p>
+          ) : (
+            <p style={{ marginTop: 10 }}>
+              {loc.nearestCountry}: <FlagChip dest={resolution.result.entry} width={20} height={15} />{' '}
+              {nameOf(resolution.result.entry, lang)}
+            </p>
+          )}
           {resolution.method === 'centroid-fallback' ? (
             <p style={{ marginTop: 6 }}>{loc.approxNote}</p>
           ) : null}
@@ -190,6 +230,7 @@ export function LocationPersonalize() {
           </p>
           <p style={{ marginTop: 8 }}>Resolved country: {resolution ? nameOf(resolution.result.entry, 'en') : '—'}</p>
           <p style={{ marginTop: 4 }}>Resolution method: {resolution?.method ?? '—'}</p>
+          <p style={{ marginTop: 4 }}>Resolved city: {cityResolution ? cityResolution.city.nameEn : 'none (country-only)'}</p>
           {debugDistances.map((d) => (
             <p key={d.iso2} style={{ marginTop: 4 }}>
               Distance to {d.label} centroid: {d.distanceKm !== undefined ? `${d.distanceKm.toFixed(1)} km` : 'n/a'}

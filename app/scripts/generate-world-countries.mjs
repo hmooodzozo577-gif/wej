@@ -31,6 +31,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import countries from 'world-countries';
+import cityTimezones from 'city-timezones';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.join(__dirname, '../src/data/generated');
@@ -43,6 +44,7 @@ const world195 = [...trueMembers, ...observers];
 if (world195.length !== 195) {
   throw new Error(`Expected 195 countries, got ${world195.length} — convention or dataset changed, review script`);
 }
+const world195Iso2 = new Set(world195.map((c) => c.cca2));
 
 // ---- 2. Exclude the 30 already covered by existing recommendation-ready destinations ----
 const existingDestinations = JSON.parse(
@@ -353,4 +355,121 @@ fs.writeFileSync(path.join(outDir, 'countryBoundaries.json'), boundariesJson);
 console.log(
   `Wrote ${boundaryCount} country boundary records to generated/countryBoundaries.json ` +
     `(${totalBoundaryPoints} points, ${(boundariesJson.length / 1024).toFixed(0)} KB)`,
+);
+
+// ---- 11. Phase 12 (city-level location personalization) — a compact,
+//          build-time "major cities" dataset ----
+// SOURCE: `city-timezones` (new devDependency — confirmed, before adding
+// it, that no already-installed package has city-level coordinates:
+// world-countries only carries one capital NAME per country, no
+// coordinates for it). city-timezones ships ~7,300 cities worldwide with
+// name/lat/lng/population/ISO2 — generation-time only, never shipped raw.
+//
+// THRESHOLD: population >= 200,000. Chosen empirically: it's the lowest
+// round threshold that still includes Abha (pop ~207,803, the smallest of
+// the cities this feature was built to resolve) while keeping the dataset
+// genuinely compact (1,815 of ~7,300 cities pass, ~92 KB of JSON — see the
+// logged size below) rather than shipping every town. It necessarily means
+// 41 of the 195 catalog countries have no qualifying city at all (small
+// nations, sparse population) — those correctly fall back to a country-
+// only location display (see data/cities.ts's MAX_CITY_DISTANCE_KM for the
+// other half of that fallback: a resolved-but-too-far city also falls
+// back rather than being shown as if it were nearby).
+const CITY_POPULATION_THRESHOLD = 200000;
+
+// ARABIC NAMES: city-timezones has no non-English name field. Rather than
+// invent a transliteration for ~1,800 cities (this project's data-honesty
+// rule, upheld since Phase 10's "no fabricated data" decision), only a
+// small, explicitly hand-verified set of well-known cities gets a real
+// Arabic name here. Every other city's `nameAr` deliberately equals its
+// `nameEn` — a plain, honest fallback, not a guess. Keyed by
+// "<exact city-timezones name>|<iso2>" because several names are ambiguous
+// across countries in the source data (e.g. "London" exists in the UK,
+// Canada, and the US; "Tripoli" in Libya and Greece).
+const ARABIC_CITY_NAMES = {
+  'Abha|SA': 'أبها',
+  'Riyadh|SA': 'الرياض',
+  'Jeddah|SA': 'جدة',
+  'Makkah|SA': 'مكة المكرمة',
+  'Medina|SA': 'المدينة المنورة',
+  'Paris|FR': 'باريس',
+  'Tokyo|JP': 'طوكيو',
+  'London|GB': 'لندن',
+  'Berlin|DE': 'برلين',
+  'Rome|IT': 'روما',
+  'Madrid|ES': 'مدريد',
+  'Cairo|EG': 'القاهرة',
+  'Dubai|AE': 'دبي',
+  'Abu Dhabi|AE': 'أبوظبي',
+  'Istanbul|TR': 'إسطنبول',
+  'Ankara|TR': 'أنقرة',
+  'Moscow|RU': 'موسكو',
+  'Beijing|CN': 'بكين',
+  'Shanghai|CN': 'شنغهاي',
+  'New York|US': 'نيويورك',
+  'Los Angeles|US': 'لوس أنجلوس',
+  'Chicago|US': 'شيكاغو',
+  'Toronto|CA': 'تورونتو',
+  'Sydney|AU': 'سيدني',
+  'Amman|JO': 'عمّان',
+  'Baghdad|IQ': 'بغداد',
+  'Beirut|LB': 'بيروت',
+  'Damascus|SY': 'دمشق',
+  'Doha|QA': 'الدوحة',
+  'Kuwait|KW': 'مدينة الكويت',
+  'Manama|BH': 'المنامة',
+  'Muscat|OM': 'مسقط',
+  'Sanaa|YE': 'صنعاء',
+  'Khartoum|SD': 'الخرطوم',
+  'Tripoli|LY': 'طرابلس',
+  'Tunis|TN': 'تونس',
+  'Algiers|DZ': 'الجزائر',
+  'Rabat|MA': 'الرباط',
+  'Casablanca|MA': 'الدار البيضاء',
+  'Nairobi|KE': 'نيروبي',
+  'Lagos|NG': 'لاغوس',
+  'Johannesburg|ZA': 'جوهانسبرغ',
+  'Mumbai|IN': 'مومباي',
+  'Delhi|IN': 'دلهي',
+  'Bangkok|TH': 'بانكوك',
+  'Singapore|SG': 'سنغافورة',
+  'Seoul|KR': 'سيول',
+  'Jakarta|ID': 'جاكرتا',
+  'Manila|PH': 'مانيلا',
+};
+
+const rawCities = cityTimezones.cityMapping.filter(
+  (c) => c.pop >= CITY_POPULATION_THRESHOLD && world195Iso2.has(c.iso2),
+);
+
+// Defensive dedupe: two source rows with the exact same (name, country) —
+// keep the higher-population one. Not expected in this dataset, but the
+// generation must stay deterministic and correct even if it ever occurs.
+const cityByKey = new Map();
+for (const c of rawCities) {
+  const key = `${c.city}|${c.iso2}`;
+  const existing = cityByKey.get(key);
+  if (!existing || c.pop > existing.pop) cityByKey.set(key, c);
+}
+
+const cities = [...cityByKey.values()]
+  .sort((a, b) => b.pop - a.pop)
+  .map((c) => {
+    const key = `${c.city}|${c.iso2}`;
+    return {
+      nameEn: c.city,
+      nameAr: ARABIC_CITY_NAMES[key] ?? c.city,
+      countryCode: c.iso2,
+      lat: Math.round(c.lat * 10000) / 10000,
+      lng: Math.round(c.lng * 10000) / 10000,
+    };
+  });
+
+const citiesJson = JSON.stringify(cities);
+fs.writeFileSync(path.join(outDir, 'cities.json'), citiesJson);
+const citiesWithArabicCount = cities.filter((c) => c.nameAr !== c.nameEn).length;
+console.log(
+  `Wrote ${cities.length} cities (pop >= ${CITY_POPULATION_THRESHOLD.toLocaleString()}) to ` +
+    `generated/cities.json (${citiesWithArabicCount} with a curated Arabic name, ` +
+    `${(citiesJson.length / 1024).toFixed(0)} KB)`,
 );

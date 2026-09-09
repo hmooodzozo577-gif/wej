@@ -161,6 +161,21 @@ export interface CountryInfo {
   latlng: { lat: number; lng: number };
 }
 
+/** Phase 12 (city-level location personalization) — one "major" city (see
+ *  generate-world-countries.mjs Step 11 for the population threshold and
+ *  source). `nameAr` is a real, hand-verified Arabic name only for a small
+ *  curated set of well-known cities; everywhere else it deliberately
+ *  equals `nameEn` rather than guessing a transliteration — see that
+ *  script's ARABIC_CITY_NAMES table. `countryCode` matches
+ *  CatalogEntry.countryCode (ISO 3166-1 alpha-2). */
+export interface CityLocation {
+  nameEn: string;
+  nameAr: string;
+  countryCode: string;
+  lat: number;
+  lng: number;
+}
+
 export type PurposeId =
   | 'tourism'
   | 'work'
@@ -351,8 +366,10 @@ export interface LocationStrings {
    *  (after the browser permission is already granted). */
   resolving: string;
   /** Label for a real point-in-polygon match (method: 'boundary') — safe to
-   *  present with confidence, no accuracy caveat needed. */
-  currentCountry: string;
+   *  present with confidence, no accuracy caveat needed. Used for both the
+   *  "city, country" and country-only sub-cases (only the value differs —
+   *  see LocationPersonalize.tsx). */
+  currentLocation: string;
   /** Label for the nearest-centroid fallback (method: 'centroid-fallback') —
    *  always paired with approxNote below. */
   nearestCountry: string;
