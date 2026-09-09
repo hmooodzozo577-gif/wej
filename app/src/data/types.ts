@@ -522,6 +522,89 @@ export interface TravelCostStrings {
   disclaimer: string;
 }
 
+// --- Phase 13.5d: Destination Tourism Insights -----------------------------
+// Additive, optional, build-time-generated snapshot layer, entirely separate
+// from TravelCostSnapshot above — different World Bank indicators, different
+// units, never combined on one chart/axis. See
+// scripts/lib/tourismInsightsIngest.mjs for the ingestion pipeline and
+// app/scripts/TOURISM_INSIGHTS.md for full source/semantics documentation.
+
+/** One annual observation. `period` is the calendar year the observation
+ *  is FOR (e.g. "2020"), as a string (matches TravelCostIndexEntry's
+ *  sourcePeriod convention) — never implied to be "measured today". */
+export interface TourismObservation {
+  period: string;
+  value: number;
+}
+
+/** One country's real source observations. Both series are optional —
+ *  a country may have one, both, or (if excluded/uncovered) neither;
+ *  never fabricated to fill a gap. Live-verified via a GitHub Actions
+ *  run against the real API (this sandboxed dev environment's own
+ *  network egress is blocked to worldbank.org): both indicators are
+ *  live/serving but World Bank's own WDI has not published a new
+ *  observation for either since 2020 — the arrays below reflect that
+ *  real ceiling, not a Wejhaty staleness bug. See
+ *  TOURISM_INSIGHTS.md. */
+export interface DestinationTourismEntry {
+  /** ISO 3166-1 alpha-2, uppercase — matches CatalogEntry.countryCode. */
+  countryCode: string;
+  /** World Bank ST.INT.ARVL — "International tourism, number of
+   *  arrivals" (headcount of international arrivals, not a percentage
+   *  of anything, not a poll). */
+  arrivals?: TourismObservation[];
+  /** World Bank ST.INT.RCPT.CD — "International tourism, receipts
+   *  (current US$)" — nominal USD, not inflation-adjusted, not SAR. */
+  receiptsUsd?: TourismObservation[];
+}
+
+/** The whole committed, generated snapshot (data/generated/
+ *  tourismInsights.json) — same "small wrapper, not a bare array"
+ *  rationale as TravelCostSnapshot. */
+export interface TourismInsightsSnapshot {
+  /** ISO date-time the SNAPSHOT FILE was (re)generated, or null if the
+   *  updater has never successfully run. */
+  snapshotUpdatedAt: string | null;
+  /** The two World Bank indicator codes this snapshot was built from. */
+  sourceIndicators: { arrivals: string; receiptsUsd: string };
+  entries: DestinationTourismEntry[];
+}
+
+/** Result of computing year-over-year growth from two consecutive real
+ *  observations — never a separately-sourced "growth percentage".
+ *  `undefined` (never 0, never a guess) when growth cannot be computed:
+ *  no previous observation, non-consecutive/non-adjacent periods, or
+ *  previous value <= 0 (division-by-zero/undefined-percentage guard).
+ *  See computeYoyGrowth() in data/tourismInsights.ts. */
+export interface YoyGrowth {
+  currentPeriod: string;
+  previousPeriod: string;
+  /** Percentage points, e.g. 8.4 means +8.4%. Can be negative (a real
+   *  decline, e.g. the 2019->2020 pandemic collapse — never hidden or
+   *  clamped). */
+  percent: number;
+}
+
+/** Phase 13.5d strings. Like TravelCostStrings above, no wejhaty.html
+ *  equivalent. */
+export interface TourismInsightsStrings {
+  title: string;
+  arrivalsLabel: string;
+  receiptsLabel: string;
+  growthLabel: string;
+  /** e.g. "Tourism data: {year}" — {year} is the observation's own
+   *  period, never snapshotUpdatedAt. Mirrors TravelCostStrings'
+   *  sourcePeriodLabel distinction. */
+  sourcePeriodLabel: string;
+  /** e.g. "{from} -> {to}" for the growth card's period range. */
+  growthPeriodLabel: string;
+  arrivalsChartTitle: string;
+  receiptsChartTitle: string;
+  /** Shown when a country has no tourism snapshot coverage at all. */
+  unavailable: string;
+  disclaimer: string;
+}
+
 export interface I18nDict {
   dir: 'rtl' | 'ltr';
   htmlLang: 'ar' | 'en';
@@ -540,6 +623,7 @@ export interface I18nDict {
   travel: TravelStrings;
   accommodation: AccommodationStrings;
   travelCost: TravelCostStrings;
+  tourismInsights: TourismInsightsStrings;
   costLevels: [string, string, string, string];
   climateLabels: Record<ClimateKind, string>;
   visaLabels: Record<VisaDifficulty, string>;

@@ -213,3 +213,39 @@ its bulk machine-readable format/coverage was not verified live here,
 so it is a recommendation, not an implementation. `PA.NUS.GDP.PLI`
 stays a general relative-affordability index; it was never used to
 derive a currency figure.
+
+### Foreign Per Diem Rates — follow-up investigation and final decision
+
+Investigated further: the State Department's Foreign Per Diem Rates
+(DSSR §925, `aoprals.state.gov`/`allowances.state.gov`) are established
+monthly, public-domain (US federal government work), covering lodging
+and M&IE (meals & incidental expenses) separately plus a combined daily
+rate, for a large set of foreign posts.
+
+**Semantic finding (decisive):** these are explicitly **maximum
+reimbursement ceilings** for US government civilians on official
+travel — "intended to substantially cover the cost of lodging at
+adequate, suitable and moderately-priced facilities," a cap a traveler
+is reimbursed *up to*, not a measured average of what any traveler
+(government or tourist) actually spends. Presenting this as "average
+tourist spending per day" would misrepresent it exactly as warned
+against; even the more careful framing "Official travel allowance
+reference" would need its own dedicated, clearly-separated
+implementation to avoid conflation with the arrivals/receipts-style
+real-observation data elsewhere in this app.
+
+**Access finding:** no authoritative bulk machine-readable (JSON/XML)
+endpoint was confirmed live in this pass — `aoprals.state.gov` is an
+HTML per-location lookup tool; a `data.gov` catalog listing and an
+archived (2009-2017/2017-2021) State Department developer portal
+reference an API that could not be confirmed still live; third-party
+repackagers (e.g. allowancesapi.com) exist but are not the authoritative
+source and introduce their own reliability/authorization questions.
+
+**Decision:** `BLOCKED — SUITABLE DATA SOURCE`. Not a licensing
+problem (the underlying data is public domain) — the blocker is (1) no
+confirmed live authoritative bulk endpoint, and (2) the semantic gap
+between a reimbursement ceiling and tourist spending needs a dedicated,
+carefully-labeled implementation effort this pass's scope (Phase 13.5d)
+should not be diluted by. No numeric SAR/day figure was implemented or
+derived from this or any other source.
