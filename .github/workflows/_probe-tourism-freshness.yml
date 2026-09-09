@@ -1,0 +1,22 @@
+name: PROBE - tourism data freshness (temporary, deleted after use)
+on:
+  workflow_dispatch: {}
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe Our World in Data grapher CSV (international tourist arrivals, sourced from UNWTO)
+        run: |
+          echo "--- OWID international-tourist-trips.csv, tail ---"
+          curl -sSL "https://ourworldindata.org/grapher/international-tourist-trips.csv" | tail -c 3000
+          echo
+          echo "--- grep Japan/Saudi Arabia rows ---"
+          curl -sSL "https://ourworldindata.org/grapher/international-tourist-trips.csv" | grep -E "^Japan|^Saudi Arabia" | tail -20
+      - name: Probe OWID metadata for that chart (source + latest year)
+        run: |
+          curl -sSL "https://ourworldindata.org/grapher/international-tourist-trips.metadata.json" | head -c 3000
+          echo
+      - name: Re-probe World Bank ST.INT.ARVL directly (re-verify, do not assume still frozen)
+        run: |
+          curl -sS "https://api.worldbank.org/v2/country/JPN/indicator/ST.INT.ARVL?format=json&mrv=3" | head -c 800
+          echo
