@@ -8,9 +8,18 @@
 // WORLD_CATALOG (Explore, DestinationCard, Destination routing,
 // countryInfoOf, recommendation eligibility) is automatically consistent —
 // no scattered per-component checks, no duplicated filtering logic.
+import excludedCountriesData from './excludedCountriesData.json';
+
+// To disable the exclusion entirely, empty excludedCountriesData.json (or
+// remove an individual entry there). No other file needs to change.
 //
-// To disable the exclusion entirely, empty this array (or remove an
-// individual entry). No other file needs to change.
+// Phase 13.5c completion: the list itself now lives in the sibling
+// excludedCountriesData.json, a plain JSON file with no TS-specific
+// syntax, so scripts/generate-travel-cost-index.mjs (plain Node ESM,
+// no TS loader) can import the EXACT SAME file this module does,
+// instead of maintaining its own hardcoded mirror of it. This module
+// remains the only place the app's own exclusion checks
+// (isExcludedIso2/isExcludedIso3) are defined and exported from.
 export interface ExcludedCountry {
   /** ISO 3166-1 alpha-2, uppercase. */
   iso2: string;
@@ -21,13 +30,7 @@ export interface ExcludedCountry {
   reason: string;
 }
 
-export const EXCLUDED_COUNTRIES: ExcludedCountry[] = [
-  // QA test fixture (temporary): proves the exclusion mechanism works
-  // end-to-end — catalog, Explore, search, routing, recommendation
-  // eligibility, country info, and border-reference cleanup. Remove this
-  // entry (or empty the array) to restore Israel and go back to 195/165.
-  { iso2: 'IL', iso3: 'ISR', reason: 'QA test: verify country-exclusion mechanism end-to-end (temporary)' },
-];
+export const EXCLUDED_COUNTRIES: ExcludedCountry[] = excludedCountriesData;
 
 const excludedIso2 = new Set(EXCLUDED_COUNTRIES.map((c) => c.iso2.toUpperCase()));
 const excludedIso3 = new Set(EXCLUDED_COUNTRIES.map((c) => c.iso3.toUpperCase()));

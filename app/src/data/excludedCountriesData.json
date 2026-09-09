@@ -1,0 +1,7 @@
+[
+  {
+    "iso2": "IL",
+    "iso3": "ISR",
+    "reason": "QA test: verify country-exclusion mechanism end-to-end (temporary)"
+  }
+]

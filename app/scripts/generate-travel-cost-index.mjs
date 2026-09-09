@@ -23,6 +23,7 @@ import {
   serializeSnapshot,
   validateEntries,
 } from './lib/travelCostIndexIngest.mjs';
+import excludedCountriesData from '../src/data/excludedCountriesData.json' with { type: 'json' };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.join(__dirname, '../src/data/generated');
@@ -33,14 +34,14 @@ const SOURCE_INDICATOR = 'PA.NUS.PPPC.RF';
 // never has to deduplicate across multiple years for the same country.
 const WORLD_BANK_URL = `https://api.worldbank.org/v2/country/all/indicator/${SOURCE_INDICATOR}?format=json&per_page=20000&mrv=1`;
 
-// Defense-in-depth mirror of app/src/data/excludedCountries.ts's current
-// entries. This script is plain Node ESM and cannot import that TS
-// module directly, so this list is NOT a second source of truth for the
-// app's exclusion behavior (excludedCountries.ts + WORLD_CATALOG remain
-// that, at runtime) — it only stops an excluded country from ever
-// sitting in the generated snapshot file in the first place. Keep in
-// sync with excludedCountries.ts if that list ever changes.
-const EXCLUDED_COUNTRY_CODES = ['IL'];
+// Completion-pass cleanup: this used to be a hardcoded mirror of
+// app/src/data/excludedCountries.ts's list ('IL'), duplicated because
+// this script is plain Node ESM and can't import a .ts module. Both
+// sides now import the SAME plain JSON file
+// (src/data/excludedCountriesData.json) — one real source of truth,
+// consumed identically by the runtime module and this script, no
+// duplication left to drift out of sync.
+const EXCLUDED_COUNTRY_CODES = excludedCountriesData.map((c) => c.iso2);
 
 /** The app's real effective catalog country codes, derived from the SAME
  *  generated JSON destinations.ts/basicCountries.ts already read (not a
