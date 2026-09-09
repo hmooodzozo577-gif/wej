@@ -7,6 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { AppStateProvider } from '../state/AppStateContext';
 import { Home } from './Home';
 import { WORLD_CATALOG } from '../data/worldCatalog';
+import { EXCLUDED_COUNTRIES } from '../data/excludedCountries';
 
 function renderHome() {
   return render(
@@ -19,7 +20,7 @@ function renderHome() {
 }
 
 describe('Home hero stat — destination count', () => {
-  it('displays the real catalog size (195), not a hard-coded "30"', () => {
+  it('displays the real catalog size, not a hard-coded "30"', () => {
     renderHome();
     expect(screen.getByText(`${WORLD_CATALOG.length}+`)).toBeInTheDocument();
     expect(screen.queryByText('30+')).not.toBeInTheDocument();
@@ -27,9 +28,11 @@ describe('Home hero stat — destination count', () => {
   });
 
   it('is wired to WORLD_CATALOG.length, not a separate hard-coded number', () => {
-    // Sanity anchor: if this ever fails, WORLD_CATALOG itself changed size —
-    // the Home test above should still pass regardless, since it reads the
-    // same source rather than asserting a literal "195".
-    expect(WORLD_CATALOG.length).toBe(195);
+    // Sanity anchor: the base convention is 195 (193 UN members + 2
+    // observers), minus whatever excludedCountries.ts currently configures
+    // (a QA test entry today). If this ever fails, WORLD_CATALOG itself
+    // changed size for some other reason — the Home test above should still
+    // pass regardless, since it reads the same source rather than a literal.
+    expect(WORLD_CATALOG.length).toBe(195 - EXCLUDED_COUNTRIES.length);
   });
 });

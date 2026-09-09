@@ -9,6 +9,7 @@ import { Destination } from './Destination';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { DESTINATIONS } from '../data/destinations';
 import { BASIC_COUNTRIES } from '../data/basicCountries';
+import { EXCLUDED_COUNTRIES } from '../data/excludedCountries';
 
 function renderAt(path: string) {
   return render(
@@ -57,7 +58,14 @@ describe('Phase 10 — F. destination routing', () => {
     expect(screen.getByText('Not found')).toBeInTheDocument();
   });
 
-  it('sanity: WORLD_CATALOG route coverage matches its own length', () => {
-    expect(WORLD_CATALOG).toHaveLength(195);
+  it('an excluded country (see excludedCountries.ts) is not resolvable — same "not found" state as an unknown id, no special-case hack', () => {
+    for (const excluded of EXCLUDED_COUNTRIES) {
+      renderAt(`/destination/${excluded.iso2.toLowerCase()}`);
+      expect(screen.getByText('Not found')).toBeInTheDocument();
+    }
+  });
+
+  it('sanity: WORLD_CATALOG route coverage matches its own (post-exclusion) length', () => {
+    expect(WORLD_CATALOG).toHaveLength(195 - EXCLUDED_COUNTRIES.length);
   });
 });

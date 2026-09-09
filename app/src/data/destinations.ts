@@ -5,10 +5,17 @@
 // output stays byte-for-byte verbatim.
 import destinationsJson from './generated/destinations.json';
 import type { Destination } from './types';
+import { isExcludedIso2 } from './excludedCountries';
 
 type RawDestination = Omit<Destination, 'recommendationReady'>;
 
-export const DESTINATIONS: Destination[] = (destinationsJson as RawDestination[]).map((d) => ({
-  ...d,
-  recommendationReady: true as const,
-}));
+// Same exclusion boundary as basicCountries.ts — a no-op today (no entry in
+// excludedCountries.ts matches one of the 30), kept here so the mechanism
+// covers recommendation-ready destinations too without ever touching the
+// verbatim-extracted values themselves.
+export const DESTINATIONS: Destination[] = (destinationsJson as RawDestination[])
+  .filter((d) => !isExcludedIso2(d.countryCode))
+  .map((d) => ({
+    ...d,
+    recommendationReady: true as const,
+  }));

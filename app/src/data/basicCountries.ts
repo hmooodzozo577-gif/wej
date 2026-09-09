@@ -4,5 +4,10 @@
 // No recommendation-engine data is invented for these — see BasicCountry.
 import basicCountriesJson from './generated/basicCountries.json';
 import type { BasicCountry } from './types';
+import { isExcludedIso2 } from './excludedCountries';
 
-export const BASIC_COUNTRIES: BasicCountry[] = basicCountriesJson as BasicCountry[];
+// Any entry configured in excludedCountries.ts is dropped here, before it
+// ever reaches WORLD_CATALOG — see that file for why this is the boundary.
+export const BASIC_COUNTRIES: BasicCountry[] = (basicCountriesJson as BasicCountry[]).filter(
+  (c) => !isExcludedIso2(c.countryCode),
+);

@@ -7,6 +7,12 @@ import { DESTINATIONS } from './destinations';
 import { BASIC_COUNTRIES } from './basicCountries';
 import { WORLD_CATALOG } from './worldCatalog';
 import { FLAG_SVG_RAW } from './flags';
+import { EXCLUDED_COUNTRIES } from './excludedCountries';
+
+// The base convention is 195 (193 UN members + 2 observers); the effective
+// count is reduced by whatever's currently configured in
+// excludedCountries.ts (a QA test entry today — see that file to revert).
+const EFFECTIVE_TOTAL = 195 - EXCLUDED_COUNTRIES.length;
 
 const ORIGINAL_30_IDS = [
   'japan', 'skorea', 'malaysia', 'thailand', 'turkey', 'uae', 'ksa', 'qatar',
@@ -17,14 +23,16 @@ const ORIGINAL_30_IDS = [
 
 describe('Phase 10 — worldwide country catalog', () => {
   describe('A. Country count', () => {
-    it('WORLD_CATALOG has exactly 195 entries (193 UN members + 2 observers)', () => {
-      expect(WORLD_CATALOG).toHaveLength(195);
+    it('WORLD_CATALOG has the base 195 (193 UN members + 2 observers) minus any configured exclusions', () => {
+      expect(WORLD_CATALOG).toHaveLength(EFFECTIVE_TOTAL);
     });
 
-    it('is exactly 30 existing destinations + 165 new basic countries', () => {
+    it('is exactly the 30 existing destinations + the (possibly reduced) basic countries', () => {
+      expect(DESTINATIONS.length + BASIC_COUNTRIES.length).toBe(EFFECTIVE_TOTAL);
+      // Today's one QA exclusion (see excludedCountries.ts) is a basic
+      // country, so DESTINATIONS stays at its usual 30.
       expect(DESTINATIONS).toHaveLength(30);
-      expect(BASIC_COUNTRIES).toHaveLength(165);
-      expect(DESTINATIONS.length + BASIC_COUNTRIES.length).toBe(195);
+      expect(BASIC_COUNTRIES).toHaveLength(165 - EXCLUDED_COUNTRIES.length);
     });
 
     it('includes both UN observer states (Palestine, Vatican/Holy See)', () => {
