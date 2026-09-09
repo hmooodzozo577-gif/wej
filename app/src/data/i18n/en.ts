@@ -101,4 +101,17 @@ export const EN: I18nDict = {
     disclaimer:
       'A general relative price-level estimate — not a currency amount, hotel price, food price, daily budget, or live booking figure.',
   },
+  tourismInsights: {
+    title: 'Tourism Insights',
+    arrivalsLabel: 'International tourist arrivals',
+    receiptsLabel: 'Tourism receipts',
+    growthLabel: 'Annual arrivals growth',
+    sourcePeriodLabel: 'Tourism data: {year} (World Bank)',
+    growthPeriodLabel: '{from} → {to}',
+    arrivalsChartTitle: 'International tourist arrivals over time',
+    receiptsChartTitle: 'Tourism receipts over time',
+    unavailable: 'No tourism data is available for this destination yet.',
+    disclaimer:
+      'International arrivals and receipts figures from the World Bank (UNWTO-sourced) — not a live or current-year measurement, and not a personal travel budget.',
+  },
 };

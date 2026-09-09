@@ -30,6 +30,7 @@ import { AccommodationInfo } from '../components/AccommodationInfo';
 import { FlagBanner, FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
 import { TravelCostIndexInfo } from '../components/TravelCostIndexInfo';
+import { TourismInsights } from '../components/TourismInsights';
 import { TravelInfo } from '../components/TravelInfo';
 import { regionGradientCss } from '../components/regionGradient';
 import { buildWhyText } from '../engine';
@@ -202,6 +203,7 @@ export function Destination() {
               <TravelInfo destination={d} />
               <AccommodationInfo destination={d} />
               <TravelCostIndexInfo destination={d} />
+              <TourismInsights destination={d} />
             </div>
           </div>
         </div>
@@ -358,6 +360,7 @@ export function Destination() {
             <TravelInfo destination={d} />
             <AccommodationInfo destination={d} />
             <TravelCostIndexInfo destination={d} />
+            <TourismInsights destination={d} />
           </div>
         </div>
       </div>
