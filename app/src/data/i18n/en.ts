@@ -78,4 +78,18 @@ export const EN: I18nDict = {
     ],
     disclaimer: 'General guidance based on our destination data — not a live price, availability, or booking.',
   },
+  // Phase 13.5c — Dynamic Travel Cost Index. Like accommodation above,
+  // not part of the original wejhaty.html copy.
+  travelCost: {
+    title: 'Travel Cost Index',
+    indexLabel: 'Relative price level',
+    tiers: {
+      low: 'Low',
+      moderate: 'Moderate',
+      high: 'High',
+      veryHigh: 'Very high',
+    },
+    sourcePeriodLabel: 'Data: {year} (World Bank)',
+    disclaimer: 'A general price-level estimate for this country, not a hotel price, food price, or live booking figure.',
+  },
 };
