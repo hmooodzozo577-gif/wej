@@ -39,3 +39,18 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** Add a rule to systematic-debugging that performance work starts by reproducing and measuring the user-visible symptom on the specific path named in the complaint, with results recorded before and after on the same machine in the same session. Add a second rule: before any refactor, read the existing tests to find behavioural contracts they encode implicitly, and treat a change that would require editing tests as a signal to find a different change.
 
 **Principle:** A plausible cause is not a measured cause, and the cheapest correct fix is often one line rather than an architectural change. Existing tests are a specification of behaviour the codebase has already promised; needing to edit them to accommodate a refactor is evidence against the refactor, not an obstacle to route around.
+
+### Observation 3: Check the deployment target before implementing the named technology
+
+**Status:** OPEN
+**Date:** 2026-09-09
+**Session context:** A spec named Cloudflare Durable Objects, PostgreSQL via Supabase or Neon, and Redis via Upstash as the required stack for fixing a concurrency defect.
+**Skill:** New skill candidate: platform-constraint-check
+**Type:** open-source
+**Phase/Area:** Design, before writing infrastructure code
+
+**Issue:** The hosting manifest exposed exactly one binding, a D1 database, and no Durable Object namespace or wrangler configuration existed. Implementing the named technology alone would have produced a class that nothing could ever bind, giving the appearance of a fix while the defect stayed live in production. The requirement behind the request was a counter shared across isolates, which D1 satisfies with a single atomic upsert. Implementing a preference chain, Durable Object then D1 then a clearly-labelled per-isolate fallback, satisfied the request where the platform allows it and shipped a working fix today. A second constraint appeared in the tests: two suites load the worker as a standalone module, one through a data URL with no resolvable base, so a separate module file would have broken them and the limiter had to be inlined.
+
+**Suggested improvement:** Create a skill for infrastructure work that requires, before writing code, reading the deployment manifest and any binding configuration to establish what the target platform actually offers, then naming the underlying capability the request depends on rather than the branded product. Where the named product is unavailable, implement the capability against what exists and keep the named product as the preferred branch behind a binding check. Include a step to check how tests load the module under change, since import style constrains file layout.
+
+**Principle:** A named technology is a proposed means to a capability, not the capability itself. Code that targets a binding the platform does not provide is indistinguishable from no fix at all, so establishing what the deployment target offers is design input, not a detail to discover later.

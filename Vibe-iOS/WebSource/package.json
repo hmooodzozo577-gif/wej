@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node tests/security.cjs && node tests/support.mjs && node tests/video-preview.mjs",
+    "test": "node tests/security.cjs && node tests/support.mjs && node tests/video-preview.mjs && node tests/ratelimit.mjs",
     "test:cinema": "node scripts/build.mjs && node tests/cinema.mjs"
   },
   "devDependencies": {

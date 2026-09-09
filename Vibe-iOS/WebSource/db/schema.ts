@@ -9,3 +9,12 @@ export const cinemaSessions = sqliteTable('cinema_sessions', {
   updatedAt: integer('updated_at').notNull(),
   expiresAt: integer('expires_at').notNull(),
 }, table => [index('cinema_expiry_idx').on(table.expiresAt)]);
+
+// Request counters shared by every worker isolate. Keyed by bucket and caller so one row
+// per caller is reused across windows instead of accumulating a row per window.
+export const rateLimits = sqliteTable('rate_limits', {
+  bucketKey: text('bucket_key').primaryKey(),
+  windowStart: integer('window_start').notNull(),
+  count: integer('count').notNull().default(0),
+  expiresAt: integer('expires_at').notNull(),
+}, table => [index('rate_limit_expiry_idx').on(table.expiresAt)]);
