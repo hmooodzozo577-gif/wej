@@ -75,6 +75,10 @@ async function main() {
     console.error(String(err));
     process.exit(1);
   }
+  // Debug visibility only (never affects the write path): print a
+  // truncated view of the raw response BEFORE parsing is attempted, so
+  // a shape mismatch is diagnosable from CI logs alone.
+  console.log('Raw response (truncated to 1000 chars):', JSON.stringify(body).slice(0, 1000));
 
   let rawRows;
   try {
