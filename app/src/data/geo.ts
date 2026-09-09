@@ -150,7 +150,16 @@ function loadCountryBoundaries(): Promise<CountryBoundaries | null> {
   if (!boundariesPromise) {
     boundariesPromise = import('./generated/countryBoundaries.json')
       .then((mod) => mod.default as unknown as CountryBoundaries)
-      .catch(() => null);
+      .catch((err: unknown) => {
+        // The UI already treats a null return as "use the labeled
+        // centroid-fallback" (never presented as exact) — this does not
+        // change that behavior. It exists purely so a real load failure
+        // (bad deploy, network issue, wrong base path) leaves a trace
+        // instead of silently and indistinguishably looking like "no
+        // polygon matched this point" in production.
+        console.error('Failed to load country boundary data; falling back to nearest-centroid resolution.', err);
+        return null;
+      });
   }
   return boundariesPromise;
 }

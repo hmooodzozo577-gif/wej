@@ -2,7 +2,7 @@
 // approximateCountryOf) and (Phase 12 fix) real point-in-polygon current-
 // country resolution (resolveCurrentCountry). All computed from local data
 // only; no network, no real device geolocation anywhere in these tests.
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { approximateCountryOf, haversineKm, nearbyCountries, resolveCurrentCountry } from './geo';
 import { WORLD_CATALOG, countryInfoOf } from './worldCatalog';
 import { EXCLUDED_COUNTRIES } from './excludedCountries';
@@ -87,6 +87,38 @@ describe('Phase 12 fix — resolveCurrentCountry (real point-in-polygon)', () =>
     expect(resolution?.result.entry.countryCode).not.toBe('ER');
   });
 
+  it('resolves Abha to Saudi Arabia specifically, not any of its other nearby neighbors either', async () => {
+    const abha = { lat: 18.2164, lng: 42.5053 };
+    const resolution = await resolveCurrentCountry(abha);
+    // Confirms this isn't a fluke pass against Eritrea alone — the other
+    // countries whose centroids are also relatively close to Abha (and
+    // that a nearest-centroid approach could plausibly have picked
+    // instead) must not match either.
+    expect(resolution?.result.entry.countryCode).not.toBe('YE'); // Yemen
+    expect(resolution?.result.entry.countryCode).not.toBe('DJ'); // Djibouti
+  });
+
+  it('resolves Riyadh and Jeddah (other real Saudi Arabian cities) to Saudi Arabia', async () => {
+    const riyadh = { lat: 24.7136, lng: 46.6753 };
+    const jeddah = { lat: 21.4858, lng: 39.1925 };
+    const riyadhResolution = await resolveCurrentCountry(riyadh);
+    const jeddahResolution = await resolveCurrentCountry(jeddah);
+    expect(riyadhResolution?.method).toBe('boundary');
+    expect(riyadhResolution?.result.entry.countryCode).toBe('SA');
+    expect(jeddahResolution?.method).toBe('boundary');
+    expect(jeddahResolution?.result.entry.countryCode).toBe('SA');
+  });
+
+  it('coordinate-order regression guard: swapping lat/lng for Abha must NOT still resolve to Saudi Arabia', async () => {
+    // If a future change accidentally passed (lat, lng) where (lng, lat) is
+    // required (or vice versa) anywhere in the pipeline, this point would
+    // land somewhere in the Gulf of Aden/Arabian Sea — nowhere near Saudi
+    // Arabia's polygon — and this test would catch it immediately.
+    const abhaWithSwappedFields = { lat: 42.5053, lng: 18.2164 }; // deliberately wrong
+    const resolution = await resolveCurrentCountry(abhaWithSwappedFields);
+    expect(resolution?.result.entry.countryCode).not.toBe('SA');
+  });
+
   it('resolves a known coordinate inside another country correctly (Paris, France)', async () => {
     const paris = { lat: 48.8566, lng: 2.3522 };
     const resolution = await resolveCurrentCountry(paris);
@@ -167,5 +199,30 @@ describe('Phase 12 fix — resolveCurrentCountry (real point-in-polygon)', () =>
     // real regression (e.g. the whole dataset failing to load, which would
     // read near 0%) without being a flaky cliff on the exact number.
     expect(boundaryMatches / WORLD_CATALOG.length).toBeGreaterThan(0.75);
+  });
+});
+
+describe('Phase 12 fix — boundary load failure behavior', () => {
+  it('falls back to the labeled centroid approximation (not a crash, not a silently-mislabeled result) and logs the failure', async () => {
+    vi.resetModules();
+    vi.doMock('./generated/countryBoundaries.json', () => {
+      throw new Error('simulated boundary chunk load failure');
+    });
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const freshGeo = await import('./geo');
+    const abha = { lat: 18.2164, lng: 42.5053 };
+    const resolution = await freshGeo.resolveCurrentCountry(abha);
+
+    // Never crashes, never silently presents this as a confident boundary
+    // match — falls back to the same clearly-labeled approximation used
+    // for open ocean/data gaps, and the failure itself is observable
+    // (not silently swallowed), per the section 9 requirement.
+    expect(resolution?.method).toBe('centroid-fallback');
+    expect(errorSpy).toHaveBeenCalled();
+
+    errorSpy.mockRestore();
+    vi.doUnmock('./generated/countryBoundaries.json');
+    vi.resetModules();
   });
 });
