@@ -53,16 +53,17 @@ jobs:
       # catalog for the current replacement so the script can be fixed
       # with a real, currently-valid code rather than a guess. Removed
       # once the correct indicator is confirmed and hardcoded.
-      - name: DEBUG - search World Bank indicator catalog for price-level indicators
+      - name: DEBUG - probe candidate price-level indicators directly
         run: |
-          curl -sS "https://api.worldbank.org/v2/indicator?format=json&per_page=25000" -o /tmp/wb_indicators.json
-          node -e "
-            const body = JSON.parse(require('fs').readFileSync('/tmp/wb_indicators.json', 'utf8'));
-            const rows = body[1] || [];
-            console.log('total indicators:', rows.length);
-            const matches = rows.filter(r => /price level/i.test(r.name) || /PPP conversion factor/i.test(r.name));
-            for (const m of matches) console.log(m.id, '|', m.name);
-          "
+          echo "--- PA.NUS.PPPC.RF, single country, no mrv/per_page ---"
+          curl -sS "https://api.worldbank.org/v2/country/USA/indicator/PA.NUS.PPPC.RF?format=json" | head -c 500
+          echo
+          echo "--- PA.NUS.GDP.PLI, single country, mrv=1 ---"
+          curl -sS "https://api.worldbank.org/v2/country/USA/indicator/PA.NUS.GDP.PLI?format=json&mrv=1" | head -c 500
+          echo
+          echo "--- PA.NUS.GDP.PLI, all countries, mrv=1, per_page=300 ---"
+          curl -sS "https://api.worldbank.org/v2/country/all/indicator/PA.NUS.GDP.PLI?format=json&mrv=1&per_page=300" | head -c 1500
+          echo
 
       # The only network-touching step in this whole workflow. Exits
       # non-zero on ANY failure (fetch, malformed response, insufficient
