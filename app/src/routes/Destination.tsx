@@ -5,9 +5,9 @@
 // same code path as before (untouched). A basic country (one of the 165)
 // renders a smaller, honest detail view — flag, name, continent, capital —
 // instead of fabricating an overview/strengths/cost/etc. it doesn't have.
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
-import { WORLD_CATALOG, continentOf, countryInfoOf } from '../data/worldCatalog';
+import { WORLD_CATALOG, continentOf, countryInfoOf, resolvedBordersOf } from '../data/worldCatalog';
 import {
   citiesOf,
   costLabel,
@@ -18,7 +18,14 @@ import {
   strengthsOf,
   weaknessesOf,
 } from '../data/destinationText';
-import type { CountryInfo, Destination as DestinationType, DetailStrings, Lang, PurposeId } from '../data/types';
+import type {
+  CatalogEntry,
+  CountryInfo,
+  Destination as DestinationType,
+  DetailStrings,
+  Lang,
+  PurposeId,
+} from '../data/types';
 import { FlagBanner, FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
 import { regionGradientCss } from '../components/regionGradient';
@@ -40,12 +47,23 @@ const PURPOSE_SCORE_KEYS: [PurposeId, keyof DestinationType][] = [
 // all 195 catalog entries get it identically. Omits any row whose data is
 // empty (e.g. no reported currency, no land border) instead of showing a
 // blank value.
-function CountryInfoCard({ info, dt, lang }: { info: CountryInfo; dt: DetailStrings; lang: Lang }) {
+function CountryInfoCard({
+  info,
+  borders,
+  dt,
+  lang,
+}: {
+  info: CountryInfo;
+  /** Phase 11 Step 3 — resolved via resolvedBordersOf(), already filtered to
+   *  real, navigable, non-self, non-duplicate catalog entries. */
+  borders: CatalogEntry[];
+  dt: DetailStrings;
+  lang: Lang;
+}) {
   const currencyText = info.currencies
     .map((c) => (c.symbol ? `${c.name} (${c.symbol})` : c.name))
     .join(' · ');
   const languagesText = info.languagesEn.join(' · ');
-  const bordersText = info.borders.join(' · ');
 
   return (
     <div className="detail-card">
@@ -79,10 +97,16 @@ function CountryInfoCard({ info, dt, lang }: { info: CountryInfo; dt: DetailStri
           <div className="label">{dt.callingCode}</div>
           <div className="value">{info.callingCode}</div>
         </div>
-        {bordersText ? (
+        {borders.length ? (
           <div className="info-item">
             <div className="label">{dt.borders}</div>
-            <div className="value">{bordersText}</div>
+            <div className="dest-meta">
+              {borders.map((b) => (
+                <Link key={b.id} to={`/destination/${b.id}`} className="meta-chip">
+                  <FlagChip dest={b} width={16} height={12} /> {nameOf(b, lang)}
+                </Link>
+              ))}
+            </div>
           </div>
         ) : null}
       </div>
@@ -109,6 +133,7 @@ export function Destination() {
   const dt = t.detail;
   const continent = continentOf(d);
   const info = countryInfoOf(d.id);
+  const borders = resolvedBordersOf(d.id);
 
   const goBackBasic = () => navigate('/explore');
   const startAgain = () => {
@@ -170,7 +195,7 @@ export function Destination() {
                   ) : null}
                 </div>
               </div>
-              {info ? <CountryInfoCard info={info} dt={dt} lang={lang} /> : null}
+              {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
             </div>
           </div>
         </div>
@@ -323,7 +348,7 @@ export function Destination() {
               </h3>
               <p>{cities}</p>
             </div>
-            {info ? <CountryInfoCard info={info} dt={dt} lang={lang} /> : null}
+            {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
           </div>
         </div>
       </div>

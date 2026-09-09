@@ -42,3 +42,42 @@ export function countryInfoOf(id: string): CountryInfo | undefined {
   if (!info.borders.some(isExcludedIso3)) return info;
   return { ...info, borders: info.borders.filter((b) => !isExcludedIso3(b)) };
 }
+
+// Phase 11 Step 3 — border-country navigation. Built once at module load
+// (not per render): ISO3 -> catalog entry, but ONLY for entries already in
+// the effective WORLD_CATALOG. An excluded country's iso3 is therefore
+// never a key here at all — border navigation can't reintroduce it, on top
+// of countryInfoOf() above already scrubbing excluded codes from the raw
+// borders list.
+const catalogByIso3 = new Map<string, CatalogEntry>();
+for (const entry of WORLD_CATALOG) {
+  const iso3 = countryInfoByIso2(entry.countryCode)?.iso3;
+  if (iso3) catalogByIso3.set(iso3, entry);
+}
+
+/** Resolves a raw ISO3 border code to its catalog entry, if that country is
+ *  in the effective catalog. Undefined for any code that doesn't resolve —
+ *  unknown/invalid code, or an excluded country — so callers can render
+ *  nothing rather than a broken link. */
+export function resolveBorderCountry(iso3: string): CatalogEntry | undefined {
+  return catalogByIso3.get(iso3.toUpperCase());
+}
+
+/** The navigable border list for a catalog entry: each raw ISO3 in its
+ *  Country Information resolved to a real catalog entry, in original order,
+ *  with unresolved codes, self-references, and duplicates dropped. Empty
+ *  array (never throws) when there's no country info or no resolvable
+ *  border — callers can render it directly with no null check. */
+export function resolvedBordersOf(id: string): CatalogEntry[] {
+  const info = countryInfoOf(id);
+  if (!info) return [];
+  const seen = new Set<string>();
+  const result: CatalogEntry[] = [];
+  for (const code of info.borders) {
+    const entry = resolveBorderCountry(code);
+    if (!entry || entry.id === id || seen.has(entry.id)) continue;
+    seen.add(entry.id);
+    result.push(entry);
+  }
+  return result;
+}

@@ -1,6 +1,7 @@
 {
   "AF": {
     "iso2": "AF",
+    "iso3": "AFG",
     "officialNameEn": "Islamic Republic of Afghanistan",
     "officialNameAr": "جمهورية أففانستان الإسلامية",
     "areaKm2": 652230,
@@ -28,6 +29,7 @@
   },
   "AO": {
     "iso2": "AO",
+    "iso3": "AGO",
     "officialNameEn": "Republic of Angola",
     "officialNameAr": "أنغولا",
     "areaKm2": 1246700,
@@ -51,6 +53,7 @@
   },
   "AL": {
     "iso2": "AL",
+    "iso3": "ALB",
     "officialNameEn": "Republic of Albania",
     "officialNameAr": "جمهورية ألبانيا",
     "areaKm2": 28748,
@@ -74,6 +77,7 @@
   },
   "AD": {
     "iso2": "AD",
+    "iso3": "AND",
     "officialNameEn": "Principality of Andorra",
     "officialNameAr": "إمارة أندورا",
     "areaKm2": 468,
@@ -95,6 +99,7 @@
   },
   "AE": {
     "iso2": "AE",
+    "iso3": "ARE",
     "officialNameEn": "United Arab Emirates",
     "officialNameAr": "الإمارات العربية المتحدة",
     "areaKm2": 83600,
@@ -116,6 +121,7 @@
   },
   "AR": {
     "iso2": "AR",
+    "iso3": "ARG",
     "officialNameEn": "Argentine Republic",
     "officialNameAr": "جمهورية الأرجنتين",
     "areaKm2": 2780400,
@@ -141,6 +147,7 @@
   },
   "AM": {
     "iso2": "AM",
+    "iso3": "ARM",
     "officialNameEn": "Republic of Armenia",
     "officialNameAr": "جمهورية أرمينيا",
     "areaKm2": 29743,
@@ -164,6 +171,7 @@
   },
   "AG": {
     "iso2": "AG",
+    "iso3": "ATG",
     "officialNameEn": "Antigua and Barbuda",
     "officialNameAr": "أنتيغوا وباربودا",
     "areaKm2": 442,
@@ -182,6 +190,7 @@
   },
   "AU": {
     "iso2": "AU",
+    "iso3": "AUS",
     "officialNameEn": "Commonwealth of Australia",
     "officialNameAr": "كومونولث أستراليا",
     "areaKm2": 7692024,
@@ -200,6 +209,7 @@
   },
   "AT": {
     "iso2": "AT",
+    "iso3": "AUT",
     "officialNameEn": "Republic of Austria",
     "officialNameAr": "جمهورية النمسا",
     "areaKm2": 83871,
@@ -227,6 +237,7 @@
   },
   "AZ": {
     "iso2": "AZ",
+    "iso3": "AZE",
     "officialNameEn": "Republic of Azerbaijan",
     "officialNameAr": "جمهورية أذربيجان",
     "areaKm2": 86600,
@@ -252,6 +263,7 @@
   },
   "BI": {
     "iso2": "BI",
+    "iso3": "BDI",
     "officialNameEn": "Republic of Burundi",
     "officialNameAr": "جمهورية بوروندي",
     "areaKm2": 27834,
@@ -275,6 +287,7 @@
   },
   "BE": {
     "iso2": "BE",
+    "iso3": "BEL",
     "officialNameEn": "Kingdom of Belgium",
     "officialNameAr": "مملكة بلجيكا",
     "areaKm2": 30528,
@@ -300,6 +313,7 @@
   },
   "BJ": {
     "iso2": "BJ",
+    "iso3": "BEN",
     "officialNameEn": "Republic of Benin",
     "officialNameAr": "جمهورية بنين",
     "areaKm2": 112622,
@@ -323,6 +337,7 @@
   },
   "BF": {
     "iso2": "BF",
+    "iso3": "BFA",
     "officialNameEn": "Burkina Faso",
     "officialNameAr": "بوركينا فاسو",
     "areaKm2": 272967,
@@ -348,6 +363,7 @@
   },
   "BD": {
     "iso2": "BD",
+    "iso3": "BGD",
     "officialNameEn": "People's Republic of Bangladesh",
     "officialNameAr": "جمهورية بنغلاديش الشعبية",
     "areaKm2": 147570,
@@ -369,6 +385,7 @@
   },
   "BG": {
     "iso2": "BG",
+    "iso3": "BGR",
     "officialNameEn": "Republic of Bulgaria",
     "officialNameAr": "جمهورية بلغاريا",
     "areaKm2": 110879,
@@ -393,6 +410,7 @@
   },
   "BH": {
     "iso2": "BH",
+    "iso3": "BHR",
     "officialNameEn": "Kingdom of Bahrain",
     "officialNameAr": "مملكة البحرين",
     "areaKm2": 765,
@@ -411,6 +429,7 @@
   },
   "BS": {
     "iso2": "BS",
+    "iso3": "BHS",
     "officialNameEn": "Commonwealth of the Bahamas",
     "officialNameAr": "كومنولث جزر البهاما",
     "areaKm2": 13943,
@@ -434,6 +453,7 @@
   },
   "BA": {
     "iso2": "BA",
+    "iso3": "BIH",
     "officialNameEn": "Bosnia and Herzegovina",
     "officialNameAr": "البوسنة والهرسك",
     "areaKm2": 51209,
@@ -458,6 +478,7 @@
   },
   "BY": {
     "iso2": "BY",
+    "iso3": "BLR",
     "officialNameEn": "Republic of Belarus",
     "officialNameAr": "جمهورية بيلاروسيا",
     "areaKm2": 207600,
@@ -483,6 +504,7 @@
   },
   "BZ": {
     "iso2": "BZ",
+    "iso3": "BLZ",
     "officialNameEn": "Belize",
     "officialNameAr": "بليز",
     "areaKm2": 22966,
@@ -506,6 +528,7 @@
   },
   "BO": {
     "iso2": "BO",
+    "iso3": "BOL",
     "officialNameEn": "Plurinational State of Bolivia",
     "officialNameAr": "دولة بوليفيا المتعددة القوميات",
     "areaKm2": 1098581,
@@ -533,6 +556,7 @@
   },
   "BR": {
     "iso2": "BR",
+    "iso3": "BRA",
     "officialNameEn": "Federative Republic of Brazil",
     "officialNameAr": "جمهورية البرازيل الاتحادية",
     "areaKm2": 8515767,
@@ -562,6 +586,7 @@
   },
   "BB": {
     "iso2": "BB",
+    "iso3": "BRB",
     "officialNameEn": "Barbados",
     "officialNameAr": "باربادوس",
     "areaKm2": 430,
@@ -580,6 +605,7 @@
   },
   "BN": {
     "iso2": "BN",
+    "iso3": "BRN",
     "officialNameEn": "Nation of Brunei, Abode of Peace",
     "officialNameAr": "بروناي دار السلام",
     "areaKm2": 5765,
@@ -605,6 +631,7 @@
   },
   "BT": {
     "iso2": "BT",
+    "iso3": "BTN",
     "officialNameEn": "Kingdom of Bhutan",
     "officialNameAr": "مملكة بوتان",
     "areaKm2": 38394,
@@ -631,6 +658,7 @@
   },
   "BW": {
     "iso2": "BW",
+    "iso3": "BWA",
     "officialNameEn": "Republic of Botswana",
     "officialNameAr": "جمهورية بوتسوانا",
     "areaKm2": 582000,
@@ -655,6 +683,7 @@
   },
   "CF": {
     "iso2": "CF",
+    "iso3": "CAF",
     "officialNameEn": "Central African Republic",
     "officialNameAr": "جمهورية أفريقيا الوسطى",
     "areaKm2": 622984,
@@ -681,6 +710,7 @@
   },
   "CA": {
     "iso2": "CA",
+    "iso3": "CAN",
     "officialNameEn": "Canada",
     "officialNameAr": "كندا",
     "areaKm2": 9984670,
@@ -702,6 +732,7 @@
   },
   "CH": {
     "iso2": "CH",
+    "iso3": "CHE",
     "officialNameEn": "Swiss Confederation",
     "officialNameAr": "الاتحاد السويسري",
     "areaKm2": 41284,
@@ -729,6 +760,7 @@
   },
   "CL": {
     "iso2": "CL",
+    "iso3": "CHL",
     "officialNameEn": "Republic of Chile",
     "officialNameAr": "جمهورية تشيلي",
     "areaKm2": 756102,
@@ -751,6 +783,7 @@
   },
   "CN": {
     "iso2": "CN",
+    "iso3": "CHN",
     "officialNameEn": "People's Republic of China",
     "officialNameAr": "جمهورية الصين الشعبية",
     "areaKm2": 9706961,
@@ -786,6 +819,7 @@
   },
   "CI": {
     "iso2": "CI",
+    "iso3": "CIV",
     "officialNameEn": "Republic of Côte d'Ivoire",
     "officialNameAr": "جمهورية ساحل العاج",
     "areaKm2": 322463,
@@ -810,6 +844,7 @@
   },
   "CM": {
     "iso2": "CM",
+    "iso3": "CMR",
     "officialNameEn": "Republic of Cameroon",
     "officialNameAr": "جمهورية الكاميرون",
     "areaKm2": 475442,
@@ -836,6 +871,7 @@
   },
   "CD": {
     "iso2": "CD",
+    "iso3": "COD",
     "officialNameEn": "Democratic Republic of the Congo",
     "officialNameAr": "جمهورية الكونغو الديمقراطية",
     "areaKm2": 2344858,
@@ -868,6 +904,7 @@
   },
   "CG": {
     "iso2": "CG",
+    "iso3": "COG",
     "officialNameEn": "Republic of the Congo",
     "officialNameAr": "جمهورية الكونغو",
     "areaKm2": 342000,
@@ -894,6 +931,7 @@
   },
   "CO": {
     "iso2": "CO",
+    "iso3": "COL",
     "officialNameEn": "Republic of Colombia",
     "officialNameAr": "جمهورية كولومبيا",
     "areaKm2": 1141748,
@@ -918,6 +956,7 @@
   },
   "KM": {
     "iso2": "KM",
+    "iso3": "COM",
     "officialNameEn": "Union of the Comoros",
     "officialNameAr": "الإتحاد القمري",
     "areaKm2": 1862,
@@ -938,6 +977,7 @@
   },
   "CV": {
     "iso2": "CV",
+    "iso3": "CPV",
     "officialNameEn": "Republic of Cabo Verde",
     "officialNameAr": "جمهورية كابو فيردي",
     "areaKm2": 4033,
@@ -956,6 +996,7 @@
   },
   "CR": {
     "iso2": "CR",
+    "iso3": "CRI",
     "officialNameEn": "Republic of Costa Rica",
     "officialNameAr": "جمهورية كوستاريكا",
     "areaKm2": 51100,
@@ -977,6 +1018,7 @@
   },
   "CU": {
     "iso2": "CU",
+    "iso3": "CUB",
     "officialNameEn": "Republic of Cuba",
     "officialNameAr": "جمهورية كوبا",
     "areaKm2": 109884,
@@ -1000,6 +1042,7 @@
   },
   "CY": {
     "iso2": "CY",
+    "iso3": "CYP",
     "officialNameEn": "Republic of Cyprus",
     "officialNameAr": "جمهورية قبرص",
     "areaKm2": 9251,
@@ -1019,6 +1062,7 @@
   },
   "CZ": {
     "iso2": "CZ",
+    "iso3": "CZE",
     "officialNameEn": "Czech Republic",
     "officialNameAr": "جمهورية التشيك",
     "areaKm2": 78865,
@@ -1043,6 +1087,7 @@
   },
   "DE": {
     "iso2": "DE",
+    "iso3": "DEU",
     "officialNameEn": "Federal Republic of Germany",
     "officialNameAr": "جمهورية ألمانيا الاتحادية",
     "areaKm2": 357114,
@@ -1071,6 +1116,7 @@
   },
   "DJ": {
     "iso2": "DJ",
+    "iso3": "DJI",
     "officialNameEn": "Republic of Djibouti",
     "officialNameAr": "جمهورية جيبوتي",
     "areaKm2": 23200,
@@ -1094,6 +1140,7 @@
   },
   "DM": {
     "iso2": "DM",
+    "iso3": "DMA",
     "officialNameEn": "Commonwealth of Dominica",
     "officialNameAr": "كومونولث دومينيكا",
     "areaKm2": 751,
@@ -1112,6 +1159,7 @@
   },
   "DK": {
     "iso2": "DK",
+    "iso3": "DNK",
     "officialNameEn": "Kingdom of Denmark",
     "officialNameAr": "مملكة الدنمارك",
     "areaKm2": 43094,
@@ -1132,6 +1180,7 @@
   },
   "DO": {
     "iso2": "DO",
+    "iso3": "DOM",
     "officialNameEn": "Dominican Republic",
     "officialNameAr": "جمهورية الدومينيكان",
     "areaKm2": 48671,
@@ -1152,6 +1201,7 @@
   },
   "DZ": {
     "iso2": "DZ",
+    "iso3": "DZA",
     "officialNameEn": "People's Democratic Republic of Algeria",
     "officialNameAr": "الجمهورية الديمقراطية الشعبية الجزائرية",
     "areaKm2": 2381741,
@@ -1178,6 +1228,7 @@
   },
   "EC": {
     "iso2": "EC",
+    "iso3": "ECU",
     "officialNameEn": "Republic of Ecuador",
     "officialNameAr": "جمهورية الإكوادور",
     "areaKm2": 276841,
@@ -1199,6 +1250,7 @@
   },
   "EG": {
     "iso2": "EG",
+    "iso3": "EGY",
     "officialNameEn": "Arab Republic of Egypt",
     "officialNameAr": "جمهورية مصر العربية",
     "areaKm2": 1002450,
@@ -1222,6 +1274,7 @@
   },
   "ER": {
     "iso2": "ER",
+    "iso3": "ERI",
     "officialNameEn": "State of Eritrea",
     "officialNameAr": "دولة إريتريا",
     "areaKm2": 117600,
@@ -1246,6 +1299,7 @@
   },
   "ES": {
     "iso2": "ES",
+    "iso3": "ESP",
     "officialNameEn": "Kingdom of Spain",
     "officialNameAr": "مملكة إسبانيا",
     "areaKm2": 505992,
@@ -1270,6 +1324,7 @@
   },
   "EE": {
     "iso2": "EE",
+    "iso3": "EST",
     "officialNameEn": "Republic of Estonia",
     "officialNameAr": "جمهورية إستونيا",
     "areaKm2": 45227,
@@ -1291,6 +1346,7 @@
   },
   "ET": {
     "iso2": "ET",
+    "iso3": "ETH",
     "officialNameEn": "Federal Democratic Republic of Ethiopia",
     "officialNameAr": "جمهورية إثيوبيا الفدرالية الديموقراطية",
     "areaKm2": 1104300,
@@ -1316,6 +1372,7 @@
   },
   "FI": {
     "iso2": "FI",
+    "iso3": "FIN",
     "officialNameEn": "Republic of Finland",
     "officialNameAr": "جمهورية فنلندا",
     "areaKm2": 338424,
@@ -1339,6 +1396,7 @@
   },
   "FJ": {
     "iso2": "FJ",
+    "iso3": "FJI",
     "officialNameEn": "Republic of Fiji",
     "officialNameAr": "جمهورية جزر فيجي",
     "areaKm2": 18272,
@@ -1359,6 +1417,7 @@
   },
   "FR": {
     "iso2": "FR",
+    "iso3": "FRA",
     "officialNameEn": "French Republic",
     "officialNameAr": "الجمهورية الفرنسية",
     "areaKm2": 551695,
@@ -1386,6 +1445,7 @@
   },
   "FM": {
     "iso2": "FM",
+    "iso3": "FSM",
     "officialNameEn": "Federated States of Micronesia",
     "officialNameAr": "ولايات ميكرونيسيا المتحدة",
     "areaKm2": 702,
@@ -1398,6 +1458,7 @@
   },
   "GA": {
     "iso2": "GA",
+    "iso3": "GAB",
     "officialNameEn": "Gabonese Republic",
     "officialNameAr": "جمهورية الغابون",
     "areaKm2": 267668,
@@ -1420,6 +1481,7 @@
   },
   "GB": {
     "iso2": "GB",
+    "iso3": "GBR",
     "officialNameEn": "United Kingdom of Great Britain and Northern Ireland",
     "officialNameAr": "المملكة المتحدة لبريطانيا العظمى وايرلندا الشمالية",
     "areaKm2": 242900,
@@ -1440,6 +1502,7 @@
   },
   "GE": {
     "iso2": "GE",
+    "iso3": "GEO",
     "officialNameEn": "Georgia",
     "officialNameAr": "جورجيا",
     "areaKm2": 69700,
@@ -1463,6 +1526,7 @@
   },
   "GH": {
     "iso2": "GH",
+    "iso3": "GHA",
     "officialNameEn": "Republic of Ghana",
     "officialNameAr": "جمهورية غانا",
     "areaKm2": 238533,
@@ -1485,6 +1549,7 @@
   },
   "GN": {
     "iso2": "GN",
+    "iso3": "GIN",
     "officialNameEn": "Republic of Guinea",
     "officialNameAr": "جمهورية غينيا",
     "areaKm2": 245857,
@@ -1510,6 +1575,7 @@
   },
   "GM": {
     "iso2": "GM",
+    "iso3": "GMB",
     "officialNameEn": "Republic of the Gambia",
     "officialNameAr": "جمهورية غامبيا",
     "areaKm2": 10689,
@@ -1530,6 +1596,7 @@
   },
   "GW": {
     "iso2": "GW",
+    "iso3": "GNB",
     "officialNameEn": "Republic of Guinea-Bissau",
     "officialNameAr": "جمهورية غينيا بيساو",
     "areaKm2": 36125,
@@ -1552,6 +1619,7 @@
   },
   "GQ": {
     "iso2": "GQ",
+    "iso3": "GNQ",
     "officialNameEn": "Republic of Equatorial Guinea",
     "officialNameAr": "جمهورية غينيا الاستوائية",
     "areaKm2": 28051,
@@ -1575,6 +1643,7 @@
   },
   "GR": {
     "iso2": "GR",
+    "iso3": "GRC",
     "officialNameEn": "Hellenic Republic",
     "officialNameAr": "الجمهورية الهيلينية",
     "areaKm2": 131990,
@@ -1598,6 +1667,7 @@
   },
   "GD": {
     "iso2": "GD",
+    "iso3": "GRD",
     "officialNameEn": "Grenada",
     "officialNameAr": "غرينادا",
     "areaKm2": 344,
@@ -1616,6 +1686,7 @@
   },
   "GT": {
     "iso2": "GT",
+    "iso3": "GTM",
     "officialNameEn": "Republic of Guatemala",
     "officialNameAr": "جمهورية غواتيمالا",
     "areaKm2": 108889,
@@ -1639,6 +1710,7 @@
   },
   "GY": {
     "iso2": "GY",
+    "iso3": "GUY",
     "officialNameEn": "Co-operative Republic of Guyana",
     "officialNameAr": "جمهورية غيانا التعاونية",
     "areaKm2": 214969,
@@ -1661,6 +1733,7 @@
   },
   "HN": {
     "iso2": "HN",
+    "iso3": "HND",
     "officialNameEn": "Republic of Honduras",
     "officialNameAr": "جمهورية هندوراس",
     "areaKm2": 112492,
@@ -1683,6 +1756,7 @@
   },
   "HR": {
     "iso2": "HR",
+    "iso3": "HRV",
     "officialNameEn": "Republic of Croatia",
     "officialNameAr": "جمهورية كرواتيا",
     "areaKm2": 56594,
@@ -1707,6 +1781,7 @@
   },
   "HT": {
     "iso2": "HT",
+    "iso3": "HTI",
     "officialNameEn": "Republic of Haiti",
     "officialNameAr": "جمهورية هايتي",
     "areaKm2": 27750,
@@ -1728,6 +1803,7 @@
   },
   "HU": {
     "iso2": "HU",
+    "iso3": "HUN",
     "officialNameEn": "Hungary",
     "officialNameAr": "الجمهورية المجرية",
     "areaKm2": 93028,
@@ -1754,6 +1830,7 @@
   },
   "ID": {
     "iso2": "ID",
+    "iso3": "IDN",
     "officialNameEn": "Republic of Indonesia",
     "officialNameAr": "جمهورية إندونيسيا",
     "areaKm2": 1904569,
@@ -1776,6 +1853,7 @@
   },
   "IN": {
     "iso2": "IN",
+    "iso3": "IND",
     "officialNameEn": "Republic of India",
     "officialNameAr": "جمهورية الهند",
     "areaKm2": 3287590,
@@ -1803,6 +1881,7 @@
   },
   "IE": {
     "iso2": "IE",
+    "iso3": "IRL",
     "officialNameEn": "Republic of Ireland",
     "officialNameAr": "جمهورية أيرلندا",
     "areaKm2": 70273,
@@ -1824,6 +1903,7 @@
   },
   "IR": {
     "iso2": "IR",
+    "iso3": "IRN",
     "officialNameEn": "Islamic Republic of Iran",
     "officialNameAr": "جمهورية إيران الإسلامية",
     "areaKm2": 1648195,
@@ -1850,6 +1930,7 @@
   },
   "IQ": {
     "iso2": "IQ",
+    "iso3": "IRQ",
     "officialNameEn": "Republic of Iraq",
     "officialNameAr": "جمهورية العراق",
     "areaKm2": 438317,
@@ -1877,6 +1958,7 @@
   },
   "IS": {
     "iso2": "IS",
+    "iso3": "ISL",
     "officialNameEn": "Iceland",
     "officialNameAr": "آيسلندا",
     "areaKm2": 103000,
@@ -1895,6 +1977,7 @@
   },
   "IL": {
     "iso2": "IL",
+    "iso3": "ISR",
     "officialNameEn": "State of Israel",
     "officialNameAr": "دولة إسرائيل",
     "areaKm2": 20770,
@@ -1920,6 +2003,7 @@
   },
   "IT": {
     "iso2": "IT",
+    "iso3": "ITA",
     "officialNameEn": "Italian Republic",
     "officialNameAr": "الجمهورية الإيطالية",
     "areaKm2": 301336,
@@ -1945,6 +2029,7 @@
   },
   "JM": {
     "iso2": "JM",
+    "iso3": "JAM",
     "officialNameEn": "Jamaica",
     "officialNameAr": "جامايكا",
     "areaKm2": 10991,
@@ -1964,6 +2049,7 @@
   },
   "JO": {
     "iso2": "JO",
+    "iso3": "JOR",
     "officialNameEn": "Hashemite Kingdom of Jordan",
     "officialNameAr": "المملكة الأردنية الهاشمية",
     "areaKm2": 89342,
@@ -1988,6 +2074,7 @@
   },
   "JP": {
     "iso2": "JP",
+    "iso3": "JPN",
     "officialNameEn": "Japan",
     "officialNameAr": "اليابان",
     "areaKm2": 377930,
@@ -2006,6 +2093,7 @@
   },
   "KZ": {
     "iso2": "KZ",
+    "iso3": "KAZ",
     "officialNameEn": "Republic of Kazakhstan",
     "officialNameAr": "جمهورية كازاخستان",
     "areaKm2": 2724900,
@@ -2031,6 +2119,7 @@
   },
   "KE": {
     "iso2": "KE",
+    "iso3": "KEN",
     "officialNameEn": "Republic of Kenya",
     "officialNameAr": "جمهورية كينيا",
     "areaKm2": 580367,
@@ -2056,6 +2145,7 @@
   },
   "KG": {
     "iso2": "KG",
+    "iso3": "KGZ",
     "officialNameEn": "Kyrgyz Republic",
     "officialNameAr": "الجمهورية القيرغيزية",
     "areaKm2": 199951,
@@ -2080,6 +2170,7 @@
   },
   "KH": {
     "iso2": "KH",
+    "iso3": "KHM",
     "officialNameEn": "Kingdom of Cambodia",
     "officialNameAr": "مملكة كمبوديا",
     "areaKm2": 181035,
@@ -2107,6 +2198,7 @@
   },
   "KI": {
     "iso2": "KI",
+    "iso3": "KIR",
     "officialNameEn": "Independent and Sovereign Republic of Kiribati",
     "officialNameAr": "جمهورية كيريباتي",
     "areaKm2": 811,
@@ -2131,6 +2223,7 @@
   },
   "KN": {
     "iso2": "KN",
+    "iso3": "KNA",
     "officialNameEn": "Federation of Saint Christopher and Nevis",
     "officialNameAr": "اتحاد القديس كريستوفر ونيفيس",
     "areaKm2": 261,
@@ -2149,6 +2242,7 @@
   },
   "KR": {
     "iso2": "KR",
+    "iso3": "KOR",
     "officialNameEn": "Republic of Korea",
     "officialNameAr": "جمهورية كوريا",
     "areaKm2": 100210,
@@ -2169,6 +2263,7 @@
   },
   "KW": {
     "iso2": "KW",
+    "iso3": "KWT",
     "officialNameEn": "State of Kuwait",
     "officialNameAr": "دولة الكويت",
     "areaKm2": 17818,
@@ -2190,6 +2285,7 @@
   },
   "LA": {
     "iso2": "LA",
+    "iso3": "LAO",
     "officialNameEn": "Lao People's Democratic Republic",
     "officialNameAr": "جمهورية لاوس الديمقراطية الشعبية",
     "areaKm2": 236800,
@@ -2214,6 +2310,7 @@
   },
   "LB": {
     "iso2": "LB",
+    "iso3": "LBN",
     "officialNameEn": "Lebanese Republic",
     "officialNameAr": "الجمهورية اللبنانية",
     "areaKm2": 10452,
@@ -2236,6 +2333,7 @@
   },
   "LR": {
     "iso2": "LR",
+    "iso3": "LBR",
     "officialNameEn": "Republic of Liberia",
     "officialNameAr": "جمهورية ليبيريا",
     "areaKm2": 111369,
@@ -2258,6 +2356,7 @@
   },
   "LY": {
     "iso2": "LY",
+    "iso3": "LBY",
     "officialNameEn": "State of Libya",
     "officialNameAr": "دولة ليبيا",
     "areaKm2": 1759540,
@@ -2283,6 +2382,7 @@
   },
   "LC": {
     "iso2": "LC",
+    "iso3": "LCA",
     "officialNameEn": "Saint Lucia",
     "officialNameAr": "سانت لوسيا",
     "areaKm2": 616,
@@ -2301,6 +2401,7 @@
   },
   "LI": {
     "iso2": "LI",
+    "iso3": "LIE",
     "officialNameEn": "Principality of Liechtenstein",
     "officialNameAr": "إمارة ليختنشتاين",
     "areaKm2": 160,
@@ -2322,6 +2423,7 @@
   },
   "LK": {
     "iso2": "LK",
+    "iso3": "LKA",
     "officialNameEn": "Democratic Socialist Republic of Sri Lanka",
     "officialNameAr": "جمهورية سريلانكا الديمقراطية الشعبية",
     "areaKm2": 65610,
@@ -2343,6 +2445,7 @@
   },
   "LS": {
     "iso2": "LS",
+    "iso3": "LSO",
     "officialNameEn": "Kingdom of Lesotho",
     "officialNameAr": "مملكة ليسوتو",
     "areaKm2": 30355,
@@ -2369,6 +2472,7 @@
   },
   "LT": {
     "iso2": "LT",
+    "iso3": "LTU",
     "officialNameEn": "Republic of Lithuania",
     "officialNameAr": "جمهورية ليتوانيا",
     "areaKm2": 65300,
@@ -2392,6 +2496,7 @@
   },
   "LU": {
     "iso2": "LU",
+    "iso3": "LUX",
     "officialNameEn": "Grand Duchy of Luxembourg",
     "officialNameAr": "دوقية لوكسمبورغ",
     "areaKm2": 2586,
@@ -2416,6 +2521,7 @@
   },
   "LV": {
     "iso2": "LV",
+    "iso3": "LVA",
     "officialNameEn": "Republic of Latvia",
     "officialNameAr": "جمهورية لاتفيا",
     "areaKm2": 64559,
@@ -2439,6 +2545,7 @@
   },
   "MA": {
     "iso2": "MA",
+    "iso3": "MAR",
     "officialNameEn": "Kingdom of Morocco",
     "officialNameAr": "المملكة المغربية",
     "areaKm2": 446550,
@@ -2462,6 +2569,7 @@
   },
   "MC": {
     "iso2": "MC",
+    "iso3": "MCO",
     "officialNameEn": "Principality of Monaco",
     "officialNameAr": "إمارة موناكو",
     "areaKm2": 2.02,
@@ -2482,6 +2590,7 @@
   },
   "MD": {
     "iso2": "MD",
+    "iso3": "MDA",
     "officialNameEn": "Republic of Moldova",
     "officialNameAr": "جمهورية مولدوڤا",
     "areaKm2": 33846,
@@ -2503,6 +2612,7 @@
   },
   "MG": {
     "iso2": "MG",
+    "iso3": "MDG",
     "officialNameEn": "Republic of Madagascar",
     "officialNameAr": "جمهورية مدغشقر",
     "areaKm2": 587041,
@@ -2522,6 +2632,7 @@
   },
   "MV": {
     "iso2": "MV",
+    "iso3": "MDV",
     "officialNameEn": "Republic of the Maldives",
     "officialNameAr": "جمهورية المالديف",
     "areaKm2": 300,
@@ -2540,6 +2651,7 @@
   },
   "MX": {
     "iso2": "MX",
+    "iso3": "MEX",
     "officialNameEn": "United Mexican States",
     "officialNameAr": "الولايات المتحدة المكسيكية",
     "areaKm2": 1964375,
@@ -2562,6 +2674,7 @@
   },
   "MH": {
     "iso2": "MH",
+    "iso3": "MHL",
     "officialNameEn": "Republic of the Marshall Islands",
     "officialNameAr": "جمهورية جزر مارشال",
     "areaKm2": 181,
@@ -2581,6 +2694,7 @@
   },
   "MK": {
     "iso2": "MK",
+    "iso3": "MKD",
     "officialNameEn": "Republic of North Macedonia",
     "officialNameAr": "جمهورية شمال مقدونيا",
     "areaKm2": 25713,
@@ -2605,6 +2719,7 @@
   },
   "ML": {
     "iso2": "ML",
+    "iso3": "MLI",
     "officialNameEn": "Republic of Mali",
     "officialNameAr": "جمهورية مالي",
     "areaKm2": 1240192,
@@ -2631,6 +2746,7 @@
   },
   "MT": {
     "iso2": "MT",
+    "iso3": "MLT",
     "officialNameEn": "Republic of Malta",
     "officialNameAr": "جمهورية مالطا",
     "areaKm2": 316,
@@ -2650,6 +2766,7 @@
   },
   "MM": {
     "iso2": "MM",
+    "iso3": "MMR",
     "officialNameEn": "Republic of the Union of Myanmar",
     "officialNameAr": "جمهورية اتحاد ميانمار",
     "areaKm2": 676578,
@@ -2674,6 +2791,7 @@
   },
   "ME": {
     "iso2": "ME",
+    "iso3": "MNE",
     "officialNameEn": "Montenegro",
     "officialNameAr": "الجبل الاسود",
     "areaKm2": 13812,
@@ -2698,6 +2816,7 @@
   },
   "MN": {
     "iso2": "MN",
+    "iso3": "MNG",
     "officialNameEn": "Mongolia",
     "officialNameAr": "جمهورية منغوليا",
     "areaKm2": 1564110,
@@ -2719,6 +2838,7 @@
   },
   "MZ": {
     "iso2": "MZ",
+    "iso3": "MOZ",
     "officialNameEn": "Republic of Mozambique",
     "officialNameAr": "جمهورية موزمبيق",
     "areaKm2": 801590,
@@ -2744,6 +2864,7 @@
   },
   "MR": {
     "iso2": "MR",
+    "iso3": "MRT",
     "officialNameEn": "Islamic Republic of Mauritania",
     "officialNameAr": "الجمهورية الإسلامية الموريتانية",
     "areaKm2": 1030700,
@@ -2767,6 +2888,7 @@
   },
   "MU": {
     "iso2": "MU",
+    "iso3": "MUS",
     "officialNameEn": "Republic of Mauritius",
     "officialNameAr": "جمهورية موريشيوس",
     "areaKm2": 2040,
@@ -2787,6 +2909,7 @@
   },
   "MW": {
     "iso2": "MW",
+    "iso3": "MWI",
     "officialNameEn": "Republic of Malawi",
     "officialNameAr": "جمهورية مالاوي",
     "areaKm2": 118484,
@@ -2810,6 +2933,7 @@
   },
   "MY": {
     "iso2": "MY",
+    "iso3": "MYS",
     "officialNameEn": "Malaysia",
     "officialNameAr": "ماليزيا",
     "areaKm2": 330803,
@@ -2833,6 +2957,7 @@
   },
   "NA": {
     "iso2": "NA",
+    "iso3": "NAM",
     "officialNameEn": "Republic of Namibia",
     "officialNameAr": "جمهورية ناميبيا",
     "areaKm2": 825615,
@@ -2869,6 +2994,7 @@
   },
   "NE": {
     "iso2": "NE",
+    "iso3": "NER",
     "officialNameEn": "Republic of Niger",
     "officialNameAr": "جمهورية النيجر",
     "areaKm2": 1267000,
@@ -2895,6 +3021,7 @@
   },
   "NG": {
     "iso2": "NG",
+    "iso3": "NGA",
     "officialNameEn": "Federal Republic of Nigeria",
     "officialNameAr": "جمهورية نيجيريا الاتحادية",
     "areaKm2": 923768,
@@ -2918,6 +3045,7 @@
   },
   "NI": {
     "iso2": "NI",
+    "iso3": "NIC",
     "officialNameEn": "Republic of Nicaragua",
     "officialNameAr": "جمهورية نيكاراغوا",
     "areaKm2": 130373,
@@ -2939,6 +3067,7 @@
   },
   "NL": {
     "iso2": "NL",
+    "iso3": "NLD",
     "officialNameEn": "Kingdom of the Netherlands",
     "officialNameAr": "هولندا",
     "areaKm2": 41850,
@@ -2960,6 +3089,7 @@
   },
   "NO": {
     "iso2": "NO",
+    "iso3": "NOR",
     "officialNameEn": "Kingdom of Norway",
     "officialNameAr": "مملكة النرويج",
     "areaKm2": 323802,
@@ -2984,6 +3114,7 @@
   },
   "NP": {
     "iso2": "NP",
+    "iso3": "NPL",
     "officialNameEn": "Federal Democratic Republic of Nepal",
     "officialNameAr": "جمهورية نيبال الديمقراطية الاتحادية",
     "areaKm2": 147181,
@@ -3005,6 +3136,7 @@
   },
   "NR": {
     "iso2": "NR",
+    "iso3": "NRU",
     "officialNameEn": "Republic of Nauru",
     "officialNameAr": "جمهورية ناورو",
     "areaKm2": 21,
@@ -3024,6 +3156,7 @@
   },
   "NZ": {
     "iso2": "NZ",
+    "iso3": "NZL",
     "officialNameEn": "New Zealand",
     "officialNameAr": "نيوزيلندا",
     "areaKm2": 270467,
@@ -3044,6 +3177,7 @@
   },
   "OM": {
     "iso2": "OM",
+    "iso3": "OMN",
     "officialNameEn": "Sultanate of Oman",
     "officialNameAr": "سلطنة عمان",
     "areaKm2": 309500,
@@ -3066,6 +3200,7 @@
   },
   "PK": {
     "iso2": "PK",
+    "iso3": "PAK",
     "officialNameEn": "Islamic Republic of Pakistan",
     "officialNameAr": "جمهورية باكستان الإسلامية",
     "areaKm2": 881912,
@@ -3090,6 +3225,7 @@
   },
   "PA": {
     "iso2": "PA",
+    "iso3": "PAN",
     "officialNameEn": "Republic of Panama",
     "officialNameAr": "جمهورية بنما",
     "areaKm2": 75417,
@@ -3116,6 +3252,7 @@
   },
   "PE": {
     "iso2": "PE",
+    "iso3": "PER",
     "officialNameEn": "Republic of Peru",
     "officialNameAr": "جمهورية بيرو",
     "areaKm2": 1285216,
@@ -3142,6 +3279,7 @@
   },
   "PH": {
     "iso2": "PH",
+    "iso3": "PHL",
     "officialNameEn": "Republic of the Philippines",
     "officialNameAr": "جمهورية الفلبين",
     "areaKm2": 342353,
@@ -3161,6 +3299,7 @@
   },
   "PW": {
     "iso2": "PW",
+    "iso3": "PLW",
     "officialNameEn": "Republic of Palau",
     "officialNameAr": "جمهورية بالاو",
     "areaKm2": 459,
@@ -3180,6 +3319,7 @@
   },
   "PG": {
     "iso2": "PG",
+    "iso3": "PNG",
     "officialNameEn": "Independent State of Papua New Guinea",
     "officialNameAr": "دولة بابوا غينيا الجديدة",
     "areaKm2": 462840,
@@ -3202,6 +3342,7 @@
   },
   "PL": {
     "iso2": "PL",
+    "iso3": "POL",
     "officialNameEn": "Republic of Poland",
     "officialNameAr": "الجمهورية البولندية",
     "areaKm2": 312679,
@@ -3228,6 +3369,7 @@
   },
   "KP": {
     "iso2": "KP",
+    "iso3": "PRK",
     "officialNameEn": "Democratic People's Republic of Korea",
     "officialNameAr": "جمهورية كوريا الديمقراطية الشعبية",
     "areaKm2": 120538,
@@ -3250,6 +3392,7 @@
   },
   "PT": {
     "iso2": "PT",
+    "iso3": "PRT",
     "officialNameEn": "Portuguese Republic",
     "officialNameAr": "الجمهورية البرتغالية",
     "areaKm2": 92090,
@@ -3270,6 +3413,7 @@
   },
   "PY": {
     "iso2": "PY",
+    "iso3": "PRY",
     "officialNameEn": "Republic of Paraguay",
     "officialNameAr": "جمهورية باراغواي",
     "areaKm2": 406752,
@@ -3293,6 +3437,7 @@
   },
   "QA": {
     "iso2": "QA",
+    "iso3": "QAT",
     "officialNameEn": "State of Qatar",
     "officialNameAr": "دولة قطر",
     "areaKm2": 11586,
@@ -3313,6 +3458,7 @@
   },
   "RO": {
     "iso2": "RO",
+    "iso3": "ROU",
     "officialNameEn": "Romania",
     "officialNameAr": "رومانيا",
     "areaKm2": 238391,
@@ -3337,6 +3483,7 @@
   },
   "RU": {
     "iso2": "RU",
+    "iso3": "RUS",
     "officialNameEn": "Russian Federation",
     "officialNameAr": "روسيا الاتحادية",
     "areaKm2": 17098242,
@@ -3370,6 +3517,7 @@
   },
   "RW": {
     "iso2": "RW",
+    "iso3": "RWA",
     "officialNameEn": "Republic of Rwanda",
     "officialNameAr": "جمهورية رواندا",
     "areaKm2": 26338,
@@ -3395,6 +3543,7 @@
   },
   "SA": {
     "iso2": "SA",
+    "iso3": "SAU",
     "officialNameEn": "Kingdom of Saudi Arabia",
     "officialNameAr": "المملكة العربية السعودية",
     "areaKm2": 2149690,
@@ -3421,6 +3570,7 @@
   },
   "SD": {
     "iso2": "SD",
+    "iso3": "SDN",
     "officialNameEn": "Republic of the Sudan",
     "officialNameAr": "جمهورية السودان",
     "areaKm2": 1886068,
@@ -3448,6 +3598,7 @@
   },
   "SN": {
     "iso2": "SN",
+    "iso3": "SEN",
     "officialNameEn": "Republic of Senegal",
     "officialNameAr": "جمهورية السنغال",
     "areaKm2": 196722,
@@ -3472,6 +3623,7 @@
   },
   "SG": {
     "iso2": "SG",
+    "iso3": "SGP",
     "officialNameEn": "Republic of Singapore",
     "officialNameAr": "جمهورية سنغافورة",
     "areaKm2": 710,
@@ -3493,6 +3645,7 @@
   },
   "SB": {
     "iso2": "SB",
+    "iso3": "SLB",
     "officialNameEn": "Solomon Islands",
     "officialNameAr": "جزر سليمان",
     "areaKm2": 28896,
@@ -3511,6 +3664,7 @@
   },
   "SL": {
     "iso2": "SL",
+    "iso3": "SLE",
     "officialNameEn": "Republic of Sierra Leone",
     "officialNameAr": "جمهورية سيراليون",
     "areaKm2": 71740,
@@ -3532,6 +3686,7 @@
   },
   "SV": {
     "iso2": "SV",
+    "iso3": "SLV",
     "officialNameEn": "Republic of El Salvador",
     "officialNameAr": "جمهورية السلفادور",
     "areaKm2": 21041,
@@ -3553,6 +3708,7 @@
   },
   "SM": {
     "iso2": "SM",
+    "iso3": "SMR",
     "officialNameEn": "Most Serene Republic of San Marino",
     "officialNameAr": "جمهورية سان مارينو",
     "areaKm2": 61,
@@ -3573,6 +3729,7 @@
   },
   "SO": {
     "iso2": "SO",
+    "iso3": "SOM",
     "officialNameEn": "Federal Republic of Somalia",
     "officialNameAr": "جمهورية الصومال الفيدرالية",
     "areaKm2": 637657,
@@ -3596,6 +3753,7 @@
   },
   "RS": {
     "iso2": "RS",
+    "iso3": "SRB",
     "officialNameEn": "Republic of Serbia",
     "officialNameAr": "جمهورية صيربيا",
     "areaKm2": 88361,
@@ -3623,6 +3781,7 @@
   },
   "SS": {
     "iso2": "SS",
+    "iso3": "SSD",
     "officialNameEn": "Republic of South Sudan",
     "officialNameAr": "جمهورية جنوب السودان",
     "areaKm2": 619745,
@@ -3648,6 +3807,7 @@
   },
   "ST": {
     "iso2": "ST",
+    "iso3": "STP",
     "officialNameEn": "Democratic Republic of São Tomé and Príncipe",
     "officialNameAr": "جمهورية ساو تومي وبرينسيب الديمقراطية",
     "areaKm2": 964,
@@ -3666,6 +3826,7 @@
   },
   "SR": {
     "iso2": "SR",
+    "iso3": "SUR",
     "officialNameEn": "Republic of Suriname",
     "officialNameAr": "جمهورية سورينام",
     "areaKm2": 163820,
@@ -3688,6 +3849,7 @@
   },
   "SK": {
     "iso2": "SK",
+    "iso3": "SVK",
     "officialNameEn": "Slovak Republic",
     "officialNameAr": "جمهورية سلوفاكيا",
     "areaKm2": 49037,
@@ -3712,6 +3874,7 @@
   },
   "SI": {
     "iso2": "SI",
+    "iso3": "SVN",
     "officialNameEn": "Republic of Slovenia",
     "officialNameAr": "جمهورية سلوفينيا",
     "areaKm2": 20273,
@@ -3735,6 +3898,7 @@
   },
   "SE": {
     "iso2": "SE",
+    "iso3": "SWE",
     "officialNameEn": "Kingdom of Sweden",
     "officialNameAr": "مملكة السويد",
     "areaKm2": 450295,
@@ -3756,6 +3920,7 @@
   },
   "SZ": {
     "iso2": "SZ",
+    "iso3": "SWZ",
     "officialNameEn": "Kingdom of Eswatini",
     "officialNameAr": "مملكة إسواتيني",
     "areaKm2": 17364,
@@ -3783,6 +3948,7 @@
   },
   "SC": {
     "iso2": "SC",
+    "iso3": "SYC",
     "officialNameEn": "Republic of Seychelles",
     "officialNameAr": "جمهورية سيشل",
     "areaKm2": 452,
@@ -3803,6 +3969,7 @@
   },
   "SY": {
     "iso2": "SY",
+    "iso3": "SYR",
     "officialNameEn": "Syrian Arab Republic",
     "officialNameAr": "الجمهورية العربية السورية",
     "areaKm2": 185180,
@@ -3827,6 +3994,7 @@
   },
   "TD": {
     "iso2": "TD",
+    "iso3": "TCD",
     "officialNameEn": "Republic of Chad",
     "officialNameAr": "جمهورية تشاد",
     "areaKm2": 1284000,
@@ -3853,6 +4021,7 @@
   },
   "TG": {
     "iso2": "TG",
+    "iso3": "TGO",
     "officialNameEn": "Togolese Republic",
     "officialNameAr": "جمهورية توغو",
     "areaKm2": 56785,
@@ -3875,6 +4044,7 @@
   },
   "TH": {
     "iso2": "TH",
+    "iso3": "THA",
     "officialNameEn": "Kingdom of Thailand",
     "officialNameAr": "مملكة تايلند",
     "areaKm2": 513120,
@@ -3898,6 +4068,7 @@
   },
   "TJ": {
     "iso2": "TJ",
+    "iso3": "TJK",
     "officialNameEn": "Republic of Tajikistan",
     "officialNameAr": "جمهورية طاجيكستان",
     "areaKm2": 143100,
@@ -3922,6 +4093,7 @@
   },
   "TM": {
     "iso2": "TM",
+    "iso3": "TKM",
     "officialNameEn": "Turkmenistan",
     "officialNameAr": "تركمانستان",
     "areaKm2": 488100,
@@ -3946,6 +4118,7 @@
   },
   "TL": {
     "iso2": "TL",
+    "iso3": "TLS",
     "officialNameEn": "Democratic Republic of Timor-Leste",
     "officialNameAr": "جمهورية تيمور الشرقية الديمقراطية",
     "areaKm2": 14874,
@@ -3967,6 +4140,7 @@
   },
   "TO": {
     "iso2": "TO",
+    "iso3": "TON",
     "officialNameEn": "Kingdom of Tonga",
     "officialNameAr": "مملكة تونغا",
     "areaKm2": 747,
@@ -3986,6 +4160,7 @@
   },
   "TT": {
     "iso2": "TT",
+    "iso3": "TTO",
     "officialNameEn": "Republic of Trinidad and Tobago",
     "officialNameAr": "جمهورية ترينيداد وتوباغو",
     "areaKm2": 5130,
@@ -4004,6 +4179,7 @@
   },
   "TN": {
     "iso2": "TN",
+    "iso3": "TUN",
     "officialNameEn": "Tunisian Republic",
     "officialNameAr": "الجمهورية التونسية",
     "areaKm2": 163610,
@@ -4025,6 +4201,7 @@
   },
   "TR": {
     "iso2": "TR",
+    "iso3": "TUR",
     "officialNameEn": "Republic of Türkiye",
     "officialNameAr": "الجمهورية التركية",
     "areaKm2": 783562,
@@ -4052,6 +4229,7 @@
   },
   "TV": {
     "iso2": "TV",
+    "iso3": "TUV",
     "officialNameEn": "Tuvalu",
     "officialNameAr": "توفالو",
     "areaKm2": 26,
@@ -4076,6 +4254,7 @@
   },
   "TZ": {
     "iso2": "TZ",
+    "iso3": "TZA",
     "officialNameEn": "United Republic of Tanzania",
     "officialNameAr": "جمهورية تنزانيا الاتحادية",
     "areaKm2": 945087,
@@ -4104,6 +4283,7 @@
   },
   "UG": {
     "iso2": "UG",
+    "iso3": "UGA",
     "officialNameEn": "Republic of Uganda",
     "officialNameAr": "جمهورية أوغندا",
     "areaKm2": 241550,
@@ -4129,6 +4309,7 @@
   },
   "UA": {
     "iso2": "UA",
+    "iso3": "UKR",
     "officialNameEn": "Ukraine",
     "officialNameAr": "أوكرانيا",
     "areaKm2": 603500,
@@ -4155,6 +4336,7 @@
   },
   "UY": {
     "iso2": "UY",
+    "iso3": "URY",
     "officialNameEn": "Oriental Republic of Uruguay",
     "officialNameAr": "جمهورية الأوروغواي الشرقية",
     "areaKm2": 181034,
@@ -4176,6 +4358,7 @@
   },
   "US": {
     "iso2": "US",
+    "iso3": "USA",
     "officialNameEn": "United States of America",
     "officialNameAr": "الولايات المتحدة الامريكية",
     "areaKm2": 9372610,
@@ -4197,6 +4380,7 @@
   },
   "UZ": {
     "iso2": "UZ",
+    "iso3": "UZB",
     "officialNameEn": "Republic of Uzbekistan",
     "officialNameAr": "جمهورية أوزباكستان",
     "areaKm2": 447400,
@@ -4222,6 +4406,7 @@
   },
   "VC": {
     "iso2": "VC",
+    "iso3": "VCT",
     "officialNameEn": "Saint Vincent and the Grenadines",
     "officialNameAr": "سانت فينسنت والغرينادين",
     "areaKm2": 389,
@@ -4240,6 +4425,7 @@
   },
   "VE": {
     "iso2": "VE",
+    "iso3": "VEN",
     "officialNameEn": "Bolivarian Republic of Venezuela",
     "officialNameAr": "جمهورية فنزويلا البوليفارية",
     "areaKm2": 916445,
@@ -4262,6 +4448,7 @@
   },
   "VN": {
     "iso2": "VN",
+    "iso3": "VNM",
     "officialNameEn": "Socialist Republic of Vietnam",
     "officialNameAr": "جمهورية فيتنام الاشتراكية",
     "areaKm2": 331212,
@@ -4284,6 +4471,7 @@
   },
   "VU": {
     "iso2": "VU",
+    "iso3": "VUT",
     "officialNameEn": "Republic of Vanuatu",
     "officialNameAr": "جمهورية فانواتو",
     "areaKm2": 12189,
@@ -4304,6 +4492,7 @@
   },
   "WS": {
     "iso2": "WS",
+    "iso3": "WSM",
     "officialNameEn": "Independent State of Samoa",
     "officialNameAr": "دولة ساموا المستقلة",
     "areaKm2": 2842,
@@ -4323,6 +4512,7 @@
   },
   "YE": {
     "iso2": "YE",
+    "iso3": "YEM",
     "officialNameEn": "Republic of Yemen",
     "officialNameAr": "الجمهورية اليمنية",
     "areaKm2": 527968,
@@ -4344,6 +4534,7 @@
   },
   "ZA": {
     "iso2": "ZA",
+    "iso3": "ZAF",
     "officialNameEn": "Republic of South Africa",
     "officialNameAr": "جمهورية جنوب أفريقيا",
     "areaKm2": 1221037,
@@ -4379,6 +4570,7 @@
   },
   "ZM": {
     "iso2": "ZM",
+    "iso3": "ZMB",
     "officialNameEn": "Republic of Zambia",
     "officialNameAr": "جمهورية زامبيا",
     "areaKm2": 752612,
@@ -4406,6 +4598,7 @@
   },
   "ZW": {
     "iso2": "ZW",
+    "iso3": "ZWE",
     "officialNameEn": "Republic of Zimbabwe",
     "officialNameAr": "جمهورية زيمبابوي",
     "areaKm2": 390757,
@@ -4483,6 +4676,7 @@
   },
   "PS": {
     "iso2": "PS",
+    "iso3": "PSE",
     "officialNameEn": "State of Palestine",
     "officialNameAr": "دولة فلسطين",
     "areaKm2": 6220,
@@ -4515,6 +4709,7 @@
   },
   "VA": {
     "iso2": "VA",
+    "iso3": "VAT",
     "officialNameEn": "Vatican City State",
     "officialNameAr": "دولة مدينة الفاتيكان",
     "areaKm2": 0.44,
