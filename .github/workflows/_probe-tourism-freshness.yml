@@ -20,3 +20,10 @@ jobs:
         run: |
           curl -sS "https://api.worldbank.org/v2/country/JPN/indicator/ST.INT.ARVL?format=json&mrv=3" | head -c 800
           echo
+      - name: Probe OWID tourism receipts freshness
+        run: |
+          echo "--- international-tourism-receipts.csv metadata ---"
+          curl -sSL "https://ourworldindata.org/grapher/international-tourism-receipts.metadata.json" | head -c 1500
+          echo
+          echo "--- tail rows ---"
+          curl -sSL "https://ourworldindata.org/grapher/international-tourism-receipts.csv" | grep -E "^Saudi Arabia|^Japan" | tail -10
