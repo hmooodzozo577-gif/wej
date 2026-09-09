@@ -26,6 +26,7 @@ import type {
   Lang,
   PurposeId,
 } from '../data/types';
+import { AccommodationInfo } from '../components/AccommodationInfo';
 import { FlagBanner, FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
 import { TravelInfo } from '../components/TravelInfo';
@@ -198,6 +199,7 @@ export function Destination() {
               </div>
               {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
               <TravelInfo destination={d} />
+              <AccommodationInfo destination={d} />
             </div>
           </div>
         </div>
@@ -352,6 +354,7 @@ export function Destination() {
             </div>
             {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
             <TravelInfo destination={d} />
+            <AccommodationInfo destination={d} />
           </div>
         </div>
       </div>

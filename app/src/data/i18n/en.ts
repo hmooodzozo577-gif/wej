@@ -65,4 +65,17 @@ export const EN: I18nDict = {
     nonStop: 'Non-stop',
     offerFoundNote: 'Real flight offer from our travel search — informational only, not a booking.',
   },
+  // Phase 13.5a — Accommodation Discovery. Like travel/location above,
+  // not part of the original wejhaty.html copy.
+  accommodation: {
+    title: 'Accommodation',
+    costLabel: 'General accommodation affordability',
+    guidanceByCostLevel: [
+      'Accommodation here is generally budget-friendly, relative to other destinations in our catalog.',
+      'Accommodation here is generally moderately priced, relative to other destinations in our catalog.',
+      'Accommodation here is generally on the pricier side, relative to other destinations in our catalog.',
+      'Accommodation here is generally premium/luxury-priced, relative to other destinations in our catalog.',
+    ],
+    disclaimer: 'General guidance based on our destination data — not a live price, availability, or booking.',
+  },
 };

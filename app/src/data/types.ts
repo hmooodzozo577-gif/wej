@@ -426,6 +426,22 @@ export interface TravelStrings {
   offerFoundNote: string;
 }
 
+/** Phase 13.5a — Accommodation Discovery strings. Like LocationStrings/
+ *  TravelStrings, no wejhaty.html equivalent, so added directly in
+ *  data/i18n/ar.ts / en.ts rather than sourced from the generated JSON. */
+export interface AccommodationStrings {
+  title: string;
+  costLabel: string;
+  /** 4-tuple, one qualitative guidance sentence per Destination.costLevel
+   *  (1-4) — the SAME costLevel already shown on this page as the
+   *  general cost tier, reused here for an accommodation-specific
+   *  framing. Never a numeric price. */
+  guidanceByCostLevel: [string, string, string, string];
+  /** Always shown alongside guidanceByCostLevel — makes clear this is
+   *  general, relative guidance, never a live price or availability. */
+  disclaimer: string;
+}
+
 export interface I18nDict {
   dir: 'rtl' | 'ltr';
   htmlLang: 'ar' | 'en';
@@ -442,6 +458,7 @@ export interface I18nDict {
   explore: ExploreStrings;
   location: LocationStrings;
   travel: TravelStrings;
+  accommodation: AccommodationStrings;
   costLevels: [string, string, string, string];
   climateLabels: Record<ClimateKind, string>;
   visaLabels: Record<VisaDifficulty, string>;
