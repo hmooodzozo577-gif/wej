@@ -53,6 +53,21 @@ It is a **general economy-wide price level estimate**. It is **not**:
 `TravelCostIndexInfo.tsx`'s disclaimer copy (EN/AR) says this explicitly
 on every render.
 
+### UI (Phase 13.5-followup)
+
+`TravelCostIndexInfo.tsx` shows the actual numeric `priceLevelIndex`
+(rounded to the nearest whole number for display only —
+`formatPriceLevelIndex()`; classification always uses the unrounded
+value), the fixed "United States = 100" baseline, the short tier word
+(Low/Moderate/High/Very high), a plain-language relative sentence per
+tier, and the source period — never an invented 0–100 "Wejhaty score"
+and never a currency/day-budget figure. `sourcePeriodLabel` ("Source
+data: {year}") always renders `sourcePeriod` (the economic OBSERVATION
+year), never `snapshotUpdatedAt` (when this file was last regenerated —
+not shown in the UI at all currently); the two are intentionally kept
+separate so a 2025 observation is never implied to be as recent as
+whenever Wejhaty's snapshot happens to have last run.
+
 ## Pipeline
 
 ```
@@ -158,3 +173,43 @@ Permissions are least-privilege (`contents: write`, `pull-requests:
 write` — nothing else), and only first-party GitHub Actions are used
 (`actions/checkout`, `actions/setup-node`, `actions/upload-artifact` —
 the same ones `deploy-pages.yml` already uses).
+
+### Known blocker: PR creation (repository setting, not a code bug)
+
+Real `workflow_dispatch` runs prove steps 1-4 above (and the branch push
+in step 5) genuinely work end-to-end against the live World Bank API.
+The final `gh pr create` call then fails with: *"GraphQL: GitHub
+Actions is not permitted to create or approve pull requests"*. This is
+this repository's **Settings → Actions → General → Workflow
+permissions → "Allow GitHub Actions to create and approve pull
+requests"** being disabled — not a workflow or data bug, and not
+fixable from workflow YAML. The job's PR-creation step recognizes this
+exact error and logs an explicit `::error::` naming the one required
+admin action; it still fails the job (red), on purpose — a real
+snapshot pushed to a branch with no PR opened is a genuinely
+incomplete update path, not a success. Workaround not applied: a new
+PAT/secret would work around it, but this project's standing rule is
+to stop and ask before introducing a new secret rather than do that
+unilaterally. Until a repo admin enables that setting, each scheduled
+run leaves its per-run branch (with the real, validated update)
+pushed and waiting for a human to open the PR manually.
+
+## Numeric travel-budget estimates (SAR/day) — investigated, not implemented
+
+A follow-up ask was real SAR/day traveler budgets (accommodation,
+meals, local transport), separate from this general price-level index.
+Investigated: **Numbeo** (paid API required; ToS forbids redistributing
+its data through another API/feed without consent — incompatible with
+this project's snapshot/cache architecture regardless of cost; not
+pre-authorized, not added) and **Budget Your Trip** (its public API is
+being retired/delisted — not built against). No source was found in
+this pass that is simultaneously free/licensed for this use, has
+confirmed current broad country coverage, and is genuinely about
+*tourist* spending rather than resident cost-of-living. The most
+promising unexplored candidate is the U.S. State Department's Foreign
+Per Diem Rates (public-domain, government per diem lodging + M&IE
+rates by country, updated monthly) — plausible for a future pass, but
+its bulk machine-readable format/coverage was not verified live here,
+so it is a recommendation, not an implementation. `PA.NUS.GDP.PLI`
+stays a general relative-affordability index; it was never used to
+derive a currency figure.
