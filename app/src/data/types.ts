@@ -139,6 +139,11 @@ export interface CountryInfoCurrency {
 export interface CountryInfo {
   /** ISO 3166-1 alpha-2, uppercase — matches CatalogEntry.countryCode. */
   iso2: string;
+  /** ISO 3166-1 alpha-3, uppercase. Phase 11 Step 3: the only place a full
+   *  destination's iso3 exists (BasicCountry already has its own; Destination
+   *  was deliberately never given one — see CountryBase above), so border
+   *  codes can be resolved back to a catalog entry for every one of the 195. */
+  iso3: string;
   officialNameEn: string;
   officialNameAr: string;
   areaKm2: number;

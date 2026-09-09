@@ -32,26 +32,39 @@ describe('Phase 10 — F. destination routing', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'اليابان' })).toBeInTheDocument();
   });
 
-  it('every one of the original 30 destinations opens without crashing', () => {
-    for (const d of DESTINATIONS) {
-      const { unmount } = renderAt(`/destination/${d.id}`);
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
-      unmount();
-    }
-  });
+  it(
+    'every one of the original 30 destinations opens without crashing',
+    () => {
+      for (const d of DESTINATIONS) {
+        const { unmount } = renderAt(`/destination/${d.id}`);
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+        unmount();
+      }
+    },
+    // Renders and unmounts up to 30 full detail pages (now also resolving
+    // borders per page since Phase 11 Step 3) in one test — comfortably
+    // under the default 5s on a normal machine, but can brush against it
+    // under sandboxed/loaded CI, so give it real headroom rather than
+    // letting an unrelated slow run report a false failure here.
+    20000,
+  );
 
   it('a new basic-country route renders a graceful state, not a crash (e.g. Egypt)', () => {
     renderAt('/destination/eg');
     expect(screen.getByText('مصر')).toBeInTheDocument();
   });
 
-  it('every one of the 165 basic countries opens without crashing', () => {
-    for (const c of BASIC_COUNTRIES) {
-      const { unmount } = renderAt(`/destination/${c.id}`);
-      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
-      unmount();
-    }
-  });
+  it(
+    'every one of the 165 basic countries opens without crashing',
+    () => {
+      for (const c of BASIC_COUNTRIES) {
+        const { unmount } = renderAt(`/destination/${c.id}`);
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+        unmount();
+      }
+    },
+    20000,
+  );
 
   it('an unknown id shows a safe "not found" state, not a crash', () => {
     renderAt('/destination/does-not-exist');

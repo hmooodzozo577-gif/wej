@@ -172,6 +172,12 @@ for (const c of world195) {
 
   countryInfo[c.cca2] = {
     iso2: c.cca2,
+    // Phase 11 Step 3: the 30 original destinations carry no iso3 anywhere
+    // else (deliberately never retrofitted — see types.ts), so this is the
+    // only place border-code resolution can get an iso3 for ALL 195
+    // catalog entries. Same source (world-countries' cca3) already used
+    // for `borders` itself below.
+    iso3: c.cca3,
     officialNameEn: c.name.official,
     officialNameAr: c.translations.ara.official,
     areaKm2: c.area,
