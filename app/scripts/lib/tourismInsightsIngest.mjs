@@ -1,34 +1,116 @@
 // Phase 13.5d — Destination Tourism Insights: pure ingestion pipeline
 // (parse -> normalize -> validate -> serialize), separate from network
-// fetching so it is unit-testable with fixtures — mirrors
-// scripts/lib/travelCostIndexIngest.mjs's own structure. Reuses that
-// module's parseWorldBankResponse() as-is (it is generic to the World
-// Bank [metadata, rows] response shape, not specific to any indicator)
-// rather than duplicating it.
+// fetching so it is unit-testable with fixtures.
 //
-// SOURCE: World Bank Indicators API — ST.INT.ARVL ("International
-// tourism, number of arrivals") and ST.INT.RCPT.CD ("International
-// tourism, receipts (current US$)"), both World Development
-// Indicators, UNWTO-sourced. Live-verified via a real GitHub Actions
-// run (this sandboxed dev environment's own network egress is blocked
-// to worldbank.org): BOTH indicators return real HTTP-success data for
-// 2015-2020 with no gaps (USA, France checked directly with mrv=6) —
-// they are NOT archived like PA.NUS.PPPC.RF was. But neither has a
-// single observation newer than 2020, even though the API's own
-// metadata "lastupdated" field is recent — World Bank's WDI has simply
-// not received a newer UNWTO tourism update since. 2020 itself is kept
-// as a real historical observation (the pandemic collapse), never
-// dropped or "smoothed" — see app/scripts/TOURISM_INSIGHTS.md.
+// SOURCE CORRECTION (tourism-freshness pass): originally World Bank
+// ST.INT.ARVL/ST.INT.RCPT.CD (still live, but live-verified frozen at
+// 2020 — see the git history of this file). Migrated to **Our World in
+// Data**'s grapher CSVs (`international-tourist-trips` for arrivals,
+// `spending-by-international-visitors-while-visiting-a-country` for
+// receipts) — both UN Tourism-sourced, CC BY licensed, explicitly
+// designed for bulk/API reuse, and live-verified via a real GitHub
+// Actions run to have real observations through **2024** (Saudi Arabia
+// and Japan checked directly) — genuinely current, not fabricated.
+// parseWorldBankResponse() (still used by travelCostIndexIngest.mjs,
+// unaffected) does not apply to this CSV-shaped source; parseOwidCsv()
+// below is this source's own minimal parser.
 //
 // COUNTRY-CODE JOIN / EXCLUSION: same principle as
 // travelCostIndexIngest.mjs — `validCountryCodes` must be the app's
-// real EFFECTIVE catalog country codes (exclusions already applied),
-// which is what keeps Israel (IL/ISR) out and naturally filters World
-// Bank's aggregate/region pseudo-codes without a hand-maintained
-// blocklist.
-import { parseWorldBankResponse } from './travelCostIndexIngest.mjs';
+// real EFFECTIVE catalog country codes (ISO2, exclusions already
+// applied), which is what keeps Israel (IL/ISR) out. OWID's CSV rows
+// use ISO3 codes (`Code` column) — generate-tourism-insights.mjs maps
+// ISO3->ISO2 via the already-installed `world-countries` package (no
+// new dependency) before calling normalizeSeriesRows() below, and OWID's
+// own region/aggregate rows (e.g. "World", "Asia" with no real ISO3 in
+// that column) are filtered out by that same join, with no hand-
+// maintained blocklist.
 
-export { parseWorldBankResponse };
+/** Minimal CSV row parser — handles double-quoted fields (with embedded
+ *  commas or escaped `""` quotes), since some OWID entity names contain
+ *  commas (e.g. "Korea, Rep."). Deliberately not a general CSV library
+ *  (no new dependency for one well-defined column shape): returns an
+ *  array of arrays, header row included as returned[0]. */
+export function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+  const lines = text.split(/\r\n|\n/);
+  for (const line of lines) {
+    if (line.length === 0 && !inQuotes && rows.length > 0 && row.length === 0 && field === '') continue;
+    let i = 0;
+    if (!inQuotes) {
+      row = [];
+      field = '';
+    }
+    while (i < line.length) {
+      const ch = line[i];
+      if (inQuotes) {
+        if (ch === '"' && line[i + 1] === '"') {
+          field += '"';
+          i += 2;
+          continue;
+        }
+        if (ch === '"') {
+          inQuotes = false;
+          i += 1;
+          continue;
+        }
+        field += ch;
+        i += 1;
+        continue;
+      }
+      if (ch === '"') {
+        inQuotes = true;
+        i += 1;
+        continue;
+      }
+      if (ch === ',') {
+        row.push(field);
+        field = '';
+        i += 1;
+        continue;
+      }
+      field += ch;
+      i += 1;
+    }
+    if (inQuotes) {
+      // Embedded newline inside a quoted field — join with the next line.
+      field += '\n';
+      continue;
+    }
+    row.push(field);
+    if (row.length > 1 || row[0] !== '') rows.push(row);
+  }
+  return rows;
+}
+
+/** Parses an OWID grapher CSV (header: Entity,Code,Year,<value column>[,...])
+ *  into the same raw-row shape normalizeSeriesRows() already expects
+ *  ({ country: { id }, date, value }), using an injected iso3->iso2 map
+ *  so this stays a pure, fixture-testable function with no dependency
+ *  on the `world-countries` package itself. Only columns 0-3 (Entity,
+ *  Code, Year, first value column) are used; any further columns (e.g.
+ *  OWID's own "World region" annotation) are ignored. Rows whose Code
+ *  has no entry in `iso3ToIso2` (OWID's own region/aggregate rows, or a
+ *  territory this app's catalog doesn't track) are simply skipped here
+ *  — normalizeSeriesRows() also independently re-checks catalog
+ *  membership, so this is not the only guard. */
+export function parseOwidCsv(text, iso3ToIso2) {
+  const table = parseCsv(text);
+  if (table.length === 0) return [];
+  const rows = [];
+  for (const cols of table.slice(1)) {
+    const [, iso3, year, rawValue] = cols;
+    if (!iso3) continue;
+    const iso2 = iso3ToIso2.get(iso3);
+    if (!iso2) continue;
+    const value = rawValue === '' || rawValue === undefined ? null : Number(rawValue);
+    rows.push({ country: { id: iso2 }, date: year, value });
+  }
+  return rows;
+}
 
 /** Same conservative-floor rationale as travelCostIndexIngest.mjs's own
  *  MIN_COVERAGE_RATIO, but lower: UNWTO tourism reporting has

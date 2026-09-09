@@ -1,23 +1,27 @@
 // Phase 13.5d — Destination Tourism Insights: the ONLY file in this
-// feature that touches the network. Fetches TWO World Bank indicators
-// (arrivals, receipts), hands each's raw rows to the pure pipeline in
-// scripts/lib/tourismInsightsIngest.mjs, merges them, and only
-// overwrites the committed snapshot (src/data/generated/
-// tourismInsights.json) if validation passes. On any failure this
-// exits non-zero and leaves the existing snapshot file untouched — same
-// atomic-write, never-corrupt-the-committed-file design as
-// generate-travel-cost-index.mjs.
+// feature that touches the network. Fetches TWO Our World in Data
+// grapher CSVs (arrivals, receipts — see tourismInsightsIngest.mjs's
+// module doc comment for the freshness correction and why OWID was
+// selected), maps their ISO3 country codes to this app's ISO2 codes via
+// the already-installed `world-countries` package, hands the resulting
+// rows to the pure pipeline in scripts/lib/tourismInsightsIngest.mjs,
+// merges them, and only overwrites the committed snapshot
+// (src/data/generated/tourismInsights.json) if validation passes. On
+// any failure this exits non-zero and leaves the existing snapshot
+// untouched — same atomic-write, never-corrupt-the-committed-file
+// design as generate-travel-cost-index.mjs.
 //
 // Run manually, or via .github/workflows/update-tourism-insights.yml:
 //   node scripts/generate-tourism-insights.mjs
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import countries from 'world-countries';
 import {
   buildEntries,
   buildSnapshot,
   normalizeSeriesRows,
-  parseWorldBankResponse,
+  parseOwidCsv,
   serializeSnapshot,
   validateEntries,
 } from './lib/tourismInsightsIngest.mjs';
@@ -27,17 +31,18 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.join(__dirname, '../src/data/generated');
 const outFile = path.join(outDir, 'tourismInsights.json');
 
-// Live-verified (see TOURISM_INSIGHTS.md): both indicators are live/
-// serving but neither has an observation newer than 2020. mrv=6 pulls
-// the full available historical run (2015-2020) in one call per
-// indicator, all countries at once.
-const SOURCE_INDICATORS = { arrivals: 'ST.INT.ARVL', receiptsUsd: 'ST.INT.RCPT.CD' };
-const MRV = 6;
-const urlFor = (indicator) =>
-  `https://api.worldbank.org/v2/country/all/indicator/${indicator}?format=json&per_page=20000&mrv=${MRV}`;
+// Live-verified (see TOURISM_INSIGHTS.md): both OWID grapher CSVs have
+// real observations through 2024 (checked directly for Saudi Arabia
+// and Japan) — UN Tourism-sourced, CC BY licensed, no auth needed.
+const SOURCE_INDICATORS = {
+  arrivals: 'OWID:international-tourist-trips',
+  receiptsUsd: 'OWID:spending-by-international-visitors-while-visiting-a-country',
+};
+const OWID_URLS = {
+  arrivals: 'https://ourworldindata.org/grapher/international-tourist-trips.csv',
+  receiptsUsd: 'https://ourworldindata.org/grapher/spending-by-international-visitors-while-visiting-a-country.csv',
+};
 
-// Same shared exclusion source of truth as generate-travel-cost-index.mjs
-// — one hand-maintained list, no second mirror.
 const EXCLUDED_COUNTRY_CODES = excludedCountriesData.map((c) => c.iso2);
 
 function loadEffectiveCatalogCountryCodes() {
@@ -51,28 +56,39 @@ function loadEffectiveCatalogCountryCodes() {
   return codes;
 }
 
-async function fetchIndicatorRows(indicator) {
-  const res = await fetch(urlFor(indicator));
-  if (!res.ok) throw new Error(`World Bank API returned HTTP ${res.status} for ${indicator}`);
-  const body = await res.json();
-  return parseWorldBankResponse(body);
+/** ISO3 -> ISO2, from the same `world-countries` package
+ *  generate-world-countries.mjs already uses (MIT licensed, already a
+ *  dependency — no new one added). */
+function loadIso3ToIso2Map() {
+  const map = new Map();
+  for (const c of countries) {
+    if (c.cca3 && c.cca2) map.set(c.cca3, c.cca2);
+  }
+  return map;
+}
+
+async function fetchCsv(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`OWID returned HTTP ${res.status} for ${url}`);
+  return res.text();
 }
 
 async function main() {
   const validCountryCodes = loadEffectiveCatalogCountryCodes();
+  const iso3ToIso2 = loadIso3ToIso2Map();
   console.log(`Effective catalog (join target): ${validCountryCodes.size} countries.`);
 
-  let arrivalsRows, receiptsRows;
+  let arrivalsCsv, receiptsCsv;
   try {
-    [arrivalsRows, receiptsRows] = await Promise.all([
-      fetchIndicatorRows(SOURCE_INDICATORS.arrivals),
-      fetchIndicatorRows(SOURCE_INDICATORS.receiptsUsd),
-    ]);
+    [arrivalsCsv, receiptsCsv] = await Promise.all([fetchCsv(OWID_URLS.arrivals), fetchCsv(OWID_URLS.receiptsUsd)]);
   } catch (err) {
-    console.error('Fetch or parse failed — leaving the existing snapshot untouched.');
+    console.error('Fetch failed — leaving the existing snapshot untouched.');
     console.error(String(err));
     process.exit(1);
   }
+
+  const arrivalsRows = parseOwidCsv(arrivalsCsv, iso3ToIso2);
+  const receiptsRows = parseOwidCsv(receiptsCsv, iso3ToIso2);
   console.log(`Raw rows received: arrivals=${arrivalsRows.length}, receipts=${receiptsRows.length}`);
 
   const arrivalsNorm = normalizeSeriesRows(arrivalsRows, validCountryCodes);
@@ -89,11 +105,19 @@ async function main() {
   console.log(`Unmatched: ${validCountryCodes.size - entries.length}`);
 
   const allPeriods = new Set();
+  let latestPeriod = null;
   for (const e of entries) {
-    for (const obs of e.arrivals ?? []) allPeriods.add(obs.period);
-    for (const obs of e.receiptsUsd ?? []) allPeriods.add(obs.period);
+    for (const obs of e.arrivals ?? []) {
+      allPeriods.add(obs.period);
+      if (!latestPeriod || obs.period > latestPeriod) latestPeriod = obs.period;
+    }
+    for (const obs of e.receiptsUsd ?? []) {
+      allPeriods.add(obs.period);
+      if (!latestPeriod || obs.period > latestPeriod) latestPeriod = obs.period;
+    }
   }
   console.log(`Periods observed: ${[...allPeriods].sort().join(', ')}`);
+  console.log(`Latest observation period: ${latestPeriod}`);
 
   const validation = validateEntries(entries, validCountryCodes.size, EXCLUDED_COUNTRY_CODES);
   if (!validation.ok) {

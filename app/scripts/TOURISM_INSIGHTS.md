@@ -5,44 +5,56 @@
 A build-time-generated, committed snapshot of real historical tourism
 statistics (international arrivals, tourism receipts), shown on the
 destination page as `TourismInsights.tsx` — a separate concept from the
-Travel Cost Index (`TRAVEL_COST_INDEX.md`): different World Bank
-indicators, different units (headcounts/USD, not a price-level index),
-never combined on one chart or axis.
+Travel Cost Index (`TRAVEL_COST_INDEX.md`): different source, different
+units (headcounts/USD, not a price-level index), never combined on one
+chart or axis.
 
-## Source evaluation
+## Source evaluation — original (World Bank) and the freshness correction
 
-Priority order followed: World Bank first (globally consistent,
-already the source for Travel Cost Index), then UNWTO/OECD/other only
-if World Bank were insufficient. World Bank's own tourism indicators
-are themselves UNWTO-sourced, so a separate direct UNWTO integration
-was not pursued.
+**Original source (Phase 13.5d initial pass):** World Bank
+`ST.INT.ARVL` ("International tourism, number of arrivals") and
+`ST.INT.RCPT.CD` ("International tourism, receipts (current US$)"),
+both World Development Indicators, UNWTO-sourced. Live-verified via a
+real GitHub Actions run: both indicators return real HTTP-success
+data (not archived like `PA.NUS.PPPC.RF` was), but — confirmed
+directly, not assumed — **neither has a single observation newer than
+2020**, even though the API's own response metadata `lastupdated`
+field is recent. This is World Bank WDI's own well-known freeze of its
+UNWTO-sourced tourism series after 2020, not a Wejhaty staleness bug.
 
-- **`ST.INT.ARVL`** — "International tourism, number of arrivals".
-  Headcount of international arrivals; not a percentage of anything.
-- **`ST.INT.RCPT.CD`** — "International tourism, receipts (current
-  US$)". Nominal USD (not inflation-adjusted, not SAR).
+**Freshness correction (tourism-freshness pass):** the 2020 ceiling
+made the section look outdated for current-tourism intelligence.
+Re-investigated per priority order (UN Tourism first, then World Bank,
+then OECD, then other): UN Tourism's own statistics database is
+current (dashboard last updated mid-2026) but its bulk API access is
+not confirmed free/self-service. **Our World in Data** republishes the
+same UN Tourism series as public, CC BY-licensed, no-auth grapher
+CSVs, explicitly designed for bulk/API reuse (each chart has a stable
+`.csv` and `.metadata.json` endpoint) — a legitimate, licensed,
+machine-readable redistribution channel for UN Tourism data, not a
+blog/scrape/estimate.
 
-Both are World Development Indicators, public, no authentication.
+Live-verified via a real GitHub Actions run: both
+`international-tourist-trips` (arrivals) and
+`spending-by-international-visitors-while-visiting-a-country`
+(receipts) have real observations through **2024** — checked directly
+for Saudi Arabia (arrivals: 29.7M in 2024; receipts: $46.3B in 2024)
+and Japan. `.metadata.json` confirms `"citationLong":"UN Tourism
+(2025) – processed by Our World in Data"`, `timespan: "1995-2024"`,
+`lastUpdated: "2026-01-21"`, `nextUpdate: "2027-01-21"` — a real,
+versioned, annually-refreshed dataset, not a one-off scrape.
+`generate-tourism-insights.mjs` now fetches these two CSVs; ISO3
+country codes (OWID's `Code` column) are mapped to this app's ISO2
+codes via the already-installed `world-countries` package (no new
+dependency). If World Bank's own indicators ever resume publishing
+more recent data, that's a separate future re-evaluation — OWID is the
+selected source for now because it is demonstrably fresher and
+equally licensed/machine-readable.
 
-### Live verification (critical — do not assume from old docs)
-
-Live-verified via a real GitHub Actions run (this sandboxed dev
-environment's own network egress is blocked to worldbank.org): both
-indicators return real HTTP-success data, so they are **not archived**
-like `PA.NUS.PPPC.RF` was. But — confirmed directly, not assumed —
-**neither indicator has a single observation newer than 2020**, even
-though the API's own response metadata `lastupdated` field is recent.
-`mrv=6` for USA and France both returned a fully-populated 2015-2020
-series with no gaps for either indicator. This matches World Bank
-WDI's own well-known freeze of its UNWTO-sourced tourism series after
-2020 — not a Wejhaty staleness bug, and not something a future
-ingestion run can fix by asking again differently. If World Bank ever
-resumes publishing, the monthly automation (below) will pick it up
-without any code change.
-
-2020 itself (a real, extreme collapse — e.g. USA arrivals: 165.5M in
-2019 → 45.0M in 2020) is kept as a genuine historical observation, not
-dropped, "smoothed", or treated as an error.
+The real 2020 pandemic collapse (e.g. Saudi Arabia arrivals: 17.5M in
+2019 → 4.1M in 2020) remains in the historical series exactly as
+published — never dropped, "smoothed", or treated as an error; 2021's
+partial recovery and 2022-2024's real rebound are now visible too.
 
 ### Chart library evaluation
 
@@ -98,7 +110,7 @@ runtime.
 ```json
 {
   "snapshotUpdatedAt": "2026-01-01T00:00:00.000Z" or null,
-  "sourceIndicators": { "arrivals": "ST.INT.ARVL", "receiptsUsd": "ST.INT.RCPT.CD" },
+  "sourceIndicators": { "arrivals": "OWID:international-tourist-trips", "receiptsUsd": "OWID:spending-by-international-visitors-while-visiting-a-country" },
   "entries": [
     { "countryCode": "JP", "arrivals": [{ "period": "2019", "value": 31900000 }], "receiptsUsd": [...] }
   ]

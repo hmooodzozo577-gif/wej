@@ -5,37 +5,86 @@ import {
   buildEntries,
   buildSnapshot,
   normalizeSeriesRows,
-  parseWorldBankResponse,
+  parseCsv,
+  parseOwidCsv,
   serializeSnapshot,
   validateEntries,
 } from './tourismInsightsIngest.mjs';
 
 const VALID_CODES = ['JP', 'SA', 'FR', 'CH', 'TH', 'US'];
+const ISO3_TO_ISO2 = new Map([
+  ['JPN', 'JP'],
+  ['SAU', 'SA'],
+  ['FRA', 'FR'],
+]);
 
 function wbRow(overrides = {}) {
   return {
-    indicator: { id: 'ST.INT.ARVL', value: 'International tourism, number of arrivals' },
     country: { id: 'JP', value: 'Japan' },
-    countryiso3code: 'JPN',
     date: '2019',
     value: 31900000,
-    unit: '',
-    obs_status: '',
-    decimal: 0,
     ...overrides,
   };
 }
 
-describe('Phase 13.5d — parseWorldBankResponse (reused from travelCostIndexIngest.mjs)', () => {
-  it('extracts rows from the real [metadata, rows] shape', () => {
-    expect(parseWorldBankResponse([{ page: 1 }, [wbRow()]])).toHaveLength(1);
+describe('Phase 13.5d — parseCsv', () => {
+  it('parses a simple CSV with a header row', () => {
+    const table = parseCsv('Entity,Code,Year,Value\nJapan,JPN,2019,31900000\n');
+    expect(table).toEqual([
+      ['Entity', 'Code', 'Year', 'Value'],
+      ['Japan', 'JPN', '2019', '31900000'],
+    ]);
   });
-  it('throws on a malformed/non-array body (e.g. an archived-indicator error object)', () => {
-    expect(() => parseWorldBankResponse({ not: 'valid' })).toThrow();
-    expect(() => parseWorldBankResponse([{ message: [{ id: '175' }] }])).toThrow();
+
+  it('handles a double-quoted field containing a comma (e.g. "Korea, Rep.")', () => {
+    const table = parseCsv('Entity,Code,Year,Value\n"Korea, Rep.",KOR,2019,17500000\n');
+    expect(table[1]).toEqual(['Korea, Rep.', 'KOR', '2019', '17500000']);
   });
-  it('returns an empty array for an empty source (rows: null)', () => {
-    expect(parseWorldBankResponse([{ page: 1 }, null])).toEqual([]);
+
+  it('handles an escaped double-quote inside a quoted field', () => {
+    const table = parseCsv('Entity,Code,Year,Value\n"Say ""hi""",XXX,2019,1\n');
+    expect(table[1][0]).toBe('Say "hi"');
+  });
+
+  it('skips blank trailing lines', () => {
+    const table = parseCsv('Entity,Code,Year,Value\nJapan,JPN,2019,1\n\n');
+    expect(table).toHaveLength(2);
+  });
+});
+
+describe('Phase 13.5d — parseOwidCsv', () => {
+  it('extracts rows for countries present in the iso3->iso2 map', () => {
+    const csv = 'Entity,Code,Year,Value,World region\nJapan,JPN,2019,31900000,Asia\nFrance,FRA,2020,4000000,Europe\n';
+    const rows = parseOwidCsv(csv, ISO3_TO_ISO2);
+    expect(rows).toEqual([
+      { country: { id: 'JP' }, date: '2019', value: 31900000 },
+      { country: { id: 'FR' }, date: '2020', value: 4000000 },
+    ]);
+  });
+
+  it('skips OWID aggregate/region rows whose Code has no iso3->iso2 mapping, without a hand-maintained blocklist', () => {
+    const csv = 'Entity,Code,Year,Value,World region\nWorld,OWID_WRL,2019,1000000000,\nAsia,OWID_ASI,2019,500000000,\n';
+    expect(parseOwidCsv(csv, ISO3_TO_ISO2)).toEqual([]);
+  });
+
+  it('skips a row with no Code at all', () => {
+    const csv = 'Entity,Code,Year,Value\nSomewhere,,2019,1\n';
+    expect(parseOwidCsv(csv, ISO3_TO_ISO2)).toEqual([]);
+  });
+
+  it('represents an empty value cell as null ("no observation"), not 0 or NaN', () => {
+    const csv = 'Entity,Code,Year,Value\nJapan,JPN,2019,\n';
+    expect(parseOwidCsv(csv, ISO3_TO_ISO2)).toEqual([{ country: { id: 'JP' }, date: '2019', value: null }]);
+  });
+
+  it('ignores extra trailing columns (e.g. the "World region" annotation column)', () => {
+    const csv = 'Entity,Code,Year,Value,World region\nJapan,JPN,2019,31900000,Asia\n';
+    expect(parseOwidCsv(csv, ISO3_TO_ISO2)).toEqual([{ country: { id: 'JP' }, date: '2019', value: 31900000 }]);
+  });
+
+  it('returns an empty array for an empty CSV (header only, or nothing)', () => {
+    expect(parseOwidCsv('Entity,Code,Year,Value\n', ISO3_TO_ISO2)).toEqual([]);
+    expect(parseOwidCsv('', ISO3_TO_ISO2)).toEqual([]);
   });
 });
 
