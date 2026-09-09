@@ -80,6 +80,7 @@ jobs:
       # repository; it never pushes to claude/marhaba-kxry8l directly.
       - name: Open a pull request with the updated snapshot
         if: steps.diff.outputs.changed == 'true'
+        working-directory: app
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
