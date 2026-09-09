@@ -25,8 +25,8 @@ export const EXCLUDED_COUNTRIES: ExcludedCountry[] = [
   // QA test fixture (temporary): proves the exclusion mechanism works
   // end-to-end — catalog, Explore, search, routing, recommendation
   // eligibility, country info, and border-reference cleanup. Remove this
-  // entry (or empty the array) to restore Monaco and go back to 195/165.
-  { iso2: 'MC', iso3: 'MCO', reason: 'QA test: verify country-exclusion mechanism end-to-end (temporary)' },
+  // entry (or empty the array) to restore Israel and go back to 195/165.
+  { iso2: 'IL', iso3: 'ISR', reason: 'QA test: verify country-exclusion mechanism end-to-end (temporary)' },
 ];
 
 const excludedIso2 = new Set(EXCLUDED_COUNTRIES.map((c) => c.iso2.toUpperCase()));
