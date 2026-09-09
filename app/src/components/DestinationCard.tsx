@@ -9,7 +9,7 @@
 import { Link } from 'react-router-dom';
 import type { CatalogEntry, I18nDict, Lang } from '../data/types';
 import { costLabel, descOf, nameOf } from '../data/destinationText';
-import { continentOf } from '../data/worldCatalog';
+import { continentOf, countryInfoOf } from '../data/worldCatalog';
 import { FlagChip, FlagThumb } from './flags/FlagIcon';
 import { Icon } from './Icon';
 
@@ -32,6 +32,9 @@ export function DestinationCard({
   const subtitle = dest.recommendationReady
     ? (lang === 'ar' ? dest.citiesAr : dest.citiesEn)[0]
     : dest.capitalEn;
+  // Phase 11 Step 2 — only used for the basic-country chip row below.
+  const info = dest.recommendationReady ? undefined : countryInfoOf(dest.id);
+  const currency = info?.currencies[0];
 
   return (
     <Link
@@ -69,6 +72,23 @@ export function DestinationCard({
             <span className="meta-chip">
               <Icon name="sun" size={13} stroke={2.4} /> {t.climateLabels[dest.climate]}
             </span>
+          </div>
+        ) : info ? (
+          // Phase 11 Step 2 — compact Country Information chips (area,
+          // currency) for basic countries, mirroring the chip row above.
+          // Either chip is omitted cleanly when its data isn't available
+          // (e.g. no reported currency) rather than showing an empty chip.
+          <div className="dest-meta">
+            <span className="meta-chip">
+              <Icon name="globe" size={13} stroke={2.4} /> {t.detail.area}: {info.areaKm2.toLocaleString('en-US')}{' '}
+              {t.detail.areaUnit}
+            </span>
+            {currency ? (
+              <span className="meta-chip">
+                <Icon name="tag" size={13} stroke={2.4} /> {t.detail.currency}: {currency.code}
+                {currency.symbol ? ` (${currency.symbol})` : ''}
+              </span>
+            ) : null}
           </div>
         ) : null}
       </div>
