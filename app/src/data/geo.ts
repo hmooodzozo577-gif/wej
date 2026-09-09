@@ -1,30 +1,34 @@
-// Phase 12 — Location Personalization: geographic distance ranking, built
-// entirely from local data (WORLD_CATALOG + CountryInfo.latlng) — no
-// external geocoding/maps API, no network call.
+// Phase 12 — Location Personalization: geographic distance ranking AND
+// (Phase 12 fix) real point-in-polygon "current country" resolution. Both
+// built entirely from local data — no external geocoding/maps API, no
+// network call ever made from this module.
 //
-// ACCURACY: `latlng` is ONE approximate centroid per country (from
-// world-countries), not a boundary/polygon. That makes two different
-// things this module offers very different in reliability:
+// TWO DIFFERENT PROBLEMS, TWO DIFFERENT TECHNIQUES:
 //
 //  - nearbyCountries(): ranking countries by straight-line distance from a
-//    point is a reasonable, honestly-approximate use of a centroid — nearer
-//    centroids really are (roughly) nearer countries. Safe to present as
-//    "nearby", clearly not as "distance to travel".
-//  - approximateCountryOf(): "which country is the user actually in" is a
-//    point-in-polygon problem, and a single centroid per country CANNOT
-//    answer it reliably — nearest-centroid can be meaningfully wrong for a
-//    large country or anyone near a border (see its own doc comment).
-//    What's missing for real detection: an actual country boundary/polygon
-//    dataset (e.g. GeoJSON/TopoJSON country borders) to run a proper
-//    point-in-polygon test against — not available locally, and adding one
-//    is out of scope for this phase (no external API, no invented
-//    accuracy). This function is deliberately still labeled "approximate"
-//    everywhere it's used, in code and in the UI.
+//    point to each country's approximate centroid (CountryInfo.latlng) is a
+//    reasonable, honestly-approximate answer to "what's nearby" — nearer
+//    centroids really are (roughly) nearer countries. Unchanged by the
+//    Phase 12 fix below; still centroid-based, still labeled as such.
+//  - resolveCurrentCountry(): "which country is the user actually in" is a
+//    point-in-polygon problem. A single centroid per country CANNOT answer
+//    it reliably — confirmed by a real bug report: a user in Abha (SW Saudi
+//    Arabia, near the Yemen/Red Sea border) resolved to Eritrea, because
+//    Eritrea's centroid was arithmetically closer to Abha than Saudi
+//    Arabia's own (much more northerly) centroid. Fixed here using real
+//    country boundary polygons — see generate-world-countries.mjs Step 10
+//    for where they come from (bundled inside the already-installed
+//    `world-countries` package, not previously exposed) and how they're
+//    simplified. approximateCountryOf() (nearest-centroid) is kept as the
+//    documented, clearly-labeled fallback for when no polygon contains the
+//    point (open ocean, or a data gap) — never presented as exact.
 //
-// Exclusion safety: both functions are built from WORLD_CATALOG (already
-// filtered by excludedCountries.ts) via countryInfoOf() (which itself never
-// returns a record for an excluded id) — an excluded country was never a
-// candidate in the first place, so there's no separate filter to remember.
+// Exclusion safety: every function here is built from WORLD_CATALOG
+// (already filtered by excludedCountries.ts) via countryInfoOf() (which
+// itself never returns a record for an excluded id) — an excluded country
+// was never a candidate in the first place, so there's no separate filter
+// to remember. The boundary lookup below follows the same rule: it's keyed
+// off WORLD_CATALOG entries, never off the raw (unfiltered) generated file.
 import { WORLD_CATALOG, countryInfoOf } from './worldCatalog';
 import type { CatalogEntry } from './types';
 
@@ -78,7 +82,123 @@ export function nearbyCountries(from: Coords, limit = 6): NearbyCountry[] {
 
 /** APPROXIMATE nearest-centroid "current country" — see the accuracy
  *  caveat in this module's top comment before using this for anything
- *  presented as authoritative. Always the same as nearbyCountries(from, 1)[0]. */
+ *  presented as authoritative. Always the same as nearbyCountries(from, 1)[0].
+ *  Kept exactly as originally implemented — this is now resolveCurrentCountry()'s
+ *  documented fallback, used only when no boundary polygon contains the point. */
 export function approximateCountryOf(from: Coords): NearbyCountry | undefined {
   return nearbyCountries(from, 1)[0];
+}
+
+// --- Phase 12 fix: real point-in-polygon "current country" resolution ------
+
+/** [minLng, minLat, maxLng, maxLat] — GeoJSON bbox order, matches how it's
+ *  written in generate-world-countries.mjs. */
+type Bbox = [number, number, number, number];
+
+/** A ring is a closed [lng, lat] point sequence; a polygon is [outerRing,
+ *  ...holeRings] (GeoJSON semantics); a country can be a MultiPolygon
+ *  (island nations, exclaves), so this is an array of those. */
+type Ring = [number, number][];
+type Polygon = Ring[];
+
+interface RawCountryBoundary {
+  bbox: Bbox;
+  polygons: Polygon[];
+}
+
+type CountryBoundaries = Record<string, RawCountryBoundary>;
+
+function bboxContains(bbox: Bbox, lng: number, lat: number): boolean {
+  const [minLng, minLat, maxLng, maxLat] = bbox;
+  return lng >= minLng && lng <= maxLng && lat >= minLat && lat <= maxLat;
+}
+
+/** Standard ray-casting point-in-polygon test against a single ring. */
+function pointInRing(lng: number, lat: number, ring: Ring): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    const crosses = yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
+    if (crosses) inside = !inside;
+  }
+  return inside;
+}
+
+/** True if the point is inside any polygon's outer ring and NOT inside any
+ *  of that polygon's holes (GeoJSON hole semantics — ring 0 is the outer
+ *  boundary, every subsequent ring in the same polygon is a hole cut out
+ *  of it). Checks each of a MultiPolygon's polygons independently. */
+function pointInPolygons(lng: number, lat: number, polygons: Polygon[]): boolean {
+  for (const [outer, ...holes] of polygons) {
+    if (pointInRing(lng, lat, outer) && !holes.some((hole) => pointInRing(lng, lat, hole))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Lazy-loaded: the boundary dataset (~730 KB) is only fetched the first
+// time a caller actually needs it (i.e. a user requested their location),
+// not on every page load. A single shared promise means concurrent callers
+// never trigger a duplicate fetch, and a load failure (e.g. offline)
+// resolves to `null` rather than rejecting, so callers can fall back
+// cleanly instead of needing their own try/catch.
+let boundariesPromise: Promise<CountryBoundaries | null> | null = null;
+
+function loadCountryBoundaries(): Promise<CountryBoundaries | null> {
+  if (!boundariesPromise) {
+    boundariesPromise = import('./generated/countryBoundaries.json')
+      .then((mod) => mod.default as unknown as CountryBoundaries)
+      .catch(() => null);
+  }
+  return boundariesPromise;
+}
+
+export type CountryResolutionMethod = 'boundary' | 'centroid-fallback';
+
+export interface CountryResolution {
+  result: NearbyCountry;
+  /** 'boundary': a real point-in-polygon match — safe to present as the
+   *  user's actual current country. 'centroid-fallback': no polygon
+   *  contained the point (open ocean, or a data gap) — nearest-centroid
+   *  only, MUST be presented as approximate, never as exact detection. */
+  method: CountryResolutionMethod;
+}
+
+/** Real "current country" resolution: point-in-polygon against the
+ *  effective catalog's boundary data, with each country's bounding box as
+ *  a cheap first-pass filter (only WORLD_CATALOG entries whose bbox
+ *  contains the point get the more expensive polygon test — for almost any
+ *  point that's a small handful of candidates, not all ~194). Falls back to
+ *  approximateCountryOf() (nearest-centroid, clearly labeled) only when no
+ *  polygon matches or the boundary data failed to load.
+ *
+ *  Deterministic even if bundled polygons happen to overlap at a shared
+ *  border: among every polygon match, the one whose own centroid is
+ *  nearest to the point wins — same tie-break rule every time, not
+ *  first-in-array-order.
+ *
+ *  Exclusion-safe by construction: only iterates WORLD_CATALOG (already
+ *  exclusion-filtered) entries as candidates — an excluded country's
+ *  boundary record in the raw generated file is never looked up. */
+export async function resolveCurrentCountry(from: Coords): Promise<CountryResolution | undefined> {
+  const boundaries = await loadCountryBoundaries();
+  if (boundaries) {
+    const matches: NearbyCountry[] = [];
+    for (const { entry, latlng } of catalogGeo) {
+      const boundary = boundaries[entry.countryCode];
+      if (!boundary) continue;
+      if (!bboxContains(boundary.bbox, from.lng, from.lat)) continue;
+      if (pointInPolygons(from.lng, from.lat, boundary.polygons)) {
+        matches.push({ entry, distanceKm: haversineKm(from, latlng) });
+      }
+    }
+    if (matches.length > 0) {
+      matches.sort((a, b) => a.distanceKm - b.distanceKm);
+      return { result: matches[0], method: 'boundary' };
+    }
+  }
+  const fallback = approximateCountryOf(from);
+  return fallback ? { result: fallback, method: 'centroid-fallback' } : undefined;
 }

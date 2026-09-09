@@ -51,7 +51,7 @@ describe('Phase 12 — LocationPersonalize', () => {
     renderWith('en');
     fireEvent.click(screen.getByRole('button', { name: /Use My Location/ }));
 
-    await waitFor(() => expect(screen.getByText(/Nearby countries/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/Nearby countries/)).toBeInTheDocument(), { timeout: 5000 });
 
     for (const excluded of EXCLUDED_COUNTRIES) {
       const link = document.querySelector(`a[href="/destination/${excluded.iso2.toLowerCase()}"]`);
@@ -75,6 +75,31 @@ describe('Phase 12 — LocationPersonalize', () => {
     expect(screen.queryByRole('button', { name: /Try Again/ })).not.toBeInTheDocument();
   });
 
+  it('resolves the Abha regression case end-to-end: current country shown is Saudi Arabia, no approximation caveat (real boundary match)', async () => {
+    vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue({
+      ok: true,
+      coords: { lat: 18.2164, lng: 42.5053 }, // Abha
+    });
+    renderWith('en');
+    fireEvent.click(screen.getByRole('button', { name: /Use My Location/ }));
+    await waitFor(() => expect(screen.getByText(/Your current country/)).toBeInTheDocument(), { timeout: 5000 });
+    expect(screen.getByText('Saudi Arabia')).toBeInTheDocument();
+    // A real boundary match — the approximation caveat is only for the
+    // nearest-centroid fallback and must not appear here.
+    expect(screen.queryByText(/approximate straight-line estimate/)).not.toBeInTheDocument();
+  });
+
+  it('Arabic localized country name is correct for the resolved current country', async () => {
+    vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue({
+      ok: true,
+      coords: { lat: 18.2164, lng: 42.5053 }, // Abha
+    });
+    renderWith('ar');
+    fireEvent.click(screen.getByRole('button', { name: /استخدام موقعي/ }));
+    await waitFor(() => expect(screen.getByText(/دولتك الحالية/)).toBeInTheDocument(), { timeout: 5000 });
+    expect(screen.getByText('المملكة العربية السعودية')).toBeInTheDocument();
+  });
+
   it('never shows raw coordinates anywhere in the rendered output', async () => {
     vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue({
       ok: true,
@@ -82,7 +107,7 @@ describe('Phase 12 — LocationPersonalize', () => {
     });
     renderWith('en');
     fireEvent.click(screen.getByRole('button', { name: /Use My Location/ }));
-    await waitFor(() => expect(screen.getByText(/Nearby countries/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/Nearby countries/)).toBeInTheDocument(), { timeout: 5000 });
     expect(document.body.textContent).not.toMatch(/24\.7136/);
     expect(document.body.textContent).not.toMatch(/46\.6753/);
   });

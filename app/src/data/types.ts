@@ -347,9 +347,17 @@ export interface LocationStrings {
   retry: string;
   reset: string;
   requesting: string;
+  /** Phase 12 fix: shown while resolveCurrentCountry() is still running
+   *  (after the browser permission is already granted). */
+  resolving: string;
+  /** Label for a real point-in-polygon match (method: 'boundary') — safe to
+   *  present with confidence, no accuracy caveat needed. */
+  currentCountry: string;
+  /** Label for the nearest-centroid fallback (method: 'centroid-fallback') —
+   *  always paired with approxNote below. */
   nearestCountry: string;
-  /** Explicit accuracy caveat shown next to the resolved nearest country —
-   *  never presented as authoritative border-based detection. */
+  /** Explicit accuracy caveat shown next to the fallback result — never
+   *  shown for a real boundary match. */
   approxNote: string;
   nearbyTitle: string;
   denied: string;

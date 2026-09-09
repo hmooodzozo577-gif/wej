@@ -211,3 +211,146 @@ fs.writeFileSync(
   JSON.stringify(countryInfo, null, 2) + '\n',
 );
 console.log(`Wrote ${countryInfoCount} country info records to generated/countryInfo.json`);
+
+// ---- 10. Phase 12 fix — real country boundary polygons for point-in-polygon
+//          "current country" resolution ----
+// PROBLEM this replaces: nearest-centroid resolution (data/geo.ts's
+// approximateCountryOf, still used as its fallback) can pick the WRONG
+// country for anyone far from their own country's single reference point —
+// confirmed for a real user in Abha, Saudi Arabia (SW corner, near the
+// Yemen/Red Sea border), who resolved to Eritrea because Eritrea's centroid
+// (15,39) is arithmetically closer to Abha than Saudi Arabia's own
+// centroid (25,45) is.
+//
+// SOURCE: the `world-countries` npm package (already a devDependency, same
+// as everything else in this file) ships real per-country boundary GeoJSON
+// as sibling static files under node_modules/world-countries/data/<iso3>.geo.json
+// — NOT exposed through its main JS/JSON import (only `latlng` is). No new
+// package, no runtime API: this reads files already present locally.
+//
+// SIMPLIFICATION: raw boundaries for all 195 countries total ~348,000
+// coordinate points (~9.2 MB) — far too heavy to ship. Simplified here with
+// a dependency-free Douglas-Peucker implementation (no devDependency added
+// either) at epsilon=0.05° (~5.5km at the equator) — chosen empirically as
+// the point past which further simplification stops meaningfully shrinking
+// the output (diminishing returns) while still preserving country-level
+// shape; verified against the Abha regression case (see geo.test.ts) at
+// every candidate epsilon from 0.01 to 0.3 before picking this one, so
+// borders aren't distorted more than necessary for a "which country"
+// resolution — this is not survey-grade boundary data.
+const DP_EPSILON_DEGREES = 0.05;
+const COORD_DECIMALS = 3; // ~111m precision at the equator — plenty for this
+
+function perpendicularDistance(point, lineStart, lineEnd) {
+  const [x, y] = point;
+  const [x1, y1] = lineStart;
+  const [x2, y2] = lineEnd;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  if (dx === 0 && dy === 0) return Math.hypot(x - x1, y - y1);
+  const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy)));
+  return Math.hypot(x - (x1 + t * dx), y - (y1 + t * dy));
+}
+
+function douglasPeucker(points, epsilon) {
+  if (points.length < 3) return points;
+  let maxDist = 0;
+  let index = 0;
+  const end = points.length - 1;
+  for (let i = 1; i < end; i++) {
+    const dist = perpendicularDistance(points[i], points[0], points[end]);
+    if (dist > maxDist) {
+      maxDist = dist;
+      index = i;
+    }
+  }
+  if (maxDist > epsilon) {
+    const left = douglasPeucker(points.slice(0, index + 1), epsilon);
+    const right = douglasPeucker(points.slice(index), epsilon);
+    return left.slice(0, -1).concat(right);
+  }
+  return [points[0], points[end]];
+}
+
+// A ring must stay a valid closed polygon (>= 4 points, first === last).
+// Rather than silently reverting to the full unsimplified ring for a small
+// shape (which would blow past the size budget for the many tiny-island
+// countries in this catalog), pick 4 well-spread real points from it —
+// coarse, but keeps every ring simplifiable and closed.
+function simplifyRing(ring, epsilon) {
+  if (ring.length <= 4) return ring;
+  const simplified = douglasPeucker(ring, epsilon);
+  if (simplified.length >= 4) return simplified;
+  const mid = ring[Math.floor(ring.length / 2)];
+  const q1 = ring[Math.floor(ring.length / 4)];
+  return [ring[0], q1, mid, ring[ring.length - 1]];
+}
+
+function roundRing(ring, decimals) {
+  const f = 10 ** decimals;
+  return ring.map(([lng, lat]) => [Math.round(lng * f) / f, Math.round(lat * f) / f]);
+}
+
+const boundariesDir = path.join(__dirname, '../node_modules/world-countries/data');
+const countryBoundaries = {};
+let totalBoundaryPoints = 0;
+
+for (const c of world195) {
+  const geoPath = path.join(boundariesDir, `${c.cca3.toLowerCase()}.geo.json`);
+  if (!fs.existsSync(geoPath)) {
+    throw new Error(`No boundary GeoJSON found for ${c.name.common} (${c.cca3}) at ${geoPath}`);
+  }
+  const geo = JSON.parse(fs.readFileSync(geoPath, 'utf8'));
+  const geometry = geo.features?.[0]?.geometry;
+  if (!geometry || (geometry.type !== 'Polygon' && geometry.type !== 'MultiPolygon')) {
+    throw new Error(`Unexpected/missing geometry for ${c.name.common} (${c.cca3}): ${geometry?.type}`);
+  }
+  // Normalize both shapes to MultiPolygon's nested form: an array of
+  // polygons, each polygon an array of rings (ring 0 = outer, rest = holes)
+  // — this preserves GeoJSON hole semantics exactly as given.
+  const rawPolygons = geometry.type === 'Polygon' ? [geometry.coordinates] : geometry.coordinates;
+
+  // Bounding box computed from the RAW (pre-simplification) coordinates —
+  // simplification can only remove points, never extend the shape, so a
+  // bbox from the original data is always at least as inclusive as (never
+  // narrower than) one from the simplified rings, which matters since this
+  // is used as a fast pre-filter that must never reject a true candidate.
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLng = Infinity;
+  let maxLng = -Infinity;
+  for (const polygon of rawPolygons) {
+    for (const ring of polygon) {
+      for (const [lng, lat] of ring) {
+        if (lat < minLat) minLat = lat;
+        if (lat > maxLat) maxLat = lat;
+        if (lng < minLng) minLng = lng;
+        if (lng > maxLng) maxLng = lng;
+      }
+    }
+  }
+
+  const simplifiedPolygons = rawPolygons.map((polygon) =>
+    polygon.map((ring) => roundRing(simplifyRing(ring, DP_EPSILON_DEGREES), COORD_DECIMALS)),
+  );
+  for (const polygon of simplifiedPolygons) {
+    for (const ring of polygon) totalBoundaryPoints += ring.length;
+  }
+
+  countryBoundaries[c.cca2] = {
+    bbox: [minLng, minLat, maxLng, maxLat],
+    polygons: simplifiedPolygons,
+  };
+}
+
+const boundaryCount = Object.keys(countryBoundaries).length;
+if (boundaryCount !== 195) {
+  throw new Error(`Expected 195 country boundary records, got ${boundaryCount}`);
+}
+
+const boundariesJson = JSON.stringify(countryBoundaries);
+fs.writeFileSync(path.join(outDir, 'countryBoundaries.json'), boundariesJson);
+console.log(
+  `Wrote ${boundaryCount} country boundary records to generated/countryBoundaries.json ` +
+    `(${totalBoundaryPoints} points, ${(boundariesJson.length / 1024).toFixed(0)} KB)`,
+);

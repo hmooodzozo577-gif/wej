@@ -41,6 +41,8 @@ export const AR: I18nDict = {
     retry: 'إعادة المحاولة',
     reset: 'مسح',
     requesting: 'جارٍ طلب موقعك…',
+    resolving: 'جارٍ تحديد دولتك…',
+    currentCountry: 'دولتك الحالية',
     nearestCountry: 'أقرب دولة في الكتالوج (تقريبية)',
     approxNote: 'هذا تقدير تقريبي بخط مستقيم، وليس مسافة سفر حقيقية أو تحديدًا فعليًا للحدود.',
     nearbyTitle: 'الدول القريبة',
