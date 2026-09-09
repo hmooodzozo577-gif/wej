@@ -1,0 +1,7 @@
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; font-src 'self'; img-src 'self' blob: https://i.ytimg.com; media-src blob: https:; connect-src 'self'; object-src 'none'; frame-src https://www.youtube-nocookie.com; worker-src blob:; base-uri 'none'; form-action 'none'; upgrade-insecure-requests; frame-ancestors 'self' https://chatgpt.com
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Strict-Transport-Security: max-age=31536000
+  Permissions-Policy: camera=(), geolocation=(), microphone=(self), payment=(), usb=()
+  Cache-Control: no-store

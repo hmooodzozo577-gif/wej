@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="referrer" content="strict-origin-when-cross-origin"><title>Vibe · Cinema</title><link rel="stylesheet" href="/cinema.css"><script src="/cinema.js" defer></script></head>
+<body><main class="cinema-shell">
+<header><a href="/" class="brand" aria-label="Vibe home">vibe <span>Ⅲ</span></a><span class="badge">CINEMA · FIX-13</span><button id="language" type="button">العربية</button></header>
+<section class="heading"><p class="eyebrow" data-ar="نفس المقطع، نفس اللحظة" data-en="SAME VIDEO. SAME MOMENT."></p><h1 data-ar="سينما مع الشلّة" data-en="Watch together"></h1><p id="description"></p></section>
+<form id="link-form"><label for="video-link" data-ar="رابط المقطع" data-en="Video link"></label><div class="link-row"><input id="video-link" type="url" maxlength="2048" placeholder="https://www.youtube.com/watch?v=…" autocomplete="off" required><button type="button" id="paste" data-ar="لصق وتشغيل" data-en="Paste & play"></button><button type="submit" data-ar="تشغيل" data-en="Play"></button></div><p class="hint" data-ar="يوتيوب أو رابط فيديو مباشر MP4 / WebM. بعض المقاطع تمنع التشغيل خارج موقعها." data-en="YouTube or a direct MP4 / WebM video link. Some videos restrict embedded playback."></p></form>
+<p id="status" role="status" aria-live="polite"></p>
+<section id="watch" hidden>
+<div class="watch-top"><span id="role" class="badge"></span><button id="share" type="button" data-ar="نسخ دعوة الروم" data-en="Copy room invite"></button></div>
+<div id="player-shell"><div id="player-mount"></div></div>
+<a id="source" target="_blank" rel="noopener noreferrer" data-ar="فتح المصدر إذا تعذّر تشغيل المقطع" data-en="Open source if this video cannot play"></a>
+<div class="controls"><button id="start" type="button" data-ar="ابدأ المشاهدة بالصوت" data-en="Start watching with sound"></button><div id="host-controls" hidden><button id="play" type="button" data-ar="▶ تشغيل للجميع" data-en="▶ Play for everyone"></button><button id="pause" type="button" data-ar="Ⅱ إيقاف للجميع" data-en="Ⅱ Pause for everyone"></button><button id="back" type="button" data-ar="−10 ثوانٍ" data-en="−10 seconds"></button><button id="forward" type="button" data-ar="+10 ثوانٍ" data-en="+10 seconds"></button></div></div>
+<p id="sync-note" class="hint"></p><p class="hint" data-ar="المضيف يتحكم بتوقيت المشاهدة. قد يظهر إعلان أو طلب تشغيل من مزود الفيديو على جهازك." data-en="The host controls the timeline. Your video provider may show an ad or require a play tap on your device."></p>
+<details><summary data-ar="رابط الدعوة" data-en="Invitation link"></summary><input id="invite" readonly aria-label="Invitation link"><p class="hint" data-ar="كل من يمتلك الرابط يمكنه الانضمام. تنتهي الجلسة بعد 24 ساعة. أبقِ صفحة المضيف مفتوحة للحفاظ على التحكم." data-en="Anyone with the link can join. The room expires after 24 hours. Keep the host page open to retain controls."></p></details>
+<button id="end" type="button" class="danger" hidden data-ar="إنهاء الجلسة للجميع" data-en="End session for everyone"></button>
+</section><footer><a href="/" data-ar="العودة إلى فايب" data-en="Back to Vibe"></a></footer>
+</main></body></html>

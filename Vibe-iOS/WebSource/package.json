@@ -1,0 +1,14 @@
+{
+  "name": "vibe-social",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node tests/security.cjs && node tests/support.mjs && node tests/video-preview.mjs",
+    "test:cinema": "node scripts/build.mjs && node tests/cinema.mjs"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.45.2"
+  }
+}
