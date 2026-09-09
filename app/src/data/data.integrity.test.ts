@@ -25,8 +25,8 @@ describe('data integrity', () => {
     expect(new Set(ids).size).toBe(30);
   });
 
-  it('has exactly 30 embedded flags', () => {
-    expect(Object.keys(FLAG_SVG_RAW)).toHaveLength(30);
+  it('has at least the 30 original embedded flags (Phase 10 adds more, see worldCatalog.test.ts)', () => {
+    expect(Object.keys(FLAG_SVG_RAW).length).toBeGreaterThanOrEqual(30);
   });
 
   it('every destination has a matching embedded flag', () => {
@@ -37,12 +37,9 @@ describe('data integrity', () => {
     }
   });
 
-  it('no orphaned flags (every flag maps to a destination)', () => {
-    const usedCodes = new Set(DESTINATIONS.map((d) => d.countryCode.toLowerCase()));
-    for (const code of Object.keys(FLAG_SVG_RAW)) {
-      expect(usedCodes.has(code), `flag ${code} has no destination`).toBe(true);
-    }
-  });
+  // "No orphaned flags among the ORIGINAL 30" — Phase 10 intentionally adds
+  // 165 more flags for countries that aren't (yet) full Destinations; that
+  // full-catalog check lives in worldCatalog.test.ts, not here.
 
   it('has exactly 8 purposes', () => {
     expect(PURPOSES).toHaveLength(8);

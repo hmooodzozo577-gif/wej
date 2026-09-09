@@ -6,6 +6,42 @@ export type Region = 'Asia' | 'Europe' | 'MiddleEast' | 'NAmerica' | 'Oceania';
 export type ClimateKind = 'tropical' | 'mediterranean' | 'temperate' | 'cold' | 'desert';
 export type VisaDifficulty = 'easy' | 'moderate' | 'hard';
 
+// --- Phase 10: worldwide country catalog -----------------------------------
+// `Region` (above) is the original 5-value display/gradient category used by
+// the 30 recommendation-ready destinations — unchanged, still exactly what
+// it was. `Continent` is a strict superset, adding the two buckets needed to
+// place the other 165 UN-recognized countries somewhere sensible (every
+// existing `Region` value remains a valid `Continent` value, so nothing that
+// already types against `Region` needs to change).
+export type Continent = Region | 'Africa' | 'SouthAmerica';
+
+/** The minimal shape shared by EVERY catalog entry — the 30 original
+ *  destinations (which predate iso2/iso3/continent and never gained them,
+ *  to avoid touching their verbatim-extracted data) and the 165 basic
+ *  countries alike. Components that only ever needed a name and a flag
+ *  (FlagChip, FlagBanner, nameOf) are typed against this, not the richer
+ *  CountryBase below, so they work for both without widening Destination. */
+export interface FlagSubject {
+  id: string;
+  nameEn: string;
+  nameAr: string;
+  /** ISO 3166-1 alpha-2, uppercase (e.g. "JP") — keys the flag map (lowercased). */
+  countryCode: string;
+}
+
+/** Fields every Phase 10 basic-country entry has. (Not retrofitted onto the
+ *  30 original destinations — see FlagSubject above for why.) */
+export interface CountryBase extends FlagSubject {
+  /** ISO 3166-1 alpha-2, uppercase — same value as `countryCode` here. */
+  iso2: string;
+  /** ISO 3166-1 alpha-3, uppercase (e.g. "EGY"). */
+  iso3: string;
+  continent: Continent;
+  /** Free-text subregion, e.g. "Northern Africa" — informational only, not used for filtering. */
+  subregion?: string;
+  capitalEn?: string;
+}
+
 export interface Destination {
   id: string;
   nameEn: string;
@@ -57,12 +93,31 @@ export interface Destination {
   langAr: string;
   /** ISO 3166-1 alpha-2, uppercase (e.g. "JP") — assigned via ISO_CODES in the original. */
   countryCode: string;
+  /** Discriminant added in Phase 10 (set programmatically in data/destinations.ts,
+   *  not stored in the generated JSON) so code can distinguish the 30 full
+   *  destinations from the 165 Phase 10 basic countries in a unified catalog. */
+  recommendationReady: true;
 }
 
 /** Keys on Destination usable as a numeric scoring target (question.destKey). */
 export type NumericDestinationKey = {
   [K in keyof Destination]: Destination[K] extends number ? K : never;
 }[keyof Destination];
+
+// --- Phase 10: the 165 additional countries --------------------------------
+// Deliberately NOT given costLevel/safety/climate/etc: they have no
+// recommendation-engine data yet (a later phase's job), and inventing scores
+// here would be fabricated data. `recommendationReady: false` makes that
+// distinction explicit and lets Explorer/Detail branch safely instead of
+// crashing on missing fields.
+export interface BasicCountry extends CountryBase {
+  recommendationReady: false;
+}
+
+/** One entry in the unified worldwide catalog — either a full, scoreable
+ *  destination (the original 30) or a basic country (Phase 10's 165). Narrow
+ *  with `entry.recommendationReady` before accessing recommendation fields. */
+export type CatalogEntry = Destination | BasicCountry;
 
 export type PurposeId =
   | 'tourism'
@@ -208,6 +263,9 @@ export interface DetailStrings {
   region: string;
   match: string;
   browse: string;
+  /** Phase 10 additions, for the graceful basic-country detail state. */
+  capital: string;
+  notRecommendationReady: string;
 }
 
 export interface ExploreStrings {
@@ -243,7 +301,9 @@ export interface I18nDict {
   costLevels: [string, string, string, string];
   climateLabels: Record<ClimateKind, string>;
   visaLabels: Record<VisaDifficulty, string>;
-  regionLabels: Record<Region, string>;
+  /** Extended in Phase 10 to Continent (was Region) so the two new buckets
+   *  (Africa, SouthAmerica) have labels too — see data/i18n/ar.ts / en.ts. */
+  regionLabels: Record<Continent, string>;
 }
 
 export type Lang = 'ar' | 'en';

@@ -3,14 +3,19 @@
 // remote URL, never a redrawn/simplified flag. The only original SVG
 // source data used is FLAG_SVG_RAW (data/flags.ts), instantiated through
 // instantiateFlagSvg() exactly as before.
+//
+// Phase 10: typed against FlagSubject (id/nameEn/nameAr/countryCode) rather
+// than the full Destination, since these components only ever needed those
+// fields — this lets them render flags for the 165 new basic countries too,
+// with no change to how the original 30 render.
 import { useId } from 'react';
-import type { Destination, Lang } from '../../data/types';
+import type { Continent, FlagSubject, Lang } from '../../data/types';
 import { FLAG_SVG_RAW } from '../../data/flags';
 import { instantiateFlagSvg } from './instantiateFlagSvg';
 import { regionGradientCss } from '../regionGradient';
 
-function nameOf(dest: Destination, lang: Lang): string {
-  return lang === 'ar' ? dest.nameAr : dest.nameEn;
+function nameOf(country: FlagSubject, lang: Lang): string {
+  return lang === 'ar' ? country.nameAr : country.nameEn;
 }
 
 /** React's useId() includes colons (":r1:"), which aren't worth risking inside
@@ -25,7 +30,7 @@ export function FlagChip({
   width = 26,
   height = 19,
 }: {
-  dest: Destination;
+  dest: FlagSubject;
   width?: number;
   height?: number;
 }) {
@@ -48,7 +53,7 @@ export function FlagChip({
 
 /** Two-layer flag banner: blurred full-bleed backdrop + crisp centered flag,
  *  with a fallback badge only if a country genuinely has no embedded flag. */
-export function FlagBanner({ dest, lang }: { dest: Destination; lang: Lang }) {
+export function FlagBanner({ dest, lang }: { dest: FlagSubject; lang: Lang }) {
   const uid = useFlagUid();
   const code = dest.countryCode ? dest.countryCode.toLowerCase() : null;
 
@@ -71,22 +76,26 @@ export function FlagBanner({ dest, lang }: { dest: Destination; lang: Lang }) {
 }
 
 /** Ports thumbHTML(): the region-gradient thumb/card image used on Results
- *  and Explorer cards, with the flag banner layered on top. */
+ *  and Explorer cards, with the flag banner layered on top. `continent`
+ *  drives the gradient (Destination.region and BasicCountry.continent are
+ *  both Continent-shaped; pass whichever the caller has via continentOf()). */
 export function FlagThumb({
   dest,
   lang,
+  continent,
   className = 'thumb',
   style,
 }: {
-  dest: Destination;
+  dest: FlagSubject;
   lang: Lang;
+  continent: Continent;
   className?: string;
   style?: React.CSSProperties;
 }) {
   return (
     <div
       className={`${className} flag-banner`}
-      style={{ backgroundImage: regionGradientCss(dest.region), ...style }}
+      style={{ backgroundImage: regionGradientCss(continent), ...style }}
     >
       <FlagBanner dest={dest} lang={lang} />
     </div>

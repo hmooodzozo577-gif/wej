@@ -1,14 +1,22 @@
 // Ports filteredDestinations() + renderExplore() from wejhaty.html.
+//
+// Phase 10: the data source is now the full worldwide WORLD_CATALOG (195)
+// instead of just DESTINATIONS (30) — the toolbar, layout, and card grid
+// are otherwise unchanged. The purpose/cost filters only make sense for
+// recommendation-ready entries (a basic country has no costLevel/pTourism
+// etc.), so they now explicitly exclude non-recommendation-ready entries
+// rather than silently letting them through unfiltered or crashing on a
+// missing field.
 import { useAppState, useI18n } from '../state/hooks';
-import { DESTINATIONS } from '../data/destinations';
 import { costLabel } from '../data/destinationText';
 import { PURPOSES } from '../data/purposes';
-import type { Destination, Region } from '../data/types';
+import { WORLD_CATALOG, continentOf } from '../data/worldCatalog';
+import type { CatalogEntry, Continent, Destination } from '../data/types';
 import { DestinationCard } from '../components/DestinationCard';
 import { Icon } from '../components/Icon';
 import type { ExploreFilters } from '../state/types';
 
-const REGIONS: Region[] = ['Asia', 'Europe', 'MiddleEast', 'NAmerica', 'Oceania'];
+const CONTINENTS: Continent[] = ['Africa', 'Asia', 'Europe', 'MiddleEast', 'NAmerica', 'SouthAmerica', 'Oceania'];
 
 const PURPOSE_SCORE_KEY: Record<string, keyof Destination> = {
   tourism: 'pTourism',
@@ -20,16 +28,30 @@ const PURPOSE_SCORE_KEY: Record<string, keyof Destination> = {
   wellness: 'pWellness',
 };
 
-function filteredDestinations(f: ExploreFilters): Destination[] {
+function searchHaystack(d: CatalogEntry): string {
+  const parts = [d.nameEn, d.nameAr];
+  if (d.recommendationReady) {
+    parts.push(...d.citiesEn, ...d.citiesAr);
+  } else if (d.capitalEn) {
+    parts.push(d.capitalEn);
+  }
+  return parts.join(' ').toLowerCase();
+}
+
+function filteredCatalog(f: ExploreFilters): CatalogEntry[] {
   const q = f.q.trim().toLowerCase();
-  return DESTINATIONS.filter((d) => {
-    if (q) {
-      const hay = (d.nameEn + ' ' + d.nameAr + ' ' + d.citiesEn.join(' ') + ' ' + d.citiesAr.join(' ')).toLowerCase();
-      if (!hay.includes(q)) return false;
+  return WORLD_CATALOG.filter((d) => {
+    if (q && !searchHaystack(d).includes(q)) return false;
+    if (f.region && continentOf(d) !== f.region) return false;
+    // Cost and purpose filters only apply to recommendation-ready entries —
+    // a basic country has neither field, so it's excluded rather than
+    // silently shown as a false match.
+    if (f.cost) {
+      if (!d.recommendationReady) return false;
+      if (String(d.costLevel) !== f.cost) return false;
     }
-    if (f.region && d.region !== f.region) return false;
-    if (f.cost && String(d.costLevel) !== f.cost) return false;
     if (f.purpose) {
+      if (!d.recommendationReady) return false;
       const key = PURPOSE_SCORE_KEY[f.purpose];
       if (key && (d[key] as number) < 65) return false;
     }
@@ -42,7 +64,7 @@ export function Explore() {
   const { lang, t } = useI18n();
   const ex = t.explore;
   const purposeOpts = PURPOSES.filter((p) => p.id !== 'other');
-  const list = filteredDestinations(state.explore);
+  const list = filteredCatalog(state.explore);
 
   const setFilter = (key: keyof ExploreFilters, value: string) =>
     dispatch({ type: 'SET_EXPLORE_FILTER', key, value });
@@ -72,7 +94,7 @@ export function Explore() {
               <label htmlFor="exRegion">{ex.region}</label>
               <select id="exRegion" value={state.explore.region} onChange={(e) => setFilter('region', e.target.value)}>
                 <option value="">{ex.allRegions}</option>
-                {REGIONS.map((r) => (
+                {CONTINENTS.map((r) => (
                   <option value={r} key={r}>
                     {t.regionLabels[r]}
                   </option>

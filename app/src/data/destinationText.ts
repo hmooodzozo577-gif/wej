@@ -1,8 +1,13 @@
 // Ports the per-language destination text accessors from wejhaty.html
 // (nameOf, descOf, citiesOf, strengthsOf, weaknessesOf, langOf, livingCostOf).
-import type { Destination, Lang } from './types';
+import type { Destination, FlagSubject, Lang } from './types';
 
-export const nameOf = (d: Destination, lang: Lang): string => (lang === 'ar' ? d.nameAr : d.nameEn);
+// nameOf works for any CatalogEntry (Destination or BasicCountry) — both
+// satisfy FlagSubject. Everything else here (description, cities,
+// strengths, etc.) only exists on full destinations, so stays typed to
+// Destination and is only ever called after narrowing on
+// `recommendationReady` — see components/DestinationCard.tsx.
+export const nameOf = (d: FlagSubject, lang: Lang): string => (lang === 'ar' ? d.nameAr : d.nameEn);
 export const descOf = (d: Destination, lang: Lang): string => (lang === 'ar' ? d.descAr : d.descEn);
 export const citiesOf = (d: Destination, lang: Lang): string[] =>
   lang === 'ar' ? d.citiesAr : d.citiesEn;
