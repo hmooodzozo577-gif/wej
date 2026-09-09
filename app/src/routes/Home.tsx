@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { DESTINATIONS } from '../data/destinations';
+import { WORLD_CATALOG } from '../data/worldCatalog';
 import { nameOf } from '../data/destinationText';
 import { PURPOSES } from '../data/purposes';
 import { Icon } from '../components/Icon';
@@ -52,7 +53,9 @@ export function Home() {
             </div>
             <div className="hero-stats">
               <div className="hero-stat">
-                <b>{h.stat1n}</b>
+                {/* Stale "30+" (from the original static copy) replaced with
+                    the real catalog size, so this never drifts again. */}
+                <b>{WORLD_CATALOG.length}+</b>
                 <span>{h.stat1l}</span>
               </div>
               <div className="hero-stat">
