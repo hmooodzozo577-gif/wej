@@ -1,0 +1,19 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+node_modules
+dist
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# wrangler local state (never used in this step, but keep out of git
+# regardless — it can contain local dev secrets/state)
+.wrangler
+.dev.vars

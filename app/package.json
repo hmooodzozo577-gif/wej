@@ -24,10 +24,16 @@
     "city-timezones": "^1.3.4",
     "flag-icons": "^7.5.0",
     "jsdom": "^30.0.1",
+    "ourairports-data-js": "^1.0.3",
     "oxlint": "^1.79.0",
     "typescript": "~6.0.2",
     "vite": "^8.2.2",
     "vitest": "^5.0.0",
     "world-countries": "^5.1.0"
+  },
+  "overrides": {
+    "ourairports-data-js": {
+      "typescript": "$typescript"
+    }
   }
 }

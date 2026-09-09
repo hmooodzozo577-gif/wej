@@ -176,6 +176,25 @@ export interface CityLocation {
   lng: number;
 }
 
+/** Phase 13.2 (travel API foundation — airport resolution) — one major,
+ *  scheduled-passenger-service airport (see scripts/generate-airports.mjs
+ *  for the exact source and filtering criteria). Unlike `CityLocation`,
+ *  there is no `nameAr`: OurAirports has no non-English name field, and
+ *  unlike cities.ts's small hand-verified table, no curated Arabic airport
+ *  names exist yet — rather than guess a transliteration for ~3,000
+ *  airports, this type only carries the real English name. A `nameAr`
+ *  field can be added in a later phase if a genuine curated source is
+ *  found. `countryCode` matches CatalogEntry.countryCode (ISO 3166-1
+ *  alpha-2) — the same country-code space used throughout the app, not a
+ *  second country model. */
+export interface AirportLocation {
+  iata: string;
+  name: string;
+  countryCode: string;
+  lat: number;
+  lng: number;
+}
+
 export type PurposeId =
   | 'tourism'
   | 'work'

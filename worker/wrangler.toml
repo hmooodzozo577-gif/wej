@@ -1,0 +1,18 @@
+# Cloudflare Worker configuration for Wejhaty's travel API backend.
+#
+# NOT DEPLOYED as part of Phase 13.2 — this file only documents the
+# intended configuration so a future step (13.3+) can run
+# `npx wrangler deploy` once Amadeus integration actually begins. Deploying
+# this Worker requires a Cloudflare account and `wrangler login`/API token,
+# neither of which this task sets up.
+name = "wejhaty-travel-worker"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+# No [vars] section: this Worker takes no plaintext configuration values.
+# The one secret it will eventually need (AMADEUS_API_KEY, Phase 13.3) is
+# NEVER set here — see ../SECRETS.md. Secrets are configured out-of-band
+# via `wrangler secret put AMADEUS_API_KEY`, which stores the value
+# encrypted in Cloudflare's platform and injects it into `env` at runtime
+# only; it is never written to this file, this repository, or any build
+# output.

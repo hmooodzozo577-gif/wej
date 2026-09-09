@@ -1,0 +1,17 @@
+{
+  "name": "wejhaty-travel-worker",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Cloudflare Worker backend for Wejhaty's travel API. Structurally separate from app/ (the GitHub Pages frontend) — not bundled into it, not deployed by deploy-pages.yml, and not deployed by this task.",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "dev": "echo 'Not run in this step — see ../README.md. Requires: npx wrangler dev (wrangler not installed yet).'",
+    "deploy": "echo 'Not run in this step — see ../README.md and ../SECRETS.md before ever running: npx wrangler deploy'"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.2",
+    "vitest": "^5.0.0"
+  }
+}
