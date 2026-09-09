@@ -20,22 +20,23 @@ describe('Phase 11 Step 3 — resolveBorderCountry', () => {
     expect(resolveBorderCountry('')).toBeUndefined();
   });
 
-  it('never resolves an excluded country\'s iso3 (Monaco, MCO, currently excluded)', () => {
-    expect(EXCLUDED_COUNTRIES.some((c) => c.iso3 === 'MCO')).toBe(true); // sanity: this is what's configured
-    expect(resolveBorderCountry('MCO')).toBeUndefined();
+  it('never resolves whatever iso3 is currently configured as excluded', () => {
+    expect(EXCLUDED_COUNTRIES.length).toBeGreaterThan(0); // sanity: there's something configured to check
+    for (const excluded of EXCLUDED_COUNTRIES) {
+      expect(resolveBorderCountry(excluded.iso3)).toBeUndefined();
+    }
   });
 });
 
 describe('Phase 11 Step 3 — resolvedBordersOf', () => {
-  it('France resolves to its real neighbors, including both a full destination and basic countries, excluding the excluded one', () => {
-    const borders = resolvedBordersOf('france');
-    const ids = borders.map((b) => b.id);
+  it('France resolves to its real neighbors, including both a full destination and a basic country', () => {
+    // Exclusion is covered generically below ("no result ever contains an
+    // excluded country") — this test only asserts the underlying geography,
+    // which holds regardless of what excludedCountries.ts currently configures.
+    const ids = resolvedBordersOf('france').map((b) => b.id);
     expect(ids).toContain('germany'); // full destination
     expect(ids).toContain('italy'); // full destination
     expect(ids).toContain('ad'); // basic country (Andorra)
-    // Monaco (excluded) must not appear even though France's raw
-    // countryInfo.borders includes "MCO".
-    expect(borders.some((b) => b.countryCode === 'MC')).toBe(false);
   });
 
   it('returns an empty array (never throws) for a country with no land borders', () => {

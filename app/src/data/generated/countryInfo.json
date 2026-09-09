@@ -25,7 +25,11 @@
       "UZB",
       "TJK",
       "CHN"
-    ]
+    ],
+    "latlng": {
+      "lat": 33,
+      "lng": 65
+    }
   },
   "AO": {
     "iso2": "AO",
@@ -49,7 +53,11 @@
       "COD",
       "ZMB",
       "NAM"
-    ]
+    ],
+    "latlng": {
+      "lat": -12.5,
+      "lng": 18.5
+    }
   },
   "AL": {
     "iso2": "AL",
@@ -73,7 +81,11 @@
       "GRC",
       "MKD",
       "UNK"
-    ]
+    ],
+    "latlng": {
+      "lat": 41,
+      "lng": 20
+    }
   },
   "AD": {
     "iso2": "AD",
@@ -95,7 +107,11 @@
     "borders": [
       "FRA",
       "ESP"
-    ]
+    ],
+    "latlng": {
+      "lat": 42.5,
+      "lng": 1.5
+    }
   },
   "AE": {
     "iso2": "AE",
@@ -117,7 +133,11 @@
     "borders": [
       "OMN",
       "SAU"
-    ]
+    ],
+    "latlng": {
+      "lat": 24,
+      "lng": 54
+    }
   },
   "AR": {
     "iso2": "AR",
@@ -143,7 +163,11 @@
       "CHL",
       "PRY",
       "URY"
-    ]
+    ],
+    "latlng": {
+      "lat": -34,
+      "lng": -64
+    }
   },
   "AM": {
     "iso2": "AM",
@@ -167,7 +191,11 @@
       "GEO",
       "IRN",
       "TUR"
-    ]
+    ],
+    "latlng": {
+      "lat": 40,
+      "lng": 45
+    }
   },
   "AG": {
     "iso2": "AG",
@@ -186,7 +214,11 @@
       "English"
     ],
     "callingCode": "+1268",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 17.05,
+      "lng": -61.8
+    }
   },
   "AU": {
     "iso2": "AU",
@@ -205,7 +237,11 @@
       "English"
     ],
     "callingCode": "+61",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -27,
+      "lng": 133
+    }
   },
   "AT": {
     "iso2": "AT",
@@ -233,7 +269,11 @@
       "SVK",
       "SVN",
       "CHE"
-    ]
+    ],
+    "latlng": {
+      "lat": 47.33333333,
+      "lng": 13.33333333
+    }
   },
   "AZ": {
     "iso2": "AZ",
@@ -259,7 +299,11 @@
       "IRN",
       "RUS",
       "TUR"
-    ]
+    ],
+    "latlng": {
+      "lat": 40.5,
+      "lng": 47.5
+    }
   },
   "BI": {
     "iso2": "BI",
@@ -283,7 +327,11 @@
       "COD",
       "RWA",
       "TZA"
-    ]
+    ],
+    "latlng": {
+      "lat": -3.5,
+      "lng": 30
+    }
   },
   "BE": {
     "iso2": "BE",
@@ -309,7 +357,11 @@
       "DEU",
       "LUX",
       "NLD"
-    ]
+    ],
+    "latlng": {
+      "lat": 50.83333333,
+      "lng": 4
+    }
   },
   "BJ": {
     "iso2": "BJ",
@@ -333,7 +385,11 @@
       "NER",
       "NGA",
       "TGO"
-    ]
+    ],
+    "latlng": {
+      "lat": 9.5,
+      "lng": 2.25
+    }
   },
   "BF": {
     "iso2": "BF",
@@ -359,7 +415,11 @@
       "MLI",
       "NER",
       "TGO"
-    ]
+    ],
+    "latlng": {
+      "lat": 13,
+      "lng": -2
+    }
   },
   "BD": {
     "iso2": "BD",
@@ -381,7 +441,11 @@
     "borders": [
       "MMR",
       "IND"
-    ]
+    ],
+    "latlng": {
+      "lat": 24,
+      "lng": 90
+    }
   },
   "BG": {
     "iso2": "BG",
@@ -406,7 +470,11 @@
       "ROU",
       "SRB",
       "TUR"
-    ]
+    ],
+    "latlng": {
+      "lat": 43,
+      "lng": 25
+    }
   },
   "BH": {
     "iso2": "BH",
@@ -425,7 +493,11 @@
       "Arabic"
     ],
     "callingCode": "+973",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 26,
+      "lng": 50.55
+    }
   },
   "BS": {
     "iso2": "BS",
@@ -449,7 +521,11 @@
       "English"
     ],
     "callingCode": "+1242",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 24.25,
+      "lng": -76
+    }
   },
   "BA": {
     "iso2": "BA",
@@ -474,7 +550,11 @@
       "HRV",
       "MNE",
       "SRB"
-    ]
+    ],
+    "latlng": {
+      "lat": 44,
+      "lng": 18
+    }
   },
   "BY": {
     "iso2": "BY",
@@ -500,7 +580,11 @@
       "POL",
       "RUS",
       "UKR"
-    ]
+    ],
+    "latlng": {
+      "lat": 53,
+      "lng": 28
+    }
   },
   "BZ": {
     "iso2": "BZ",
@@ -524,7 +608,11 @@
     "borders": [
       "GTM",
       "MEX"
-    ]
+    ],
+    "latlng": {
+      "lat": 17.25,
+      "lng": -88.75
+    }
   },
   "BO": {
     "iso2": "BO",
@@ -552,7 +640,11 @@
       "CHL",
       "PRY",
       "PER"
-    ]
+    ],
+    "latlng": {
+      "lat": -17,
+      "lng": -65
+    }
   },
   "BR": {
     "iso2": "BR",
@@ -582,7 +674,11 @@
       "SUR",
       "URY",
       "VEN"
-    ]
+    ],
+    "latlng": {
+      "lat": -10,
+      "lng": -55
+    }
   },
   "BB": {
     "iso2": "BB",
@@ -601,7 +697,11 @@
       "English"
     ],
     "callingCode": "+1246",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 13.16666666,
+      "lng": -59.53333333
+    }
   },
   "BN": {
     "iso2": "BN",
@@ -627,7 +727,11 @@
     "callingCode": "+673",
     "borders": [
       "MYS"
-    ]
+    ],
+    "latlng": {
+      "lat": 4.5,
+      "lng": 114.66666666
+    }
   },
   "BT": {
     "iso2": "BT",
@@ -654,7 +758,11 @@
     "borders": [
       "CHN",
       "IND"
-    ]
+    ],
+    "latlng": {
+      "lat": 27.5,
+      "lng": 90.5
+    }
   },
   "BW": {
     "iso2": "BW",
@@ -679,7 +787,11 @@
       "ZAF",
       "ZMB",
       "ZWE"
-    ]
+    ],
+    "latlng": {
+      "lat": -22,
+      "lng": 24
+    }
   },
   "CF": {
     "iso2": "CF",
@@ -706,7 +818,11 @@
       "COG",
       "SSD",
       "SDN"
-    ]
+    ],
+    "latlng": {
+      "lat": 7,
+      "lng": 21
+    }
   },
   "CA": {
     "iso2": "CA",
@@ -728,7 +844,11 @@
     "callingCode": "+1",
     "borders": [
       "USA"
-    ]
+    ],
+    "latlng": {
+      "lat": 60,
+      "lng": -95
+    }
   },
   "CH": {
     "iso2": "CH",
@@ -756,7 +876,11 @@
       "ITA",
       "LIE",
       "DEU"
-    ]
+    ],
+    "latlng": {
+      "lat": 47,
+      "lng": 8
+    }
   },
   "CL": {
     "iso2": "CL",
@@ -779,7 +903,11 @@
       "ARG",
       "BOL",
       "PER"
-    ]
+    ],
+    "latlng": {
+      "lat": -30,
+      "lng": -71
+    }
   },
   "CN": {
     "iso2": "CN",
@@ -815,7 +943,11 @@
       "RUS",
       "TJK",
       "VNM"
-    ]
+    ],
+    "latlng": {
+      "lat": 35,
+      "lng": 105
+    }
   },
   "CI": {
     "iso2": "CI",
@@ -840,7 +972,11 @@
       "GIN",
       "LBR",
       "MLI"
-    ]
+    ],
+    "latlng": {
+      "lat": 8,
+      "lng": -5
+    }
   },
   "CM": {
     "iso2": "CM",
@@ -867,7 +1003,11 @@
       "GNQ",
       "GAB",
       "NGA"
-    ]
+    ],
+    "latlng": {
+      "lat": 6,
+      "lng": 12
+    }
   },
   "CD": {
     "iso2": "CD",
@@ -900,7 +1040,11 @@
       "TZA",
       "UGA",
       "ZMB"
-    ]
+    ],
+    "latlng": {
+      "lat": 0,
+      "lng": 25
+    }
   },
   "CG": {
     "iso2": "CG",
@@ -927,7 +1071,11 @@
       "CAF",
       "COD",
       "GAB"
-    ]
+    ],
+    "latlng": {
+      "lat": -1,
+      "lng": 15
+    }
   },
   "CO": {
     "iso2": "CO",
@@ -952,7 +1100,11 @@
       "PAN",
       "PER",
       "VEN"
-    ]
+    ],
+    "latlng": {
+      "lat": 4,
+      "lng": -72
+    }
   },
   "KM": {
     "iso2": "KM",
@@ -973,7 +1125,11 @@
       "Comorian"
     ],
     "callingCode": "+269",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -12.16666666,
+      "lng": 44.25
+    }
   },
   "CV": {
     "iso2": "CV",
@@ -992,7 +1148,11 @@
       "Portuguese"
     ],
     "callingCode": "+238",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 16,
+      "lng": -24
+    }
   },
   "CR": {
     "iso2": "CR",
@@ -1014,7 +1174,11 @@
     "borders": [
       "NIC",
       "PAN"
-    ]
+    ],
+    "latlng": {
+      "lat": 10,
+      "lng": -84
+    }
   },
   "CU": {
     "iso2": "CU",
@@ -1038,7 +1202,11 @@
       "Spanish"
     ],
     "callingCode": "+53",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 21.5,
+      "lng": -80
+    }
   },
   "CY": {
     "iso2": "CY",
@@ -1058,7 +1226,11 @@
       "Turkish"
     ],
     "callingCode": "+357",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 35,
+      "lng": 33
+    }
   },
   "CZ": {
     "iso2": "CZ",
@@ -1083,7 +1255,11 @@
       "DEU",
       "POL",
       "SVK"
-    ]
+    ],
+    "latlng": {
+      "lat": 49.75,
+      "lng": 15.5
+    }
   },
   "DE": {
     "iso2": "DE",
@@ -1112,7 +1288,11 @@
       "NLD",
       "POL",
       "CHE"
-    ]
+    ],
+    "latlng": {
+      "lat": 51,
+      "lng": 9
+    }
   },
   "DJ": {
     "iso2": "DJ",
@@ -1136,7 +1316,11 @@
       "ERI",
       "ETH",
       "SOM"
-    ]
+    ],
+    "latlng": {
+      "lat": 11.5,
+      "lng": 43
+    }
   },
   "DM": {
     "iso2": "DM",
@@ -1155,7 +1339,11 @@
       "English"
     ],
     "callingCode": "+1767",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 15.41666666,
+      "lng": -61.33333333
+    }
   },
   "DK": {
     "iso2": "DK",
@@ -1176,7 +1364,11 @@
     "callingCode": "+45",
     "borders": [
       "DEU"
-    ]
+    ],
+    "latlng": {
+      "lat": 56,
+      "lng": 10
+    }
   },
   "DO": {
     "iso2": "DO",
@@ -1197,7 +1389,11 @@
     "callingCode": "+1",
     "borders": [
       "HTI"
-    ]
+    ],
+    "latlng": {
+      "lat": 19,
+      "lng": -70.66666666
+    }
   },
   "DZ": {
     "iso2": "DZ",
@@ -1224,7 +1420,11 @@
       "MRT",
       "MLI",
       "MAR"
-    ]
+    ],
+    "latlng": {
+      "lat": 28,
+      "lng": 3
+    }
   },
   "EC": {
     "iso2": "EC",
@@ -1246,7 +1446,11 @@
     "borders": [
       "COL",
       "PER"
-    ]
+    ],
+    "latlng": {
+      "lat": -2,
+      "lng": -77.5
+    }
   },
   "EG": {
     "iso2": "EG",
@@ -1270,7 +1474,11 @@
       "LBY",
       "PSE",
       "SDN"
-    ]
+    ],
+    "latlng": {
+      "lat": 27,
+      "lng": 30
+    }
   },
   "ER": {
     "iso2": "ER",
@@ -1295,7 +1503,11 @@
       "DJI",
       "ETH",
       "SDN"
-    ]
+    ],
+    "latlng": {
+      "lat": 15,
+      "lng": 39
+    }
   },
   "ES": {
     "iso2": "ES",
@@ -1320,7 +1532,11 @@
       "GIB",
       "PRT",
       "MAR"
-    ]
+    ],
+    "latlng": {
+      "lat": 40,
+      "lng": -4
+    }
   },
   "EE": {
     "iso2": "EE",
@@ -1342,7 +1558,11 @@
     "borders": [
       "LVA",
       "RUS"
-    ]
+    ],
+    "latlng": {
+      "lat": 59,
+      "lng": 26
+    }
   },
   "ET": {
     "iso2": "ET",
@@ -1368,7 +1588,11 @@
       "SOM",
       "SSD",
       "SDN"
-    ]
+    ],
+    "latlng": {
+      "lat": 8,
+      "lng": 38
+    }
   },
   "FI": {
     "iso2": "FI",
@@ -1392,7 +1616,11 @@
       "NOR",
       "SWE",
       "RUS"
-    ]
+    ],
+    "latlng": {
+      "lat": 64,
+      "lng": 26
+    }
   },
   "FJ": {
     "iso2": "FJ",
@@ -1413,7 +1641,11 @@
       "Fiji Hindi"
     ],
     "callingCode": "+679",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -18,
+      "lng": 175
+    }
   },
   "FR": {
     "iso2": "FR",
@@ -1441,7 +1673,11 @@
       "MCO",
       "ESP",
       "CHE"
-    ]
+    ],
+    "latlng": {
+      "lat": 46,
+      "lng": 2
+    }
   },
   "FM": {
     "iso2": "FM",
@@ -1454,7 +1690,11 @@
       "English"
     ],
     "callingCode": "+691",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 6.91666666,
+      "lng": 158.25
+    }
   },
   "GA": {
     "iso2": "GA",
@@ -1477,7 +1717,11 @@
       "CMR",
       "COG",
       "GNQ"
-    ]
+    ],
+    "latlng": {
+      "lat": -1,
+      "lng": 11.75
+    }
   },
   "GB": {
     "iso2": "GB",
@@ -1498,7 +1742,11 @@
     "callingCode": "+44",
     "borders": [
       "IRL"
-    ]
+    ],
+    "latlng": {
+      "lat": 54,
+      "lng": -2
+    }
   },
   "GE": {
     "iso2": "GE",
@@ -1522,7 +1770,11 @@
       "AZE",
       "RUS",
       "TUR"
-    ]
+    ],
+    "latlng": {
+      "lat": 42,
+      "lng": 43.5
+    }
   },
   "GH": {
     "iso2": "GH",
@@ -1545,7 +1797,11 @@
       "BFA",
       "CIV",
       "TGO"
-    ]
+    ],
+    "latlng": {
+      "lat": 8,
+      "lng": -2
+    }
   },
   "GN": {
     "iso2": "GN",
@@ -1571,7 +1827,11 @@
       "MLI",
       "SEN",
       "SLE"
-    ]
+    ],
+    "latlng": {
+      "lat": 11,
+      "lng": -10
+    }
   },
   "GM": {
     "iso2": "GM",
@@ -1592,7 +1852,11 @@
     "callingCode": "+220",
     "borders": [
       "SEN"
-    ]
+    ],
+    "latlng": {
+      "lat": 13.46666666,
+      "lng": -16.56666666
+    }
   },
   "GW": {
     "iso2": "GW",
@@ -1615,7 +1879,11 @@
     "borders": [
       "GIN",
       "SEN"
-    ]
+    ],
+    "latlng": {
+      "lat": 12,
+      "lng": -15
+    }
   },
   "GQ": {
     "iso2": "GQ",
@@ -1639,7 +1907,11 @@
     "borders": [
       "CMR",
       "GAB"
-    ]
+    ],
+    "latlng": {
+      "lat": 2,
+      "lng": 10
+    }
   },
   "GR": {
     "iso2": "GR",
@@ -1663,7 +1935,11 @@
       "BGR",
       "TUR",
       "MKD"
-    ]
+    ],
+    "latlng": {
+      "lat": 39,
+      "lng": 22
+    }
   },
   "GD": {
     "iso2": "GD",
@@ -1682,7 +1958,11 @@
       "English"
     ],
     "callingCode": "+1473",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 12.11666666,
+      "lng": -61.66666666
+    }
   },
   "GT": {
     "iso2": "GT",
@@ -1706,7 +1986,11 @@
       "SLV",
       "HND",
       "MEX"
-    ]
+    ],
+    "latlng": {
+      "lat": 15.5,
+      "lng": -90.25
+    }
   },
   "GY": {
     "iso2": "GY",
@@ -1729,7 +2013,11 @@
       "BRA",
       "SUR",
       "VEN"
-    ]
+    ],
+    "latlng": {
+      "lat": 5,
+      "lng": -59
+    }
   },
   "HN": {
     "iso2": "HN",
@@ -1752,7 +2040,11 @@
       "GTM",
       "SLV",
       "NIC"
-    ]
+    ],
+    "latlng": {
+      "lat": 15,
+      "lng": -86.5
+    }
   },
   "HR": {
     "iso2": "HR",
@@ -1777,7 +2069,11 @@
       "MNE",
       "SRB",
       "SVN"
-    ]
+    ],
+    "latlng": {
+      "lat": 45.16666666,
+      "lng": 15.5
+    }
   },
   "HT": {
     "iso2": "HT",
@@ -1799,7 +2095,11 @@
     "callingCode": "+509",
     "borders": [
       "DOM"
-    ]
+    ],
+    "latlng": {
+      "lat": 19,
+      "lng": -72.41666666
+    }
   },
   "HU": {
     "iso2": "HU",
@@ -1826,7 +2126,11 @@
       "SVK",
       "SVN",
       "UKR"
-    ]
+    ],
+    "latlng": {
+      "lat": 47,
+      "lng": 20
+    }
   },
   "ID": {
     "iso2": "ID",
@@ -1849,7 +2153,11 @@
       "TLS",
       "MYS",
       "PNG"
-    ]
+    ],
+    "latlng": {
+      "lat": -5,
+      "lng": 120
+    }
   },
   "IN": {
     "iso2": "IN",
@@ -1877,7 +2185,11 @@
       "CHN",
       "NPL",
       "PAK"
-    ]
+    ],
+    "latlng": {
+      "lat": 20,
+      "lng": 77
+    }
   },
   "IE": {
     "iso2": "IE",
@@ -1899,7 +2211,11 @@
     "callingCode": "+353",
     "borders": [
       "GBR"
-    ]
+    ],
+    "latlng": {
+      "lat": 53,
+      "lng": -8
+    }
   },
   "IR": {
     "iso2": "IR",
@@ -1926,7 +2242,11 @@
       "PAK",
       "TUR",
       "TKM"
-    ]
+    ],
+    "latlng": {
+      "lat": 32,
+      "lng": 53
+    }
   },
   "IQ": {
     "iso2": "IQ",
@@ -1954,7 +2274,11 @@
       "SAU",
       "SYR",
       "TUR"
-    ]
+    ],
+    "latlng": {
+      "lat": 33,
+      "lng": 44
+    }
   },
   "IS": {
     "iso2": "IS",
@@ -1973,7 +2297,11 @@
       "Icelandic"
     ],
     "callingCode": "+354",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 65,
+      "lng": -18
+    }
   },
   "IL": {
     "iso2": "IL",
@@ -1999,7 +2327,11 @@
       "LBN",
       "PSE",
       "SYR"
-    ]
+    ],
+    "latlng": {
+      "lat": 31.47,
+      "lng": 35.13
+    }
   },
   "IT": {
     "iso2": "IT",
@@ -2025,7 +2357,11 @@
       "SVN",
       "CHE",
       "VAT"
-    ]
+    ],
+    "latlng": {
+      "lat": 42.83333333,
+      "lng": 12.83333333
+    }
   },
   "JM": {
     "iso2": "JM",
@@ -2045,7 +2381,11 @@
       "Jamaican Patois"
     ],
     "callingCode": "+1876",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 18.25,
+      "lng": -77.5
+    }
   },
   "JO": {
     "iso2": "JO",
@@ -2070,7 +2410,11 @@
       "PSE",
       "SAU",
       "SYR"
-    ]
+    ],
+    "latlng": {
+      "lat": 31,
+      "lng": 36
+    }
   },
   "JP": {
     "iso2": "JP",
@@ -2089,7 +2433,11 @@
       "Japanese"
     ],
     "callingCode": "+81",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 36,
+      "lng": 138
+    }
   },
   "KZ": {
     "iso2": "KZ",
@@ -2115,7 +2463,11 @@
       "RUS",
       "TKM",
       "UZB"
-    ]
+    ],
+    "latlng": {
+      "lat": 48,
+      "lng": 68
+    }
   },
   "KE": {
     "iso2": "KE",
@@ -2141,7 +2493,11 @@
       "SSD",
       "TZA",
       "UGA"
-    ]
+    ],
+    "latlng": {
+      "lat": 1,
+      "lng": 38
+    }
   },
   "KG": {
     "iso2": "KG",
@@ -2166,7 +2522,11 @@
       "KAZ",
       "TJK",
       "UZB"
-    ]
+    ],
+    "latlng": {
+      "lat": 41,
+      "lng": 75
+    }
   },
   "KH": {
     "iso2": "KH",
@@ -2194,7 +2554,11 @@
       "LAO",
       "THA",
       "VNM"
-    ]
+    ],
+    "latlng": {
+      "lat": 13,
+      "lng": 105
+    }
   },
   "KI": {
     "iso2": "KI",
@@ -2219,7 +2583,11 @@
       "Gilbertese"
     ],
     "callingCode": "+686",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 1.41666666,
+      "lng": 173
+    }
   },
   "KN": {
     "iso2": "KN",
@@ -2238,7 +2606,11 @@
       "English"
     ],
     "callingCode": "+1869",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 17.33333333,
+      "lng": -62.75
+    }
   },
   "KR": {
     "iso2": "KR",
@@ -2259,7 +2631,11 @@
     "callingCode": "+82",
     "borders": [
       "PRK"
-    ]
+    ],
+    "latlng": {
+      "lat": 37,
+      "lng": 127.5
+    }
   },
   "KW": {
     "iso2": "KW",
@@ -2281,7 +2657,11 @@
     "borders": [
       "IRQ",
       "SAU"
-    ]
+    ],
+    "latlng": {
+      "lat": 29.5,
+      "lng": 45.75
+    }
   },
   "LA": {
     "iso2": "LA",
@@ -2306,7 +2686,11 @@
       "CHN",
       "THA",
       "VNM"
-    ]
+    ],
+    "latlng": {
+      "lat": 18,
+      "lng": 105
+    }
   },
   "LB": {
     "iso2": "LB",
@@ -2329,7 +2713,11 @@
     "borders": [
       "ISR",
       "SYR"
-    ]
+    ],
+    "latlng": {
+      "lat": 33.83333333,
+      "lng": 35.83333333
+    }
   },
   "LR": {
     "iso2": "LR",
@@ -2352,7 +2740,11 @@
       "GIN",
       "CIV",
       "SLE"
-    ]
+    ],
+    "latlng": {
+      "lat": 6.5,
+      "lng": -9.5
+    }
   },
   "LY": {
     "iso2": "LY",
@@ -2378,7 +2770,11 @@
       "NER",
       "SDN",
       "TUN"
-    ]
+    ],
+    "latlng": {
+      "lat": 25,
+      "lng": 17
+    }
   },
   "LC": {
     "iso2": "LC",
@@ -2397,7 +2793,11 @@
       "English"
     ],
     "callingCode": "+1758",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 13.88333333,
+      "lng": -60.96666666
+    }
   },
   "LI": {
     "iso2": "LI",
@@ -2419,7 +2819,11 @@
     "borders": [
       "AUT",
       "CHE"
-    ]
+    ],
+    "latlng": {
+      "lat": 47.26666666,
+      "lng": 9.53333333
+    }
   },
   "LK": {
     "iso2": "LK",
@@ -2441,7 +2845,11 @@
     "callingCode": "+94",
     "borders": [
       "IND"
-    ]
+    ],
+    "latlng": {
+      "lat": 7,
+      "lng": 81
+    }
   },
   "LS": {
     "iso2": "LS",
@@ -2468,7 +2876,11 @@
     "callingCode": "+266",
     "borders": [
       "ZAF"
-    ]
+    ],
+    "latlng": {
+      "lat": -29.5,
+      "lng": 28.5
+    }
   },
   "LT": {
     "iso2": "LT",
@@ -2492,7 +2904,11 @@
       "LVA",
       "POL",
       "RUS"
-    ]
+    ],
+    "latlng": {
+      "lat": 56,
+      "lng": 24
+    }
   },
   "LU": {
     "iso2": "LU",
@@ -2517,7 +2933,11 @@
       "BEL",
       "FRA",
       "DEU"
-    ]
+    ],
+    "latlng": {
+      "lat": 49.75,
+      "lng": 6.16666666
+    }
   },
   "LV": {
     "iso2": "LV",
@@ -2541,7 +2961,11 @@
       "EST",
       "LTU",
       "RUS"
-    ]
+    ],
+    "latlng": {
+      "lat": 57,
+      "lng": 25
+    }
   },
   "MA": {
     "iso2": "MA",
@@ -2565,7 +2989,11 @@
       "DZA",
       "ESH",
       "ESP"
-    ]
+    ],
+    "latlng": {
+      "lat": 32,
+      "lng": -5
+    }
   },
   "MC": {
     "iso2": "MC",
@@ -2586,7 +3014,11 @@
     "callingCode": "+377",
     "borders": [
       "FRA"
-    ]
+    ],
+    "latlng": {
+      "lat": 43.73333333,
+      "lng": 7.4
+    }
   },
   "MD": {
     "iso2": "MD",
@@ -2608,7 +3040,11 @@
     "borders": [
       "ROU",
       "UKR"
-    ]
+    ],
+    "latlng": {
+      "lat": 47,
+      "lng": 29
+    }
   },
   "MG": {
     "iso2": "MG",
@@ -2628,7 +3064,11 @@
       "Malagasy"
     ],
     "callingCode": "+261",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -20,
+      "lng": 47
+    }
   },
   "MV": {
     "iso2": "MV",
@@ -2647,7 +3087,11 @@
       "Maldivian"
     ],
     "callingCode": "+960",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 3.25,
+      "lng": 73
+    }
   },
   "MX": {
     "iso2": "MX",
@@ -2670,7 +3114,11 @@
       "BLZ",
       "GTM",
       "USA"
-    ]
+    ],
+    "latlng": {
+      "lat": 23,
+      "lng": -102
+    }
   },
   "MH": {
     "iso2": "MH",
@@ -2690,7 +3138,11 @@
       "Marshallese"
     ],
     "callingCode": "+692",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 9,
+      "lng": 168
+    }
   },
   "MK": {
     "iso2": "MK",
@@ -2715,7 +3167,11 @@
       "GRC",
       "UNK",
       "SRB"
-    ]
+    ],
+    "latlng": {
+      "lat": 41.83333333,
+      "lng": 22
+    }
   },
   "ML": {
     "iso2": "ML",
@@ -2742,7 +3198,11 @@
       "MRT",
       "NER",
       "SEN"
-    ]
+    ],
+    "latlng": {
+      "lat": 17,
+      "lng": -4
+    }
   },
   "MT": {
     "iso2": "MT",
@@ -2762,7 +3222,11 @@
       "Maltese"
     ],
     "callingCode": "+356",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 35.83333333,
+      "lng": 14.58333333
+    }
   },
   "MM": {
     "iso2": "MM",
@@ -2787,7 +3251,11 @@
       "IND",
       "LAO",
       "THA"
-    ]
+    ],
+    "latlng": {
+      "lat": 22,
+      "lng": 98
+    }
   },
   "ME": {
     "iso2": "ME",
@@ -2812,7 +3280,11 @@
       "HRV",
       "UNK",
       "SRB"
-    ]
+    ],
+    "latlng": {
+      "lat": 42.5,
+      "lng": 19.3
+    }
   },
   "MN": {
     "iso2": "MN",
@@ -2834,7 +3306,11 @@
     "borders": [
       "CHN",
       "RUS"
-    ]
+    ],
+    "latlng": {
+      "lat": 46,
+      "lng": 105
+    }
   },
   "MZ": {
     "iso2": "MZ",
@@ -2860,7 +3336,11 @@
       "TZA",
       "ZMB",
       "ZWE"
-    ]
+    ],
+    "latlng": {
+      "lat": -18.25,
+      "lng": 35
+    }
   },
   "MR": {
     "iso2": "MR",
@@ -2884,7 +3364,11 @@
       "MLI",
       "SEN",
       "ESH"
-    ]
+    ],
+    "latlng": {
+      "lat": 20,
+      "lng": -12
+    }
   },
   "MU": {
     "iso2": "MU",
@@ -2905,7 +3389,11 @@
       "Mauritian Creole"
     ],
     "callingCode": "+230",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -20.28333333,
+      "lng": 57.55
+    }
   },
   "MW": {
     "iso2": "MW",
@@ -2929,7 +3417,11 @@
       "MOZ",
       "TZA",
       "ZMB"
-    ]
+    ],
+    "latlng": {
+      "lat": -13.5,
+      "lng": 34
+    }
   },
   "MY": {
     "iso2": "MY",
@@ -2953,7 +3445,11 @@
       "BRN",
       "IDN",
       "THA"
-    ]
+    ],
+    "latlng": {
+      "lat": 2.5,
+      "lng": 112.5
+    }
   },
   "NA": {
     "iso2": "NA",
@@ -2990,7 +3486,11 @@
       "BWA",
       "ZAF",
       "ZMB"
-    ]
+    ],
+    "latlng": {
+      "lat": -22,
+      "lng": 17
+    }
   },
   "NE": {
     "iso2": "NE",
@@ -3017,7 +3517,11 @@
       "LBY",
       "MLI",
       "NGA"
-    ]
+    ],
+    "latlng": {
+      "lat": 16,
+      "lng": 8
+    }
   },
   "NG": {
     "iso2": "NG",
@@ -3041,7 +3545,11 @@
       "CMR",
       "TCD",
       "NER"
-    ]
+    ],
+    "latlng": {
+      "lat": 10,
+      "lng": 8
+    }
   },
   "NI": {
     "iso2": "NI",
@@ -3063,7 +3571,11 @@
     "borders": [
       "CRI",
       "HND"
-    ]
+    ],
+    "latlng": {
+      "lat": 13,
+      "lng": -85
+    }
   },
   "NL": {
     "iso2": "NL",
@@ -3085,7 +3597,11 @@
     "borders": [
       "BEL",
       "DEU"
-    ]
+    ],
+    "latlng": {
+      "lat": 52.5,
+      "lng": 5.75
+    }
   },
   "NO": {
     "iso2": "NO",
@@ -3110,7 +3626,11 @@
       "FIN",
       "SWE",
       "RUS"
-    ]
+    ],
+    "latlng": {
+      "lat": 62,
+      "lng": 10
+    }
   },
   "NP": {
     "iso2": "NP",
@@ -3132,7 +3652,11 @@
     "borders": [
       "CHN",
       "IND"
-    ]
+    ],
+    "latlng": {
+      "lat": 28,
+      "lng": 84
+    }
   },
   "NR": {
     "iso2": "NR",
@@ -3152,7 +3676,11 @@
       "Nauru"
     ],
     "callingCode": "+674",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -0.53333333,
+      "lng": 166.91666666
+    }
   },
   "NZ": {
     "iso2": "NZ",
@@ -3173,7 +3701,11 @@
       "New Zealand Sign Language"
     ],
     "callingCode": "+64",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -41,
+      "lng": 174
+    }
   },
   "OM": {
     "iso2": "OM",
@@ -3196,7 +3728,11 @@
       "SAU",
       "ARE",
       "YEM"
-    ]
+    ],
+    "latlng": {
+      "lat": 21,
+      "lng": 57
+    }
   },
   "PK": {
     "iso2": "PK",
@@ -3221,7 +3757,11 @@
       "CHN",
       "IND",
       "IRN"
-    ]
+    ],
+    "latlng": {
+      "lat": 30,
+      "lng": 70
+    }
   },
   "PA": {
     "iso2": "PA",
@@ -3248,7 +3788,11 @@
     "borders": [
       "COL",
       "CRI"
-    ]
+    ],
+    "latlng": {
+      "lat": 9,
+      "lng": -80
+    }
   },
   "PE": {
     "iso2": "PE",
@@ -3275,7 +3819,11 @@
       "CHL",
       "COL",
       "ECU"
-    ]
+    ],
+    "latlng": {
+      "lat": -10,
+      "lng": -76
+    }
   },
   "PH": {
     "iso2": "PH",
@@ -3295,7 +3843,11 @@
       "Filipino"
     ],
     "callingCode": "+63",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 13,
+      "lng": 122
+    }
   },
   "PW": {
     "iso2": "PW",
@@ -3315,7 +3867,11 @@
       "Palauan"
     ],
     "callingCode": "+680",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 7.5,
+      "lng": 134.5
+    }
   },
   "PG": {
     "iso2": "PG",
@@ -3338,7 +3894,11 @@
     "callingCode": "+675",
     "borders": [
       "IDN"
-    ]
+    ],
+    "latlng": {
+      "lat": -6,
+      "lng": 147
+    }
   },
   "PL": {
     "iso2": "PL",
@@ -3365,7 +3925,11 @@
       "RUS",
       "SVK",
       "UKR"
-    ]
+    ],
+    "latlng": {
+      "lat": 52,
+      "lng": 20
+    }
   },
   "KP": {
     "iso2": "KP",
@@ -3388,7 +3952,11 @@
       "CHN",
       "KOR",
       "RUS"
-    ]
+    ],
+    "latlng": {
+      "lat": 40,
+      "lng": 127
+    }
   },
   "PT": {
     "iso2": "PT",
@@ -3409,7 +3977,11 @@
     "callingCode": "+351",
     "borders": [
       "ESP"
-    ]
+    ],
+    "latlng": {
+      "lat": 39.5,
+      "lng": -8
+    }
   },
   "PY": {
     "iso2": "PY",
@@ -3433,7 +4005,11 @@
       "ARG",
       "BOL",
       "BRA"
-    ]
+    ],
+    "latlng": {
+      "lat": -23,
+      "lng": -58
+    }
   },
   "QA": {
     "iso2": "QA",
@@ -3454,7 +4030,11 @@
     "callingCode": "+974",
     "borders": [
       "SAU"
-    ]
+    ],
+    "latlng": {
+      "lat": 25.5,
+      "lng": 51.25
+    }
   },
   "RO": {
     "iso2": "RO",
@@ -3479,7 +4059,11 @@
       "MDA",
       "SRB",
       "UKR"
-    ]
+    ],
+    "latlng": {
+      "lat": 46,
+      "lng": 25
+    }
   },
   "RU": {
     "iso2": "RU",
@@ -3513,7 +4097,11 @@
       "NOR",
       "POL",
       "UKR"
-    ]
+    ],
+    "latlng": {
+      "lat": 60,
+      "lng": 100
+    }
   },
   "RW": {
     "iso2": "RW",
@@ -3539,7 +4127,11 @@
       "COD",
       "TZA",
       "UGA"
-    ]
+    ],
+    "latlng": {
+      "lat": -2,
+      "lng": 30
+    }
   },
   "SA": {
     "iso2": "SA",
@@ -3566,7 +4158,11 @@
       "QAT",
       "ARE",
       "YEM"
-    ]
+    ],
+    "latlng": {
+      "lat": 25,
+      "lng": 45
+    }
   },
   "SD": {
     "iso2": "SD",
@@ -3594,7 +4190,11 @@
       "ETH",
       "LBY",
       "SSD"
-    ]
+    ],
+    "latlng": {
+      "lat": 15,
+      "lng": 30
+    }
   },
   "SN": {
     "iso2": "SN",
@@ -3619,7 +4219,11 @@
       "GNB",
       "MLI",
       "MRT"
-    ]
+    ],
+    "latlng": {
+      "lat": 14,
+      "lng": -14
+    }
   },
   "SG": {
     "iso2": "SG",
@@ -3641,7 +4245,11 @@
       "Chinese"
     ],
     "callingCode": "+65",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 1.36666666,
+      "lng": 103.8
+    }
   },
   "SB": {
     "iso2": "SB",
@@ -3660,7 +4268,11 @@
       "English"
     ],
     "callingCode": "+677",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -8,
+      "lng": 159
+    }
   },
   "SL": {
     "iso2": "SL",
@@ -3682,7 +4294,11 @@
     "borders": [
       "GIN",
       "LBR"
-    ]
+    ],
+    "latlng": {
+      "lat": 8.5,
+      "lng": -11.5
+    }
   },
   "SV": {
     "iso2": "SV",
@@ -3704,7 +4320,11 @@
     "borders": [
       "GTM",
       "HND"
-    ]
+    ],
+    "latlng": {
+      "lat": 13.83333333,
+      "lng": -88.91666666
+    }
   },
   "SM": {
     "iso2": "SM",
@@ -3725,7 +4345,11 @@
     "callingCode": "+378",
     "borders": [
       "ITA"
-    ]
+    ],
+    "latlng": {
+      "lat": 43.76666666,
+      "lng": 12.41666666
+    }
   },
   "SO": {
     "iso2": "SO",
@@ -3749,7 +4373,11 @@
       "DJI",
       "ETH",
       "KEN"
-    ]
+    ],
+    "latlng": {
+      "lat": 10,
+      "lng": 49
+    }
   },
   "RS": {
     "iso2": "RS",
@@ -3777,7 +4405,11 @@
       "MKD",
       "MNE",
       "ROU"
-    ]
+    ],
+    "latlng": {
+      "lat": 44,
+      "lng": 21
+    }
   },
   "SS": {
     "iso2": "SS",
@@ -3803,7 +4435,11 @@
       "KEN",
       "SDN",
       "UGA"
-    ]
+    ],
+    "latlng": {
+      "lat": 7,
+      "lng": 30
+    }
   },
   "ST": {
     "iso2": "ST",
@@ -3822,7 +4458,11 @@
       "Portuguese"
     ],
     "callingCode": "+239",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 1,
+      "lng": 7
+    }
   },
   "SR": {
     "iso2": "SR",
@@ -3845,7 +4485,11 @@
       "BRA",
       "GUF",
       "GUY"
-    ]
+    ],
+    "latlng": {
+      "lat": 4,
+      "lng": -56
+    }
   },
   "SK": {
     "iso2": "SK",
@@ -3870,7 +4514,11 @@
       "HUN",
       "POL",
       "UKR"
-    ]
+    ],
+    "latlng": {
+      "lat": 48.66666666,
+      "lng": 19.5
+    }
   },
   "SI": {
     "iso2": "SI",
@@ -3894,7 +4542,11 @@
       "HRV",
       "ITA",
       "HUN"
-    ]
+    ],
+    "latlng": {
+      "lat": 46.11666666,
+      "lng": 14.81666666
+    }
   },
   "SE": {
     "iso2": "SE",
@@ -3916,7 +4568,11 @@
     "borders": [
       "FIN",
       "NOR"
-    ]
+    ],
+    "latlng": {
+      "lat": 62,
+      "lng": 15
+    }
   },
   "SZ": {
     "iso2": "SZ",
@@ -3944,7 +4600,11 @@
     "borders": [
       "MOZ",
       "ZAF"
-    ]
+    ],
+    "latlng": {
+      "lat": -26.5,
+      "lng": 31.5
+    }
   },
   "SC": {
     "iso2": "SC",
@@ -3965,7 +4625,11 @@
       "French"
     ],
     "callingCode": "+248",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -4.58333333,
+      "lng": 55.66666666
+    }
   },
   "SY": {
     "iso2": "SY",
@@ -3990,7 +4654,11 @@
       "JOR",
       "LBN",
       "TUR"
-    ]
+    ],
+    "latlng": {
+      "lat": 35,
+      "lng": 38
+    }
   },
   "TD": {
     "iso2": "TD",
@@ -4017,7 +4685,11 @@
       "NER",
       "NGA",
       "SDN"
-    ]
+    ],
+    "latlng": {
+      "lat": 15,
+      "lng": 19
+    }
   },
   "TG": {
     "iso2": "TG",
@@ -4040,7 +4712,11 @@
       "BEN",
       "BFA",
       "GHA"
-    ]
+    ],
+    "latlng": {
+      "lat": 8,
+      "lng": 1.16666666
+    }
   },
   "TH": {
     "iso2": "TH",
@@ -4064,7 +4740,11 @@
       "KHM",
       "LAO",
       "MYS"
-    ]
+    ],
+    "latlng": {
+      "lat": 15,
+      "lng": 100
+    }
   },
   "TJ": {
     "iso2": "TJ",
@@ -4089,7 +4769,11 @@
       "CHN",
       "KGZ",
       "UZB"
-    ]
+    ],
+    "latlng": {
+      "lat": 39,
+      "lng": 71
+    }
   },
   "TM": {
     "iso2": "TM",
@@ -4114,7 +4798,11 @@
       "IRN",
       "KAZ",
       "UZB"
-    ]
+    ],
+    "latlng": {
+      "lat": 40,
+      "lng": 60
+    }
   },
   "TL": {
     "iso2": "TL",
@@ -4136,7 +4824,11 @@
     "callingCode": "+670",
     "borders": [
       "IDN"
-    ]
+    ],
+    "latlng": {
+      "lat": -8.83333333,
+      "lng": 125.91666666
+    }
   },
   "TO": {
     "iso2": "TO",
@@ -4156,7 +4848,11 @@
       "Tongan"
     ],
     "callingCode": "+676",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -20,
+      "lng": -175
+    }
   },
   "TT": {
     "iso2": "TT",
@@ -4175,7 +4871,11 @@
       "English"
     ],
     "callingCode": "+1868",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 11,
+      "lng": -61
+    }
   },
   "TN": {
     "iso2": "TN",
@@ -4197,7 +4897,11 @@
     "borders": [
       "DZA",
       "LBY"
-    ]
+    ],
+    "latlng": {
+      "lat": 34,
+      "lng": 9
+    }
   },
   "TR": {
     "iso2": "TR",
@@ -4225,7 +4929,11 @@
       "IRN",
       "IRQ",
       "SYR"
-    ]
+    ],
+    "latlng": {
+      "lat": 39,
+      "lng": 35
+    }
   },
   "TV": {
     "iso2": "TV",
@@ -4250,7 +4958,11 @@
       "Tuvaluan"
     ],
     "callingCode": "+688",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -8,
+      "lng": 178
+    }
   },
   "TZ": {
     "iso2": "TZ",
@@ -4279,7 +4991,11 @@
       "RWA",
       "UGA",
       "ZMB"
-    ]
+    ],
+    "latlng": {
+      "lat": -6,
+      "lng": 35
+    }
   },
   "UG": {
     "iso2": "UG",
@@ -4305,7 +5021,11 @@
       "RWA",
       "SSD",
       "TZA"
-    ]
+    ],
+    "latlng": {
+      "lat": 1,
+      "lng": 32
+    }
   },
   "UA": {
     "iso2": "UA",
@@ -4332,7 +5052,11 @@
       "ROU",
       "RUS",
       "SVK"
-    ]
+    ],
+    "latlng": {
+      "lat": 49,
+      "lng": 32
+    }
   },
   "UY": {
     "iso2": "UY",
@@ -4354,7 +5078,11 @@
     "borders": [
       "ARG",
       "BRA"
-    ]
+    ],
+    "latlng": {
+      "lat": -33,
+      "lng": -56
+    }
   },
   "US": {
     "iso2": "US",
@@ -4376,7 +5104,11 @@
     "borders": [
       "CAN",
       "MEX"
-    ]
+    ],
+    "latlng": {
+      "lat": 38,
+      "lng": -97
+    }
   },
   "UZ": {
     "iso2": "UZ",
@@ -4402,7 +5134,11 @@
       "KGZ",
       "TJK",
       "TKM"
-    ]
+    ],
+    "latlng": {
+      "lat": 41,
+      "lng": 64
+    }
   },
   "VC": {
     "iso2": "VC",
@@ -4421,7 +5157,11 @@
       "English"
     ],
     "callingCode": "+1784",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": 13.25,
+      "lng": -61.2
+    }
   },
   "VE": {
     "iso2": "VE",
@@ -4444,7 +5184,11 @@
       "BRA",
       "COL",
       "GUY"
-    ]
+    ],
+    "latlng": {
+      "lat": 8,
+      "lng": -66
+    }
   },
   "VN": {
     "iso2": "VN",
@@ -4467,7 +5211,11 @@
       "KHM",
       "CHN",
       "LAO"
-    ]
+    ],
+    "latlng": {
+      "lat": 16.16666666,
+      "lng": 107.83333333
+    }
   },
   "VU": {
     "iso2": "VU",
@@ -4488,7 +5236,11 @@
       "French"
     ],
     "callingCode": "+678",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -16,
+      "lng": 167
+    }
   },
   "WS": {
     "iso2": "WS",
@@ -4508,7 +5260,11 @@
       "Samoan"
     ],
     "callingCode": "+685",
-    "borders": []
+    "borders": [],
+    "latlng": {
+      "lat": -13.58333333,
+      "lng": -172.33333333
+    }
   },
   "YE": {
     "iso2": "YE",
@@ -4530,7 +5286,11 @@
     "borders": [
       "OMN",
       "SAU"
-    ]
+    ],
+    "latlng": {
+      "lat": 15,
+      "lng": 48
+    }
   },
   "ZA": {
     "iso2": "ZA",
@@ -4566,7 +5326,11 @@
       "NAM",
       "SWZ",
       "ZWE"
-    ]
+    ],
+    "latlng": {
+      "lat": -29,
+      "lng": 24
+    }
   },
   "ZM": {
     "iso2": "ZM",
@@ -4594,7 +5358,11 @@
       "NAM",
       "TZA",
       "ZWE"
-    ]
+    ],
+    "latlng": {
+      "lat": -15,
+      "lng": 30
+    }
   },
   "ZW": {
     "iso2": "ZW",
@@ -4672,7 +5440,11 @@
       "MOZ",
       "ZAF",
       "ZMB"
-    ]
+    ],
+    "latlng": {
+      "lat": -20,
+      "lng": 30
+    }
   },
   "PS": {
     "iso2": "PS",
@@ -4705,7 +5477,11 @@
       "ISR",
       "EGY",
       "JOR"
-    ]
+    ],
+    "latlng": {
+      "lat": 31.9,
+      "lng": 35.2
+    }
   },
   "VA": {
     "iso2": "VA",
@@ -4727,6 +5503,10 @@
     "callingCode": "+3",
     "borders": [
       "ITA"
-    ]
+    ],
+    "latlng": {
+      "lat": 41.9,
+      "lng": 12.45
+    }
   }
 }

@@ -13,6 +13,7 @@ import { PURPOSES } from '../data/purposes';
 import { WORLD_CATALOG, continentOf } from '../data/worldCatalog';
 import type { CatalogEntry, Continent, Destination } from '../data/types';
 import { DestinationCard } from '../components/DestinationCard';
+import { LocationPersonalize } from '../components/LocationPersonalize';
 import { Icon } from '../components/Icon';
 import type { ExploreFilters } from '../state/types';
 
@@ -79,6 +80,7 @@ export function Explore() {
       </section>
       <section className="section" style={{ paddingTop: 30 }}>
         <div className="container">
+          <LocationPersonalize />
           <div className="explore-toolbar">
             <div className="field">
               <label htmlFor="exSearch">{ex.search}</label>

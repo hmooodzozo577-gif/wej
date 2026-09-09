@@ -11,6 +11,7 @@ export const initialAppState: AppState = {
   answers: {},
   results: null,
   explore: { q: '', region: '', purpose: '', cost: '' },
+  location: { status: 'idle', coords: null },
 };
 
 export function appReducer(state: AppState, action: AppAction): AppState {
@@ -50,6 +51,18 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'RESET_EXPLORE_FILTERS':
       return { ...state, explore: { q: '', region: '', purpose: '', cost: '' } };
+
+    case 'LOCATION_REQUEST':
+      return { ...state, location: { status: 'requesting', coords: null } };
+
+    case 'LOCATION_GRANTED':
+      return { ...state, location: { status: 'granted', coords: action.coords } };
+
+    case 'LOCATION_FAILED':
+      return { ...state, location: { status: action.status, coords: null } };
+
+    case 'LOCATION_RESET':
+      return { ...state, location: { status: 'idle', coords: null } };
 
     default:
       return state;

@@ -169,6 +169,9 @@ for (const c of world195) {
   if (c.area == null) throw new Error(`Missing area for ${c.name.common}`);
   const callingCode = callingCodeOf(c);
   if (!callingCode) throw new Error(`Missing calling code for ${c.name.common}`);
+  if (!Array.isArray(c.latlng) || c.latlng.length !== 2) {
+    throw new Error(`Missing latlng for ${c.name.common}`);
+  }
 
   countryInfo[c.cca2] = {
     iso2: c.cca2,
@@ -189,6 +192,12 @@ for (const c of world195) {
     languagesEn: Object.values(c.languages ?? {}),
     callingCode,
     borders: c.borders ?? [],
+    // Phase 12 — Location Personalization: a single approximate country
+    // centroid (world-countries' own `latlng`), used ONLY for
+    // straight-line distance ranking (nearby countries / approximate
+    // current-country resolution). NOT a boundary/polygon — see
+    // src/data/geo.ts for the explicit accuracy caveat this powers.
+    latlng: { lat: c.latlng[0], lng: c.latlng[1] },
   };
 }
 

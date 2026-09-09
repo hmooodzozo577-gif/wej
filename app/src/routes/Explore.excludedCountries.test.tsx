@@ -1,7 +1,8 @@
 // Confirms the excludedCountries.ts mechanism reaches Explore: an excluded
 // country must not appear in the list, the count, or search results — not
-// merely be hidden with CSS. Exercised against the current QA fixture
-// (Monaco — see data/excludedCountries.ts).
+// merely be hidden with CSS. Written entirely against whatever is
+// currently configured in excludedCountries.ts, never a hard-coded
+// country, so it stays meaningful regardless of what that config holds.
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -9,6 +10,17 @@ import { AppStateProvider } from '../state/AppStateContext';
 import { Explore } from './Explore';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { EXCLUDED_COUNTRIES } from '../data/excludedCountries';
+import rawDestinations from '../data/generated/destinations.json';
+import rawBasicCountries from '../data/generated/basicCountries.json';
+
+// Looked up from the RAW generated data (bypassing the filtered
+// DESTINATIONS/BASIC_COUNTRIES wrappers on purpose) purely so this test can
+// assert the excluded country's display name is absent — not itself part
+// of the exclusion mechanism.
+function rawNameOf(iso2: string): { nameEn: string; nameAr: string } | undefined {
+  const all = [...(rawDestinations as { countryCode: string; nameEn: string; nameAr: string }[]), ...(rawBasicCountries as { countryCode: string; nameEn: string; nameAr: string }[])];
+  return all.find((c) => c.countryCode === iso2);
+}
 
 function renderExplore() {
   return render(
@@ -53,10 +65,12 @@ describe('Explore — excluded countries are absent from the underlying data, no
     'an excluded country\'s name does not appear anywhere on the page',
     () => {
       renderExplore();
-      // Monaco's English/Arabic names, used only as the assertion target
-      // here — the exclusion itself is driven entirely by excludedCountries.ts.
-      expect(screen.queryByText('Monaco')).not.toBeInTheDocument();
-      expect(screen.queryByText('موناكو')).not.toBeInTheDocument();
+      for (const excluded of EXCLUDED_COUNTRIES) {
+        const names = rawNameOf(excluded.iso2);
+        expect(names, `no raw catalog record found for excluded ${excluded.iso2}`).toBeDefined();
+        expect(screen.queryByText(names!.nameEn)).not.toBeInTheDocument();
+        expect(screen.queryByText(names!.nameAr)).not.toBeInTheDocument();
+      }
     },
     FULL_GRID_TIMEOUT,
   );

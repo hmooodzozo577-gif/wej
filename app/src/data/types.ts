@@ -154,6 +154,11 @@ export interface CountryInfo {
   callingCode: string;
   /** ISO 3166-1 alpha-3 codes of bordering countries; empty for islands / no land border. */
   borders: string[];
+  /** Phase 12 — a single approximate country centroid (world-countries'
+   *  own `latlng`), NOT a boundary/polygon. Only used for straight-line
+   *  distance ranking (data/geo.ts) — see that file for the explicit
+   *  accuracy caveat before using this for anything else. */
+  latlng: { lat: number; lng: number };
 }
 
 export type PurposeId =
@@ -330,6 +335,29 @@ export interface ExploreStrings {
   clearFilters: string;
 }
 
+/** Phase 12 — Location Personalization strings. Not part of the original
+ *  extracted wejhaty.html copy (this feature didn't exist there), so — like
+ *  regionLabels.Africa/SouthAmerica and detail.capital before it — this is
+ *  added directly in data/i18n/ar.ts / en.ts rather than sourced from the
+ *  generated JSON. */
+export interface LocationStrings {
+  title: string;
+  sub: string;
+  cta: string;
+  retry: string;
+  reset: string;
+  requesting: string;
+  nearestCountry: string;
+  /** Explicit accuracy caveat shown next to the resolved nearest country —
+   *  never presented as authoritative border-based detection. */
+  approxNote: string;
+  nearbyTitle: string;
+  denied: string;
+  unavailable: string;
+  timeout: string;
+  unsupported: string;
+}
+
 export interface I18nDict {
   dir: 'rtl' | 'ltr';
   htmlLang: 'ar' | 'en';
@@ -344,6 +372,7 @@ export interface I18nDict {
   results: ResultsStrings;
   detail: DetailStrings;
   explore: ExploreStrings;
+  location: LocationStrings;
   costLevels: [string, string, string, string];
   climateLabels: Record<ClimateKind, string>;
   visaLabels: Record<VisaDifficulty, string>;

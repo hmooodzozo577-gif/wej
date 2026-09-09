@@ -9,6 +9,7 @@ import { AppStateContext } from '../state/context';
 import { appReducer, initialAppState } from '../state/reducer';
 import { Destination } from './Destination';
 import type { Lang } from '../data/types';
+import { EXCLUDED_COUNTRIES } from '../data/excludedCountries';
 
 // Renders with a given starting language without going through the app's
 // full navigation chrome — same technique as other route-level tests here,
@@ -43,9 +44,12 @@ describe('Phase 11 Step 3 — Destination detail Borders row', () => {
     expect(germanyLink).toHaveAttribute('href', '/destination/germany');
   });
 
-  it('does not render a link for the excluded neighbor (Monaco)', () => {
+  it('never renders a border link pointing at whatever is currently configured as excluded', () => {
     renderAt('/destination/france', 'en');
-    expect(screen.queryByRole('link', { name: /Monaco/ })).not.toBeInTheDocument();
+    for (const excluded of EXCLUDED_COUNTRIES) {
+      const link = document.querySelector(`a.meta-chip[href="/destination/${excluded.iso2.toLowerCase()}"]`);
+      expect(link, `found a border link to excluded ${excluded.iso2}`).toBeNull();
+    }
   });
 
   it('a border link is keyboard-focusable and navigates on click to the target country\'s own page', () => {

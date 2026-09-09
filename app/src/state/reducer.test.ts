@@ -51,4 +51,37 @@ describe('appReducer', () => {
     const next = appReducer(dirty, { type: 'RESET_EXPLORE_FILTERS' });
     expect(next.explore).toEqual({ q: '', region: '', purpose: '', cost: '' });
   });
+
+  // Phase 12 — Location Personalization state transitions.
+  it('defaults location to idle with no coords', () => {
+    expect(initialAppState.location).toEqual({ status: 'idle', coords: null });
+  });
+
+  it('LOCATION_REQUEST moves to requesting and clears any prior coords', () => {
+    const granted = { ...initialAppState, location: { status: 'granted' as const, coords: { lat: 1, lng: 2 } } };
+    const next = appReducer(granted, { type: 'LOCATION_REQUEST' });
+    expect(next.location).toEqual({ status: 'requesting', coords: null });
+  });
+
+  it('LOCATION_GRANTED stores the coords and sets status to granted', () => {
+    const next = appReducer(initialAppState, { type: 'LOCATION_GRANTED', coords: { lat: 24.7, lng: 46.7 } });
+    expect(next.location).toEqual({ status: 'granted', coords: { lat: 24.7, lng: 46.7 } });
+  });
+
+  it('LOCATION_FAILED sets the given failure status and clears coords', () => {
+    const next = appReducer(initialAppState, { type: 'LOCATION_FAILED', status: 'denied' });
+    expect(next.location).toEqual({ status: 'denied', coords: null });
+  });
+
+  it('LOCATION_RESET returns to idle from any state, including granted', () => {
+    const granted = { ...initialAppState, location: { status: 'granted' as const, coords: { lat: 1, lng: 2 } } };
+    const next = appReducer(granted, { type: 'LOCATION_RESET' });
+    expect(next.location).toEqual({ status: 'idle', coords: null });
+  });
+
+  it('location actions never disturb unrelated state (quiz/explore untouched)', () => {
+    const dirty = { ...initialAppState, purpose: 'work' as const, qIndex: 2, explore: { ...initialAppState.explore, q: 'x' } };
+    const next = appReducer(dirty, { type: 'LOCATION_GRANTED', coords: { lat: 1, lng: 2 } });
+    expect(next).toMatchObject({ purpose: 'work', qIndex: 2, explore: { q: 'x' } });
+  });
 });
