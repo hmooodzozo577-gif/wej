@@ -54,3 +54,18 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** Create a skill for infrastructure work that requires, before writing code, reading the deployment manifest and any binding configuration to establish what the target platform actually offers, then naming the underlying capability the request depends on rather than the branded product. Where the named product is unavailable, implement the capability against what exists and keep the named product as the preferred branch behind a binding check. Include a step to check how tests load the module under change, since import style constrains file layout.
 
 **Principle:** A named technology is a proposed means to a capability, not the capability itself. Code that targets a binding the platform does not provide is indistinguishable from no fix at all, so establishing what the deployment target offers is design input, not a detail to discover later.
+
+### Observation 4: Validate the instrument before believing a negative result
+
+**Status:** OPEN
+**Date:** 2026-09-09
+**Session context:** Investigating two reported defects, a microphone button that stops responding and dead taps in a menu, using a scripted browser harness.
+**Skill:** systematic-debugging
+**Type:** open-source
+**Phase/Area:** Phase 1, reproduction
+
+**Issue:** The harness produced two false failures before it produced a true one. A regular expression written to find a button by its label did not match the label's actual wording, so a working feature looked broken and was nearly "fixed". A gesture test recomputed touch coordinates from an element that moves when the app re-renders, so a working swipe-to-lock gesture also looked broken. In both cases the negative result came from the measuring tool, not the code under test. The distinguishing signal was that the failure was total rather than partial: a genuinely broken feature usually leaves traces such as an error, a changed state or a partial effect, while a mis-aimed probe produces nothing at all. Checking for a positive control, proving the harness can observe the feature working at least once, separated the two cases quickly.
+
+**Suggested improvement:** Add a step to Phase 1 requiring a positive control before any negative result is accepted as a reproduction: demonstrate the harness observing the intended behaviour succeeding at least once in the same run, and only then treat a failure as evidence about the code. Add a corollary that a suspiciously total failure, where nothing happens at all and no state changes, should raise suspicion of the probe before suspicion of the product.
+
+**Principle:** A negative result is a claim about the measuring apparatus until the apparatus has been shown to detect the positive case. Skipping that check turns debugging into damage: the most expensive outcome is not failing to find a bug, it is "fixing" code that was already correct.

@@ -85,6 +85,24 @@ const oldCount=a.get('rooms.length');a.join(-1);assert.equal(a.get('rooms.length
  a.set("micHold={id:80,x:100,y:200,active:true,handler:'sendChat'}");await a.recordNote('sendChat');a.moveMicHold({pointerId:80,clientX:200,clientY:200});assert.equal(a.get('noteRecording'),true);a.moveMicHold({pointerId:80,clientX:0,clientY:200});assert.equal(a.get('noteRecording'),false);assert.equal(a.get('localMessages[3].length'),sent+1);
  ctx.navigator.mediaDevices.getUserMedia=originalMic;
  a.set("micHold={id:81,x:100,y:200,active:true,handler:'sendChat'}");const pendingNote=a.recordNote('sendChat');a.endMicHold({pointerId:81},false);resolveStream(stream);await pendingNote;assert.equal(a.get('noteRecording'),false);assert.equal(a.get('localMessages[3].length'),sent+1);
+ // A hold whose pointerup never arrives must not disable the microphone for the rest of the session.
+ // iOS drops the release when a system sheet or an incoming call steals the touch, and the pointerdown
+ // guard refuses every later press while a stale hold is still recorded.
+ ctx.navigator.mediaDevices.getUserMedia=async()=>stream;
+ const micButton={disabled:false,dataset:{noteHandler:'sendChat'}};
+ const micPress=id=>({pointerId:id,isPrimary:true,button:0,clientX:0,clientY:0,preventDefault(){},target:{closest(sel){return sel==='[data-note-handler]'?micButton:null}}});
+ const settle=()=>new Promise(r=>setImmediate(r));
+ a.set("micHold=null;noteLocked=false;plus=true;chatPerson=3;communityAccepted=true");a.set("noteRecording=false;noteBusy=false");
+ const beforeHolds=a.get('localMessages[3].length');
+ events.pointerdown(micPress(91));await settle();assert.equal(a.get('noteRecording'),true,'a first press starts recording');
+ a.endMicHold({pointerId:91},false);assert.equal(a.get('localMessages[3].length'),beforeHolds+1,'releasing sends the note');
+ events.pointerdown(micPress(92));await settle();assert.equal(a.get('noteRecording'),true);
+ // the finger lifts, but neither pointerup nor pointercancel is delivered for pointer 92
+ events.pointerdown(micPress(93));await settle();
+ a.endMicHold({pointerId:93},false);
+ assert.equal(a.get('localMessages[3].length'),beforeHolds+2,'a later press still records and sends after a lost pointerup');
+ assert.equal(a.get('micHold'),null,'no stale hold is left behind');
+ ctx.navigator.mediaDevices.getUserMedia=originalMic;
  ctx.navigator.mediaDevices.getUserMedia=originalMic;bitmapClosed=1;
  a.go('home');assert(!app.innerHTML.includes('account-hub'));assert(!app.innerHTML.includes('policy-links'));a.go('profile');assert(app.innerHTML.includes('premium-corner'));assert(app.innerHTML.includes('account-hub'));
  ctx.createImageBitmap=async()=>({width:1280,height:960,close(){bitmapClosed++}});
