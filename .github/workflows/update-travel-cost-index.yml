@@ -107,7 +107,17 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -uo pipefail
+          # GitHub Actions runs `run:` steps under `bash -e` by default —
+          # `pr_output=$(gh pr create ...)` failing would trip errexit
+          # and skip every diagnostic line below before it ever ran
+          # (confirmed live: run #7 jumped straight from the script
+          # preview to "Process completed with exit code 1" with NONE
+          # of this step's own output printed). `set +e` overrides that
+          # default for this step only, so the diagnostics below always
+          # run; every branch of the if/else below still ends in an
+          # explicit `exit 0`/`exit 1`, so the step's real outcome is
+          # unchanged.
+          set +e
           BRANCH="${{ steps.push_branch.outputs.branch }}"
           pr_output=$(gh pr create \
             --base claude/marhaba-kxry8l \
