@@ -126,11 +126,13 @@ describe('Phase 13.3 — travelService (Worker configured, fetch mocked)', () =>
         arrivalTime: '2026-12-01T14:05:00',
         airlineCode: 'SV',
         carrierName: 'SAUDIA',
+        durationMinutes: 575,
       },
     ],
     price: { amount: 845.3, currency: 'USD' },
     durationMinutes: 575,
     stops: 0,
+    layovers: [],
   };
 
   function jsonResponse(body: unknown, status = 200) {
@@ -158,14 +160,41 @@ describe('Phase 13.3 — travelService (Worker configured, fetch mocked)', () =>
     });
   });
 
-  it('returns a normalized "ok" result for a successful Worker response', async () => {
+  it('returns a normalized "ok" result for a successful Worker response, enriched from the local airport catalog', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ offers: [OFFER] })));
     const searchFlights = await freshSearchFlights();
     const result = await searchFlights(validRequest);
     expect(result.status).toBe('ok');
     if (result.status === 'ok') {
       expect(result.offers).toHaveLength(1);
-      expect(result.offers[0]).toEqual(OFFER);
+      const offer = result.offers[0]!;
+      // Everything the Worker sent is preserved...
+      expect(offer.id).toBe(OFFER.id);
+      expect(offer.price).toEqual(OFFER.price);
+      expect(offer.durationMinutes).toBe(OFFER.durationMinutes);
+      expect(offer.stops).toBe(OFFER.stops);
+      expect(offer.segments[0]!.departureTime).toBe(OFFER.segments[0]!.departureTime);
+      expect(offer.segments[0]!.airlineCode).toBe(OFFER.segments[0]!.airlineCode);
+      // ...but RUH/JFK are real airports in the local catalog, so their
+      // name/lat/lng are enriched beyond the Worker's iata-as-name
+      // fallback (Phase 13.4b) — countryCode (Amadeus-sourced) is
+      // untouched.
+      expect(offer.segments[0]!.origin).toEqual({ iata: 'RUH', name: 'King Khaled International Airport', countryCode: 'SA', lat: 24.9576, lng: 46.6988 });
+      expect(offer.segments[0]!.destination).toEqual({ iata: 'JFK', name: 'John F Kennedy International Airport', countryCode: 'US', lat: 40.6394, lng: -73.7793 });
+    }
+  });
+
+  it('leaves an Airport unchanged when its IATA code has no local catalog match', async () => {
+    const offerWithUnknownAirport = {
+      ...OFFER,
+      segments: [{ ...OFFER.segments[0], origin: { iata: 'ZZZ', name: 'ZZZ', countryCode: '' } }],
+    };
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ offers: [offerWithUnknownAirport] })));
+    const searchFlights = await freshSearchFlights();
+    const result = await searchFlights(validRequest);
+    expect(result.status).toBe('ok');
+    if (result.status === 'ok') {
+      expect(result.offers[0]!.segments[0]!.origin).toEqual({ iata: 'ZZZ', name: 'ZZZ', countryCode: '' });
     }
   });
 

@@ -354,9 +354,14 @@ describe('Phase 13.3 — Worker: handleRequest + real Amadeus flow (fetch mocked
         }),
     });
     const res = await handleRequest(post(validBody), env);
-    const data = (await res.json()) as { offers: { segments: unknown[]; stops: number }[] };
+    const data = (await res.json()) as {
+      offers: { segments: { durationMinutes: number }[]; stops: number; layovers: { airport: { iata: string }; durationMinutes: number }[] }[];
+    };
     expect(data.offers[0]!.segments).toHaveLength(2);
     expect(data.offers[0]!.stops).toBe(1);
+    // Layover breakdown reaches the browser: 1 stop at DXB, 120 minutes
+    // (11:00 arrival to 13:00 departure).
+    expect(data.offers[0]!.layovers).toEqual([{ airport: { iata: 'DXB', name: 'DXB', countryCode: '' }, durationMinutes: 120 }]);
   });
 
   it('CRITICAL: no response (success or error) ever contains the API key, secret, or bearer token', async () => {

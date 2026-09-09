@@ -59,6 +59,7 @@ const SINGLE_OFFER_RESPONSE = {
               arrival: { iataCode: 'JFK', at: '2026-12-01T14:05:00' },
               carrierCode: 'SV',
               number: '37',
+              duration: 'PT9H35M',
             },
           ],
         },
@@ -90,12 +91,14 @@ const ROUND_TRIP_WITH_CONNECTION_RESPONSE = {
               arrival: { iataCode: 'DXB', at: '2026-12-01T11:00:00' },
               carrierCode: 'EK',
               number: '815',
+              duration: 'PT2H30M',
             },
             {
               departure: { iataCode: 'DXB', at: '2026-12-01T13:00:00' },
               arrival: { iataCode: 'JFK', at: '2026-12-01T20:30:00' },
               carrierCode: 'EK',
               number: '201',
+              duration: 'PT7H30M',
             },
           ],
         },
@@ -107,6 +110,7 @@ const ROUND_TRIP_WITH_CONNECTION_RESPONSE = {
               arrival: { iataCode: 'RUH', at: '2026-12-11T18:00:00' },
               carrierCode: 'EK',
               number: '202',
+              duration: 'PT20H0M',
             },
           ],
         },
@@ -320,7 +324,10 @@ describe('Phase 13.3 — searchAmadeusFlightOffers: success + normalization', ()
       arrivalTime: '2026-12-01T14:05:00',
       airlineCode: 'SV',
       carrierName: 'SAUDIA',
+      durationMinutes: 9 * 60 + 35,
     });
+    // Single-segment, non-stop offer: no layovers.
+    expect(offer.layovers).toEqual([]);
   });
 
   it('normalizes a round trip with a connecting outbound leg: segment order + stop count', async () => {
@@ -336,6 +343,56 @@ describe('Phase 13.3 — searchAmadeusFlightOffers: success + normalization', ()
     expect(offer.segments.map((s) => `${s.origin.iata}-${s.destination.iata}`)).toEqual(['RUH-DXB', 'DXB-JFK', 'JFK-RUH']);
     expect(offer.durationMinutes).toBe(12 * 60 + 13 * 60);
     expect(offer.price).toEqual({ amount: 1420, currency: 'USD' });
+    // Per-segment duration, from each segment's own `duration` field.
+    expect(offer.segments.map((s) => s.durationMinutes)).toEqual([2 * 60 + 30, 7 * 60 + 30, 20 * 60]);
+    // Exactly ONE layover: the RUH-DXB / DXB-JFK connection at DXB
+    // (11:00 arrival to 13:00 departure = 120 min). The gap between the
+    // outbound's JFK arrival (20:30) and the return's JFK departure
+    // (10 days later) is NOT a layover — it never appears here.
+    expect(offer.layovers).toHaveLength(1);
+    expect(offer.layovers[0]).toEqual({
+      airport: { iata: 'DXB', name: 'DXB', countryCode: 'AE' },
+      durationMinutes: 120,
+    });
+    expect(offer.layovers.length).toBe(offer.stops);
+  });
+
+  it('a layover spanning midnight is computed correctly (crosses a day boundary)', async () => {
+    const { fn } = makeFetchMock({
+      '/v1/security/oauth2/token': () => jsonResponse(tokenResponse()),
+      '/v2/shopping/flight-offers': () =>
+        jsonResponse({
+          data: [
+            {
+              id: '3',
+              itineraries: [
+                {
+                  duration: 'PT10H0M',
+                  segments: [
+                    {
+                      departure: { iataCode: 'RUH', at: '2026-12-01T22:00:00' },
+                      arrival: { iataCode: 'DXB', at: '2026-12-01T23:30:00' },
+                      carrierCode: 'EK',
+                      duration: 'PT1H30M',
+                    },
+                    {
+                      departure: { iataCode: 'DXB', at: '2026-12-02T01:15:00' },
+                      arrival: { iataCode: 'JFK', at: '2026-12-02T08:00:00' },
+                      carrierCode: 'EK',
+                      duration: 'PT6H45M',
+                    },
+                  ],
+                },
+              ],
+              price: { currency: 'USD', total: '500.00' },
+            },
+          ],
+          dictionaries: { locations: {}, carriers: {} },
+        }),
+    });
+    const result = await searchAmadeusFlightOffers(FAKE_ENV, REQUEST, fn);
+    // 23:30 -> 01:15 next day = 1h45m = 105 minutes.
+    expect(result.offers[0]!.layovers).toEqual([{ airport: { iata: 'DXB', name: 'DXB', countryCode: '' }, durationMinutes: 105 }]);
   });
 
   it('sends passengers as "adults" and includes "max", and only includes returnDate when provided', async () => {

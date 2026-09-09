@@ -6,7 +6,7 @@
 // "do not assume the nearest airport without verifying the actual
 // dataset" instruction) rather than assumed from general knowledge.
 import { describe, expect, it } from 'vitest';
-import { resolveNearestAirport, MAX_AIRPORT_DISTANCE_KM } from './airports';
+import { resolveNearestAirport, findAirportByIata, MAX_AIRPORT_DISTANCE_KM } from './airports';
 
 describe('Phase 13.2 — resolveNearestAirport', () => {
   it('resolves Abha coordinates to Abha International Airport (AHB), scoped to Saudi Arabia', async () => {
@@ -119,5 +119,35 @@ describe('Phase 13.2 — resolveNearestAirport', () => {
     const vatican = { lat: 41.9029, lng: 12.4534 };
     const result = await resolveNearestAirport(vatican, 'VA');
     expect(result).toBeUndefined();
+  });
+});
+
+describe('Phase 13.4b — findAirportByIata', () => {
+  it('finds a real major airport by its exact IATA code', async () => {
+    const result = await findAirportByIata('RUH');
+    expect(result?.name).toBe('King Khaled International Airport');
+    expect(result?.countryCode).toBe('SA');
+  });
+
+  it('finds airports across different countries by code alone (no country scoping — this is a plain lookup)', async () => {
+    expect((await findAirportByIata('JFK'))?.countryCode).toBe('US');
+    expect((await findAirportByIata('ORY'))?.countryCode).toBe('FR');
+    expect((await findAirportByIata('HND'))?.countryCode).toBe('JP');
+  });
+
+  it('returns undefined for a code not in the compact dataset, rather than guessing', async () => {
+    const result = await findAirportByIata('ZZZ');
+    expect(result).toBeUndefined();
+  });
+
+  it('is case-sensitive: a lowercase code does not match (IATA codes are always uppercase)', async () => {
+    const result = await findAirportByIata('ruh');
+    expect(result).toBeUndefined();
+  });
+
+  it('is deterministic: repeated calls return the same result', async () => {
+    const first = await findAirportByIata('RUH');
+    const second = await findAirportByIata('RUH');
+    expect(first).toEqual(second);
   });
 });

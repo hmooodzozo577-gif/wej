@@ -163,6 +163,20 @@ export interface TravelSegment {
   arrivalTime: string;
   airlineCode: string;
   carrierName?: string;
+  /** Phase 13.4b: this leg's own flown duration (from Amadeus segment's
+   *  own `duration` field), not the itinerary/offer total. */
+  durationMinutes: number;
+}
+
+/** Phase 13.4b: one stop between two segments of the SAME itinerary
+ *  (never between the outbound and return itineraries of a round trip —
+ *  that gap is ground time between two separate journeys, not a
+ *  layover). `airport` is the connecting airport (arrival airport of the
+ *  segment before, departure airport of the segment after — always the
+ *  same code). */
+export interface Layover {
+  airport: Airport;
+  durationMinutes: number;
 }
 
 export interface FlightOffer {
@@ -171,6 +185,10 @@ export interface FlightOffer {
   price: { amount: number; currency: string };
   durationMinutes: number;
   stops: number;
+  /** Phase 13.4b: one entry per stop, same order as `segments`. Length
+   *  always equals `stops`. Empty for a non-stop or single-itinerary
+   *  direct offer. */
+  layovers: Layover[];
 }
 
 // ISO 8601 durations as Amadeus returns them, e.g. "PT15H30M". Minimal
@@ -185,6 +203,24 @@ function parseIsoDurationToMinutes(iso: string | undefined): number {
   const hours = Number(match[1] ?? 0);
   const minutes = Number(match[2] ?? 0);
   return hours * 60 + minutes;
+}
+
+// Amadeus segment departure/arrival `at` timestamps are local wall-clock
+// time WITHOUT a UTC offset (e.g. "2026-12-01T13:00:00"). Parsing that
+// string directly with `new Date(...)` is environment-dependent (Node
+// uses the host's local timezone for an offset-less ISO string; a
+// Cloudflare Worker always runs in UTC) — not deterministic across
+// runtimes. This function forces a deterministic parse by treating the
+// string as UTC when it carries no offset, so the SAME input always
+// produces the SAME millisecond value everywhere. Known limitation
+// (documented, not hidden): a layover spanning two airports in different
+// real timezones is computed from these wall-clock values as given,
+// which is exactly what Amadeus' own response provides — no timezone
+// database is available offline, and Part K/NO NEW EXTERNAL APIS forbids
+// fetching one.
+function parseAmadeusLocalDateTimeMs(iso: string): number {
+  const hasOffset = /(?:[Zz]|[+-]\d{2}:\d{2})$/.test(iso);
+  return new Date(hasOffset ? iso : `${iso}Z`).getTime();
 }
 
 interface AmadeusLocationDictEntry {
@@ -228,6 +264,7 @@ function normalizeOffer(raw: unknown, locations: Record<string, AmadeusLocationD
   }
 
   const segments: TravelSegment[] = [];
+  const layovers: Layover[] = [];
   let durationMinutes = 0;
   for (const itinerary of itineraries as unknown[]) {
     const it = itinerary as Record<string, unknown>;
@@ -236,6 +273,12 @@ function normalizeOffer(raw: unknown, locations: Record<string, AmadeusLocationD
     if (!Array.isArray(itSegments) || itSegments.length === 0) {
       throw new AmadeusMalformedResponseError('Amadeus itinerary had no segments.');
     }
+    // Reset per itinerary: a layover only exists BETWEEN two segments of
+    // the SAME itinerary. The gap between the last outbound segment and
+    // the first return segment is ground time between two separate
+    // journeys, not a layover, so it must never be carried across this
+    // boundary.
+    let previousArrival: { at: string; iataCode: unknown } | undefined;
     for (const seg of itSegments as unknown[]) {
       const s = seg as Record<string, unknown>;
       const departure = s.departure as Record<string, unknown> | undefined;
@@ -243,6 +286,17 @@ function normalizeOffer(raw: unknown, locations: Record<string, AmadeusLocationD
       if (!departure || !arrival || typeof departure.at !== 'string' || typeof arrival.at !== 'string') {
         throw new AmadeusMalformedResponseError('Amadeus segment was missing departure/arrival details.');
       }
+
+      if (previousArrival) {
+        const gapMinutes = Math.round(
+          (parseAmadeusLocalDateTimeMs(departure.at) - parseAmadeusLocalDateTimeMs(previousArrival.at)) / 60000,
+        );
+        layovers.push({
+          airport: toAirport(previousArrival.iataCode, locations),
+          durationMinutes: Math.max(0, gapMinutes),
+        });
+      }
+
       segments.push({
         origin: toAirport(departure.iataCode, locations),
         destination: toAirport(arrival.iataCode, locations),
@@ -250,16 +304,18 @@ function normalizeOffer(raw: unknown, locations: Record<string, AmadeusLocationD
         arrivalTime: arrival.at,
         airlineCode: typeof s.carrierCode === 'string' ? s.carrierCode : '',
         carrierName: undefined, // populated by index.ts from dictionaries.carriers, kept out of this pure-data-shape function
+        durationMinutes: parseIsoDurationToMinutes(typeof s.duration === 'string' ? s.duration : undefined),
       });
+      previousArrival = { at: arrival.at, iataCode: arrival.iataCode };
     }
   }
 
   // Stops across the whole trip = every segment boundary that isn't the
   // start of a new itinerary (outbound vs. return each start a fresh,
-  // non-stop "leg 0").
+  // non-stop "leg 0"). Always equal to layovers.length by construction.
   const stops = segments.length - itineraries.length;
 
-  return { id, segments, price: { amount, currency }, durationMinutes, stops: Math.max(0, stops) };
+  return { id, segments, price: { amount, currency }, durationMinutes, stops: Math.max(0, stops), layovers };
 }
 
 export interface FlightOffersSearchResult {

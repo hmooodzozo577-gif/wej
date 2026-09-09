@@ -19,7 +19,19 @@
 // travel-related — the estimate logic itself lives in flightEstimate.ts
 // (kept separate since it's pure/synchronous and has nothing to do with
 // the Worker), but nothing about searchFlights() itself changes.
-import type { Airport, FlightOffer, TravelSearchRequest, TravelSearchResult, TravelSegment } from './types';
+//
+// Phase 13.4b: validates the Worker's now-richer offer shape (per-segment
+// durationMinutes, layovers[]) and enriches each Airport's `name`/`lat`/
+// `lng` from the local airport catalog (data/airports.ts's
+// findAirportByIata — the SAME dataset/loader Phase 13.2's
+// resolveNearestAirport already uses, no new resolution logic) when the
+// IATA code happens to be one this project already carries data for.
+// This is purely additive frontend post-processing: it never touches the
+// Worker/Amadeus abstraction, and a code with no local match is left
+// exactly as the Worker returned it (iata-as-name fallback), never
+// guessed.
+import { findAirportByIata } from '../data/airports';
+import type { Airport, FlightOffer, Layover, TravelSearchRequest, TravelSearchResult, TravelSegment } from './types';
 
 export { estimateFlight, estimateDistanceKm, estimateDurationMinutes } from './flightEstimate';
 
@@ -117,8 +129,14 @@ function isSegmentShaped(value: unknown): value is TravelSegment {
     isAirportShaped(s.destination) &&
     typeof s.departureTime === 'string' &&
     typeof s.arrivalTime === 'string' &&
-    typeof s.airlineCode === 'string'
+    typeof s.airlineCode === 'string' &&
+    typeof s.durationMinutes === 'number'
   );
+}
+
+function isLayoverShaped(value: unknown): value is Layover {
+  const l = value as Partial<Layover> | null;
+  return !!l && isAirportShaped(l.airport) && typeof l.durationMinutes === 'number';
 }
 
 function isOfferShaped(value: unknown): value is FlightOffer {
@@ -132,7 +150,9 @@ function isOfferShaped(value: unknown): value is FlightOffer {
     typeof o.price.amount === 'number' &&
     typeof o.price.currency === 'string' &&
     typeof o.durationMinutes === 'number' &&
-    typeof o.stops === 'number'
+    typeof o.stops === 'number' &&
+    Array.isArray(o.layovers) &&
+    o.layovers.every(isLayoverShaped)
   );
 }
 
@@ -145,6 +165,45 @@ function isOfferShaped(value: unknown): value is FlightOffer {
 function isValidOffersResponse(body: unknown): body is { offers: FlightOffer[] } {
   const b = body as { offers?: unknown } | null;
   return !!b && Array.isArray(b.offers) && b.offers.every(isOfferShaped);
+}
+
+/** Phase 13.4b — enriches one Airport's `name`/`lat`/`lng` from the local
+ *  catalog when its `iata` code has a match there, via `cache` (one Map
+ *  per searchFlights() call, so repeated codes across segments/layovers
+ *  only look up the dataset once). Leaves the Airport exactly as given
+ *  when there is no local match — never guesses, never overwrites
+ *  `countryCode` (the Worker's value, already sourced from Amadeus'
+ *  dictionaries, is left alone). */
+async function enrichAirport(airport: Airport, cache: Map<string, Awaited<ReturnType<typeof findAirportByIata>>>): Promise<Airport> {
+  if (!cache.has(airport.iata)) {
+    cache.set(airport.iata, await findAirportByIata(airport.iata));
+  }
+  const match = cache.get(airport.iata);
+  if (!match) return airport;
+  return { ...airport, name: match.name, lat: match.lat, lng: match.lng };
+}
+
+async function enrichSegment(segment: TravelSegment, cache: Map<string, Awaited<ReturnType<typeof findAirportByIata>>>): Promise<TravelSegment> {
+  return {
+    ...segment,
+    origin: await enrichAirport(segment.origin, cache),
+    destination: await enrichAirport(segment.destination, cache),
+  };
+}
+
+async function enrichOffers(offers: FlightOffer[]): Promise<FlightOffer[]> {
+  const cache = new Map<string, Awaited<ReturnType<typeof findAirportByIata>>>();
+  const enriched: FlightOffer[] = [];
+  for (const offer of offers) {
+    enriched.push({
+      ...offer,
+      segments: await Promise.all(offer.segments.map((segment) => enrichSegment(segment, cache))),
+      layovers: await Promise.all(
+        offer.layovers.map(async (layover) => ({ ...layover, airport: await enrichAirport(layover.airport, cache) })),
+      ),
+    });
+  }
+  return enriched;
 }
 
 async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
@@ -223,5 +282,5 @@ export async function searchFlights(request: TravelSearchRequest): Promise<Trave
     return { status: 'error', message: 'Received an unexpected response from the flight search service.' };
   }
 
-  return { status: 'ok', offers: body.offers };
+  return { status: 'ok', offers: await enrichOffers(body.offers) };
 }

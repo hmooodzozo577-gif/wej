@@ -21,16 +21,29 @@
 // separate, standalone shape for flightEstimate.ts's client-side,
 // no-network distance/duration estimate, usable independently of (and
 // before) any real searchFlights() call.
+//
+// Phase 13.4b addition: `durationMinutes` on TravelSegment (this leg's
+// own flown time, not the offer total) and `layovers` on FlightOffer
+// (Layover[], one per stop) — both populated by the Worker from real
+// Amadeus segment/itinerary data, never fabricated. `Airport.name` may
+// now also be enriched from the local airport catalog (data/airports.ts)
+// by travelService.ts after receiving the Worker's response — see there
+// for how, and data/airports.ts's findAirportByIata for the reused
+// lookup. This never touches the Worker/Amadeus abstraction: enrichment
+// happens only in this project's own frontend layer, using data already
+// committed for Phase 13.2.
 
 /** A minimal airport reference for travel purposes. Distinct from (but
- *  structurally compatible with) data/types.ts's AirportLocation — this
- *  one deliberately omits lat/lng, which travel components don't need,
- *  keeping this layer's types free of any dependency on the geo data
- *  module. */
+ *  structurally compatible with) data/types.ts's AirportLocation.
+ *  `lat`/`lng` (Phase 13.4b) are optional and populated ONLY when
+ *  travelService.ts finds a matching entry in the local airport catalog
+ *  by IATA code — never guessed, never required. */
 export interface Airport {
   iata: string;
   name: string;
   countryCode: string;
+  lat?: number;
+  lng?: number;
 }
 
 /** One flown leg of an offer. */
@@ -46,6 +59,9 @@ export interface TravelSegment {
   airlineCode: string;
   /** Airline/operator display name, when known. */
   carrierName?: string;
+  /** Phase 13.4b: this leg's own flown duration, in minutes — from the
+   *  Worker's per-segment normalization, not the offer/itinerary total. */
+  durationMinutes: number;
 }
 
 export interface FlightOfferPrice {
@@ -54,17 +70,28 @@ export interface FlightOfferPrice {
   currency: string;
 }
 
+/** Phase 13.4b — one stop between two segments of the same itinerary
+ *  (never the ground gap between an outbound and a return itinerary of a
+ *  round trip). `airport` is the connecting airport. */
+export interface Layover {
+  airport: Airport;
+  durationMinutes: number;
+}
+
 /** One bookable flight offer, already normalized — never a raw provider
  *  payload. `segments` is ordered outbound-then-return when a round trip.
  *  `durationMinutes`/`stops` (Phase 13.3) summarize the whole trip: total
  *  flown duration across all itineraries, and total connections (segment
- *  boundaries that aren't the start of a new itinerary). */
+ *  boundaries that aren't the start of a new itinerary). `layovers`
+ *  (Phase 13.4b) breaks those connections down: one entry per stop, same
+ *  order as `segments`, length always equal to `stops`. */
 export interface FlightOffer {
   id: string;
   segments: TravelSegment[];
   price: FlightOfferPrice;
   durationMinutes: number;
   stops: number;
+  layovers: Layover[];
 }
 
 /** What a caller asks travelService.searchFlights() for. IATA codes only

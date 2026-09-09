@@ -96,3 +96,20 @@ export async function resolveNearestAirport(from: Coords, countryCode: string): 
   if (!best || best.distanceKm > MAX_AIRPORT_DISTANCE_KM) return undefined;
   return best;
 }
+
+/** Phase 13.4b — plain lookup by IATA code, over the SAME lazily-loaded
+ *  dataset resolveNearestAirport() already uses (loadAirports()) — no
+ *  new resolution algorithm, no distance calculation, no country
+ *  scoping: this just finds the one record whose `iata` matches. Used by
+ *  travelService.ts to enrich a Worker-returned Airport's name/lat/lng
+ *  from the local catalog when the code happens to be one of the
+ *  ~3,000 major airports this project already carries data for. Case-
+ *  sensitive (IATA codes are always uppercase, both here and from
+ *  Amadeus) and never guesses: returns undefined for any code not in
+ *  the dataset (a small regional airport, a data-load failure, etc.) —
+ *  callers must fall back to whatever they already had. */
+export async function findAirportByIata(iata: string): Promise<AirportLocation | undefined> {
+  const airports = await loadAirports();
+  if (!airports) return undefined;
+  return airports.find((airport) => airport.iata === iata);
+}
