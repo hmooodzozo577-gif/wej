@@ -47,12 +47,12 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
   it('renders for a full destination, English', async () => {
     vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
       countryCode: japan.countryCode,
-      ratioToUS: 1.32,
+      priceLevelIndex: 132,
       sourcePeriod: '2023',
     });
     renderWith(japan, 'en');
     await waitFor(() => expect(screen.getByText('Travel Cost Index')).toBeInTheDocument());
-    expect(screen.getByText('Very high')).toBeInTheDocument(); // 1.32 >= 1.15
+    expect(screen.getByText('Very high')).toBeInTheDocument(); // 132 >= 115
     expect(screen.getByText('Data: 2023 (World Bank)')).toBeInTheDocument();
     expect(screen.getByText(/not a hotel price, food price, or live booking figure/)).toBeInTheDocument();
     vi.restoreAllMocks();
@@ -61,7 +61,7 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
   it('renders for a BASIC country too — the dynamic index does not depend on costLevel/recommendationReady', async () => {
     vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
       countryCode: basicCountry.countryCode,
-      ratioToUS: 0.5,
+      priceLevelIndex: 45,
       sourcePeriod: '2023',
     });
     renderWith(basicCountry, 'en');
@@ -73,12 +73,12 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
   it('renders the Arabic tier label and disclaimer, same underlying tier as English', async () => {
     vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
       countryCode: japan.countryCode,
-      ratioToUS: 0.75,
+      priceLevelIndex: 75,
       sourcePeriod: '2022',
     });
     renderWith(japan, 'ar');
     await waitFor(() => expect(screen.getByText('مؤشر تكلفة السفر')).toBeInTheDocument());
-    expect(screen.getByText('متوسطة')).toBeInTheDocument(); // 0.75 -> moderate
+    expect(screen.getByText('متوسطة')).toBeInTheDocument(); // 75 -> moderate
     expect(screen.getByText('بيانات 2022 (البنك الدولي)')).toBeInTheDocument();
     vi.restoreAllMocks();
   });
@@ -86,7 +86,7 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
   it('never renders a fabricated price/availability/booking claim', async () => {
     vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
       countryCode: japan.countryCode,
-      ratioToUS: 1.0,
+      priceLevelIndex: 100,
       sourcePeriod: '2023',
     });
     renderWith(japan, 'en');
@@ -99,7 +99,7 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
 
   it('re-fetches and clears the previous entry when the destination changes', async () => {
     vi.spyOn(travelCostIndex, 'getTravelCostIndex')
-      .mockResolvedValueOnce({ countryCode: japan.countryCode, ratioToUS: 1.32, sourcePeriod: '2023' })
+      .mockResolvedValueOnce({ countryCode: japan.countryCode, priceLevelIndex: 132, sourcePeriod: '2023' })
       .mockResolvedValueOnce(undefined);
 
     function Providers({ children }: { children: ReactNode }) {

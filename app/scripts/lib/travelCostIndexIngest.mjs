@@ -5,12 +5,26 @@
 // travelCostIndexIngest.test.ts). generate-travel-cost-index.mjs is the
 // only file in this pair that touches the network.
 //
-// SOURCE: World Bank Indicators API, indicator PA.NUS.PPPC.RF ("Price
-// level ratio of PPP conversion factor to market exchange rate", part of
-// the International Comparison Program / ICP). A value of 1.0 means the
-// same general price level as the United States (the indicator's own
-// reference point) — NOT an OECD=100-style index. See
-// ../TRAVEL_COST_INDEX.md for the full source/semantics writeup.
+// SOURCE: World Bank Indicators API, indicator PA.NUS.GDP.PLI ("Price
+// level index (GDP)", World Development Indicators, sourced from the
+// International Comparison Program / ICP). Live-verified via a GitHub
+// Actions run against the real API (this sandboxed dev environment's
+// own network egress is blocked to worldbank.org — see
+// ../TRAVEL_COST_INDEX.md for that evidence): the United States returns
+// exactly 100 for 2025, confirming the documented US=100 baseline. A
+// value of 100 means the same general price level as the United States;
+// above 100 = more expensive, below 100 = cheaper.
+//
+// CORRECTION (Phase 13.5c completion pass): the originally-assumed
+// indicator, PA.NUS.PPPC.RF ("Price level ratio of PPP conversion factor
+// to market exchange rate"), is still listed in the World Bank's
+// indicator catalog metadata but its data endpoint now returns "The
+// indicator was not found. It may have been deleted or archived." —
+// confirmed live, including with no extra query parameters, ruling out a
+// request-shape issue. PA.NUS.GDP.PLI is the live, currently-serving
+// replacement with equivalent semantics (still WDI source, still ICP-
+// derived, still "how expensive is this country in general") on a
+// 100-baseline scale rather than a ~1.0-baseline ratio.
 //
 // COUNTRY-CODE JOIN / EXCLUSION: `validCountryCodes` must be the app's
 // real EFFECTIVE catalog countryCodes (i.e. WORLD_CATALOG's, with
@@ -32,25 +46,27 @@
 export const MIN_COVERAGE_RATIO = 0.5;
 
 /** Centralized, documented, tested classification thresholds for
- *  ratioToUS -> TravelCostTier. 1.0 = same general price level as the
- *  US (the source indicator's own reference point). Boundaries chosen
- *  so the tiers split roughly evenly across the real-world spread of
- *  published ICP price-level ratios (very low-income economies down
- *  near ~0.2-0.3, up to high-cost economies like Switzerland/Norway
- *  above ~1.3) — illustrative, not derived from a formula, and meant to
- *  be revisited if real data shows a materially different distribution. */
+ *  priceLevelIndex -> TravelCostTier. 100 = same general price level as
+ *  the US (the source indicator's own baseline). Boundaries are the
+ *  same relative spread previously documented for the 1.0-baseline
+ *  ratio, rescaled ×100 for this indicator's 100-baseline scale: very
+ *  low-income economies down near ~20-30, up to high-cost economies
+ *  like Switzerland/Norway above ~130 — illustrative, not derived from
+ *  a formula, and meant to be revisited if real data shows a materially
+ *  different distribution. */
 export const CLASSIFICATION_THRESHOLDS = {
-  low: 0.6, // ratioToUS < 0.6 -> 'low'
-  moderate: 0.9, // 0.6 <= ratioToUS < 0.9 -> 'moderate'
-  high: 1.15, // 0.9 <= ratioToUS < 1.15 -> 'high'
-  // ratioToUS >= 1.15 -> 'veryHigh'
+  low: 60, // priceLevelIndex < 60 -> 'low'
+  moderate: 90, // 60 <= priceLevelIndex < 90 -> 'moderate'
+  high: 115, // 90 <= priceLevelIndex < 115 -> 'high'
+  // priceLevelIndex >= 115 -> 'veryHigh'
 };
 
-/** Pure, deterministic: same ratioToUS always returns the same tier. */
-export function classifyRatioToUS(ratioToUS) {
-  if (ratioToUS < CLASSIFICATION_THRESHOLDS.low) return 'low';
-  if (ratioToUS < CLASSIFICATION_THRESHOLDS.moderate) return 'moderate';
-  if (ratioToUS < CLASSIFICATION_THRESHOLDS.high) return 'high';
+/** Pure, deterministic: same priceLevelIndex always returns the same
+ *  tier. */
+export function classifyPriceLevelIndex(priceLevelIndex) {
+  if (priceLevelIndex < CLASSIFICATION_THRESHOLDS.low) return 'low';
+  if (priceLevelIndex < CLASSIFICATION_THRESHOLDS.moderate) return 'moderate';
+  if (priceLevelIndex < CLASSIFICATION_THRESHOLDS.high) return 'high';
   return 'veryHigh';
 }
 
@@ -58,7 +74,10 @@ export function classifyRatioToUS(ratioToUS) {
  *  its data-row array. The API returns `[metadata, rows]`; `rows` is
  *  null when the query matched nothing. Throws a descriptive Error on a
  *  structurally unexpected body (never silently returns something the
- *  caller could mistake for real rows). */
+ *  caller could mistake for real rows) — this is also what catches the
+ *  API's own `[{"message":[{...}]}]` error-object shape (e.g. an
+ *  archived/unknown indicator), since that shape has length 1, not the
+ *  expected [metadata, rows] pair. */
 export function parseWorldBankResponse(body) {
   if (!Array.isArray(body) || body.length < 2) {
     throw new Error('Unexpected World Bank response shape: expected a [metadata, rows] array.');
@@ -112,7 +131,7 @@ export function normalizeRows(rawRows, validCountryCodes) {
       continue;
     }
     seen.add(countryCode);
-    accepted.push({ countryCode, ratioToUS: value, sourcePeriod });
+    accepted.push({ countryCode, priceLevelIndex: value, sourcePeriod });
   }
 
   accepted.sort((a, b) => a.countryCode.localeCompare(b.countryCode));
@@ -142,8 +161,8 @@ export function validateEntries(entries, effectiveCatalogSize, excludedCountryCo
     if (codes.has(entry.countryCode)) errors.push(`duplicate country code in final entries: ${entry.countryCode}`);
     codes.add(entry.countryCode);
 
-    if (!Number.isFinite(entry.ratioToUS) || entry.ratioToUS <= 0) {
-      errors.push(`invalid ratioToUS for ${entry.countryCode}: ${entry.ratioToUS}`);
+    if (!Number.isFinite(entry.priceLevelIndex) || entry.priceLevelIndex <= 0) {
+      errors.push(`invalid priceLevelIndex for ${entry.countryCode}: ${entry.priceLevelIndex}`);
     }
     if (typeof entry.sourcePeriod !== 'string' || entry.sourcePeriod.length === 0) {
       errors.push(`missing sourcePeriod for ${entry.countryCode}`);

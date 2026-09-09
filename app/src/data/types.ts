@@ -452,18 +452,22 @@ export interface AccommodationStrings {
 // for the ingestion pipeline and app/scripts/TRAVEL_COST_INDEX.md for the
 // full source/semantics/update documentation.
 
-/** One country's real source observation. `ratioToUS` is the World Bank
- *  ICP indicator PA.NUS.PPPC.RF value AS PUBLISHED — the ratio of a
- *  country's PPP conversion factor to its market exchange rate, where
- *  1.0 means "the same general price level as the United States" (the
- *  indicator's own reference point, not a Wejhaty invention, and NOT an
- *  OECD=100-style index — this dataset's baseline is 1.0, not 100).
+/** One country's real source observation. `priceLevelIndex` is the World
+ *  Bank indicator PA.NUS.GDP.PLI ("Price level index (GDP)") value AS
+ *  PUBLISHED, live-verified via a GitHub Actions run against the real
+ *  API — 100 means "the same general price level as the United States"
+ *  (confirmed live: the US itself returns exactly 100), the indicator's
+ *  own baseline, not a Wejhaty invention. (The originally-targeted
+ *  indicator, PA.NUS.PPPC.RF, is still listed in the World Bank's
+ *  catalog metadata but its data endpoint now returns "deleted or
+ *  archived" — confirmed live; PA.NUS.GDP.PLI is the currently-serving
+ *  replacement with equivalent semantics. See TRAVEL_COST_INDEX.md.)
  *  Never a nightly hotel price, food price, or tourist daily budget —
  *  see AccommodationInfo.tsx's disclaimer copy. */
 export interface TravelCostIndexEntry {
   /** ISO 3166-1 alpha-2, uppercase — matches CatalogEntry.countryCode. */
   countryCode: string;
-  ratioToUS: number;
+  priceLevelIndex: number;
   /** The year the source observation itself is FOR (e.g. "2023") — not
    *  when this snapshot file was generated. World Bank ICP data is
    *  published on a multi-year cycle; this is deliberately named
@@ -490,7 +494,7 @@ export interface TravelCostSnapshot {
   entries: TravelCostIndexEntry[];
 }
 
-/** Four-tier relative classification of `ratioToUS`, thresholds centralized
+/** Four-tier relative classification of `priceLevelIndex`, thresholds centralized
  *  in data/travelCostIndex.ts's CLASSIFICATION_THRESHOLDS (never scattered
  *  as magic numbers in a component). */
 export type TravelCostTier = 'low' | 'moderate' | 'high' | 'veryHigh';

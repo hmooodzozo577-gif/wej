@@ -13,25 +13,26 @@ import { isExcludedIso2 } from './excludedCountries';
 import type { TravelCostIndexEntry, TravelCostSnapshot, TravelCostTier } from './types';
 
 /** Same thresholds as scripts/lib/travelCostIndexIngest.mjs's
- *  CLASSIFICATION_THRESHOLDS/classifyRatioToUS — duplicated here (not
- *  imported: the generation script is plain Node ESM with no TS loader,
- *  and this module is bundled TS/ESM for the browser) rather than
- *  shared, but travelCostIndexIngest.test.ts and this file's own tests
- *  both assert the exact boundary values below, so a drift between the
- *  two would be caught immediately. */
+ *  CLASSIFICATION_THRESHOLDS/classifyPriceLevelIndex — duplicated here
+ *  (not imported: the generation script is plain Node ESM with no TS
+ *  loader, and this module is bundled TS/ESM for the browser) rather
+ *  than shared, but travelCostIndexIngest.test.mjs and this file's own
+ *  tests both assert the exact boundary values below, so a drift
+ *  between the two would be caught immediately. 100 = same general
+ *  price level as the US (this indicator's own baseline). */
 const CLASSIFICATION_THRESHOLDS = {
-  low: 0.6,
-  moderate: 0.9,
-  high: 1.15,
+  low: 60,
+  moderate: 90,
+  high: 115,
 };
 
-/** Pure, deterministic: the same ratioToUS always returns the same
- *  tier. See CLASSIFICATION_THRESHOLDS' doc comment in
+/** Pure, deterministic: the same priceLevelIndex always returns the
+ *  same tier. See CLASSIFICATION_THRESHOLDS' doc comment in
  *  travelCostIndexIngest.mjs for why these specific boundaries. */
-export function classifyRatioToUS(ratioToUS: number): TravelCostTier {
-  if (ratioToUS < CLASSIFICATION_THRESHOLDS.low) return 'low';
-  if (ratioToUS < CLASSIFICATION_THRESHOLDS.moderate) return 'moderate';
-  if (ratioToUS < CLASSIFICATION_THRESHOLDS.high) return 'high';
+export function classifyPriceLevelIndex(priceLevelIndex: number): TravelCostTier {
+  if (priceLevelIndex < CLASSIFICATION_THRESHOLDS.low) return 'low';
+  if (priceLevelIndex < CLASSIFICATION_THRESHOLDS.moderate) return 'moderate';
+  if (priceLevelIndex < CLASSIFICATION_THRESHOLDS.high) return 'high';
   return 'veryHigh';
 }
 
@@ -52,7 +53,7 @@ function loadSnapshot(): Promise<TravelCostSnapshot | null> {
 /** Resolves the dynamic Travel Cost Index entry for a country, by its
  *  ISO2 `countryCode` — the SAME code space as CatalogEntry.countryCode,
  *  never re-derived or guessed. Returns undefined (never a guess, never
- *  a fabricated ratio) when: the snapshot failed to load, the snapshot
+ *  a fabricated value) when: the snapshot failed to load, the snapshot
  *  has never been generated yet (entries: []), or this specific country
  *  simply isn't in the source dataset's coverage. Callers (e.g.
  *  AccommodationInfo.tsx) MUST fall back to the existing static

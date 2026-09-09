@@ -1,13 +1,16 @@
 // Phase 13.5c — pure ingestion pipeline tests. Fixtures only, no network
 // — see travelCostIndexIngest.mjs's module doc comment for why fetch is
 // kept out of this file entirely (generate-travel-cost-index.mjs is the
-// only network-touching file in this feature).
+// only network-touching file in this feature). Field name/scale
+// (priceLevelIndex, 100-baseline) and indicator (PA.NUS.GDP.PLI) reflect
+// the live-verified replacement for the originally-assumed, now-archived
+// PA.NUS.PPPC.RF — see the module's own doc comment for that evidence.
 import { describe, expect, it } from 'vitest';
 import {
   CLASSIFICATION_THRESHOLDS,
   MIN_COVERAGE_RATIO,
   buildSnapshot,
-  classifyRatioToUS,
+  classifyPriceLevelIndex,
   normalizeRows,
   parseWorldBankResponse,
   serializeSnapshot,
@@ -18,11 +21,11 @@ const VALID_CODES = ['JP', 'SA', 'FR', 'CH', 'TH'];
 
 function wbRow(overrides = {}) {
   return {
-    indicator: { id: 'PA.NUS.PPPC.RF', value: 'Price level ratio...' },
+    indicator: { id: 'PA.NUS.GDP.PLI', value: 'Price level index (GDP)' },
     country: { id: 'JP', value: 'Japan' },
     countryiso3code: 'JPN',
     date: '2023',
-    value: 1.02,
+    value: 102,
     unit: '',
     obs_status: '',
     decimal: 1,
@@ -48,12 +51,19 @@ describe('Phase 13.5c — parseWorldBankResponse', () => {
   it('throws when rows is present but not an array', () => {
     expect(() => parseWorldBankResponse([{ page: 1 }, 'nope'])).toThrow();
   });
+
+  it('throws on the World Bank API\'s own error-object shape (e.g. an archived/unknown indicator) rather than misreading it as rows', () => {
+    // Real, live-observed shape for PA.NUS.PPPC.RF after it was archived:
+    // [{"message":[{"id":"175","key":"Invalid format","value":"The indicator was not found..."}]}]
+    const errorBody = [{ message: [{ id: '175', key: 'Invalid format', value: 'The indicator was not found. It may have been deleted or archived.' }] }];
+    expect(() => parseWorldBankResponse(errorBody)).toThrow();
+  });
 });
 
 describe('Phase 13.5c — normalizeRows', () => {
   it('accepts a valid record for a country in the effective catalog', () => {
-    const { accepted, rejected } = normalizeRows([wbRow({ country: { id: 'JP' }, value: 1.32 })], VALID_CODES);
-    expect(accepted).toEqual([{ countryCode: 'JP', ratioToUS: 1.32, sourcePeriod: '2023' }]);
+    const { accepted, rejected } = normalizeRows([wbRow({ country: { id: 'JP' }, value: 132 })], VALID_CODES);
+    expect(accepted).toEqual([{ countryCode: 'JP', priceLevelIndex: 132, sourcePeriod: '2023' }]);
     expect(rejected).toEqual([]);
   });
 
@@ -87,11 +97,11 @@ describe('Phase 13.5c — normalizeRows', () => {
 
   it('handles a duplicate country code deterministically: keeps the first occurrence, rejects the rest', () => {
     const rows = [
-      wbRow({ country: { id: 'JP' }, value: 1.1 }),
-      wbRow({ country: { id: 'JP' }, value: 1.9 }),
+      wbRow({ country: { id: 'JP' }, value: 110 }),
+      wbRow({ country: { id: 'JP' }, value: 190 }),
     ];
     const { accepted, rejected } = normalizeRows(rows, VALID_CODES);
-    expect(accepted).toEqual([{ countryCode: 'JP', ratioToUS: 1.1, sourcePeriod: '2023' }]);
+    expect(accepted).toEqual([{ countryCode: 'JP', priceLevelIndex: 110, sourcePeriod: '2023' }]);
     expect(rejected).toHaveLength(1);
     expect(rejected[0].reason).toBe('duplicate_country_code');
   });
@@ -104,52 +114,52 @@ describe('Phase 13.5c — normalizeRows', () => {
 
   it('is deterministic: sorts accepted entries by countryCode regardless of input order', () => {
     const rows = [
-      wbRow({ country: { id: 'TH' }, value: 0.5 }),
-      wbRow({ country: { id: 'CH' }, value: 1.3 }),
-      wbRow({ country: { id: 'FR' }, value: 1.0 }),
+      wbRow({ country: { id: 'TH' }, value: 50 }),
+      wbRow({ country: { id: 'CH' }, value: 130 }),
+      wbRow({ country: { id: 'FR' }, value: 100 }),
     ];
     const { accepted } = normalizeRows(rows, VALID_CODES);
     expect(accepted.map((e) => e.countryCode)).toEqual(['CH', 'FR', 'TH']);
   });
 });
 
-describe('Phase 13.5c — classifyRatioToUS (centralized, documented thresholds)', () => {
+describe('Phase 13.5c — classifyPriceLevelIndex (centralized, documented thresholds)', () => {
   it('boundary just below "low" threshold classifies as low', () => {
-    expect(classifyRatioToUS(CLASSIFICATION_THRESHOLDS.low - 0.01)).toBe('low');
+    expect(classifyPriceLevelIndex(CLASSIFICATION_THRESHOLDS.low - 1)).toBe('low');
   });
 
   it('boundary exactly at the "low" threshold classifies as moderate (inclusive upper bound)', () => {
-    expect(classifyRatioToUS(CLASSIFICATION_THRESHOLDS.low)).toBe('moderate');
+    expect(classifyPriceLevelIndex(CLASSIFICATION_THRESHOLDS.low)).toBe('moderate');
   });
 
   it('boundary just below "moderate" threshold classifies as moderate', () => {
-    expect(classifyRatioToUS(CLASSIFICATION_THRESHOLDS.moderate - 0.01)).toBe('moderate');
+    expect(classifyPriceLevelIndex(CLASSIFICATION_THRESHOLDS.moderate - 1)).toBe('moderate');
   });
 
   it('boundary exactly at the "moderate" threshold classifies as high', () => {
-    expect(classifyRatioToUS(CLASSIFICATION_THRESHOLDS.moderate)).toBe('high');
+    expect(classifyPriceLevelIndex(CLASSIFICATION_THRESHOLDS.moderate)).toBe('high');
   });
 
   it('boundary just below "high" threshold classifies as high', () => {
-    expect(classifyRatioToUS(CLASSIFICATION_THRESHOLDS.high - 0.01)).toBe('high');
+    expect(classifyPriceLevelIndex(CLASSIFICATION_THRESHOLDS.high - 1)).toBe('high');
   });
 
   it('boundary exactly at and above the "high" threshold classifies as veryHigh', () => {
-    expect(classifyRatioToUS(CLASSIFICATION_THRESHOLDS.high)).toBe('veryHigh');
-    expect(classifyRatioToUS(2.0)).toBe('veryHigh');
+    expect(classifyPriceLevelIndex(CLASSIFICATION_THRESHOLDS.high)).toBe('veryHigh');
+    expect(classifyPriceLevelIndex(200)).toBe('veryHigh');
   });
 
   it('is deterministic: repeated calls with the same value return the same tier', () => {
-    const results = new Set([classifyRatioToUS(1.0), classifyRatioToUS(1.0), classifyRatioToUS(1.0)]);
+    const results = new Set([classifyPriceLevelIndex(100), classifyPriceLevelIndex(100), classifyPriceLevelIndex(100)]);
     expect(results.size).toBe(1);
   });
 });
 
 describe('Phase 13.5c — validateEntries', () => {
   const entries = [
-    { countryCode: 'JP', ratioToUS: 1.3, sourcePeriod: '2023' },
-    { countryCode: 'SA', ratioToUS: 0.6, sourcePeriod: '2023' },
-    { countryCode: 'FR', ratioToUS: 1.0, sourcePeriod: '2023' },
+    { countryCode: 'JP', priceLevelIndex: 130, sourcePeriod: '2023' },
+    { countryCode: 'SA', priceLevelIndex: 60, sourcePeriod: '2023' },
+    { countryCode: 'FR', priceLevelIndex: 100, sourcePeriod: '2023' },
   ];
 
   it('passes for well-formed entries meeting the minimum coverage ratio', () => {
@@ -171,21 +181,21 @@ describe('Phase 13.5c — validateEntries', () => {
   });
 
   it('fails on a duplicate country code slipping into the final list', () => {
-    const dup = [...entries, { countryCode: 'JP', ratioToUS: 1.5, sourcePeriod: '2023' }];
+    const dup = [...entries, { countryCode: 'JP', priceLevelIndex: 150, sourcePeriod: '2023' }];
     const result = validateEntries(dup, dup.length / MIN_COVERAGE_RATIO, []);
     expect(result.ok).toBe(false);
     expect(result.errors.some((e) => e.includes('duplicate'))).toBe(true);
   });
 
-  it('fails on an invalid numeric ratioToUS (NaN/Infinity/<=0)', () => {
+  it('fails on an invalid numeric priceLevelIndex (NaN/Infinity/<=0)', () => {
     for (const bad of [NaN, Infinity, 0, -1]) {
-      const result = validateEntries([{ countryCode: 'JP', ratioToUS: bad, sourcePeriod: '2023' }], 1, []);
+      const result = validateEntries([{ countryCode: 'JP', priceLevelIndex: bad, sourcePeriod: '2023' }], 1, []);
       expect(result.ok).toBe(false);
     }
   });
 
   it('CRITICAL: fails if an excluded country code (Israel, IL) is present in the final entries', () => {
-    const withIsrael = [...entries, { countryCode: 'IL', ratioToUS: 1.1, sourcePeriod: '2023' }];
+    const withIsrael = [...entries, { countryCode: 'IL', priceLevelIndex: 110, sourcePeriod: '2023' }];
     const result = validateEntries(withIsrael, withIsrael.length / MIN_COVERAGE_RATIO, ['IL']);
     expect(result.ok).toBe(false);
     expect(result.errors.some((e) => e.includes('IL'))).toBe(true);
@@ -194,16 +204,16 @@ describe('Phase 13.5c — validateEntries', () => {
 
 describe('Phase 13.5c — buildSnapshot + serializeSnapshot', () => {
   it('builds a deterministic, traceable snapshot object', () => {
-    const snapshot = buildSnapshot([{ countryCode: 'JP', ratioToUS: 1.3, sourcePeriod: '2023' }], 'PA.NUS.PPPC.RF', '2026-01-01T00:00:00.000Z');
+    const snapshot = buildSnapshot([{ countryCode: 'JP', priceLevelIndex: 130, sourcePeriod: '2023' }], 'PA.NUS.GDP.PLI', '2026-01-01T00:00:00.000Z');
     expect(snapshot).toEqual({
       snapshotUpdatedAt: '2026-01-01T00:00:00.000Z',
-      sourceIndicator: 'PA.NUS.PPPC.RF',
-      entries: [{ countryCode: 'JP', ratioToUS: 1.3, sourcePeriod: '2023' }],
+      sourceIndicator: 'PA.NUS.GDP.PLI',
+      entries: [{ countryCode: 'JP', priceLevelIndex: 130, sourcePeriod: '2023' }],
     });
   });
 
   it('serializes to valid, deterministic JSON (same input -> byte-identical output)', () => {
-    const snapshot = buildSnapshot([{ countryCode: 'JP', ratioToUS: 1.3, sourcePeriod: '2023' }], 'PA.NUS.PPPC.RF', '2026-01-01T00:00:00.000Z');
+    const snapshot = buildSnapshot([{ countryCode: 'JP', priceLevelIndex: 130, sourcePeriod: '2023' }], 'PA.NUS.GDP.PLI', '2026-01-01T00:00:00.000Z');
     const first = serializeSnapshot(snapshot);
     const second = serializeSnapshot(snapshot);
     expect(first).toBe(second);

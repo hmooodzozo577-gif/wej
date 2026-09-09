@@ -4,55 +4,52 @@
 // getTravelCostIndex()'s missing/found/deterministic behavior. The
 // "found" cases mock the generated JSON module itself (vi.resetModules +
 // a fresh dynamic import per test — the same pattern already used for
-// travelService.test.ts's env-dependent module) rather than depending on
-// the real committed snapshot's current (empty) contents, so these
-// tests remain meaningful once a real snapshot exists.
+// travelService.test.ts's env-dependent module) so these tests don't
+// depend on the real committed snapshot's exact current contents.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { classifyRatioToUS } from './travelCostIndex';
+import { classifyPriceLevelIndex } from './travelCostIndex';
 
-// classifyRatioToUS's thresholds are re-asserted here as bare numeric
-// literals (not imported — travelCostIndex.ts intentionally doesn't
-// export the threshold object, only the classify function) so a
+// classifyPriceLevelIndex's thresholds are re-asserted here as bare
+// numeric literals (not imported — travelCostIndex.ts intentionally
+// doesn't export the threshold object, only the classify function) so a
 // silent drift from the ingestion script's own copy would show up as a
 // boundary test failure on ONE side without touching the other file.
-describe('Phase 13.5c — classifyRatioToUS (frontend copy of the thresholds)', () => {
-  it('boundary just below 0.6 -> low', () => {
-    expect(classifyRatioToUS(0.59)).toBe('low');
+// 100 = same general price level as the US (PA.NUS.GDP.PLI's baseline).
+describe('Phase 13.5c — classifyPriceLevelIndex (frontend copy of the thresholds)', () => {
+  it('boundary just below 60 -> low', () => {
+    expect(classifyPriceLevelIndex(59)).toBe('low');
   });
-  it('boundary at 0.6 -> moderate', () => {
-    expect(classifyRatioToUS(0.6)).toBe('moderate');
+  it('boundary at 60 -> moderate', () => {
+    expect(classifyPriceLevelIndex(60)).toBe('moderate');
   });
-  it('boundary just below 0.9 -> moderate', () => {
-    expect(classifyRatioToUS(0.89)).toBe('moderate');
+  it('boundary just below 90 -> moderate', () => {
+    expect(classifyPriceLevelIndex(89)).toBe('moderate');
   });
-  it('boundary at 0.9 -> high', () => {
-    expect(classifyRatioToUS(0.9)).toBe('high');
+  it('boundary at 90 -> high', () => {
+    expect(classifyPriceLevelIndex(90)).toBe('high');
   });
-  it('boundary just below 1.15 -> high', () => {
-    expect(classifyRatioToUS(1.14)).toBe('high');
+  it('boundary just below 115 -> high', () => {
+    expect(classifyPriceLevelIndex(114)).toBe('high');
   });
-  it('boundary at and above 1.15 -> veryHigh', () => {
-    expect(classifyRatioToUS(1.15)).toBe('veryHigh');
-    expect(classifyRatioToUS(3)).toBe('veryHigh');
+  it('boundary at and above 115 -> veryHigh', () => {
+    expect(classifyPriceLevelIndex(115)).toBe('veryHigh');
+    expect(classifyPriceLevelIndex(300)).toBe('veryHigh');
   });
   it('is deterministic', () => {
-    expect(classifyRatioToUS(1.0)).toBe(classifyRatioToUS(1.0));
+    expect(classifyPriceLevelIndex(100)).toBe(classifyPriceLevelIndex(100));
   });
 });
 
 describe('Phase 13.5c — getTravelCostIndex against the real committed snapshot', () => {
-  it('returns undefined for any country while the snapshot has not been generated yet (entries: [])', async () => {
-    const { getTravelCostIndex } = await import('./travelCostIndex');
-    // JP is a real, well-covered destination — if this ever returns a
-    // value, the committed snapshot has real data and this assertion
-    // (deliberately) needs updating alongside it.
-    expect(await getTravelCostIndex('JP')).toBeUndefined();
-  });
-
   it('never throws for an unknown/malformed country code', async () => {
     const { getTravelCostIndex } = await import('./travelCostIndex');
     await expect(getTravelCostIndex('ZZ')).resolves.toBeUndefined();
     await expect(getTravelCostIndex('')).resolves.toBeUndefined();
+  });
+
+  it('never returns an entry for Israel (IL) from the real snapshot', async () => {
+    const { getTravelCostIndex } = await import('./travelCostIndex');
+    expect(await getTravelCostIndex('IL')).toBeUndefined();
   });
 });
 
@@ -68,21 +65,21 @@ describe('Phase 13.5c — getTravelCostIndex with a mocked snapshot (found case)
     vi.doMock('./generated/travelCostIndex.json', () => ({
       default: {
         snapshotUpdatedAt: '2026-01-01T00:00:00.000Z',
-        sourceIndicator: 'PA.NUS.PPPC.RF',
+        sourceIndicator: 'PA.NUS.GDP.PLI',
         entries: [
-          { countryCode: 'JP', ratioToUS: 1.32, sourcePeriod: '2023' },
-          { countryCode: 'TH', ratioToUS: 0.45, sourcePeriod: '2023' },
+          { countryCode: 'JP', priceLevelIndex: 132, sourcePeriod: '2023' },
+          { countryCode: 'TH', priceLevelIndex: 45, sourcePeriod: '2023' },
         ],
       },
     }));
     const { getTravelCostIndex } = await import('./travelCostIndex');
-    expect(await getTravelCostIndex('JP')).toEqual({ countryCode: 'JP', ratioToUS: 1.32, sourcePeriod: '2023' });
-    expect(await getTravelCostIndex('TH')).toEqual({ countryCode: 'TH', ratioToUS: 0.45, sourcePeriod: '2023' });
+    expect(await getTravelCostIndex('JP')).toEqual({ countryCode: 'JP', priceLevelIndex: 132, sourcePeriod: '2023' });
+    expect(await getTravelCostIndex('TH')).toEqual({ countryCode: 'TH', priceLevelIndex: 45, sourcePeriod: '2023' });
   });
 
   it('returns undefined for a country the mocked snapshot does not cover — never a guess', async () => {
     vi.doMock('./generated/travelCostIndex.json', () => ({
-      default: { snapshotUpdatedAt: '2026-01-01T00:00:00.000Z', sourceIndicator: 'PA.NUS.PPPC.RF', entries: [] },
+      default: { snapshotUpdatedAt: '2026-01-01T00:00:00.000Z', sourceIndicator: 'PA.NUS.GDP.PLI', entries: [] },
     }));
     const { getTravelCostIndex } = await import('./travelCostIndex');
     expect(await getTravelCostIndex('JP')).toBeUndefined();
@@ -92,12 +89,12 @@ describe('Phase 13.5c — getTravelCostIndex with a mocked snapshot (found case)
     vi.doMock('./generated/travelCostIndex.json', () => ({
       default: {
         snapshotUpdatedAt: '2026-01-01T00:00:00.000Z',
-        sourceIndicator: 'PA.NUS.PPPC.RF',
+        sourceIndicator: 'PA.NUS.GDP.PLI',
         // Simulates the ingestion-side and catalog-side guarantees both
         // having failed — getTravelCostIndex() itself has an
         // independent, third-layer exclusion check (isExcludedIso2)
         // that must still refuse to surface this.
-        entries: [{ countryCode: 'IL', ratioToUS: 1.0, sourcePeriod: '2023' }],
+        entries: [{ countryCode: 'IL', priceLevelIndex: 100, sourcePeriod: '2023' }],
       },
     }));
     const { getTravelCostIndex } = await import('./travelCostIndex');
@@ -108,8 +105,8 @@ describe('Phase 13.5c — getTravelCostIndex with a mocked snapshot (found case)
     vi.doMock('./generated/travelCostIndex.json', () => ({
       default: {
         snapshotUpdatedAt: '2026-01-01T00:00:00.000Z',
-        sourceIndicator: 'PA.NUS.PPPC.RF',
-        entries: [{ countryCode: 'JP', ratioToUS: 1.32, sourcePeriod: '2023' }],
+        sourceIndicator: 'PA.NUS.GDP.PLI',
+        entries: [{ countryCode: 'JP', priceLevelIndex: 132, sourcePeriod: '2023' }],
       },
     }));
     const { getTravelCostIndex } = await import('./travelCostIndex');

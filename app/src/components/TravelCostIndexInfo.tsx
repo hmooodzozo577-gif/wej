@@ -9,13 +9,13 @@
 // read (see that file's own doc comment).
 //
 // Renders nothing (graceful omission, never a guess) when this country
-// has no snapshot entry — which, before scripts/generate-travel-cost-
-// index.mjs has ever been run against a live source, is ALL countries
-// (the committed snapshot ships with entries: []). This is intentional:
-// shipping the full pipeline without pretending data exists yet.
+// has no snapshot entry — e.g. it isn't covered by the World Bank's
+// PA.NUS.GDP.PLI series for the fetched period, or the snapshot failed
+// to load. This is intentional: never pretend data exists for a country
+// the source dataset doesn't actually cover.
 import { useEffect, useState } from 'react';
 import { useI18n } from '../state/hooks';
-import { classifyRatioToUS, getTravelCostIndex } from '../data/travelCostIndex';
+import { classifyPriceLevelIndex, getTravelCostIndex } from '../data/travelCostIndex';
 import type { CatalogEntry, TravelCostIndexEntry } from '../data/types';
 import { Icon } from './Icon';
 
@@ -42,7 +42,7 @@ export function TravelCostIndexInfo({ destination }: { destination: CatalogEntry
 
   if (!entry) return null;
 
-  const tier = classifyRatioToUS(entry.ratioToUS);
+  const tier = classifyPriceLevelIndex(entry.priceLevelIndex);
 
   return (
     <div className="detail-card">

@@ -9,17 +9,38 @@ destination detail page.
 
 ## Authoritative source
 
-World Bank Indicators API, indicator **`PA.NUS.PPPC.RF`** — "Price level
-ratio of PPP conversion factor to market exchange rate", sourced from the
-International Comparison Program (ICP). Public, no authentication
-required.
+World Bank Indicators API, indicator **`PA.NUS.GDP.PLI`** — "Price level
+index (GDP)", World Development Indicators, sourced from the International
+Comparison Program (ICP). Public, no authentication required.
+
+### Indicator correction (Phase 13.5c completion pass)
+
+The originally-assumed indicator, `PA.NUS.PPPC.RF` ("Price level ratio of
+PPP conversion factor (GDP) to market exchange rate"), is still listed in
+the World Bank's general indicator catalog metadata, but its own data
+endpoint now returns an error ("The indicator was not found. It may have
+been deleted or archived.") — confirmed live via a real GitHub Actions run
+against the actual API, including with zero extra query parameters, which
+rules out a request-shape bug and confirms genuine server-side archival.
+
+`PA.NUS.GDP.PLI` is the live, currently-serving replacement with equivalent
+semantics (still WDI/ICP-derived, still "how expensive is this country in
+general") on a **100-baseline scale** rather than the old ~1.0-baseline
+ratio. Also confirmed live via GitHub Actions: `USA`, `date: "2025"`,
+`mrv=1` returns exactly `value: 100`, validating the documented US=100
+baseline.
+
+This sandboxed dev environment's own network egress is blocked to
+`api.worldbank.org` (direct `curl`/`fetch` from here fails); GitHub-hosted
+Actions runners have separate, unrestricted network access and are the
+verification path used above.
 
 ## What the number means — and does NOT mean
 
-`ratioToUS` is that indicator's value **as published**: 1.0 means "the
-same general price level as the United States" (the indicator's own
-reference point — this is **not** an OECD=100-style index, and this
-project does not rescale it to one).
+`priceLevelIndex` is that indicator's value **as published**: 100 means
+"the same general price level as the United States" (the indicator's own
+reference point). Above 100 = more expensive than the US, below 100 =
+cheaper.
 
 It is a **general economy-wide price level estimate**. It is **not**:
 
@@ -27,6 +48,7 @@ It is a **general economy-wide price level estimate**. It is **not**:
 - a food price
 - a tourist daily budget
 - a live booking/availability figure
+- a currency conversion of any kind
 
 `TravelCostIndexInfo.tsx`'s disclaimer copy (EN/AR) says this explicitly
 on every render.
@@ -43,7 +65,7 @@ parseWorldBankResponse -> normalizeRows -> validateEntries -> serializeSnapshot
 src/data/generated/travelCostIndex.json  (committed snapshot)
         |
         v
-src/data/travelCostIndex.ts  (lazy-loaded read + classifyRatioToUS)
+src/data/travelCostIndex.ts  (lazy-loaded read + classifyPriceLevelIndex)
         |
         v
 TravelCostIndexInfo.tsx / AccommodationInfo.tsx-adjacent UI
@@ -58,17 +80,17 @@ at runtime. The site works with a stale (or never-yet-generated) snapshot.
 node scripts/generate-travel-cost-index.mjs
 ```
 
-Run manually — same convention as `generate-airports.mjs`/
-`generate-world-countries.mjs`. There is no scheduled GitHub Action for
-this (see "Automation" below).
+Same convention as `generate-airports.mjs`/`generate-world-countries.mjs`
+for running it manually. Since the completion pass this is also run
+automatically — see "Automation" below.
 
 ## Snapshot shape
 
 ```json
 {
   "snapshotUpdatedAt": "2026-01-01T00:00:00.000Z" or null,
-  "sourceIndicator": "PA.NUS.PPPC.RF",
-  "entries": [{ "countryCode": "JP", "ratioToUS": 1.32, "sourcePeriod": "2023" }]
+  "sourceIndicator": "PA.NUS.GDP.PLI",
+  "entries": [{ "countryCode": "JP", "priceLevelIndex": 132, "sourcePeriod": "2023" }]
 }
 ```
 
@@ -97,27 +119,42 @@ Enforced in three independent layers:
 
 1. `generate-travel-cost-index.mjs` only accepts rows whose country code
    is in the app's effective catalog (derived from the same generated
-   `destinations.json`/`basicCountries.json` already used elsewhere,
-   with a static IL mirror applied) — Israel can never enter the
+   `destinations.json`/`basicCountries.json` already used elsewhere, with
+   the shared exclusion list applied) — Israel can never enter the
    committed snapshot even though the World Bank dataset contains it.
 2. `validateEntries()` explicitly fails the whole snapshot if an
    excluded code is somehow present.
 3. `getTravelCostIndex()` itself checks `isExcludedIso2()` before any
    lookup, independent of the above.
 
-`app/src/data/excludedCountries.ts` remains the single source of truth
-for the app's effective catalog; nothing here duplicates or overrides it.
+`app/src/data/excludedCountries.ts` remains the runtime source of truth
+for the app's effective catalog. The list of excluded countries itself
+lives in `app/src/data/excludedCountriesData.json` — a plain JSON file
+imported identically by `excludedCountries.ts` (TS runtime) and by
+`generate-travel-cost-index.mjs` (plain Node ESM, via a `type: "json"`
+import assertion), so there is exactly one hand-maintained exclusion list,
+never a hardcoded mirror in this script.
 
 ## Automation
 
-No scheduled GitHub Action was added. This repository's existing
-generated-data scripts (`generate-airports.mjs`, `generate-world-
-countries.mjs`) are all run manually by a maintainer, not via CI — this
-follows that same convention rather than introducing new scheduled-
-workflow write permissions for an annual/periodic dataset that does not
-need daily refreshing. A maintainer with network access runs the command
-above and commits the result like any other generated-data update. If
-automatic updates are wanted later, the safest next step is a scheduled
-workflow that runs the updater and opens a PR with the diff (never a
-direct push) — the updater's own fetch/validate separation already
-supports that without further changes.
+`.github/workflows/update-travel-cost-index.yml` runs this pipeline
+monthly (`cron: '0 3 1 * *'`) and on-demand (`workflow_dispatch`). It:
+
+1. Checks out the repo, installs `app/`'s dependencies, and runs the
+   ingestion unit tests (fixtures only, no network) as a pre-flight gate.
+2. Runs `node scripts/generate-travel-cost-index.mjs` — the only
+   network-touching step. A failure here (fetch, malformed response,
+   insufficient coverage, an excluded code present) fails the job and
+   leaves the committed snapshot untouched; nothing downstream runs.
+3. Uploads the generated snapshot as a workflow artifact for inspection.
+4. Diffs the snapshot against the committed one; if unchanged, stops
+   (no-op run, no PR).
+5. If changed, opens a pull request from a fresh per-run branch
+   (`update-travel-cost-index-<run id>`) using the GitHub CLI with the
+   built-in `GITHUB_TOKEN` — never a direct push to the target branch,
+   never a force push, never a reused branch.
+
+Permissions are least-privilege (`contents: write`, `pull-requests:
+write` — nothing else), and only first-party GitHub Actions are used
+(`actions/checkout`, `actions/setup-node`, `actions/upload-artifact` —
+the same ones `deploy-pages.yml` already uses).

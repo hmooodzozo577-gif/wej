@@ -29,7 +29,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.join(__dirname, '../src/data/generated');
 const outFile = path.join(outDir, 'travelCostIndex.json');
 
-const SOURCE_INDICATOR = 'PA.NUS.PPPC.RF';
+// CORRECTION (Phase 13.5c completion pass): PA.NUS.PPPC.RF is archived at
+// the data-serving layer (confirmed live via GitHub Actions — see
+// ../TRAVEL_COST_INDEX.md). PA.NUS.GDP.PLI is the live, currently-serving
+// replacement with equivalent semantics (WDI/ICP-derived general price
+// level), live-confirmed to return exactly 100 for USA/2025 — the
+// documented US=100 baseline.
+const SOURCE_INDICATOR = 'PA.NUS.GDP.PLI';
 // mrv=1 -> most recent single observation per country, so normalizeRows
 // never has to deduplicate across multiple years for the same country.
 const WORLD_BANK_URL = `https://api.worldbank.org/v2/country/all/indicator/${SOURCE_INDICATOR}?format=json&per_page=20000&mrv=1`;
@@ -75,11 +81,6 @@ async function main() {
     console.error(String(err));
     process.exit(1);
   }
-  // Debug visibility only (never affects the write path): print a
-  // truncated view of the raw response BEFORE parsing is attempted, so
-  // a shape mismatch is diagnosable from CI logs alone.
-  console.log('Raw response (truncated to 1000 chars):', JSON.stringify(body).slice(0, 1000));
-
   let rawRows;
   try {
     rawRows = parseWorldBankResponse(body);
