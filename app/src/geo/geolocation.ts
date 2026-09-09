@@ -19,7 +19,23 @@ export type GeolocationOutcome =
     }
   | { ok: false; status: Exclude<LocationStatus, 'idle' | 'requesting' | 'granted'> };
 
-const TIMEOUT_MS = 10000;
+// Bug fix (post-Phase 13.6): the previous 10s timeout + maximumAge: 0
+// (never accept a cached fix, even one from seconds ago) combination
+// produced real-world TIMEOUT failures on devices/browsers with a slower
+// first position fix (weak signal, cold GPS/Wi-Fi positioning) — every
+// single call, including Retry, had to acquire a brand-new fix from
+// scratch within 10s. enableHighAccuracy is already false here (network/
+// Wi-Fi positioning, not GPS), so a high-accuracy-then-relaxed retry
+// doesn't apply — forcing enableHighAccuracy: true in would typically
+// make a fix SLOWER, not faster, and isn't what this implementation uses.
+const TIMEOUT_MS = 15000;
+// A position up to 5 minutes old is accepted. Safe for this app's
+// resolution granularity (country/nearest-major-city/nearest-major-
+// airport, all with multi-km tolerances): even at highway speed
+// (~100km/h) 5 minutes covers ~8km, well inside those tolerances and not
+// enough to plausibly cross a country border. Not used for anything
+// finer-grained than that.
+const MAXIMUM_AGE_MS = 300000;
 
 /** Requests the user's current position once. Never throws/rejects — every
  *  outcome (unsupported browser, permission denied, position unavailable,
@@ -52,7 +68,7 @@ export function requestBrowserLocation(): Promise<GeolocationOutcome> {
           resolve({ ok: false, status: 'unavailable' });
         }
       },
-      { enableHighAccuracy: false, timeout: TIMEOUT_MS, maximumAge: 0 },
+      { enableHighAccuracy: false, timeout: TIMEOUT_MS, maximumAge: MAXIMUM_AGE_MS },
     );
   });
 }

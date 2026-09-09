@@ -72,6 +72,28 @@ describe('Phase 12 — LocationPersonalize', () => {
     expect(screen.getByRole('button', { name: /Try Again/ })).toBeInTheDocument();
   });
 
+  it('bug fix: after a TIMEOUT, pressing Retry clears the timeout message, makes exactly one fresh request, and shows the successful result', async () => {
+    const mock = vi
+      .spyOn(geolocationModule, 'requestBrowserLocation')
+      .mockResolvedValueOnce({ ok: false, status: 'timeout' })
+      .mockResolvedValueOnce(RIYADH_GEO_RESULT);
+    renderWith('en');
+
+    fireEvent.click(screen.getByRole('button', { name: /Use My Location/ }));
+    await waitFor(() => expect(screen.getByText(/took too long/)).toBeInTheDocument());
+    expect(mock).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole('button', { name: /Try Again/ }));
+    // Stale timeout message must be gone as soon as the retry starts, not
+    // lingering alongside the new result.
+    expect(screen.queryByText(/took too long/)).not.toBeInTheDocument();
+
+    await waitFor(() => expect(screen.getByText(/Nearby countries/)).toBeInTheDocument(), { timeout: 5000 });
+    expect(screen.queryByText(/took too long/)).not.toBeInTheDocument();
+    // Exactly one request per click — no duplicate/looping requests.
+    expect(mock).toHaveBeenCalledTimes(2);
+  });
+
   it('shows the unsupported message and no request button when geolocation is unavailable in the browser', async () => {
     vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue({ ok: false, status: 'unsupported' });
     renderWith('en');
