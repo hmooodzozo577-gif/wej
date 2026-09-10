@@ -332,54 +332,74 @@ export function Destination() {
             {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
           </div>
           <div>
-            <div className="detail-card">
-              <h3>
-                <Icon name="info" size={18} /> {dt.overview}
-              </h3>
-              <p>{descOf(d, lang)}</p>
-            </div>
-            {why ? (
-              <div className="detail-card why-box">
+            {/* Landscape-composition pass (real user visual QA): on wide
+                screens these 4-5 cards often hold only a short
+                paragraph or a handful of pills each, but each used to
+                take the full main-column width — substantial empty
+                horizontal space INSIDE the cards. .overview-cards-grid
+                below is a plain multi-column grid, LANDSCAPE-ONLY via a
+                viewport-width media query (not a container query —
+                deliberately, see wejhaty.css's own doc comment for why
+                a container-width signal here would have gotten the
+                portrait/landscape distinction backwards). Below that
+                breakpoint (portrait, narrow, and the ≤860px range where
+                .detail-grid itself is already single-column) this is a
+                plain block-flow div — IDENTICAL to the previous
+                stacking, unchanged. No named grid-template-areas here:
+                plain DOM-order auto-placement is enough (nothing needs
+                to span or reorder), which also means reading/DOM order
+                is trivially preserved and correct under RTL without any
+                extra work. */}
+            <div className="overview-cards-grid">
+              <div className="detail-card overview-card">
                 <h3>
-                  <Icon name="bulb" size={18} /> {dt.why}
+                  <Icon name="info" size={18} /> {dt.overview}
                 </h3>
-                <p>{why}</p>
+                <p>{descOf(d, lang)}</p>
               </div>
-            ) : null}
-            <div className="detail-card">
-              <h3>
-                <Icon name="check" size={18} /> {dt.strengths}
-              </h3>
-              <div className="pill-list">
-                {strengthsOf(d, lang).map((s) => (
-                  <span className="pill good" key={s}>
-                    <Icon name="check" size={13} stroke={2.6} /> {s}
-                  </span>
-                ))}
+              {why ? (
+                <div className="detail-card why-box">
+                  <h3>
+                    <Icon name="bulb" size={18} /> {dt.why}
+                  </h3>
+                  <p>{why}</p>
+                </div>
+              ) : null}
+              <div className="detail-card">
+                <h3>
+                  <Icon name="check" size={18} /> {dt.strengths}
+                </h3>
+                <div className="pill-list">
+                  {strengthsOf(d, lang).map((s) => (
+                    <span className="pill good" key={s}>
+                      <Icon name="check" size={13} stroke={2.6} /> {s}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="detail-card">
-              <h3>
-                <Icon name="info" size={18} /> {dt.weaknesses}
-              </h3>
-              <div className="pill-list">
-                {weaknessesOf(d, lang).map((s) => (
-                  <span className="pill warn" key={s}>
-                    <Icon name="info" size={13} stroke={2.6} /> {s}
-                  </span>
-                ))}
+              <div className="detail-card">
+                <h3>
+                  <Icon name="info" size={18} /> {dt.weaknesses}
+                </h3>
+                <div className="pill-list">
+                  {weaknessesOf(d, lang).map((s) => (
+                    <span className="pill warn" key={s}>
+                      <Icon name="info" size={13} stroke={2.6} /> {s}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="detail-card">
-              <h3>
-                <Icon name="sparkle" size={18} /> {dt.bestFor}
-              </h3>
-              <div className="dest-meta">
-                {bestFor.map(([pid]) => (
-                  <span className="meta-chip" key={pid}>
-                    {t.purposes[pid].n}
-                  </span>
-                ))}
+              <div className="detail-card">
+                <h3>
+                  <Icon name="sparkle" size={18} /> {dt.bestFor}
+                </h3>
+                <div className="dest-meta">
+                  {bestFor.map(([pid]) => (
+                    <span className="meta-chip" key={pid}>
+                      {t.purposes[pid].n}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 

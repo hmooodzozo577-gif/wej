@@ -56,6 +56,27 @@ describe('Phase 13.6 — TravelInfo: no location granted', () => {
     expect(screen.queryByText(/Distance/)).not.toBeInTheDocument();
     expect(screen.queryByText(/Flight time/)).not.toBeInTheDocument();
   });
+
+  it('landscape-composition pass: message and action are separate block-level elements, not one crowded inline paragraph', () => {
+    // Real user visual QA found the sentence + inline chip-styled Link
+    // wrapping poorly in the narrow compact row at tablet/landscape
+    // widths. Structural guard: the action link must NOT be a
+    // descendant of the message <p> (which is how it produced that
+    // inline-wrap problem) — it's its own sibling element now.
+    const { container } = renderWith('en');
+    const paragraph = screen.getByText(/Share your location to see travel distance/);
+    expect(paragraph.tagName).toBe('P');
+    const link = screen.getByRole('link', { name: 'Set your location' });
+    expect(paragraph.contains(link)).toBe(false);
+    // Still inside the same card, still reachable — just not nested in
+    // the sentence.
+    expect(container.querySelector('.travel-card')!.contains(link)).toBe(true);
+  });
+
+  it('the action link keeps working (still a real /explore link) — no behavioral regression from the presentation fix', () => {
+    renderWith('en');
+    expect(screen.getByRole('link', { name: 'Set your location' })).toHaveAttribute('href', '/explore');
+  });
 });
 
 describe('Phase 13.6 — TravelInfo: loading state', () => {

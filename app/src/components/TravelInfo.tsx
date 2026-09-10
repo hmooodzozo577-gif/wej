@@ -120,17 +120,28 @@ export function TravelInfo({ destination }: { destination: CatalogEntry }) {
   }, [status, coords?.lat, coords?.lng, destination.id]);
 
   if (status !== 'granted' || !coords) {
+    // Landscape/tablet fix (real user visual QA): this used to be one
+    // <p> with the action Link inline, chip-styled, right after the
+    // sentence text. In the compact 3-column row (~190-230px per card
+    // at tablet/landscape widths) that put a long sentence and a small
+    // pill-button fighting for the same narrow line — poor wrapping,
+    // the chip sometimes breaking mid-text. Message and action are now
+    // separate block-level elements (own rows), same pattern already
+    // used elsewhere on this page (LocationPersonalize.tsx's own
+    // btn-ghost/btn-sm action row) instead of the cramped inline
+    // .meta-chip: the sentence gets the card's full width to wrap
+    // naturally, and the action reads as an intentional button, not a
+    // crowded inline tag. Purely presentational — no change to
+    // location state/request behavior.
     return (
       <div className="detail-card travel-card">
         <h3>
           <Icon name="map" size={18} /> {tt.title}
         </h3>
-        <p>
-          {tt.needLocation}{' '}
-          <Link to="/explore" className="meta-chip">
-            {tt.setLocationCta}
-          </Link>
-        </p>
+        <p>{tt.needLocation}</p>
+        <Link to="/explore" className="btn btn-ghost btn-sm" style={{ marginTop: 10 }}>
+          {tt.setLocationCta}
+        </Link>
       </div>
     );
   }

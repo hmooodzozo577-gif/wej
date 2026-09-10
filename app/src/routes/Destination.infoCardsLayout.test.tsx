@@ -92,6 +92,33 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     expect(getByText('الإقامة')).toBeInTheDocument();
   });
 
+  it('landscape-composition pass: Overview/Why/Strengths/Weaknesses/BestFor are wrapped in .overview-cards-grid, in DOM order, no duplicates (full destination only)', () => {
+    const { container } = renderAt('/destination/japan');
+    const grid = container.querySelector('.overview-cards-grid');
+    expect(grid).not.toBeNull();
+    const headings = Array.from(grid!.querySelectorAll(':scope > .detail-card > h3')).map((h) => h.textContent);
+    // DOM order must be Overview, then (optionally Why), then Strengths,
+    // Weaknesses, Best For — never reordered for visual packing.
+    expect(headings[0]).toContain('نظرة عامة');
+    expect(headings.some((h) => h!.includes('نقاط القوة'))).toBe(true);
+    expect(headings.some((h) => h!.includes('نقاط تحتاج انتباه'))).toBe(true);
+    expect(headings.some((h) => h!.includes('الأنسب لـ'))).toBe(true);
+    // No duplicated card.
+    expect(grid!.querySelectorAll(':scope > .overview-card')).toHaveLength(1);
+  });
+
+  it('landscape-composition pass: .overview-cards-grid is a plain block wrapper in the DOM regardless of viewport — the landscape/portrait switch is CSS-only (a media query), never conditional rendering, so no jsdom-width-dependent test is needed or meaningful here', () => {
+    const { container } = renderAt('/destination/japan');
+    // jsdom has no real layout engine (no viewport-width media query
+    // evaluation) — this only guards that the wrapper element exists
+    // and always contains the same cards; the actual responsive
+    // grid/stack behavior is verified with the browser QA in the final
+    // report, not here.
+    const grid = container.querySelector('.overview-cards-grid');
+    expect(grid).not.toBeNull();
+    expect(grid!.children.length).toBeGreaterThanOrEqual(4);
+  });
+
   it('composition-refinement pass: each compact card carries its own explicit grid-area class (not positional nth-child)', async () => {
     const { container } = renderAt('/destination/ksa');
     await waitFor(() => expect(container.querySelector('.tourism-insights-card')).not.toBeNull());
