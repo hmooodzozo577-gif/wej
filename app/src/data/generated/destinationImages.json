@@ -975,6 +975,21 @@
     "height": 961
   },
   {
+    "iso2": "IE",
+    "iso3": "IRL",
+    "countryName": "Ireland",
+    "landmarkName": "Ring of Kerry landscape 2",
+    "localPath": "/destinations/ie.webp",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Ring_of_Kerry_landscape_2.jpg",
+    "author": "Marija Grishin",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Ring_of_Kerry_landscape_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-10T14:38:25.358Z",
+    "width": 1440,
+    "height": 1026
+  },
+  {
     "iso2": "IN",
     "iso3": "IND",
     "countryName": "India",
