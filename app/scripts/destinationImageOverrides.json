@@ -22,5 +22,11 @@
   },
   "PE": {
     "preferredQueries": ["Machu Picchu Peru", "Cusco Peru landscape", "Lima skyline Peru"]
+  },
+  "IE": {
+    "preferredQueries": ["Cliffs of Moher Ireland", "Dublin skyline Ireland", "Ring of Kerry Ireland landscape"]
+  },
+  "VA": {
+    "preferredQueries": ["St Peter's Basilica Vatican City", "St Peter's Square Vatican City aerial"]
   }
 }
