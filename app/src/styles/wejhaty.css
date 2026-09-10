@@ -183,11 +183,24 @@
    nth-child auto-placement and named-area placement alike, regardless
    of align-items (which only controls a SHORTER item's own box within
    its row, never the row track's height). The real, and only, lever
-   for that gap is the height of the tallest compact card — see the
-   TravelCostIndexInfo.tsx / AccommodationInfo.tsx <details> disclosure
-   changes, which did the actual work of shrinking it. This rewrite is
-   a maintainability/clarity improvement layered on top of that fix,
-   not a second, independent fix for the same symptom. */
+   for that gap is the height of the tallest compact card sharing a
+   row with a SHORTER one.
+
+   Whitespace correction pass (real user visual review of production):
+   a since-removed @container(min-width:640px) override put Travel/
+   Accommodation/Travel Cost into ONE 3-column row — Travel is much
+   shorter than Travel Cost, so the shared row's track height was
+   pinned to Travel Cost's height, leaving a large empty gap below
+   Travel before Tourism could start. This was a composition problem,
+   not a missing-content or missing-CSS-shrink problem (Travel
+   genuinely has less to say than Travel Cost) — fixed by composition,
+   not by artificially inflating Travel or forcing equal heights:
+   Travel+Accommodation share row 1 (comparable natural heights, no
+   large asymmetry between them), Travel Cost gets its own full-width
+   row 2 (more room = its own text can wrap shorter, i.e. LESS height,
+   not more), Tourism is row 3. Every row's height is now pinned only
+   to items that are naturally similar in length, or to a single
+   full-width item — never to two mismatched cards sharing a track. */
 .info-cards-container {
   container-type: inline-size;
 }
@@ -229,14 +242,6 @@
      charts get real width instead of being squeezed to half. */
   .info-cards-grid > .tourism-insights-card {
     grid-area: tourism;
-  }
-}
-@container (min-width: 640px) {
-  .info-cards-grid {
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas:
-      'travel accommodation travelCost'
-      'tourism tourism tourism';
   }
 }
 

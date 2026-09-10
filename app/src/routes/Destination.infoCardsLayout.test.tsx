@@ -184,4 +184,33 @@ describe('Correction pass — info-cards container/grid split (both Destination 
       expect(columnCount, `grid-template-columns: ${m[1]}`).toBe(2);
     }
   });
+
+  it('whitespace correction pass REGRESSION: .info-cards-grid never shares Travel/Accommodation/Travel-Cost on one 3-column row — Travel Cost always gets its own full-width row', async () => {
+    // Real user visual review of production: at wide container widths
+    // Travel/Accommodation/Travel-Cost previously shared one row via a
+    // 3-column @container override; Travel is much shorter than Travel
+    // Cost, so the shared row's track height was pinned to Travel
+    // Cost's height, leaving a large visible gap below Travel before
+    // Tourism could start. Reads the shipped stylesheet source — the
+    // meaningful, non-brittle guard against this exact rule returning
+    // (jsdom cannot measure real card heights).
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const cssPath = path.join(import.meta.dirname, '..', 'styles', 'wejhaty.css');
+    const css = fs.readFileSync(cssPath, 'utf8');
+    expect(css).not.toMatch(/travel\s+accommodation\s+travelCost/i);
+    expect(css).not.toContain('1fr 1fr 1fr');
+  });
+
+  it('whitespace correction pass: Travel Cost carries its own full-width grid-area, distinct from the travel/accommodation row', async () => {
+    const { container } = renderAt('/destination/ksa');
+    await waitFor(() => expect(container.querySelector('.tourism-insights-card')).not.toBeNull());
+    const grid = container.querySelector('.info-cards-grid')!;
+    const travel = grid.querySelector(':scope > .travel-card')!;
+    const accommodation = grid.querySelector(':scope > .accommodation-card')!;
+    const travelCost = grid.querySelector(':scope > .travel-cost-card')!;
+    // DOM order unchanged (still explicit named grid-area placement,
+    // not positional) — the composition change is CSS-only.
+    expect([...grid.children]).toEqual([travel, accommodation, travelCost, grid.querySelector(':scope > .tourism-insights-card')]);
+  });
 });
