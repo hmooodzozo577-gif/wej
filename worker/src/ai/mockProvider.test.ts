@@ -8,7 +8,7 @@ describe('createMockAiProvider — test/dev-only, never live AI', () => {
     const result = await provider.interpretPreferences({
       lang: 'en',
       text: 'I care about climate a lot',
-      questions: [{ id: 'climate', kind: 'climate', options: ['hot', 'mild', 'cold'] }],
+      questions: [{ id: 'climate', kind: 'climate', options: [{ value: 'hot', label: 'Hot' }, { value: 'mild', label: 'Mild' }, { value: 'cold', label: 'Cold' }] }],
     });
     expect(result.interpreted).toEqual([{ questionId: 'climate', value: 'hot', confidence: 'medium' }]);
   });
@@ -17,7 +17,7 @@ describe('createMockAiProvider — test/dev-only, never live AI', () => {
     const result = await provider.interpretPreferences({
       lang: 'en',
       text: 'something totally unrelated',
-      questions: [{ id: 'climate', kind: 'climate', options: ['hot'] }],
+      questions: [{ id: 'climate', kind: 'climate', options: [{ value: 'hot', label: 'Hot' }] }],
     });
     expect(result.interpreted).toEqual([]);
     expect(result.unmapped).toEqual(['something totally unrelated']);

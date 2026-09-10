@@ -78,6 +78,35 @@ describe('NaturalPreferenceInput', () => {
     expect(sentQuestions.some((q) => q.id === 'climate')).toBe(true);
   });
 
+  // Phase 16.5 correction pass — real production bug: the payload sent
+  // to the AI carried bare option values (e.g. [15, 50, 90] for
+  // naturecity) with no label, so the model had nothing to ground a
+  // numeric direction in and guessed backwards for an explicit "فيها
+  // طبيعة" (nature) statement. This proves the fix at the boundary
+  // where the request is actually built.
+  it('BUG FIX: every option sent to the AI carries its label, not a bare value — the root cause of the real nature/city inversion', async () => {
+    mockInterpret.mockResolvedValue({ status: 'ok', interpreted: [], unmapped: [] });
+    renderWith(undefined);
+    typeAndSubmit('نص عام');
+    await waitFor(() => expect(mockInterpret).toHaveBeenCalledTimes(1));
+    const sentQuestions = mockInterpret.mock.calls[0]?.[2] as Array<{ id: string; options: Array<{ value: string | number; label: string }> }>;
+    const naturecity = sentQuestions.find((q) => q.id === 'naturecity')!;
+    expect(naturecity).toBeDefined();
+    // No bare numbers — every entry is a {value, label} pair, and the
+    // label is genuinely human-readable Arabic text (this test renders
+    // in Arabic), not the raw number restated as a string.
+    for (const opt of naturecity.options) {
+      expect(typeof opt.value === 'number' || typeof opt.value === 'string').toBe(true);
+      expect(typeof opt.label).toBe('string');
+      expect(opt.label.length).toBeGreaterThan(0);
+      expect(opt.label).not.toBe(String(opt.value));
+    }
+    const natureOption = naturecity.options.find((o) => o.value === 15)!;
+    const cityOption = naturecity.options.find((o) => o.value === 90)!;
+    expect(natureOption.label).toContain('طبيعة');
+    expect(cityOption.label).toContain('المدن');
+  });
+
   it('a high/medium-confidence proposal is shown pre-checked; applying dispatches SET_ANSWER with provenance ai_interpreted', async () => {
     const climateQuestion = questions.find((q) => q.id === 'climate')!;
     const coldValue = climateQuestion.options[0].value;
@@ -100,6 +129,7 @@ describe('NaturalPreferenceInput', () => {
       questionId: 'climate',
       value: coldValue,
       provenance: 'ai_interpreted',
+      confidence: 'medium',
     });
   });
 
@@ -138,7 +168,7 @@ describe('NaturalPreferenceInput', () => {
     await waitFor(() => expect(screen.getByRole('checkbox')).toBeInTheDocument());
     fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: /استخدام هذه التفضيلات/ }));
-    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_ANSWER', questionId: 'climate', value, provenance: 'ai_interpreted' });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_ANSWER', questionId: 'climate', value, provenance: 'ai_interpreted', confidence: 'low' });
   });
 
   it('nothing mappable: shows the graceful "none found" message, no crash, no dispatch', async () => {

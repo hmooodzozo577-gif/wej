@@ -32,18 +32,39 @@ function languageInstruction(lang: 'ar' | 'en'): string {
 }
 
 export function buildInterpretPreferencesPrompt(req: InterpretPreferencesRequest): { system: string; user: string } {
+  // Every allowed value is shown WITH its label (e.g. `15 = "Nature"`),
+  // never as a bare number — see InterpretableOption's doc comment for
+  // the real production bug this prevents (a bare-number list gives the
+  // model nothing to ground a numeric direction in, and it guessed
+  // backwards for "naturecity"). The value the model must return is
+  // still the bare `value` on the left of `=`, re-checked by
+  // ai/validate.ts against exactly this set — the label is grounding
+  // context only, never itself a valid answer.
   const questionsDescription = req.questions
-    .map((q) => `- id="${q.id}" kind="${q.kind}" allowed values: [${q.options.map((v) => JSON.stringify(v)).join(', ')}]`)
+    .map((q) => {
+      const values = q.options.map((o) => `${JSON.stringify(o.value)} = ${JSON.stringify(o.label)}`).join(', ');
+      return `- id="${q.id}" kind="${q.kind}" allowed values: [${values}]`;
+    })
     .join('\n');
+
+  const CONFIDENCE_RUBRIC = [
+    'Confidence rubric — apply it literally, per interpreted item:',
+    '"high": the traveler stated this preference directly and unambiguously, in words that clearly correspond to ONE of the allowed labels above (e.g. explicitly saying they want nature, or cold weather, or a specific one of the listed options).',
+    '"medium": the preference is reasonably implied but required some interpretation on your part (e.g. inferred from context rather than stated in those exact terms, or the wording is close to two labels and you picked the closer one).',
+    '"low": the text is ambiguous, incomplete, hedged ("maybe", "not sure", "kind of"), or conflicting — you are guessing more than reading.',
+    'An explicit, unhedged statement that clearly names one of the allowed labels above (in either Arabic or English, in your own words) must be "high", not "low" — do not under-rate confidence just because the traveler used different wording than the label.',
+  ].join('\n');
 
   const system = [
     'You interpret a traveler\'s free-text description of what they want into the EXISTING structured preference dimensions of a travel-recommendation questionnaire. You do not invent new dimensions.',
     '',
-    'Available questions for this session (only propose answers for these; never invent a question id or a value outside its listed allowed values):',
+    'Available questions for this session (only propose answers for these; never invent a question id or a value outside its listed allowed values — return the VALUE, not the label):',
     questionsDescription,
     '',
-    'Respond with a JSON object: { "interpreted": [{ "questionId": string, "value": (one of that question\'s allowed values), "confidence": "high"|"medium"|"low" }], "unmapped": [string, ...] }.',
-    '"unmapped" lists short fragments of the user\'s text you could not confidently map to any of the available questions — do not force a mapping you are not reasonably confident about.',
+    'Respond with a JSON object: { "interpreted": [{ "questionId": string, "value": (one of that question\'s allowed values, exactly as given, not its label), "confidence": "high"|"medium"|"low" }], "unmapped": [string, ...] }.',
+    '"unmapped" lists short fragments of the user\'s text you could not confidently map to any of the available questions — do not force a mapping you are not reasonably confident about, and do not invent a new dimension for a concept (like vague "quietness") that has no allowed value above.',
+    '',
+    CONFIDENCE_RUBRIC,
     '',
     languageInstruction(req.lang),
     '',

@@ -34,19 +34,42 @@ export interface Env {
 
 // ---- Capability A: natural preference interpretation ----------------------
 
+/** One allowed answer value for a question, paired with its
+ *  human-readable label (in the request's own `lang`) — the label is
+ *  context for the MODEL only, never trusted as the answer itself; the
+ *  model must still return one of the listed `value`s, and the
+ *  server-side validator (ai/validate.ts) checks the returned value
+ *  against `value`, never against label text.
+ *
+ *  Why this exists (real production bug, Phase 16.5 correction pass):
+ *  before this field existed, the Worker sent the model bare values
+ *  like [15, 50, 90] for a question named "naturecity" with no
+ *  indication of which number means what. The model had nothing to
+ *  ground its answer in except guessing from the question id/kind
+ *  string, and for a real user's explicit "فيها طبيعة" (nature) it
+ *  guessed 90 — which this project's own question bank defines as
+ *  "🏙️ Cities", the OPPOSITE meaning. The label is the fix: the model
+ *  is told outright that 15 means "Nature" and 90 means "Cities", so
+ *  it no longer has to guess numeric direction from a variable name it
+ *  was never shown. */
+export interface InterpretableOption {
+  value: string | number;
+  label: string;
+}
+
 /** One question the caller (the frontend) currently allows the model
  *  to propose an answer for — supplied BY the request, not looked up
  *  Worker-side (this Worker has no copy of app/'s question banks, by
  *  design: the frontend is the single source of truth for question
  *  metadata, avoiding a second, driftable copy here). `options` is the
- *  exhaustive real value set for that question — the server-side
- *  validator (see ai/validate.ts) rejects any interpreted value not
- *  present in this list, so the model can never introduce a value that
- *  doesn't exist in the real questionnaire. */
+ *  exhaustive real value set for that question, each with its label —
+ *  the server-side validator (see ai/validate.ts) rejects any
+ *  interpreted value not present in this list, so the model can never
+ *  introduce a value that doesn't exist in the real questionnaire. */
 export interface InterpretableQuestion {
   id: string;
   kind: string;
-  options: Array<string | number>;
+  options: InterpretableOption[];
 }
 
 export interface InterpretPreferencesRequest {

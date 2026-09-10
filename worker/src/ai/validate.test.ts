@@ -13,7 +13,7 @@ import type { ExplainRecommendationRequest, InterpretPreferencesRequest } from '
 const validInterpretBody = {
   lang: 'ar',
   text: 'أبغى دولة باردة وهادية',
-  questions: [{ id: 'climate', kind: 'climate', options: ['hot', 'mild', 'cold'] }],
+  questions: [{ id: 'climate', kind: 'climate', options: [{ value: 'hot', label: 'Hot' }, { value: 'mild', label: 'Mild' }, { value: 'cold', label: 'Cold' }] }],
 };
 
 describe('validateInterpretPreferencesRequest', () => {
@@ -43,7 +43,7 @@ describe('validateInterpretPreferencesRequest', () => {
   });
 
   it('REGRESSION: an oversized questions array is rejected', () => {
-    const questions = Array.from({ length: MAX_QUESTIONS + 1 }, (_, i) => ({ id: `q${i}`, kind: 'target', options: [1] }));
+    const questions = Array.from({ length: MAX_QUESTIONS + 1 }, (_, i) => ({ id: `q${i}`, kind: 'target', options: [{ value: 1, label: 'One' }] }));
     const errs = validateInterpretPreferencesRequest({ ...validInterpretBody, questions });
     expect(errs.some((e) => e.includes(String(MAX_QUESTIONS)))).toBe(true);
   });
@@ -52,13 +52,21 @@ describe('validateInterpretPreferencesRequest', () => {
     const errs = validateInterpretPreferencesRequest({ ...validInterpretBody, questions: [{ id: 'x' }] });
     expect(errs.length).toBeGreaterThan(0);
   });
+
+  it('BUG FIX REGRESSION: rejects an option missing its label (the old bare-value shape) — a label is now required, not optional', () => {
+    const errs = validateInterpretPreferencesRequest({
+      ...validInterpretBody,
+      questions: [{ id: 'climate', kind: 'climate', options: ['hot', 'mild', 'cold'] }],
+    });
+    expect(errs.length).toBeGreaterThan(0);
+  });
 });
 
 describe('validateInterpretPreferencesResult — structured-output validation (never trust the model)', () => {
   const request: InterpretPreferencesRequest = {
     lang: 'ar',
     text: 'test',
-    questions: [{ id: 'climate', kind: 'climate', options: ['hot', 'mild', 'cold'] }],
+    questions: [{ id: 'climate', kind: 'climate', options: [{ value: 'hot', label: 'Hot' }, { value: 'mild', label: 'Mild' }, { value: 'cold', label: 'Cold' }] }],
   };
 
   it('accepts a valid, in-schema response', () => {

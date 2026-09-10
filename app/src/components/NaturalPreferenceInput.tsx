@@ -19,6 +19,7 @@
 import { useState, type FormEvent } from 'react';
 import { useAppState, useI18n } from '../state/hooks';
 import { interpretPreferences } from '../ai/aiService';
+import { mapQuestionsForAi } from '../ai/mapQuestionsForAi';
 import type { InterpretedPreference } from '../ai/types';
 import type { Question } from '../data/types';
 import { Icon } from './Icon';
@@ -57,11 +58,7 @@ export function NaturalPreferenceInput({ questions }: { questions: Question[] })
     e.preventDefault();
     if (status === 'loading' || text.trim().length === 0) return;
     setStatus('loading');
-    const result = await interpretPreferences(
-      lang,
-      text,
-      openQuestions.map((q) => ({ id: q.id, kind: q.kind, options: q.options.map((o) => o.value) })),
-    );
+    const result = await interpretPreferences(lang, text, mapQuestionsForAi(openQuestions, lang));
     if (result.status === 'ok') {
       setUnmapped(result.unmapped);
       if (result.interpreted.length === 0) {
@@ -91,7 +88,7 @@ export function NaturalPreferenceInput({ questions }: { questions: Question[] })
   function onApply() {
     for (const p of proposals) {
       if (selected.has(p.questionId)) {
-        dispatch({ type: 'SET_ANSWER', questionId: p.questionId, value: p.value, provenance: 'ai_interpreted' });
+        dispatch({ type: 'SET_ANSWER', questionId: p.questionId, value: p.value, provenance: 'ai_interpreted', confidence: p.confidence });
       }
     }
     reset();

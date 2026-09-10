@@ -30,7 +30,7 @@ function postAi(path: string, body: unknown, origin = ALLOWED_ORIGIN): Request {
 const validInterpretBody = {
   lang: 'ar',
   text: 'أبغى دولة باردة وهادية',
-  questions: [{ id: 'climate', kind: 'climate', options: ['hot', 'mild', 'cold'] }],
+  questions: [{ id: 'climate', kind: 'climate', options: [{ value: 'hot', label: 'Hot' }, { value: 'mild', label: 'Mild' }, { value: 'cold', label: 'Cold' }] }],
 };
 
 const validExplainBody = {

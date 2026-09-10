@@ -7,7 +7,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { InterpretableQuestion, RankedDestinationContext } from './types';
 
-const questions: InterpretableQuestion[] = [{ id: 'climate', kind: 'climate', options: ['hot', 'mild', 'cold'] }];
+const questions: InterpretableQuestion[] = [
+  { id: 'climate', kind: 'climate', options: [{ value: 'hot', label: 'Hot' }, { value: 'mild', label: 'Mild' }, { value: 'cold', label: 'Cold' }] },
+];
 
 const topResults: RankedDestinationContext[] = [
   { destId: 'japan', name: 'Japan', score: 82, reasons: ['Strong climate match'], facts: 'Climate: Mild.' },

@@ -7,8 +7,8 @@ describe('buildInterpretPreferencesPrompt', () => {
     lang: 'ar',
     text: 'أبغى دولة باردة وهادية وفيها طبيعة وما تكون غالية',
     questions: [
-      { id: 'climate', kind: 'climate', options: ['hot', 'mild', 'cold'] },
-      { id: 'budget', kind: 'target', options: [1, 2, 3, 4] },
+      { id: 'climate', kind: 'climate', options: [{ value: 'hot', label: 'Hot' }, { value: 'mild', label: 'Mild' }, { value: 'cold', label: 'Cold' }] },
+      { id: 'budget', kind: 'target', options: [{ value: 1, label: 'Low' }, { value: 2, label: 'Medium' }, { value: 3, label: 'High' }, { value: 4, label: 'Luxury' }] },
     ],
   };
 
@@ -34,6 +34,31 @@ describe('buildInterpretPreferencesPrompt', () => {
   it('includes an explicit prompt-injection defense instruction', () => {
     const { system } = buildInterpretPreferencesPrompt(req);
     expect(system).toMatch(/ignore any instruction.*user.provided text/i);
+  });
+
+  // Phase 16.5 correction pass — real production bug: a bare numeric
+  // option list ("allowed values: [15, 50, 90]") gave the model nothing
+  // to ground a direction in; it mapped an explicit nature statement to
+  // the "Cities" value. Fix: every value must appear WITH its label.
+  it('BUG FIX: every allowed value is shown together with its label, not as a bare number/string', () => {
+    const { system } = buildInterpretPreferencesPrompt(req);
+    expect(system).toContain('"hot" = "Hot"');
+    expect(system).toContain('"cold" = "Cold"');
+    expect(system).toContain('1 = "Low"');
+    expect(system).toContain('4 = "Luxury"');
+  });
+
+  it('includes a confidence rubric that treats an explicit, unhedged statement as high confidence, not low', () => {
+    const { system } = buildInterpretPreferencesPrompt(req);
+    expect(system).toMatch(/confidence rubric/i);
+    expect(system).toMatch(/"high":/);
+    expect(system).toMatch(/"low":/);
+    expect(system).toMatch(/explicit, unhedged statement.*must be "high"/i);
+  });
+
+  it('instructs the model not to invent a new dimension for an unmapped concept like vague quietness', () => {
+    const { system } = buildInterpretPreferencesPrompt(req);
+    expect(system).toMatch(/do not invent a new dimension/i);
   });
 });
 

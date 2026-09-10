@@ -32,7 +32,7 @@ export function createMockAiProvider(): AiProvider {
       for (const q of req.questions) {
         const firstOption = q.options[0];
         if (lower.includes(q.id.toLowerCase()) && firstOption !== undefined) {
-          interpreted.push({ questionId: q.id, value: firstOption, confidence: 'medium' });
+          interpreted.push({ questionId: q.id, value: firstOption.value, confidence: 'medium' });
         }
       }
       return { interpreted, unmapped: interpreted.length === 0 ? [req.text] : [] };

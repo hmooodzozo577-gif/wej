@@ -13,10 +13,22 @@
 
 // ---- Capability A: natural preference interpretation ----------------------
 
+/** An allowed value paired with its human-readable label in the
+ *  request's own language — sent so the Worker/model has something to
+ *  ground a numeric value in (see worker/src/ai/types.ts's matching
+ *  doc comment for the real production bug this fixes: a bare-number
+ *  option list gave the model nothing but a variable name to guess
+ *  from, and it guessed "naturecity" backwards for an explicit "فيها
+ *  طبيعة" statement). */
+export interface InterpretableOption {
+  value: string | number;
+  label: string;
+}
+
 export interface InterpretableQuestion {
   id: string;
   kind: string;
-  options: Array<string | number>;
+  options: InterpretableOption[];
 }
 
 export interface InterpretedPreference {

@@ -45,14 +45,24 @@ export function validateInterpretPreferencesRequest(body: unknown): string[] {
     errors.push(`questions must contain at most ${MAX_QUESTIONS} entries.`);
   } else {
     for (const q of b.questions) {
+      const options = (q as { options?: unknown }).options;
+      const optionsValid =
+        Array.isArray(options) &&
+        options.every(
+          (o) =>
+            typeof o === 'object' &&
+            o !== null &&
+            (typeof (o as { value?: unknown }).value === 'string' || typeof (o as { value?: unknown }).value === 'number') &&
+            typeof (o as { label?: unknown }).label === 'string',
+        );
       if (
         typeof q !== 'object' ||
         q === null ||
         typeof (q as { id?: unknown }).id !== 'string' ||
         typeof (q as { kind?: unknown }).kind !== 'string' ||
-        !Array.isArray((q as { options?: unknown }).options)
+        !optionsValid
       ) {
-        errors.push('every entry in questions must have {id: string, kind: string, options: array}.');
+        errors.push('every entry in questions must have {id: string, kind: string, options: {value: string|number, label: string}[]}.');
         break;
       }
     }
@@ -109,7 +119,7 @@ export function validateExplainRecommendationRequest(body: unknown): string[] {
 // the response in it, not in whatever the model claims).
 
 export function validateInterpretPreferencesResult(raw: unknown, request: InterpretPreferencesRequest): InterpretPreferencesResult {
-  const allowed = new Map(request.questions.map((q) => [q.id, new Set(q.options)]));
+  const allowed = new Map(request.questions.map((q) => [q.id, new Set(q.options.map((o) => o.value))]));
   const interpreted: InterpretPreferencesResult['interpreted'] = [];
   const unmapped: string[] = [];
 

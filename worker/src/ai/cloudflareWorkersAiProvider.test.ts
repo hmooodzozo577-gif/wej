@@ -21,7 +21,7 @@ function chatResult(content: unknown) {
 const interpretReq: InterpretPreferencesRequest = {
   lang: 'ar',
   text: 'أبغى دولة باردة وهادية وفيها طبيعة',
-  questions: [{ id: 'climate', kind: 'climate', options: ['hot', 'mild', 'cold'] }],
+  questions: [{ id: 'climate', kind: 'climate', options: [{ value: 'hot', label: 'Hot' }, { value: 'mild', label: 'Mild' }, { value: 'cold', label: 'Cold' }] }],
 };
 
 const explainReq: ExplainRecommendationRequest = {
