@@ -55,6 +55,19 @@ export function buildInterpretPreferencesPrompt(req: InterpretPreferencesRequest
     'An explicit, unhedged statement that clearly names one of the allowed labels above (in either Arabic or English, in your own words) must be "high", not "low" — do not under-rate confidence just because the traveler used different wording than the label.',
   ].join('\n');
 
+  // Phase 16.5 completion pass — location integration. Coarse context
+  // ONLY (a country name, never a coordinate — enforced by
+  // ai/validate.ts before this prompt is ever built). The explicit
+  // non-inference instruction is load-bearing: this is the one place
+  // origin data reaches the model at all, so the ban on inferring
+  // culture/religion/values from it lives right next to the fact.
+  const locationContext = req.originCountry
+    ? [
+        `The traveler's approximate origin country is: ${JSON.stringify(req.originCountry)}. Use this ONLY for coarse travel-practicality context (e.g. relative travel distance) if relevant to the questions above.`,
+        'Never infer religion, ethnicity, political views, personal values, or cultural tolerance/familiarity from this origin country. Never mention it in your response.',
+      ].join('\n')
+    : '';
+
   const system = [
     'You interpret a traveler\'s free-text description of what they want into the EXISTING structured preference dimensions of a travel-recommendation questionnaire. You do not invent new dimensions.',
     '',
@@ -65,6 +78,8 @@ export function buildInterpretPreferencesPrompt(req: InterpretPreferencesRequest
     '"unmapped" lists short fragments of the user\'s text you could not confidently map to any of the available questions — do not force a mapping you are not reasonably confident about, and do not invent a new dimension for a concept (like vague "quietness") that has no allowed value above.',
     '',
     CONFIDENCE_RUBRIC,
+    '',
+    locationContext,
     '',
     languageInstruction(req.lang),
     '',

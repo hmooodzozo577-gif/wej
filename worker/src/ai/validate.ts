@@ -21,6 +21,9 @@ export const MAX_QUESTIONS = 20;
 export const MAX_TOP_RESULTS = 10;
 export const MAX_FACTS_LENGTH = 2000;
 export const MAX_PROFILE_SUMMARY_LENGTH = 1000;
+// Phase 16.5 completion pass — location integration: a coarse country
+// name only (e.g. "Saudi Arabia"), never a coordinate or address.
+export const MAX_ORIGIN_COUNTRY_LENGTH = 100;
 
 const LANGS = new Set(['ar', 'en']);
 
@@ -38,6 +41,15 @@ export function validateInterpretPreferencesRequest(body: unknown): string[] {
     errors.push('text must be a non-empty string.');
   } else if (b.text.length > MAX_TEXT_LENGTH) {
     errors.push(`text must be at most ${MAX_TEXT_LENGTH} characters.`);
+  }
+  if (b.originCountry !== undefined && (typeof b.originCountry !== 'string' || b.originCountry.length > MAX_ORIGIN_COUNTRY_LENGTH)) {
+    errors.push(`originCountry, if present, must be a string of at most ${MAX_ORIGIN_COUNTRY_LENGTH} characters.`);
+  }
+  // Defense in depth against a coordinate accidentally landing here —
+  // reject anything shaped like "12.345, 67.890" outright rather than
+  // silently forwarding it to the model.
+  if (typeof b.originCountry === 'string' && /-?\d{1,3}\.\d{2,},\s*-?\d{1,3}\.\d{2,}/.test(b.originCountry)) {
+    errors.push('originCountry must not contain coordinate-shaped values.');
   }
   if (!Array.isArray(b.questions) || b.questions.length === 0) {
     errors.push('questions must be a non-empty array.');

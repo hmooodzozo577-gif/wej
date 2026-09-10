@@ -60,6 +60,23 @@ describe('buildInterpretPreferencesPrompt', () => {
     const { system } = buildInterpretPreferencesPrompt(req);
     expect(system).toMatch(/do not invent a new dimension/i);
   });
+
+  // Phase 16.5 completion pass — location integration.
+  it('LOCATION: when originCountry is present, it is included as coarse context WITH an explicit non-inference instruction', () => {
+    const { system } = buildInterpretPreferencesPrompt({ ...req, originCountry: 'Saudi Arabia' });
+    expect(system).toContain('Saudi Arabia');
+    expect(system).toMatch(/never infer religion, ethnicity, political views, personal values, or cultural tolerance/i);
+  });
+
+  it('LOCATION: when originCountry is absent, no location text appears at all', () => {
+    const { system } = buildInterpretPreferencesPrompt(req);
+    expect(system).not.toMatch(/origin country/i);
+  });
+
+  it('LOCATION: never contains anything coordinate-shaped, even if somehow present on the request object', () => {
+    const { system } = buildInterpretPreferencesPrompt({ ...req, originCountry: 'Saudi Arabia' } as InterpretPreferencesRequest);
+    expect(system).not.toMatch(/-?\d{1,3}\.\d{4,}/);
+  });
 });
 
 describe('buildExplainRecommendationPrompt', () => {

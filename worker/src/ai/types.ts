@@ -78,6 +78,17 @@ export interface InterpretPreferencesRequest {
    *  (see ai/prompts.ts's system/user separation). */
   text: string;
   questions: InterpretableQuestion[];
+  /** Phase 16.5 completion pass — location integration. A COARSE
+   *  country name ONLY (e.g. "Saudi Arabia") — the frontend's
+   *  ai/buildLocationContext.ts is the one place this is derived, from
+   *  the existing voluntary location system, and it structurally
+   *  cannot produce anything coordinate-shaped. Optional: absent
+   *  whenever location was never granted, which the interview must
+   *  (and does) handle identically to having it. Used ONLY as coarse
+   *  context (e.g. travel-distance practicality) — see prompts.ts's
+   *  explicit instruction never to infer religion/ethnicity/values/
+   *  cultural-tolerance from it. */
+  originCountry?: string;
 }
 
 export interface InterpretedPreference {

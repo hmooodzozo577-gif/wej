@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  MAX_ORIGIN_COUNTRY_LENGTH,
   MAX_QUESTIONS,
   MAX_TEXT_LENGTH,
   MAX_TOP_RESULTS,
@@ -58,6 +59,30 @@ describe('validateInterpretPreferencesRequest', () => {
       ...validInterpretBody,
       questions: [{ id: 'climate', kind: 'climate', options: ['hot', 'mild', 'cold'] }],
     });
+    expect(errs.length).toBeGreaterThan(0);
+  });
+
+  it('LOCATION: accepts a well-formed originCountry', () => {
+    const errs = validateInterpretPreferencesRequest({ ...validInterpretBody, originCountry: 'Saudi Arabia' });
+    expect(errs).toEqual([]);
+  });
+
+  it('LOCATION: originCountry is fully optional — absent is valid', () => {
+    expect(validateInterpretPreferencesRequest(validInterpretBody)).toEqual([]);
+  });
+
+  it('LOCATION: rejects an oversized originCountry', () => {
+    const errs = validateInterpretPreferencesRequest({ ...validInterpretBody, originCountry: 'x'.repeat(MAX_ORIGIN_COUNTRY_LENGTH + 1) });
+    expect(errs.length).toBeGreaterThan(0);
+  });
+
+  it('LOCATION: rejects a coordinate-shaped originCountry (defense in depth against a coordinate ever landing here)', () => {
+    const errs = validateInterpretPreferencesRequest({ ...validInterpretBody, originCountry: '24.7136, 46.6753' });
+    expect(errs.length).toBeGreaterThan(0);
+  });
+
+  it('LOCATION: rejects a non-string originCountry', () => {
+    const errs = validateInterpretPreferencesRequest({ ...validInterpretBody, originCountry: 12345 });
     expect(errs.length).toBeGreaterThan(0);
   });
 });
