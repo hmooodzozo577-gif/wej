@@ -83,6 +83,10 @@ const EXCLUDED_TERMS = [
   'map of', 'locator map', 'location map',
   'portrait', 'president', 'prime minister', 'politician', 'king of', 'president of',
   'diagram', 'chart', 'graph', 'screenshot', 'infographic',
+  // Added after the 6-country end-to-end proof run found a real false
+  // positive: "BUR-16-Japanese occupation Burma-10 rupees (1942-44)" was
+  // selected for Japan — a banknote/currency scan, not a landmark.
+  'banknote', 'rupee', 'rupees', 'currency', ' coin', 'coins', 'postage stamp', 'numismatic',
 ];
 const LANDMARK_HINT_TERMS = ['skyline', 'landmark', 'cityscape', 'view of', 'panorama', 'temple', 'palace', 'tower', 'bridge', 'coast', 'mountain', 'old town', 'downtown'];
 const MIN_WIDTH = 800;
@@ -154,18 +158,66 @@ export function buildManifestEntry({ entry, candidate, license, localPath, width
 
 // --- Country relevance -------------------------------------------------------
 // A beautiful image from the WRONG country is worse than no image. Cheap,
-// honest heuristic (not claimed to be semantically perfect): the
-// candidate's own title/description/categories must actually mention the
-// target country by name, OR the query that found it came from a
-// human-curated override (destinationImageOverrides.json) — a human
-// already vouched for that query's relevance, so a generic Commons
-// search filename mismatch (e.g. a file titled only after a city, not
-// the country) doesn't wrongly reject a genuinely good curated result.
+// honest heuristic (NOT semantically perfect — documented limitation
+// below) revised after this task's own mandatory 6-country end-to-end
+// proof run surfaced two real false positives on the FIRST attempt:
+//   - "BUR-16-Japanese occupation Burma-10 rupees (1942-44)" selected
+//     for Japan: naive `.includes('japan')` matched inside "Japanese"
+//     (an adjective describing the banknote's historical association,
+//     not evidence the image DEPICTS Japan). Fixed by (1) a word-
+//     boundary regex ("Japanese" no longer matches `\bjapan\b`) and
+//     (2) new EXCLUDED_TERMS for banknote/currency/coin — the image
+//     was never landmark-relevant regardless of the country match.
+//   - A "Brazil, Ind." (Brazil, Indiana, USA — a real town that HAPPENS
+//     to share the country's name) photo selected for Brazil: a
+//     genuine homonym-place problem that word-boundary matching alone
+//     does NOT solve ("Brazil" is a real whole word there too).
+//     Mitigated, not solved: Commons' own structured `Categories`
+//     metadata is preferred over free-text title/description when
+//     present (a real Brazil-the-country photo is actually CATEGORIZED
+//     under Brazil; a US town's photo is categorized under its US
+//     state/county, not the unrelated country name) — falls back to
+//     title/description only when Categories is unavailable, and a
+//     title-only match immediately followed by a US-state-abbreviation
+//     pattern (", Xx." / ", Xxx.") is rejected outright as a likely
+//     homonym rather than trusted.
+// KNOWN LIMITATION (do not claim otherwise): this is still a heuristic,
+// not semantic country verification — a well-written but genuinely
+// misleading caption could still pass. It is a real, demonstrated
+// improvement over a plain substring check, not a claim of solving
+// place-name disambiguation in general.
+const US_STATE_ABBREV_HOMONYM_PATTERN = /,\s*[A-Z][a-z]{1,4}\.(?:\)|,|\s|$)/;
+
 export function checkCountryRelevance(candidate, entry, { fromOverride = false } = {}) {
   if (fromOverride) return { relevant: true, reason: 'from curated override' };
-  const haystack = `${candidate.title} ${candidate.extmetadata?.Categories || ''} ${candidate.extmetadata?.ImageDescription || ''}`.toLowerCase();
-  if (haystack.includes(entry.nameEn.toLowerCase())) return { relevant: true, reason: 'country name matched in metadata' };
-  return { relevant: false, reason: `"${entry.nameEn}" not found in candidate title/description/categories — weak relevance confidence, rejected` };
+
+  const nameEscaped = entry.nameEn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const wordBoundary = new RegExp(`\\b${nameEscaped}\\b`, 'i');
+
+  const categories = candidate.extmetadata?.Categories || '';
+  if (categories) {
+    return wordBoundary.test(categories)
+      ? { relevant: true, reason: 'country name matched in Commons Categories (structured metadata)' }
+      : { relevant: false, reason: `"${entry.nameEn}" not found in Commons Categories — rejected (Categories present but doesn't mention the country)` };
+  }
+
+  const freeText = `${candidate.title} ${candidate.extmetadata?.ImageDescription || ''}`;
+  const globalMatcher = new RegExp(`\\b${nameEscaped}\\b`, 'gi');
+  const occurrences = [...freeText.matchAll(globalMatcher)];
+  if (occurrences.length === 0) {
+    return { relevant: false, reason: `"${entry.nameEn}" not found in candidate title/description — weak relevance confidence, rejected` };
+  }
+  // Check EVERY occurrence, not just the first — a homonym-indicating
+  // mention anywhere (e.g. a country name appearing again later as
+  // "Brazil, Ind." even though it appeared earlier in an unrelated
+  // phrase) is reason enough to distrust this candidate.
+  for (const m of occurrences) {
+    const tail = freeText.slice(m.index + m[0].length, m.index + m[0].length + 12);
+    if (US_STATE_ABBREV_HOMONYM_PATTERN.test(tail)) {
+      return { relevant: false, reason: `"${entry.nameEn}" appears to name a place OTHER than the country itself (e.g. "${entry.nameEn}${tail.trim()}" reads like a homonym town) — rejected` };
+    }
+  }
+  return { relevant: true, reason: 'country name matched in title/description (no Categories metadata available)' };
 }
 
 // --- Duplicate detection -----------------------------------------------------

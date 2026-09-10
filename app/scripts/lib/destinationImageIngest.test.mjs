@@ -239,8 +239,18 @@ describe('buildManifestEntry / validateManifestEntry', () => {
 describe('checkCountryRelevance', () => {
   const entry = { iso2: 'FR', iso3: 'FRA', nameEn: 'France' };
 
-  it('accepts a candidate whose metadata actually mentions the country', () => {
-    const candidate = makeCandidate({ title: 'File:Eiffel Tower, France.jpg' });
+  it('accepts a candidate whose structured Categories mention the country', () => {
+    const candidate = makeCandidate({ title: 'File:Eiffel Tower.jpg', extmetadata: { Categories: 'Eiffel Tower|France|Paris' } });
+    expect(checkCountryRelevance(candidate, entry).relevant).toBe(true);
+  });
+
+  it('rejects a candidate whose Categories are present but do not mention the country (Categories takes priority over title)', () => {
+    const candidate = makeCandidate({ title: 'File:Eiffel Tower, France.jpg', extmetadata: { Categories: 'Towers|Paris landmarks' } });
+    expect(checkCountryRelevance(candidate, entry).relevant).toBe(false);
+  });
+
+  it('falls back to title/description only when Categories is genuinely unavailable', () => {
+    const candidate = makeCandidate({ title: 'File:Eiffel Tower, France.jpg', extmetadata: {} });
     expect(checkCountryRelevance(candidate, entry).relevant).toBe(true);
   });
 
@@ -253,6 +263,33 @@ describe('checkCountryRelevance', () => {
     const candidate = makeCandidate({ title: 'File:AlUla canyon.jpg', extmetadata: {} }); // no "Saudi Arabia" mention
     const saEntry = { iso2: 'SA', iso3: 'SAU', nameEn: 'Saudi Arabia' };
     expect(checkCountryRelevance(candidate, saEntry, { fromOverride: true }).relevant).toBe(true);
+  });
+
+  // Regression tests for the two real false positives the mandatory
+  // 6-country proof run found on its FIRST attempt (see the final
+  // report) — both are real bugs this heuristic used to have.
+  it('REGRESSION (Japan/banknote): does not match the country name inside an unrelated adjective ("Japanese" must not match "Japan")', () => {
+    const japanEntry = { iso2: 'JP', iso3: 'JPN', nameEn: 'Japan' };
+    const candidate = makeCandidate({
+      title: 'File:BUR-16-Japanese occupation Burma-10 rupees (1942-44).jpg',
+      extmetadata: {},
+    });
+    expect(checkCountryRelevance(candidate, japanEntry).relevant).toBe(false);
+  });
+
+  it('REGRESSION (Brazil, Indiana): rejects a title-only match immediately followed by a US-state-abbreviation homonym pattern', () => {
+    const brazilEntry = { iso2: 'BR', iso3: 'BRA', nameEn: 'Brazil' };
+    const candidate = makeCandidate({
+      title: 'File:Brazil Town Tour, National Avenue, 1997 (Brazil, Ind.) - DPLA.jpg',
+      extmetadata: {},
+    });
+    expect(checkCountryRelevance(candidate, brazilEntry).relevant).toBe(false);
+  });
+
+  it('still accepts a genuine, unambiguous title-only match for the same country (Brazil) when no homonym pattern follows', () => {
+    const brazilEntry = { iso2: 'BR', iso3: 'BRA', nameEn: 'Brazil' };
+    const candidate = makeCandidate({ title: 'File:Christ the Redeemer, Rio de Janeiro, Brazil.jpg', extmetadata: {} });
+    expect(checkCountryRelevance(candidate, brazilEntry).relevant).toBe(true);
   });
 });
 

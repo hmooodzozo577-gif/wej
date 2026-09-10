@@ -149,81 +149,96 @@ async function ingestOne(entry, { dryRun, seenHashes }) {
     return report;
   }
 
-  // Try candidates in score order until one clears relevance + duplicate
-  // checks too — a top-scoring candidate that fails relevance/duplicate
-  // shouldn't silently fail the whole country when a runner-up would work.
+  // Try candidates in score order until one clears EVERY remaining gate
+  // (relevance, download, optimization, final manifest validation) — a
+  // top-scoring candidate failing any one of these shouldn't silently
+  // fail the whole country when a runner-up would work. (This loop
+  // itself exists because the mandatory 6-country proof run's very
+  // first attempt found a candidate that passed relevance but failed
+  // validation — non-landscape — and the run gave up on that country
+  // entirely instead of trying the next candidate; see the final
+  // report's "End-to-End Six-Country Proof" section.)
   const ranked = [];
-  const seen = new Set();
+  const seenTitles = new Set();
   for (const c of candidates) {
-    if (seen.has(c.title)) continue;
-    seen.add(c.title);
+    if (seenTitles.has(c.title)) continue;
+    seenTitles.add(c.title);
     ranked.push(c);
   }
-  let picked;
-  let relevance;
-  let hash;
+
+  const attempts = [];
   for (const candidate of selectAllViable(ranked)) {
     const rel = checkCountryRelevance(candidate, entry, { fromOverride: !!override });
-    if (!rel.relevant) continue;
-    picked = { candidate };
-    relevance = rel;
-    break;
+    if (!rel.relevant) {
+      attempts.push({ candidate, stage: 'relevance', detail: rel.reason });
+      continue;
+    }
+
+    if (dryRun) {
+      report.status = 'DRY_RUN_OK';
+      report.detail = `would select: ${candidate.title} (${rel.reason})`;
+      return report;
+    }
+
+    let optimized;
+    try {
+      optimized = await downloadAndOptimize(candidate);
+    } catch (err) {
+      attempts.push({ candidate, stage: 'download', detail: err.message });
+      continue;
+    }
+
+    const hash = crypto.createHash('sha256').update(optimized.buffer).digest('hex');
+    if (isDuplicateHash(hash, seenHashes)) {
+      attempts.push({ candidate, stage: 'duplicate', detail: `hash ${hash.slice(0, 12)}… already used` });
+      continue;
+    }
+
+    const license = classifyLicense(candidate.extmetadata.LicenseShortName);
+    const localFileName = `${entry.iso2.toLowerCase()}.webp`;
+    const manifestEntry = buildManifestEntry({
+      entry,
+      candidate,
+      license,
+      localPath: `/destinations/${localFileName}`,
+      width: optimized.width,
+      height: optimized.height,
+      retrievedAt: new Date().toISOString(),
+    });
+    const validation = validateManifestEntry(manifestEntry);
+    if (!validation.valid) {
+      attempts.push({ candidate, stage: 'validation', detail: validation.errors.join('; ') });
+      continue;
+    }
+
+    fs.mkdirSync(ASSETS_DIR, { recursive: true });
+    fs.writeFileSync(path.join(ASSETS_DIR, localFileName), optimized.buffer);
+    seenHashes.add(hash);
+
+    report.status = 'OK';
+    report.detail = `${candidate.title} — ${optimized.width}x${optimized.height}, ${(optimized.buffer.length / 1024).toFixed(1)}KB`;
+    report.manifestEntry = manifestEntry;
+    return report;
   }
 
-  if (!picked) {
+  if (dryRun) {
     report.status = candidates.length === 0 ? 'NO_CANDIDATE' : 'COUNTRY_RELEVANCE';
     report.detail = candidates.length === 0 ? 'no search results across all queries' : 'no candidate passed license/quality AND country-relevance gates';
     return report;
   }
 
-  const license = classifyLicense(picked.candidate.extmetadata.LicenseShortName);
-
-  if (dryRun) {
-    report.status = 'DRY_RUN_OK';
-    report.detail = `would select: ${picked.candidate.title} (${relevance.reason})`;
-    return report;
+  if (attempts.length === 0) {
+    report.status = 'NO_CANDIDATE';
+    report.detail = 'no search results across all queries';
+  } else {
+    // Report the LAST attempt's failure stage as the headline reason
+    // (most informative — later attempts got further through the
+    // pipeline), with a count of how many candidates were tried.
+    const last = attempts[attempts.length - 1];
+    const stageToStatus = { relevance: 'COUNTRY_RELEVANCE', download: 'DOWNLOAD_FAILED', duplicate: 'DUPLICATE', validation: 'INVALID' };
+    report.status = stageToStatus[last.stage] || 'OTHER';
+    report.detail = `${attempts.length} candidate(s) tried, all failed — last: [${last.stage}] ${last.detail}`;
   }
-
-  let optimized;
-  try {
-    optimized = await downloadAndOptimize(picked.candidate);
-  } catch (err) {
-    report.status = 'DOWNLOAD_FAILED';
-    report.detail = err.message;
-    return report;
-  }
-
-  hash = crypto.createHash('sha256').update(optimized.buffer).digest('hex');
-  if (isDuplicateHash(hash, seenHashes)) {
-    report.status = 'DUPLICATE';
-    report.detail = `identical image already assigned to another country (hash ${hash.slice(0, 12)}…)`;
-    return report;
-  }
-
-  const localFileName = `${entry.iso2.toLowerCase()}.webp`;
-  const manifestEntry = buildManifestEntry({
-    entry,
-    candidate: picked.candidate,
-    license,
-    localPath: `/destinations/${localFileName}`,
-    width: optimized.width,
-    height: optimized.height,
-    retrievedAt: new Date().toISOString(),
-  });
-  const validation = validateManifestEntry(manifestEntry);
-  if (!validation.valid) {
-    report.status = 'INVALID';
-    report.detail = validation.errors.join('; ');
-    return report;
-  }
-
-  fs.mkdirSync(ASSETS_DIR, { recursive: true });
-  fs.writeFileSync(path.join(ASSETS_DIR, localFileName), optimized.buffer);
-  seenHashes.add(hash);
-
-  report.status = 'OK';
-  report.detail = `${picked.candidate.title} — ${optimized.width}x${optimized.height}, ${(optimized.buffer.length / 1024).toFixed(1)}KB`;
-  report.manifestEntry = manifestEntry;
   return report;
 }
 
