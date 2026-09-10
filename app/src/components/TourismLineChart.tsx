@@ -18,7 +18,18 @@
 // the surrounding page. Accessible: role="img" with a full text summary
 // (never relies on visually reading the line), plus a visually-hidden
 // data table with the exact values for screen readers/zoom users.
+//
+// Correction pass (production visual QA): a long series (e.g. 1995-2024,
+// 30 annual points) previously rendered a text label under EVERY point,
+// producing an unreadable run of overlapping digits. Fix is label
+// SELECTION only, via selectTickIndices() (../data/tourismChartTicks.ts —
+// pulled into its own module so this component file only exports the
+// component, per oxlint's react(only-export-components) rule): every
+// real data point is still plotted (circle + path segment) and still
+// present in the hidden accessible table below — only which points also
+// get a year label is reduced.
 import type { TourismObservation } from '../data/types';
+import { selectTickIndices } from '../data/tourismChartTicks';
 
 const WIDTH = 320;
 const HEIGHT = 120;
@@ -82,11 +93,21 @@ export function TourismLineChart({
           <circle key={p.obs.period} cx={p.x} cy={p.y} r={2.5} fill={color} />
         ))}
 
-        {points.map((p) => (
-          <text key={p.obs.period} x={p.x} y={HEIGHT - 4} fontSize={9} fill="currentColor" opacity={0.7} textAnchor="middle">
-            {p.obs.period}
-          </text>
-        ))}
+        {/* Label SELECTION only (see selectTickIndices doc comment above) —
+            every point above already got its circle/path segment; this
+            only decides which of them also gets a year text label, so
+            long series don't render an overlapping wall of digits. */}
+        {selectTickIndices(points.length).map((i) => {
+          const p = points[i]!;
+          // First/last tick anchor away from the chart edge instead of
+          // centering (centering would clip half the label off-canvas).
+          const anchor = i === 0 ? 'start' : i === points.length - 1 ? 'end' : 'middle';
+          return (
+            <text key={p.obs.period} x={p.x} y={HEIGHT - 4} fontSize={9} fill="currentColor" opacity={0.7} textAnchor={anchor}>
+              {p.obs.period}
+            </text>
+          );
+        })}
       </svg>
 
       {/* Visually-hidden exact data table — same real points as the SVG,
