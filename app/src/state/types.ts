@@ -35,6 +35,14 @@ export interface AppState {
   lang: Lang;
   purpose: PurposeId | null;
   qIndex: number;
+  /** Phase 15 — Adaptive Questions. The ORDERED question ids actually
+   *  presented so far, computed by adaptive/selectNextQuestion.ts one
+   *  question at a time as the user progresses — never the full bank
+   *  order up front. `qIndex` indexes into this, not into
+   *  QUESTION_BANKS[purpose] directly. Truncated (and any now-stale
+   *  downstream answers removed) when the user goes back and changes
+   *  an earlier answer — see reducer.ts's SET_ANSWER case. */
+  path: string[];
   answers: Answers;
   results: RankedResult[] | null;
   explore: ExploreFilters;

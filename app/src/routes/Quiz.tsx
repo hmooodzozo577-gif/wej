@@ -38,7 +38,18 @@ export function Quiz() {
   const questions = QUESTION_BANKS[purposeParam];
   const total = questions.length;
   const qIndex = Math.min(state.qIndex, total - 1);
-  const q = questions[qIndex];
+  // Phase 15 — Adaptive Questions: the question actually shown at this
+  // position is whichever id adaptive/selectNextQuestion.ts placed at
+  // state.path[qIndex] (computed as the user progresses, one question
+  // at a time — see reducer.ts), NOT questions[qIndex] by fixed array
+  // order. `total` (the progress denominator) stays questions.length —
+  // Phase 15 REORDERS the bank, it never skips a question, so every
+  // purpose's total question count is exactly what it was before this
+  // phase and "Question X of Y" remains truthful with no UI change.
+  // The questions[qIndex] fallback only matters for the one render
+  // tick between a purpose changing and SYNC_QUIZ_PURPOSE's effect
+  // populating state.path (see the effect above).
+  const q = questions.find((x) => x.id === state.path[qIndex]) ?? questions[qIndex];
   const progressPct = Math.round((qIndex / total) * 100 + (100 / total) * 0.15);
   const selected = state.answers[q.id];
   const purposeName = t.purposes[purposeParam].n;

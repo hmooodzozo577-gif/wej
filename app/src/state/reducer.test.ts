@@ -12,6 +12,13 @@ describe('appReducer', () => {
     expect(next).toMatchObject({ purpose: 'tourism', qIndex: 0, answers: {}, results: null });
   });
 
+  it('Phase 15: START_QUIZ seeds an adaptively-computed single-question path (deterministic, same purpose -> same first question every time)', () => {
+    const a = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
+    const b = appReducer({ ...initialAppState, path: ['stale'] }, { type: 'START_QUIZ', purpose: 'tourism' });
+    expect(a.path).toHaveLength(1);
+    expect(a.path).toEqual(b.path);
+  });
+
   it('PRESELECT_PURPOSE sets purpose only, unlike START_QUIZ it does not reset the quiz', () => {
     const dirty = { ...initialAppState, qIndex: 3, answers: { a: 1 }, results: [] as never[] };
     const next = appReducer(dirty, { type: 'PRESELECT_PURPOSE', purpose: 'work' });
@@ -24,20 +31,86 @@ describe('appReducer', () => {
     expect(state.answers).toEqual({ budget: 2, climate: 'hot' });
   });
 
-  it('NEXT_QUESTION increments, PREV_QUESTION decrements but never below 0', () => {
-    let state = appReducer(initialAppState, { type: 'NEXT_QUESTION' });
+  it('Phase 15: re-selecting the SAME value for a past question does not truncate the path', () => {
+    let state = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
+    const q1 = state.path[0];
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q1, value: 2 });
     state = appReducer(state, { type: 'NEXT_QUESTION' });
-    expect(state.qIndex).toBe(2);
-    state = appReducer(state, { type: 'PREV_QUESTION' });
+    const q2 = state.path[1];
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q2, value: 3 });
+    state = appReducer(state, { type: 'NEXT_QUESTION' });
+    const pathBefore = state.path;
+    state = appReducer(state, { type: 'PREV_QUESTION' }); // back to q2
+    state = appReducer(state, { type: 'PREV_QUESTION' }); // back to q1
+    // Re-select the identical value q1 already had.
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q1, value: 2 });
+    expect(state.path).toEqual(pathBefore);
+    expect(state.answers[q2]).toBe(3); // downstream answer untouched
+  });
+
+  it('Phase 15 REGRESSION: going back and changing an earlier answer truncates the path and removes now-stale downstream answers', () => {
+    let state = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
+    const q1 = state.path[0];
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q1, value: 1 });
+    state = appReducer(state, { type: 'NEXT_QUESTION' });
+    const q2 = state.path[1];
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q2, value: 40 });
+    state = appReducer(state, { type: 'NEXT_QUESTION' });
+    const q3 = state.path[2];
+    expect(state.answers[q2]).toBe(40);
+    expect(state.path).toHaveLength(3);
+
+    // Go back to q1 and give a genuinely DIFFERENT answer.
+    state = appReducer(state, { type: 'PREV_QUESTION' }); // -> q2
+    state = appReducer(state, { type: 'PREV_QUESTION' }); // -> q1
+    expect(state.qIndex).toBe(0);
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q1, value: 4 });
+
+    // Path truncated right after q1 — q2/q3 are no longer trusted.
+    expect(state.path).toEqual([q1]);
+    expect(state.qIndex).toBe(0);
+    // Stale downstream answers removed — never silently kept around.
+    expect(state.answers[q2]).toBeUndefined();
+    expect(state.answers[q3]).toBeUndefined();
+    expect(state.answers[q1]).toBe(4);
+  });
+
+  it('NEXT_QUESTION is a safe no-op with no purpose selected (nothing to compute a path from)', () => {
+    const state = appReducer(initialAppState, { type: 'NEXT_QUESTION' });
+    expect(state).toEqual(initialAppState);
+  });
+
+  it('Phase 15: NEXT_QUESTION extends path adaptively, PREV_QUESTION decrements but never below 0, without recomputing an unchanged path', () => {
+    let state = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
+    expect(state.path).toHaveLength(1);
+    expect(state.qIndex).toBe(0);
+
+    const firstQuestionId = state.path[0];
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: firstQuestionId, value: 2 });
+    state = appReducer(state, { type: 'NEXT_QUESTION' });
     expect(state.qIndex).toBe(1);
+    expect(state.path).toHaveLength(2);
+    const pathAfterFirstNext = state.path;
+
+    state = appReducer(state, { type: 'PREV_QUESTION' });
+    expect(state.qIndex).toBe(0);
+    // Path itself is untouched by pure back navigation.
+    expect(state.path).toEqual(pathAfterFirstNext);
+
+    // Forward again with NO answer change — reuses the cached path
+    // entry rather than recomputing (deterministic by construction).
+    state = appReducer(state, { type: 'NEXT_QUESTION' });
+    expect(state.qIndex).toBe(1);
+    expect(state.path).toEqual(pathAfterFirstNext);
+
     state = appReducer(initialAppState, { type: 'PREV_QUESTION' });
     expect(state.qIndex).toBe(0);
   });
 
-  it('RESTART_ALL clears purpose/answers/results but preserves lang', () => {
-    const dirty = { ...initialAppState, lang: 'en' as const, purpose: 'work' as const, qIndex: 2 };
+  it('RESTART_ALL clears purpose/answers/results/path but preserves lang', () => {
+    const dirty = { ...initialAppState, lang: 'en' as const, purpose: 'work' as const, qIndex: 2, path: ['field', 'salary'] };
     const next = appReducer(dirty, { type: 'RESTART_ALL' });
-    expect(next).toMatchObject({ lang: 'en', purpose: null, qIndex: 0, answers: {}, results: null });
+    expect(next).toMatchObject({ lang: 'en', purpose: null, qIndex: 0, answers: {}, results: null, path: [] });
   });
 
   it('SET_EXPLORE_FILTER updates one field without disturbing the others', () => {
