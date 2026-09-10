@@ -41,10 +41,10 @@ describe('Phase 13.5d — TourismInsights against the real committed snapshot', 
     renderWith(japan, 'en');
     await waitFor(() => expect(screen.getByText('Tourism Insights')).toBeInTheDocument());
     expect(screen.getByText('International tourist arrivals')).toBeInTheDocument();
-    expect(screen.getByText('Tourism data: 2020 (World Bank)')).toBeInTheDocument();
+    expect(screen.getByText('Tourism data: 2024 (UN Tourism)')).toBeInTheDocument();
   });
 
-  it('renders nothing for a country genuinely absent from the real snapshot (Somalia / SO, one of the 7 real unmatched)', async () => {
+  it('renders nothing for a country genuinely absent from the real snapshot (Somalia / SO, one of the real unmatched)', async () => {
     const { container } = renderWith(somalia, 'en');
     await waitFor(() => expect(container).toBeEmptyDOMElement());
     await expect(tourismInsights.getTourismInsights('SO')).resolves.toBeUndefined();
@@ -73,7 +73,7 @@ describe('Phase 13.5d — TourismInsights with a mocked entry', () => {
     expect(screen.getByText('Annual arrivals growth')).toBeInTheDocument();
     expect(screen.getByText(/-8\d\.\d%/)).toBeInTheDocument(); // real 2019->2020 collapse, negative
     expect(screen.getByText('International tourist arrivals over time')).toBeInTheDocument();
-    expect(screen.getByText('Tourism data: 2020 (World Bank)')).toBeInTheDocument();
+    expect(screen.getByText('Tourism data: 2020 (UN Tourism)')).toBeInTheDocument();
     vi.restoreAllMocks();
   });
 
@@ -88,7 +88,7 @@ describe('Phase 13.5d — TourismInsights with a mocked entry', () => {
     renderWith(japan, 'ar');
     await waitFor(() => expect(screen.getByText('مؤشرات السياحة')).toBeInTheDocument());
     expect(screen.getByText('الزوار الدوليون')).toBeInTheDocument();
-    expect(screen.getByText('بيانات السياحة: 2020 (البنك الدولي)')).toBeInTheDocument();
+    expect(screen.getByText('بيانات السياحة: 2020 (منظمة السياحة العالمية)')).toBeInTheDocument();
     vi.restoreAllMocks();
   });
 

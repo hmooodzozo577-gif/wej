@@ -106,12 +106,12 @@ export const EN: I18nDict = {
     arrivalsLabel: 'International tourist arrivals',
     receiptsLabel: 'Tourism receipts',
     growthLabel: 'Annual arrivals growth',
-    sourcePeriodLabel: 'Tourism data: {year} (World Bank)',
+    sourcePeriodLabel: 'Tourism data: {year} (UN Tourism)',
     growthPeriodLabel: '{from} → {to}',
     arrivalsChartTitle: 'International tourist arrivals over time',
     receiptsChartTitle: 'Tourism receipts over time',
     unavailable: 'No tourism data is available for this destination yet.',
     disclaimer:
-      'International arrivals and receipts figures from the World Bank (UNWTO-sourced) — not a live or current-year measurement, and not a personal travel budget.',
+      'International arrivals and receipts figures from UN Tourism (via Our World in Data) — not a live measurement, and not a personal travel budget.',
   },
 };
