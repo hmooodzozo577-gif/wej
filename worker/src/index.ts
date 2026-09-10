@@ -23,8 +23,25 @@ import {
   searchAmadeusFlightOffers,
   type Env as AmadeusEnv,
 } from './amadeus';
+import { resolveAiProvider } from './ai/provider';
+import {
+  AiInvalidResponseError,
+  AiNotConfiguredError,
+  AiProviderError,
+  AiTimeoutError,
+  type AiProvider,
+  type Env as AiEnv,
+  type ExplainRecommendationRequest,
+  type InterpretPreferencesRequest,
+} from './ai/types';
+import {
+  validateExplainRecommendationRequest,
+  validateExplainRecommendationResult,
+  validateInterpretPreferencesRequest,
+  validateInterpretPreferencesResult,
+} from './ai/validate';
 
-export type Env = AmadeusEnv;
+export type Env = AmadeusEnv & AiEnv;
 
 // Restricted to the exact GitHub Pages origin this app is deployed to —
 // deliberately never '*'. A request from any other Origin gets no
@@ -144,14 +161,34 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
     return new Response(null, { status: 204, headers: corsHeaders(origin) });
   }
 
-  if (url.pathname !== '/api/travel/flights') {
-    return json({ error: 'not_found', message: 'Unknown endpoint.' }, 404, origin);
+  if (url.pathname === '/api/travel/flights') {
+    if (request.method !== 'POST') {
+      return json({ error: 'method_not_allowed', message: 'Use POST.' }, 405, origin);
+    }
+    return handleFlightsRoute(request, env, origin);
   }
 
-  if (request.method !== 'POST') {
-    return json({ error: 'method_not_allowed', message: 'Use POST.' }, 405, origin);
+  // Phase 16 — AI API Integration. Same Worker, same CORS/validation/
+  // error-shape discipline as the travel route above — deliberately
+  // NOT a second, separate backend (task's own "prefer reusing the
+  // existing secure backend/proxy architecture" instruction).
+  if (url.pathname === '/api/ai/interpret-preferences') {
+    if (request.method !== 'POST') {
+      return json({ error: 'method_not_allowed', message: 'Use POST.' }, 405, origin);
+    }
+    return handleInterpretPreferencesRoute(request, env, origin);
+  }
+  if (url.pathname === '/api/ai/explain-recommendation') {
+    if (request.method !== 'POST') {
+      return json({ error: 'method_not_allowed', message: 'Use POST.' }, 405, origin);
+    }
+    return handleExplainRecommendationRoute(request, env, origin);
   }
 
+  return json({ error: 'not_found', message: 'Unknown endpoint.' }, 404, origin);
+}
+
+async function handleFlightsRoute(request: Request, env: Env, origin: string | null): Promise<Response> {
   let body: unknown;
   try {
     body = await request.json();
@@ -176,6 +213,96 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   } catch (err) {
     return json(...mapAmadeusErrorToResponseArgs(err), origin);
   }
+}
+
+// Factored as directly-testable functions taking an AiProvider (rather
+// than only reachable through env) — mirrors this file's existing
+// pattern of exporting small reusable pieces (validateFlightSearchRequest,
+// mapAmadeusErrorToResponseArgs) for direct unit testing. The real
+// runtime path (handleInterpretPreferencesRoute/
+// handleExplainRecommendationRoute) always resolves the provider from
+// `env` via resolveAiProvider(), which returns null today (see
+// ai/provider.ts) — tests exercise the full validation/error/
+// structured-output pipeline by passing the deterministic mock
+// provider (ai/mockProvider.ts) directly, never by touching env.
+
+export async function handleInterpretPreferences(provider: AiProvider | null, body: unknown): Promise<[body: unknown, status: number]> {
+  const fieldErrors = validateInterpretPreferencesRequest(body);
+  if (fieldErrors.length > 0) {
+    return [{ error: 'invalid_request', message: 'Request failed validation.', fields: fieldErrors }, 400];
+  }
+  if (!provider) {
+    return [{ error: 'ai_not_configured', message: 'AI preference interpretation is not available yet.' }, 503];
+  }
+  const req = body as InterpretPreferencesRequest;
+  try {
+    const raw: unknown = await provider.interpretPreferences(req);
+    return [validateInterpretPreferencesResult(raw, req), 200];
+  } catch (err) {
+    return mapAiErrorToResponseArgs(err);
+  }
+}
+
+export async function handleExplainRecommendation(provider: AiProvider | null, body: unknown): Promise<[body: unknown, status: number]> {
+  const fieldErrors = validateExplainRecommendationRequest(body);
+  if (fieldErrors.length > 0) {
+    return [{ error: 'invalid_request', message: 'Request failed validation.', fields: fieldErrors }, 400];
+  }
+  if (!provider) {
+    return [{ error: 'ai_not_configured', message: 'AI recommendation explanation is not available yet.' }, 503];
+  }
+  const req = body as ExplainRecommendationRequest;
+  try {
+    const raw: unknown = await provider.explainRecommendation(req);
+    return [validateExplainRecommendationResult(raw, req), 200];
+  } catch (err) {
+    return mapAiErrorToResponseArgs(err);
+  }
+}
+
+async function handleInterpretPreferencesRoute(request: Request, env: Env, origin: string | null): Promise<Response> {
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'invalid_request', message: 'Request body must be valid JSON.' }, 400, origin);
+  }
+  const [resBody, status] = await handleInterpretPreferences(resolveAiProvider(env), body);
+  return json(resBody, status, origin);
+}
+
+async function handleExplainRecommendationRoute(request: Request, env: Env, origin: string | null): Promise<Response> {
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'invalid_request', message: 'Request body must be valid JSON.' }, 400, origin);
+  }
+  const [resBody, status] = await handleExplainRecommendation(resolveAiProvider(env), body);
+  return json(resBody, status, origin);
+}
+
+/** Maps a thrown error from a real AiProvider adapter to a safe (status,
+ *  body) pair — same discipline as mapAmadeusErrorToResponseArgs below:
+ *  never the raw provider response, never a stack trace, never a
+ *  secret. No adapter exists today (see ai/provider.ts), so this path
+ *  is currently only exercised by tests throwing these errors directly
+ *  against the mock provider — kept ready for when a real adapter
+ *  does exist. */
+function mapAiErrorToResponseArgs(err: unknown): [body: unknown, status: number] {
+  if (err instanceof AiTimeoutError) {
+    return [{ error: 'ai_timeout', message: 'The AI service took too long to respond.' }, 504];
+  }
+  if (err instanceof AiNotConfiguredError) {
+    return [{ error: 'ai_not_configured', message: 'AI is not available yet.' }, 503];
+  }
+  if (err instanceof AiProviderError) {
+    return [{ error: 'ai_provider_error', message: 'The AI service returned an error.' }, 502];
+  }
+  if (err instanceof AiInvalidResponseError) {
+    return [{ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.' }, 502];
+  }
+  return [{ error: 'internal_error', message: 'An unexpected error occurred.' }, 500];
 }
 
 /** Maps a thrown error from ./amadeus.ts to a safe (status, body) pair.

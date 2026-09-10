@@ -1,0 +1,125 @@
+// Phase 16 — AI API Integration. Shared types for the AI intelligence
+// layer. Worker-local (never imports from app/ — the two packages are
+// structurally separate, same convention as amadeus.ts's own
+// FlightSearchRequestBody), and deliberately provider-neutral: nothing
+// here names a specific vendor.
+//
+// SECRETS: no AI API key is ever read outside ai/provider.ts, logged,
+// included in an error message, or returned to a caller — same
+// discipline as AMADEUS_API_KEY/AMADEUS_API_SECRET in amadeus.ts (see
+// ../../../SECRETS.md, extended to document the AI provider's expected
+// secret NAME only once a provider is actually selected).
+export interface Env {
+  /** Which AI provider adapter to use (e.g. 'anthropic', 'openai') —
+   *  absent today: no provider has been selected for this project (see
+   *  ai/provider.ts's resolveAiProvider() and the final report's "AI
+   *  Provider Status" section). A real value here with no matching
+   *  credential is treated identically to no provider at all — never a
+   *  crash, never a fabricated response. */
+  AI_PROVIDER?: string;
+  /** The chosen provider's API key, if one is ever configured. Never
+   *  set in this repository, never committed, never logged. */
+  AI_API_KEY?: string;
+}
+
+// ---- Capability A: natural preference interpretation ----------------------
+
+/** One question the caller (the frontend) currently allows the model
+ *  to propose an answer for — supplied BY the request, not looked up
+ *  Worker-side (this Worker has no copy of app/'s question banks, by
+ *  design: the frontend is the single source of truth for question
+ *  metadata, avoiding a second, driftable copy here). `options` is the
+ *  exhaustive real value set for that question — the server-side
+ *  validator (see ai/validate.ts) rejects any interpreted value not
+ *  present in this list, so the model can never introduce a value that
+ *  doesn't exist in the real questionnaire. */
+export interface InterpretableQuestion {
+  id: string;
+  kind: string;
+  options: Array<string | number>;
+}
+
+export interface InterpretPreferencesRequest {
+  lang: 'ar' | 'en';
+  /** Free-text user input — untrusted, never treated as an instruction
+   *  (see ai/prompts.ts's system/user separation). */
+  text: string;
+  questions: InterpretableQuestion[];
+}
+
+export interface InterpretedPreference {
+  questionId: string;
+  value: string | number;
+  confidence: 'high' | 'medium' | 'low';
+}
+
+export interface InterpretPreferencesResult {
+  interpreted: InterpretedPreference[];
+  /** Parts of the user's text the model could not map to any allowed
+   *  question — surfaced honestly rather than forced into a guess. */
+  unmapped: string[];
+}
+
+// ---- Capability B: personalized recommendation explanation ----------------
+
+export interface RankedDestinationContext {
+  destId: string;
+  name: string;
+  score: number;
+  /** Human-readable top reasons, already computed by the (Phase 14)
+   *  deterministic engine — the AI explains these, never invents its
+   *  own. */
+  reasons: string[];
+  /** Verified, already-displayed facts about this destination, as
+   *  plain text the frontend assembled from its own trusted data
+   *  (country info, Tourism Insights, Travel Cost Index) — never
+   *  precise coordinates, never anything not already shown to the
+   *  user elsewhere on the page. May be empty. */
+  facts: string;
+}
+
+export interface ExplainRecommendationRequest {
+  lang: 'ar' | 'en';
+  purposeName: string;
+  /** Short, already-derived summary of the user's own answers — never
+   *  raw browser storage, never location coordinates. */
+  profileSummary: string;
+  topResults: RankedDestinationContext[];
+}
+
+export interface DestinationExplanation {
+  destId: string;
+  explanation: string;
+}
+
+export interface ExplainRecommendationResult {
+  summary: string;
+  perDestination: DestinationExplanation[];
+  /** Caveats grounded only in the supplied facts/known project
+   *  limitations (e.g. "accommodation cost data is not yet available")
+   *  — never a fabricated price/statistic dressed up as a caveat. */
+  caveats: string[];
+}
+
+// ---- Provider adapter contract --------------------------------------------
+
+/** A concrete AI vendor implementation must satisfy this. The rest of
+ *  the Worker (index.ts) never imports a vendor SDK or knows a vendor
+ *  API shape — it only ever calls through this interface. */
+export interface AiProvider {
+  interpretPreferences(req: InterpretPreferencesRequest): Promise<InterpretPreferencesResult>;
+  explainRecommendation(req: ExplainRecommendationRequest): Promise<ExplainRecommendationResult>;
+}
+
+// ---- Typed, safe-to-log-free errors ----------------------------------------
+export class AiNotConfiguredError extends Error {}
+export class AiTimeoutError extends Error {}
+export class AiProviderError extends Error {
+  constructor(
+    message: string,
+    public readonly upstreamStatus: number,
+  ) {
+    super(message);
+  }
+}
+export class AiInvalidResponseError extends Error {}
