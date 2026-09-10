@@ -1,0 +1,4 @@
+# A vendored skill's own runtime dependencies (e.g. playwright-skill's
+# `npm install`/`npm run setup`) must never be committed — install locally,
+# gitignored, same convention as app/.gitignore and worker/.gitignore.
+**/node_modules/
