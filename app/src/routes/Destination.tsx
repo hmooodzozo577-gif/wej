@@ -27,6 +27,7 @@ import type {
   PurposeId,
 } from '../data/types';
 import { AccommodationInfo } from '../components/AccommodationInfo';
+import { DestinationVisual } from '../components/DestinationVisual';
 import { FlagBanner, FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
 import { TravelCostIndexInfo } from '../components/TravelCostIndexInfo';
@@ -175,16 +176,17 @@ export function Destination() {
             </div>
           </div>
 
+          {/* Visual refinement pass: two-zone layout. First (now narrow,
+              see .detail-grid's 1fr/2fr override in wejhaty.css) column
+              is the destination IDENTITY sidebar — landmark image (inert
+              until a licensed source exists), then country facts. Second
+              (now wide) column is MAIN — the simple overview a basic
+              country gets, plus the compact Travel/Accommodation/Travel
+              Cost row and Tourism Insights, nested here rather than as a
+              separate full-width section below the whole grid. */}
           <div className="detail-grid">
             <div>
-              <div className="detail-card">
-                <h3>
-                  <Icon name="info" size={18} /> {dt.overview}
-                </h3>
-                <p>{dt.notRecommendationReady}</p>
-              </div>
-            </div>
-            <div>
+              <DestinationVisual countryCode={d.countryCode} />
               <div className="detail-card">
                 <div className="info-grid">
                   <div className="info-item">
@@ -201,14 +203,22 @@ export function Destination() {
               </div>
               {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
             </div>
-          </div>
+            <div>
+              <div className="detail-card">
+                <h3>
+                  <Icon name="info" size={18} /> {dt.overview}
+                </h3>
+                <p>{dt.notRecommendationReady}</p>
+              </div>
 
-          <div className="info-cards-container">
-            <div className="info-cards-grid">
-              <TravelInfo destination={d} />
-              <AccommodationInfo destination={d} />
-              <TravelCostIndexInfo destination={d} />
-              <TourismInsights destination={d} />
+              <div className="info-cards-container">
+                <div className="info-cards-grid">
+                  <TravelInfo destination={d} />
+                  <AccommodationInfo destination={d} />
+                  <TravelCostIndexInfo destination={d} />
+                  <TourismInsights destination={d} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -273,7 +283,54 @@ export function Destination() {
           </div>
         </div>
 
+        {/* Visual refinement pass: two-zone layout. First (now narrow,
+            see .detail-grid's 1fr/2fr override in wejhaty.css) column is
+            the destination IDENTITY sidebar — landmark image (inert
+            until a licensed source exists), quick facts, cities, country
+            info. Second (now wide) column is MAIN — overview/why/
+            strengths/weaknesses/best-for, plus the compact Travel/
+            Accommodation/Travel Cost row and Tourism Insights, nested
+            here rather than as a separate full-width section below the
+            whole grid. */}
         <div className="detail-grid">
+          <div>
+            <DestinationVisual countryCode={d.countryCode} />
+            <div className="detail-card">
+              <div className="info-grid">
+                <div className="info-item">
+                  <div className="label">{dt.cost}</div>
+                  <div className="value">{costLabel(t.costLevels, d.costLevel)}</div>
+                </div>
+                <div className="info-item">
+                  <div className="label">{dt.safety}</div>
+                  <div className="value">{d.safety}/100</div>
+                </div>
+                <div className="info-item">
+                  <div className="label">{dt.climateL}</div>
+                  <div className="value">{t.climateLabels[d.climate]}</div>
+                </div>
+                <div className="info-item">
+                  <div className="label">{dt.visa}</div>
+                  <div className="value">{t.visaLabels[d.visaDiff]}</div>
+                </div>
+                <div className="info-item">
+                  <div className="label">{dt.language}</div>
+                  <div className="value">{langOf(d, lang)}</div>
+                </div>
+                <div className="info-item">
+                  <div className="label">{dt.livingCost}</div>
+                  <div className="value">{livingCostOf(d, lang)}</div>
+                </div>
+              </div>
+            </div>
+            <div className="detail-card">
+              <h3>
+                <Icon name="map" size={18} /> {dt.cities}
+              </h3>
+              <p>{cities}</p>
+            </div>
+            {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
+          </div>
           <div>
             <div className="detail-card">
               <h3>
@@ -325,52 +382,15 @@ export function Destination() {
                 ))}
               </div>
             </div>
-          </div>
-          <div>
-            <div className="detail-card">
-              <div className="info-grid">
-                <div className="info-item">
-                  <div className="label">{dt.cost}</div>
-                  <div className="value">{costLabel(t.costLevels, d.costLevel)}</div>
-                </div>
-                <div className="info-item">
-                  <div className="label">{dt.safety}</div>
-                  <div className="value">{d.safety}/100</div>
-                </div>
-                <div className="info-item">
-                  <div className="label">{dt.climateL}</div>
-                  <div className="value">{t.climateLabels[d.climate]}</div>
-                </div>
-                <div className="info-item">
-                  <div className="label">{dt.visa}</div>
-                  <div className="value">{t.visaLabels[d.visaDiff]}</div>
-                </div>
-                <div className="info-item">
-                  <div className="label">{dt.language}</div>
-                  <div className="value">{langOf(d, lang)}</div>
-                </div>
-                <div className="info-item">
-                  <div className="label">{dt.livingCost}</div>
-                  <div className="value">{livingCostOf(d, lang)}</div>
-                </div>
+
+            <div className="info-cards-container">
+              <div className="info-cards-grid">
+                <TravelInfo destination={d} />
+                <AccommodationInfo destination={d} />
+                <TravelCostIndexInfo destination={d} />
+                <TourismInsights destination={d} />
               </div>
             </div>
-            <div className="detail-card">
-              <h3>
-                <Icon name="map" size={18} /> {dt.cities}
-              </h3>
-              <p>{cities}</p>
-            </div>
-            {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
-          </div>
-        </div>
-
-        <div className="info-cards-container">
-          <div className="info-cards-grid">
-            <TravelInfo destination={d} />
-            <AccommodationInfo destination={d} />
-            <TravelCostIndexInfo destination={d} />
-            <TourismInsights destination={d} />
           </div>
         </div>
       </div>

@@ -76,27 +76,40 @@ export function TourismInsights({ destination }: { destination: CatalogEntry }) 
         </p>
       ) : null}
 
-      {entry.arrivals && entry.arrivals.length >= 2 ? (
-        <>
-          <p style={{ marginTop: 12, fontWeight: 600 }}>{ti.arrivalsChartTitle}</p>
-          <TourismLineChart
-            series={entry.arrivals}
-            formatValue={formatCompactNumber}
-            ariaLabel={`${ti.arrivalsChartTitle}: ${entry.arrivals.map((o) => `${o.period}: ${formatCompactNumber(o.value)}`).join(', ')}`}
-          />
-        </>
-      ) : null}
+      {/* Visual refinement pass: arrivals + receipts used to stack full-
+          width one under the other, each chart itself hard-capped at
+          320px — the real cause of this card looking oversized/empty
+          (see TourismLineChart.tsx's own doc comment). Now a flex row:
+          side-by-side once there's room for both at a readable width
+          (>=280px each), wrapping to stacked on a narrow card/viewport —
+          plain flex-wrap, not a container query (this pass's earlier
+          self-querying-container bug taught that lesson; a two-item row
+          doesn't need one). */}
+      {(entry.arrivals && entry.arrivals.length >= 2) || (entry.receiptsUsd && entry.receiptsUsd.length >= 2) ? (
+        <div className="tourism-charts-row">
+          {entry.arrivals && entry.arrivals.length >= 2 ? (
+            <div className="tourism-chart-col">
+              <p style={{ fontWeight: 600 }}>{ti.arrivalsChartTitle}</p>
+              <TourismLineChart
+                series={entry.arrivals}
+                formatValue={formatCompactNumber}
+                ariaLabel={`${ti.arrivalsChartTitle}: ${entry.arrivals.map((o) => `${o.period}: ${formatCompactNumber(o.value)}`).join(', ')}`}
+              />
+            </div>
+          ) : null}
 
-      {entry.receiptsUsd && entry.receiptsUsd.length >= 2 ? (
-        <>
-          <p style={{ marginTop: 12, fontWeight: 600 }}>{ti.receiptsChartTitle}</p>
-          <TourismLineChart
-            series={entry.receiptsUsd}
-            formatValue={(v) => `$${formatCompactNumber(v)}`}
-            ariaLabel={`${ti.receiptsChartTitle}: ${entry.receiptsUsd.map((o) => `${o.period}: $${formatCompactNumber(o.value)}`).join(', ')}`}
-            color="#4a7c59"
-          />
-        </>
+          {entry.receiptsUsd && entry.receiptsUsd.length >= 2 ? (
+            <div className="tourism-chart-col">
+              <p style={{ fontWeight: 600 }}>{ti.receiptsChartTitle}</p>
+              <TourismLineChart
+                series={entry.receiptsUsd}
+                formatValue={(v) => `$${formatCompactNumber(v)}`}
+                ariaLabel={`${ti.receiptsChartTitle}: ${entry.receiptsUsd.map((o) => `${o.period}: $${formatCompactNumber(o.value)}`).join(', ')}`}
+                color="#4a7c59"
+              />
+            </div>
+          ) : null}
+        </div>
       ) : null}
 
       {latestArrivals ? (

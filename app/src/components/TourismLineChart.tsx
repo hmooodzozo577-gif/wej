@@ -28,6 +28,15 @@
 // real data point is still plotted (circle + path segment) and still
 // present in the hidden accessible table below — only which points also
 // get a year label is reduced.
+// Visual refinement pass: the wrapper used to carry `maxWidth: WIDTH`
+// (320px), hard-capping the chart at that width no matter how wide its
+// card actually was — on a ~1130px-wide card this left ~800px of blank
+// space beside a 320px-wide chart, the real cause of the Tourism
+// Insights card looking oversized/empty. WIDTH/HEIGHT below are only the
+// SVG's internal viewBox coordinate space (still needed for the point
+// math); the rendered element itself now has no width cap and fills
+// whatever its parent (TourismInsights.tsx's chart row) gives it, via
+// `width="100%"` on the <svg> below.
 import type { TourismObservation } from '../data/types';
 import { selectTickIndices } from '../data/tourismChartTicks';
 
@@ -70,7 +79,7 @@ export function TourismLineChart({
   const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
 
   return (
-    <div dir="ltr" style={{ maxWidth: WIDTH, marginTop: 8 }}>
+    <div dir="ltr" style={{ marginTop: 8 }}>
       <svg
         role="img"
         aria-label={ariaLabel}

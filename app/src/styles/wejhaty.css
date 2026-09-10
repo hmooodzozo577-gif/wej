@@ -17,40 +17,68 @@
   text-decoration: none;
 }
 
-/* --- Destination page: responsive info-card grid (targeted layout fix,
-   not a redesign) ---------------------------------------------------------
-   Correction pass (real production visual QA on the Saudi Arabia page,
-   this fix's SECOND root cause — see below for the first):
-   (1) WIDTH: the previous version wrapped the four cards in a container
-   query INSIDE .detail-grid's 1fr sidebar column (2fr/1fr split, see
-   routes/Destination.tsx). .container caps at max-width 1180px with 24px
-   side padding (1132px content); .detail-grid splits that 2fr/1fr with a
-   26px gap, so the 1fr sidebar was only ~368px wide even at full desktop
-   width — under the grid's own 560px activation threshold. Fixed by
-   moving the four cards OUTSIDE .detail-grid (a sibling section below
-   it, full .container width).
-   (2) SELF-QUERYING CONTAINER (the deeper bug, found via live
-   devtools inspection this pass — width alone would NOT have fixed it):
-   the previous CSS set `container-type: inline-size` AND the
-   `@container` grid rules on the SAME class, `.info-cards-grid`. Per the
-   CSS Containment spec, an element is never its own query container —
-   `@container` only matches a rule against the NEAREST ANCESTOR
-   container, so a selector styling the container element itself can
-   never match. That is why `getComputedStyle` showed
-   `container-type: inline-size` correctly applied yet `display: block`
-   (the grid rule silently never matched, at any width). Fixed by
-   splitting into two elements: `.info-cards-container` (outer, sets
-   container-type only) wraps `.info-cards-grid` (inner, receives the
-   `@container` grid rules) — see routes/Destination.tsx. Falls back to
-   a plain single-column stack in browsers without container-query
-   support. */
+/* --- Destination page: two-zone layout (visual refinement pass) --------
+   User-approved information architecture: a narrow identity SIDEBAR
+   (country/destination info + image) and a wider MAIN zone (Travel /
+   Accommodation / Travel Cost compact row + Tourism Insights). Previous
+   passes' .detail-grid stayed 2fr/1fr (wide-first) with the compact-card
+   section rendered as a SEPARATE full-width block below the whole grid.
+   This pass nests that section inside .detail-grid's own main column and
+   flips which side is narrow: .detail-grid's generated CSS rule
+   (wejhaty.generated.css, not hand-edited) is `grid-template-columns: 2fr
+   1fr`; overridden here to `1fr 2fr` so the FIRST child (now the
+   identity/sidebar content — see routes/Destination.tsx, swapped to
+   match) is narrow, and the SECOND child (main content) is wide.
+
+   MUST stay scoped to `@media (min-width: 861px)` (caught during this
+   pass's own visual QA at 768px, not assumed): the generated file's own
+   collapse rule is `@media(max-width:860px){.detail-grid{grid-template-
+   columns:1fr}}` — an UNSCOPED override here has the same specificity
+   (0-1-0, one class) and comes later in the merged stylesheet, so it
+   would win the cascade even AT 768px/on mobile, silently cancelling the
+   single-column collapse (a real regression this exact bug produced on
+   the first attempt: .detail-grid measured as still 2-column at a 768px
+   viewport, squeezing the sidebar to ~230px). Scoping this rule to
+   desktop widths only lets the generated file's own narrower-viewport
+   rule keep winning there, unmodified. */
+@media (min-width: 861px) {
+  .detail-grid {
+    grid-template-columns: 1fr 2fr;
+    /* .detail-grid never set align-items (wejhaty.generated.css), so its
+       default is CSS Grid's own default, `stretch`: both column boxes
+       are forced to the height of the TALLER one. That was barely
+       visible before (this pass's own compact-card row + Tourism
+       Insights now live in the MAIN column, making it much taller than
+       the identity sidebar) — the sidebar's own box was silently
+       stretched far past its real content. `start` makes each column's
+       box only as tall as its own content — no more phantom stretched
+       box (though see the final report: most of the residual visual
+       imbalance here is real content-length asymmetry, not stretch —
+       this fixes the CSS-stretch component specifically). */
+    align-items: start;
+  }
+}
+
+/* --- Info-cards section (Travel / Accommodation / Travel Cost / Tourism
+   Insights) ---------------------------------------------------------------
+   Nested inside .detail-grid's MAIN (now-wide, second) column, not a
+   full-.container-width sibling below it as in the prior pass — so its
+   available width is narrower than before (roughly 2/3 of the main
+   column at desktop, ~520-740px typically, vs. the previous ~1130px),
+   and the tier thresholds below are tuned to that, not carried over
+   unchanged. Same container/content split as before (.info-cards-
+   container sets container-type; .info-cards-grid receives the
+   @container rules) — that split is still required: an element can
+   never be its own query container (see the prior pass's fix in git
+   history for the full explanation of that bug), only touching the
+   THRESHOLD VALUES here, not the structural split itself. */
 .info-cards-container {
   container-type: inline-size;
 }
 .info-cards-grid {
   margin-top: 20px;
 }
-@container (min-width: 560px) {
+@container (min-width: 460px) {
   .info-cards-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -70,23 +98,63 @@
      2-column grid: without this rule the 3rd (Travel Cost Index, always
      the DOM's 3rd .detail-card — Travel, Accommodation, Travel Cost
      Index, Tourism Insights, a fixed order) lands alone in row 2,
-     leaving the OTHER half of that row a large empty gap — exactly the
-     "giant empty horizontal region" this fix exists to avoid (caught by
-     measuring actual card rects during this pass's visual QA at
-     768px). Spans full width here too; the 900px tier below restores it
-     to a normal single-column cell once there's a 3rd column for it to
-     sit in next to Travel/Accommodation. */
+     leaving the OTHER half of that row empty. Spans full width here
+     too; the wider tier below restores it to a normal single-column
+     cell once there's a 3rd column for it to sit in next to Travel/
+     Accommodation. */
   .info-cards-grid > .detail-card:nth-child(3) {
     grid-column: 1 / -1;
   }
 }
-@container (min-width: 900px) {
+@container (min-width: 640px) {
   .info-cards-grid {
     grid-template-columns: 1fr 1fr 1fr;
   }
   .info-cards-grid > .detail-card:nth-child(3) {
     grid-column: auto;
   }
+}
+
+/* --- Tourism Insights: arrivals/receipts charts side-by-side ------------
+   Previously each TourismLineChart was hard-capped at 320px (its own
+   internal viewBox width used directly as a CSS maxWidth), stacked full
+   card width apart — leaving a large blank area beside each on any card
+   wider than 320px, the real cause of this card looking oversized/empty
+   (see TourismLineChart.tsx's doc comment). Fix: a plain flex row (not
+   a container query — a fixed two-item row doesn't need one) with each
+   chart column flexing to share available width, wrapping to stacked
+   once neither could stay above a readable ~260px. */
+.tourism-charts-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 12px;
+}
+.tourism-chart-col {
+  flex: 1 1 260px;
+  min-width: 0; /* allow the flex item to shrink below its chart's intrinsic width */
+}
+
+/* --- Landmark image (identity sidebar) -----------------------------------
+   Inert today (DestinationVisual.tsx renders null with no registry entry
+   — see data/destinationVisuals.ts), styled ahead of time so a future
+   pass that adds a real, licensed image needs no CSS work: responsive,
+   rounded corners matching this design's existing --radius-lg cards,
+   correct aspect-ratio box so layout never jumps once an image loads. */
+.destination-visual {
+  margin-bottom: 16px;
+}
+.destination-visual-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+.destination-visual-attribution {
+  margin-top: 4px;
+  font-size: 11px;
+  opacity: 0.6;
 }
 
 /* --- Global location intro banner (Workstream C) ------------------------
