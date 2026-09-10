@@ -92,19 +92,30 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     expect(getByText('الإقامة')).toBeInTheDocument();
   });
 
-  it('landscape-composition pass: Overview/Why/Strengths/Weaknesses/BestFor are wrapped in .overview-cards-grid, in DOM order, no duplicates (full destination only)', () => {
+  it('landscape-composition pass: Overview/Strengths/Weaknesses/BestFor are wrapped in .overview-cards-grid, in DOM order, no duplicates (full destination only)', () => {
     const { container } = renderAt('/destination/japan');
     const grid = container.querySelector('.overview-cards-grid');
     expect(grid).not.toBeNull();
     const headings = Array.from(grid!.querySelectorAll(':scope > .detail-card > h3')).map((h) => h.textContent);
-    // DOM order must be Overview, then (optionally Why), then Strengths,
-    // Weaknesses, Best For — never reordered for visual packing.
+    // DOM order must be Overview, Strengths, Weaknesses, Best For —
+    // never reordered for visual packing.
     expect(headings[0]).toContain('نظرة عامة');
     expect(headings.some((h) => h!.includes('نقاط القوة'))).toBe(true);
     expect(headings.some((h) => h!.includes('نقاط تحتاج انتباه'))).toBe(true);
     expect(headings.some((h) => h!.includes('الأنسب لـ'))).toBe(true);
     // No duplicated card.
     expect(grid!.querySelectorAll(':scope > .overview-card')).toHaveLength(1);
+  });
+
+  it('approved-dashboard pass: .overview-cards-grid always has exactly 4 children — Why (when present) is a sibling BEFORE the grid, never a 5th grid item, so Best For never ends up orphaned alone in a 3rd row', () => {
+    const { container } = renderAt('/destination/japan');
+    const grid = container.querySelector('.overview-cards-grid')!;
+    expect(grid.children).toHaveLength(4);
+    // If `why` rendered at all (only when arriving with a match score —
+    // not this route's own state, so it's absent here), it must not be
+    // a descendant of the grid.
+    const whyBox = container.querySelector('.why-box');
+    if (whyBox) expect(grid.contains(whyBox)).toBe(false);
   });
 
   it('landscape-composition pass: .overview-cards-grid is a plain block wrapper in the DOM regardless of viewport — the landscape/portrait switch is CSS-only (a media query), never conditional rendering, so no jsdom-width-dependent test is needed or meaningful here', () => {

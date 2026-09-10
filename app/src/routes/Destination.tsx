@@ -332,12 +332,34 @@ export function Destination() {
             {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
           </div>
           <div>
+            {/* Approved-dashboard pass: `why` (only present when arriving
+                from quiz results with a match score) is semantically
+                different from the other 4 cards — it explains THIS
+                specific match, not a general comparative fact — and
+                rendering it as a 5th item inside the 2x2 grid would
+                orphan Best For alone in a 3rd row (a real edge case a
+                prior version of this grid had: Overview/Why paired,
+                Strengths/Weaknesses paired, Best For alone). Pulled out
+                to its own full-width card ABOVE the grid instead: the
+                grid stays a clean, always-exactly-4-cards 2x2
+                (Overview/Strengths/Weaknesses/Best For) whether or not
+                `why` is present, and the match explanation still reads
+                first, as the most personally relevant content on the
+                page when it exists. */}
+            {why ? (
+              <div className="detail-card why-box">
+                <h3>
+                  <Icon name="bulb" size={18} /> {dt.why}
+                </h3>
+                <p>{why}</p>
+              </div>
+            ) : null}
             {/* Landscape-composition pass (real user visual QA): on wide
-                screens these 4-5 cards often hold only a short
-                paragraph or a handful of pills each, but each used to
-                take the full main-column width — substantial empty
-                horizontal space INSIDE the cards. .overview-cards-grid
-                below is a plain multi-column grid, LANDSCAPE-ONLY via a
+                screens these 4 cards often hold only a short paragraph
+                or a handful of pills each, but each used to take the
+                full main-column width — substantial empty horizontal
+                space INSIDE the cards. .overview-cards-grid below is a
+                plain multi-column grid, LANDSCAPE-ONLY via a
                 viewport-width media query (not a container query —
                 deliberately, see wejhaty.css's own doc comment for why
                 a container-width signal here would have gotten the
@@ -357,14 +379,6 @@ export function Destination() {
                 </h3>
                 <p>{descOf(d, lang)}</p>
               </div>
-              {why ? (
-                <div className="detail-card why-box">
-                  <h3>
-                    <Icon name="bulb" size={18} /> {dt.why}
-                  </h3>
-                  <p>{why}</p>
-                </div>
-              ) : null}
               <div className="detail-card">
                 <h3>
                   <Icon name="check" size={18} /> {dt.strengths}
