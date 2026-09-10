@@ -53,7 +53,7 @@ export function TravelCostIndexInfo({ destination }: { destination: CatalogEntry
   const primaryText = primaryTemplate.replace('{percent}', String(diff.percent));
 
   return (
-    <div className="detail-card">
+    <div className="detail-card travel-cost-card">
       <h3>
         <Icon name="trending" size={18} /> {tc.title}
       </h3>
@@ -73,11 +73,28 @@ export function TravelCostIndexInfo({ destination }: { destination: CatalogEntry
           <div className="value">{tc.tiers[tier]}</div>
         </div>
       </div>
-      <p style={{ marginTop: 8 }}>{tc.baselineNote}</p>
-      <p style={{ marginTop: 6 }}>{tc.baselineExplainer}</p>
-      <p style={{ marginTop: 6 }}>{tc.relative[tier]}</p>
-      <p style={{ marginTop: 6 }}>{tc.sourcePeriodLabel.replace('{year}', entry.sourcePeriod)}</p>
-      <p style={{ marginTop: 6 }}>{tc.disclaimer}</p>
+      <p style={{ marginTop: 8 }}>{tc.sourcePeriodLabel.replace('{year}', entry.sourcePeriod)}</p>
+      {/* Composition-refinement pass: this card's default visible content
+          used to be six paragraphs deep (baselineNote, baselineExplainer,
+          relative[tier], disclaimer, all always rendered) — measured as
+          the single tallest item in the compact Travel/Accommodation/
+          Travel-Cost row, dominating it and pushing everything below
+          (Tourism Insights) down with it. NONE of that text is removed —
+          it's all still here, verbatim, just behind a native <details>
+          disclosure so the card's default height matches its actual
+          "primary" content (title, plain-language comparison, index +
+          tier, source year), per this task's own explicit list of what
+          should stay visible by default. <details>/<summary> is used
+          deliberately (not a custom JS toggle) — free keyboard/screen-
+          reader support, no extra state, no extra test surface for
+          open/closed behavior beyond what the browser already provides. */}
+      <details className="tc-more-details" style={{ marginTop: 8 }}>
+        <summary>{tc.moreDetailsLabel}</summary>
+        <p style={{ marginTop: 8 }}>{tc.baselineNote}</p>
+        <p style={{ marginTop: 6 }}>{tc.baselineExplainer}</p>
+        <p style={{ marginTop: 6 }}>{tc.relative[tier]}</p>
+        <p style={{ marginTop: 6 }}>{tc.disclaimer}</p>
+      </details>
     </div>
   );
 }

@@ -6,7 +6,7 @@
 // emits a live price/availability/booking claim.
 import { useReducer, type ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AppStateContext } from '../state/context';
 import { appReducer, initialAppState } from '../state/reducer';
@@ -43,9 +43,37 @@ describe('Phase 13.5a — AccommodationInfo: renders for a full destination', ()
     expect(screen.getByText('High')).toBeInTheDocument(); // japan costLevel 3 -> costLevels[2] = 'High'
   });
 
-  it('always shows the disclaimer alongside the guidance', () => {
-    renderWith(japan, 'en');
+  it('always shows the guidance sentence directly (not inside the details disclosure)', () => {
+    const { container } = renderWith(japan, 'en');
+    const guidance = screen.getByText(/generally on the pricier side/);
+    const details = container.querySelector('details.tc-more-details');
+    expect(details).not.toBeNull();
+    expect(details!.contains(guidance)).toBe(false);
+  });
+});
+
+describe('Composition-refinement pass — Accommodation <details> disclosure (concise by default)', () => {
+  it('concise state: the disclaimer is inside <details>, collapsed by default', () => {
+    const { container } = renderWith(japan, 'en');
+    const details = container.querySelector('details.tc-more-details')!;
+    expect(details.hasAttribute('open')).toBe(false);
+    const disclaimer = screen.getByText(/not a live price, availability, or booking/);
+    expect(details.contains(disclaimer)).toBe(true);
+  });
+
+  it('expanded state: clicking the summary opens <details> and the disclaimer remains reachable', () => {
+    const { container } = renderWith(japan, 'en');
+    const details = container.querySelector('details.tc-more-details')!;
+    fireEvent.click(screen.getByText('How is this calculated?'));
+    expect(details.hasAttribute('open')).toBe(true);
     expect(screen.getByText(/not a live price, availability, or booking/)).toBeInTheDocument();
+  });
+
+  it('Arabic: summary label is the Arabic string and toggles the same way', () => {
+    const { container } = renderWith(japan, 'ar');
+    const details = container.querySelector('details.tc-more-details')!;
+    fireEvent.click(screen.getByText('كيف يُحسب هذا؟'));
+    expect(details.hasAttribute('open')).toBe(true);
   });
 });
 

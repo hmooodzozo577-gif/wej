@@ -16,7 +16,7 @@
 // for a country the source dataset simply doesn't cover), not a stale
 // one.
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { useReducer, type ReactNode } from 'react';
 import { AppStateContext } from '../state/context';
@@ -179,6 +179,83 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
       </Providers>,
     );
     await waitFor(() => expect(container).toBeEmptyDOMElement());
+    vi.restoreAllMocks();
+  });
+});
+
+describe('Composition-refinement pass — Travel Cost <details> disclosure (concise by default, full text one tap away)', () => {
+  it('concise state: primary sentence, index, tier, and source are outside <details> — always visible; methodology text is INSIDE it, collapsed by default', async () => {
+    vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
+      countryCode: japan.countryCode,
+      priceLevelIndex: 132,
+      sourcePeriod: '2023',
+    });
+    const { container } = renderWith(japan, 'en');
+    await waitFor(() => expect(screen.getByText('Travel Cost Index')).toBeInTheDocument());
+
+    const primary = screen.getByText('Price level is about 32% above the reference level');
+    const details = container.querySelector('details.tc-more-details');
+    expect(details).not.toBeNull();
+    // Primary/always-visible content must NOT be inside the details element.
+    expect(details!.contains(primary)).toBe(false);
+    expect(details!.contains(screen.getByText('Very high'))).toBe(false);
+    expect(details!.contains(screen.getByText('Source data: 2023 (World Bank)'))).toBe(false);
+
+    // Methodology text lives inside <details>, and it is CLOSED by default
+    // (no `open` attribute) — the concise state this pass exists to produce.
+    expect(details!.hasAttribute('open')).toBe(false);
+    const explainer = screen.getByText(/not a rating out of 100/);
+    expect(details!.contains(explainer)).toBe(true);
+    vi.restoreAllMocks();
+  });
+
+  it('expanded state: clicking the summary opens <details> and the full methodology text becomes reachable', async () => {
+    vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
+      countryCode: japan.countryCode,
+      priceLevelIndex: 132,
+      sourcePeriod: '2023',
+    });
+    const { container } = renderWith(japan, 'en');
+    await waitFor(() => expect(screen.getByText('Travel Cost Index')).toBeInTheDocument());
+    const summary = screen.getByText('How is this calculated?');
+    const details = container.querySelector('details.tc-more-details')!;
+    expect(details.hasAttribute('open')).toBe(false);
+
+    fireEvent.click(summary);
+
+    expect(details.hasAttribute('open')).toBe(true);
+    expect(screen.getByText(/not a currency amount, hotel price, food price, daily budget, or live booking figure/)).toBeInTheDocument();
+    vi.restoreAllMocks();
+  });
+
+  it('Arabic: summary label is the Arabic string, and disclosure toggles the same way', async () => {
+    vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
+      countryCode: japan.countryCode,
+      priceLevelIndex: 75,
+      sourcePeriod: '2022',
+    });
+    const { container } = renderWith(japan, 'ar');
+    await waitFor(() => expect(screen.getByText('مؤشر تكلفة السفر')).toBeInTheDocument());
+    const summary = screen.getByText('كيف يُحسب هذا؟');
+    const details = container.querySelector('details.tc-more-details')!;
+    expect(details.hasAttribute('open')).toBe(false);
+    fireEvent.click(summary);
+    expect(details.hasAttribute('open')).toBe(true);
+  });
+
+  it('never removed any factual content — US=100 semantics, the "not a score/budget/price" caveat, and source attribution are all still reachable', async () => {
+    vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
+      countryCode: japan.countryCode,
+      priceLevelIndex: 47,
+      sourcePeriod: '2025',
+    });
+    renderWith(japan, 'en');
+    await waitFor(() => expect(screen.getByText('Travel Cost Index')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('How is this calculated?'));
+    expect(screen.getByText('United States = 100')).toBeInTheDocument();
+    expect(screen.getByText(/not a rating out of 100/)).toBeInTheDocument();
+    expect(screen.getByText(/not a daily travel budget or a flight\/hotel price/)).toBeInTheDocument();
+    expect(screen.getByText('Source data: 2025 (World Bank)')).toBeInTheDocument();
     vi.restoreAllMocks();
   });
 });

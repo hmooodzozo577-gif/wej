@@ -84,6 +84,7 @@ export const EN: I18nDict = {
       'Accommodation here is generally premium/luxury-priced, relative to other destinations in our catalog.',
     ],
     disclaimer: 'General guidance based on our destination data — not a live price, availability, or booking.',
+    moreDetailsLabel: 'How is this calculated?',
   },
   // Phase 13.5c — Dynamic Travel Cost Index. Like accommodation above,
   // not part of the original wejhaty.html copy.
@@ -112,6 +113,7 @@ export const EN: I18nDict = {
     sourcePeriodLabel: 'Source data: {year} (World Bank)',
     disclaimer:
       'A general relative price-level estimate — not a currency amount, hotel price, food price, daily budget, or live booking figure.',
+    moreDetailsLabel: 'How is this calculated?',
   },
   tourismInsights: {
     title: 'Tourism Insights',

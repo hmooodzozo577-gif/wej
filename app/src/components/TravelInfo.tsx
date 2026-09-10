@@ -121,7 +121,7 @@ export function TravelInfo({ destination }: { destination: CatalogEntry }) {
 
   if (status !== 'granted' || !coords) {
     return (
-      <div className="detail-card">
+      <div className="detail-card travel-card">
         <h3>
           <Icon name="map" size={18} /> {tt.title}
         </h3>
@@ -138,7 +138,7 @@ export function TravelInfo({ destination }: { destination: CatalogEntry }) {
   if (info.kind === 'none') return null;
 
   return (
-    <div className="detail-card">
+    <div className="detail-card travel-card">
       <h3>
         <Icon name="map" size={18} /> {tt.title}
       </h3>

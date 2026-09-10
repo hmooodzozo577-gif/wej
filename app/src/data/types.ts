@@ -451,9 +451,20 @@ export interface AccommodationStrings {
    *  general cost tier, reused here for an accommodation-specific
    *  framing. Never a numeric price. */
   guidanceByCostLevel: [string, string, string, string];
-  /** Always shown alongside guidanceByCostLevel — makes clear this is
-   *  general, relative guidance, never a live price or availability. */
+  /** Composition-refinement pass: previously always shown directly below
+   *  guidanceByCostLevel. Live measurement during that pass found this
+   *  card had become the tallest in the compact Travel/Accommodation/
+   *  Travel-Cost row specifically because of this second paragraph —
+   *  moved into a <details> disclosure (see AccommodationInfo.tsx),
+   *  same pattern as TravelCostIndexInfo.tsx's methodology text. Not
+   *  deleted, not hidden from anyone who wants it — one tap away. The
+   *  still-always-visible guidanceByCostLevel sentence already carries
+   *  the core honesty signal ("generally X-priced, RELATIVE to other
+   *  destinations"), so the reader isn't left without any caveat by
+   *  default. */
   disclaimer: string;
+  /** Summary label for the <details> element holding `disclaimer`. */
+  moreDetailsLabel: string;
 }
 
 // --- Phase 13.5c: Dynamic Travel Cost Index ---------------------------------
@@ -550,6 +561,14 @@ export interface TravelCostStrings {
    *  Wejhaty last refreshed the snapshot) — see travelCostIndex.ts. */
   sourcePeriodLabel: string;
   disclaimer: string;
+  /** Composition-refinement pass: summary label for the <details> element
+   *  that now holds baselineNote/baselineExplainer/relative[tier]/
+   *  disclaimer — moved out of the card's default visible content (see
+   *  TravelCostIndexInfo.tsx) so the card no longer visually dominates
+   *  the compact Travel/Accommodation/Travel Cost row with several
+   *  paragraphs of methodology. None of that text was removed — it's
+   *  one click away, not deleted. */
+  moreDetailsLabel: string;
 }
 
 // --- Phase 13.5d: Destination Tourism Insights -----------------------------

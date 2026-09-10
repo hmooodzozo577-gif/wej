@@ -30,7 +30,7 @@ export function AccommodationInfo({ destination }: { destination: CatalogEntry }
   if (!guidance) return null;
 
   return (
-    <div className="detail-card">
+    <div className="detail-card accommodation-card">
       <h3>
         <Icon name="tag" size={18} /> {at.title}
       </h3>
@@ -41,7 +41,18 @@ export function AccommodationInfo({ destination }: { destination: CatalogEntry }
         </div>
       </div>
       <p style={{ marginTop: 8 }}>{guidance}</p>
-      <p style={{ marginTop: 6 }}>{at.disclaimer}</p>
+      {/* Composition-refinement pass: live measurement found this card
+          had become the tallest in the compact Travel/Accommodation/
+          Travel-Cost row once TravelCostIndexInfo.tsx's own methodology
+          text was trimmed — this card's disclaimer paragraph was the
+          reason. Moved into the same <details> disclosure pattern (not
+          deleted): `guidance` above already carries the core honesty
+          signal ("generally X-priced, RELATIVE to other destinations in
+          our catalog"), so nothing dishonest is hidden by default. */}
+      <details className="tc-more-details" style={{ marginTop: 6 }}>
+        <summary>{at.moreDetailsLabel}</summary>
+        <p style={{ marginTop: 8 }}>{at.disclaimer}</p>
+      </details>
     </div>
   );
 }

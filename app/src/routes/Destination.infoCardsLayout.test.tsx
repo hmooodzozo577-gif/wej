@@ -91,4 +91,19 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     expect(getByText('السفر')).toBeInTheDocument();
     expect(getByText('الإقامة')).toBeInTheDocument();
   });
+
+  it('composition-refinement pass: each compact card carries its own explicit grid-area class (not positional nth-child)', async () => {
+    const { container } = renderAt('/destination/ksa');
+    await waitFor(() => expect(container.querySelector('.tourism-insights-card')).not.toBeNull());
+    const grid = container.querySelector('.info-cards-grid')!;
+    expect(grid.querySelector(':scope > .travel-card')).not.toBeNull();
+    expect(grid.querySelector(':scope > .accommodation-card')).not.toBeNull();
+    expect(grid.querySelector(':scope > .travel-cost-card')).not.toBeNull();
+    expect(grid.querySelector(':scope > .tourism-insights-card')).not.toBeNull();
+    // Exactly one of each — no duplicated card.
+    expect(grid.querySelectorAll(':scope > .travel-card')).toHaveLength(1);
+    expect(grid.querySelectorAll(':scope > .accommodation-card')).toHaveLength(1);
+    expect(grid.querySelectorAll(':scope > .travel-cost-card')).toHaveLength(1);
+    expect(grid.querySelectorAll(':scope > .tourism-insights-card')).toHaveLength(1);
+  });
 });

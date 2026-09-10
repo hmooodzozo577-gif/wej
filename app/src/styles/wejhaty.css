@@ -93,16 +93,36 @@
 /* --- Info-cards section (Travel / Accommodation / Travel Cost / Tourism
    Insights) ---------------------------------------------------------------
    Nested inside .detail-grid's MAIN (now-wide, second) column, not a
-   full-.container-width sibling below it as in the prior pass — so its
+   full-.container-width sibling below it as in an earlier pass — so its
    available width is narrower than before (roughly 2/3 of the main
-   column at desktop, ~520-740px typically, vs. the previous ~1130px),
-   and the tier thresholds below are tuned to that, not carried over
-   unchanged. Same container/content split as before (.info-cards-
-   container sets container-type; .info-cards-grid receives the
-   @container rules) — that split is still required: an element can
-   never be its own query container (see the prior pass's fix in git
-   history for the full explanation of that bug), only touching the
-   THRESHOLD VALUES here, not the structural split itself. */
+   column at desktop, ~520-740px typically). Same container/content
+   split as before (.info-cards-container sets container-type;
+   .info-cards-grid receives the @container rules) — that split is still
+   required: an element can never be its own query container (see git
+   history for the full explanation of that bug).
+
+   Composition-refinement pass: rewritten from an nth-child-positional
+   grid (fragile — depended on Travel/Accommodation/Travel-Cost/Tourism
+   always rendering in exactly that DOM order) to explicit named
+   `grid-template-areas`, per this task's own "explicit composition, not
+   accidental auto-placement" requirement. Each card carries its own
+   semantic class (.travel-card / .accommodation-card / .travel-cost-
+   card / .tourism-insights-card — see the three compact components +
+   TourismInsights.tsx) so the area assignment reads directly off the
+   template string below, not off sibling position.
+
+   IMPORTANT, verified by direct measurement (not assumed): switching to
+   named areas does NOT by itself reduce how far down Tourism Insights
+   starts. In CSS Grid, a later row's top edge is always pinned to the
+   BOTTOM of the tallest item in the row above it — true for
+   nth-child auto-placement and named-area placement alike, regardless
+   of align-items (which only controls a SHORTER item's own box within
+   its row, never the row track's height). The real, and only, lever
+   for that gap is the height of the tallest compact card — see the
+   TravelCostIndexInfo.tsx / AccommodationInfo.tsx <details> disclosure
+   changes, which did the actual work of shrinking it. This rewrite is
+   a maintainability/clarity improvement layered on top of that fix,
+   not a second, independent fix for the same symptom. */
 .info-cards-container {
   container-type: inline-size;
 }
@@ -113,37 +133,56 @@
   .info-cards-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'travel accommodation'
+      'travelCost travelCost'
+      'tourism tourism';
     align-items: start;
     gap: 20px;
   }
   .info-cards-grid > .detail-card {
     margin-bottom: 0;
   }
+  .info-cards-grid > .travel-card {
+    grid-area: travel;
+  }
+  .info-cards-grid > .accommodation-card {
+    grid-area: accommodation;
+  }
+  .info-cards-grid > .travel-cost-card {
+    grid-area: travelCost;
+  }
   /* Tourism Insights holds two charts and is denser than the other three
      cards — spans the full row instead of sharing a column, so the
      charts get real width instead of being squeezed to half. */
   .info-cards-grid > .tourism-insights-card {
-    grid-column: 1 / -1;
-  }
-  /* Travel / Accommodation / Travel Cost Index is 3 cards over a
-     2-column grid: without this rule the 3rd (Travel Cost Index, always
-     the DOM's 3rd .detail-card — Travel, Accommodation, Travel Cost
-     Index, Tourism Insights, a fixed order) lands alone in row 2,
-     leaving the OTHER half of that row empty. Spans full width here
-     too; the wider tier below restores it to a normal single-column
-     cell once there's a 3rd column for it to sit in next to Travel/
-     Accommodation. */
-  .info-cards-grid > .detail-card:nth-child(3) {
-    grid-column: 1 / -1;
+    grid-area: tourism;
   }
 }
 @container (min-width: 640px) {
   .info-cards-grid {
     grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+      'travel accommodation travelCost'
+      'tourism tourism tourism';
   }
-  .info-cards-grid > .detail-card:nth-child(3) {
-    grid-column: auto;
-  }
+}
+
+/* --- Progressive-disclosure methodology text (Travel Cost / Accommodation
+   compact cards) -----------------------------------------------------------
+   Native <details>/<summary> — free keyboard and screen-reader support,
+   no extra JS state. `summary` styled to read as an intentional, tappable
+   affordance (matches this design's --teal accent already used for
+   .eyebrow-pill/.nav-links) rather than looking like leftover browser
+   chrome. */
+.tc-more-details > summary {
+  cursor: pointer;
+  color: var(--teal);
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.tc-more-details[open] > summary {
+  margin-bottom: 4px;
 }
 
 /* --- Tourism Insights: arrivals/receipts charts side-by-side ------------
