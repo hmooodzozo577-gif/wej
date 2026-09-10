@@ -87,6 +87,40 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_smoke_test == true }}
     runs-on: ubuntu-latest
     steps:
+      # Production-failure diagnosis (browser-equivalent, real production
+      # Origin header — no path component, per CORS spec). Reproduces
+      # exactly what a real browser on https://hmooodzozo577-gif.github.io/wej/
+      # would send: the preflight (POST + application/json is NOT a CORS
+      # "simple request"), then the real POST with the FULL tourism
+      # question bank (8 questions — the actual shape NaturalPreferenceInput
+      # sends, not the smaller 3-question smoke-test subset below) and the
+      # same real user-reported Arabic phrase, timed end to end.
+      - name: DIAGNOSIS — browser-equivalent OPTIONS preflight (production Origin)
+        run: |
+          curl -sS --max-time 40 -i -X OPTIONS "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
+            -H 'Origin: https://hmooodzozo577-gif.github.io' \
+            -H 'Access-Control-Request-Method: POST' \
+            -H 'Access-Control-Request-Headers: content-type'
+
+      - name: DIAGNOSIS — browser-equivalent POST (production Origin, full 8-question tourism bank, timed)
+        run: |
+          curl -sS --max-time 40 -i -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
+            -H 'Origin: https://hmooodzozo577-gif.github.io' \
+            -H 'Content-Type: application/json' \
+            -w '\n---\nHTTP_STATUS=%{http_code} TIME_TOTAL=%{time_total}s\n' \
+            --data-binary @- <<'EOF'
+          {"lang":"ar","text":"أبغى دولة باردة وهادية وفيها طبيعة","questions":[
+            {"id":"budget","kind":"target","options":[1,2,3,4]},
+            {"id":"climate","kind":"climate","options":["hot","mild","cold","rainy"]},
+            {"id":"naturecity","kind":"target","options":[15,50,90]},
+            {"id":"beaches","kind":"target","options":[90,50,10]},
+            {"id":"adventure","kind":"target","options":[90,50,10]},
+            {"id":"nightlife","kind":"importance","options":[10,40,70,100]},
+            {"id":"safety","kind":"importance","options":[30,60,85,100]},
+            {"id":"culture","kind":"importance","options":[20,50,80,100]}
+          ]}
+          EOF
+
       - name: Interpret (Arabic #1 — cold/quiet/nature)
         run: |
           curl -sS --max-time 40 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
