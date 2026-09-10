@@ -8,14 +8,19 @@ name: Generate Destination Images
 # (discovery -> license validation -> selection -> country-relevance ->
 # duplicate check -> download -> sharp optimization -> manifest).
 #
-# Deliberately does NOT commit or push anything itself (contents: read
-# only, no git config/push step) — it uploads the generated WebP assets
-# and manifest as a build artifact for a human/Claude session to review
-# and commit explicitly. This sidesteps every concern an auto-committing
-# workflow would raise (branch protection, infinite self-retrigger,
-# needing contents:write) without needing the "Allow GitHub Actions to
-# create and approve pull requests" repository setting either — this
-# workflow never opens a PR, so that known block does not apply here.
+# Originally designed to NOT commit anything itself (contents: read
+# only, artifact hand-off for a human/Claude session to review and
+# commit explicitly) — but the Claude sandbox that drives this workflow
+# turns out to be unable to reach either the artifact blob storage or
+# the raw-logs endpoint (same organization egress allowlist that blocks
+# Wikimedia directly), so the artifact hand-off path is not actually
+# usable from that side. Falls back to the task's own explicitly
+# authorized alternative: this workflow commits and pushes the
+# generated assets directly to the CURRENT feature branch only, using
+# the normal GITHUB_TOKEN (no PAT/external secret). Safe against a
+# self-retrigger loop because this workflow is workflow_dispatch-only —
+# it never runs on `push`, so its own commit cannot re-trigger it. Never
+# force-pushes, never targets main, never rewrites history.
 on:
   workflow_dispatch:
     inputs:
@@ -25,7 +30,7 @@ on:
         default: 'SA,FR,JP,BR,ZA,AU'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   ingest:
@@ -75,3 +80,19 @@ jobs:
             app/src/data/generated/destinationImages.json
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Commit and push generated assets (branch-scoped, no force)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/public/destinations/ app/src/data/generated/destinationImages.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update generated destination imagery (countries: ${{ inputs.countries }})
+
+Committed by the generate-destination-images workflow run ${{ github.run_id }}
+on ${{ github.ref_name }} — not authored by a Claude session directly.
+No PAT, no force-push, this feature branch only."
+          git push origin HEAD:${{ github.ref_name }}
