@@ -42,7 +42,7 @@ export function TourismInsights({ destination }: { destination: CatalogEntry }) 
   if (!latestArrivals && !latestReceipts) return null;
 
   return (
-    <div className="detail-card">
+    <div className="detail-card tourism-insights-card">
       <h3>
         <Icon name="trending" size={18} /> {ti.title}
       </h3>
