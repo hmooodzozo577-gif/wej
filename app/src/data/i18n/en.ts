@@ -132,4 +132,28 @@ export const EN: I18nDict = {
     disclaimer:
       'International arrivals and receipts figures from UN Tourism (via Our World in Data) — not a live measurement, and not a personal travel budget.',
   },
+  // Phase 16 — AI API Integration. Optional, additive: the questionnaire
+  // and results work identically with none of this text ever shown.
+  ai: {
+    interpret: {
+      title: 'Describe what you want (optional)',
+      placeholder: 'e.g. "I want somewhere cold, quiet, and full of nature, that isn\'t expensive"',
+      cta: 'Suggest answers',
+      loading: 'Interpreting…',
+      unavailable: 'This feature isn\'t available yet — you can keep answering the questions directly.',
+      error: 'Couldn\'t interpret that right now. You can keep answering the questions directly.',
+      proposedTitle: 'Proposed answers — review before applying',
+      apply: 'Apply selected',
+      dismiss: 'Dismiss',
+      unmappedNote: 'Some of what you wrote didn\'t map to a question.',
+      noneFound: 'Nothing in your text mapped to a question yet — try adding more detail.',
+    },
+    explain: {
+      title: 'Personalized insight',
+      badge: 'AI-enhanced',
+      loading: 'Generating a personalized explanation…',
+      unavailable: 'A personalized AI explanation isn\'t available right now — your results above are unaffected.',
+      error: 'Couldn\'t generate a personalized explanation right now — your results above are unaffected.',
+    },
+  },
 };

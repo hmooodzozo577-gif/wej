@@ -9,6 +9,7 @@ import { QuestionOption } from '../components/QuestionOption';
 import { ProgressBar } from '../components/ProgressBar';
 import { Icon } from '../components/Icon';
 import { rankDestinations } from '../engine';
+import { NaturalPreferenceInput } from '../components/NaturalPreferenceInput';
 
 function isPurposeId(value: string | undefined): value is PurposeId {
   return !!value && Object.prototype.hasOwnProperty.call(QUESTION_BANKS, value);
@@ -93,6 +94,12 @@ export function Quiz() {
         </button>
       </div>
       <ProgressBar percent={progressPct} />
+      {/* Phase 16 — Capability A. Full purpose bank (all EXISTING
+          questions, adaptive order or not) so a proposal can only ever
+          land on a dimension the quiz itself already asks about. Purely
+          additive: dismissing/ignoring this box changes nothing about
+          the quiz below it. */}
+      <NaturalPreferenceInput questions={questions} />
       <div className="q-card" role="radiogroup" aria-label={lang === 'ar' ? q.text.ar : q.text.en}>
         <div className="q-eyebrow">{purposeName}</div>
         <h2 className="q-text">{lang === 'ar' ? q.text.ar : q.text.en}</h2>

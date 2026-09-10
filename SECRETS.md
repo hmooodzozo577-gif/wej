@@ -100,3 +100,32 @@ this repository contains no `.dev.vars`, no `wrangler secret` call was
 run, and the Worker has not been deployed (see the final report's
 Deployment section for the exact manual steps a repository owner would
 run, with their own real Amadeus credentials, to actually deploy it).
+
+## Phase 16 — AI provider secrets (architecture only; no provider selected)
+
+`worker/src/ai/types.ts` declares `Env` with two OPTIONAL fields for a
+future AI provider:
+
+- `AI_PROVIDER` — the provider adapter name (e.g. `"anthropic"`,
+  `"openai"`) — **not itself a secret**, but never set in this
+  repository either, since no vendor has been chosen (see
+  `worker/src/ai/provider.ts`'s own extensive comment: a full-repo audit
+  found no prior AI vendor decision anywhere in this project).
+- `AI_API_KEY` — the chosen provider's API key. Same rules as
+  `AMADEUS_API_KEY`/`AMADEUS_API_SECRET` above apply in full: Worker
+  secret only (`npx wrangler secret put AI_API_KEY`), never a `VITE_*`
+  variable, never committed, never a fake/placeholder-looking value,
+  never logged or echoed in an error message
+  (`worker/src/ai/provider.ts`, `worker/src/ai/mockProvider.ts` — the
+  test/dev-only stand-in used until a real provider exists — read/return
+  no credential of any kind).
+
+**This document states the expected secret NAME only — `AI_API_KEY` —
+never a value.** `resolveAiProvider(env)` returns `null` whenever
+`AI_PROVIDER`/`AI_API_KEY` are absent (this repository's real state
+today) or when `AI_PROVIDER` names a vendor with no registered adapter;
+in neither case does it fabricate a response or crash. See the final
+report's "Live AI Provider" status line for why this remains
+architecture-only: a real vendor decision and a real credential are both
+required before any live call can happen, and neither exists in this
+repository.

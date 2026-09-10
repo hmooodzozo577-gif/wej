@@ -661,6 +661,35 @@ export interface TourismInsightsStrings {
   disclaimer: string;
 }
 
+/** Phase 16 — AI API Integration strings. Like LocationStrings/
+ *  TravelStrings, no wejhaty.html equivalent, so added directly in
+ *  data/i18n/ar.ts / en.ts rather than sourced from the generated JSON.
+ *  Deliberately a small surface — this is not a Results/Quiz redesign,
+ *  just the two capabilities' own labels/messages (see
+ *  components/NaturalPreferenceInput.tsx / RecommendationExplanation.tsx). */
+export interface AiStrings {
+  interpret: {
+    title: string;
+    placeholder: string;
+    cta: string;
+    loading: string;
+    unavailable: string;
+    error: string;
+    proposedTitle: string;
+    apply: string;
+    dismiss: string;
+    unmappedNote: string;
+    noneFound: string;
+  };
+  explain: {
+    title: string;
+    badge: string;
+    loading: string;
+    unavailable: string;
+    error: string;
+  };
+}
+
 export interface I18nDict {
   dir: 'rtl' | 'ltr';
   htmlLang: 'ar' | 'en';
@@ -681,6 +710,7 @@ export interface I18nDict {
   accommodation: AccommodationStrings;
   travelCost: TravelCostStrings;
   tourismInsights: TourismInsightsStrings;
+  ai: AiStrings;
   costLevels: [string, string, string, string];
   climateLabels: Record<ClimateKind, string>;
   visaLabels: Record<VisaDifficulty, string>;
