@@ -186,21 +186,41 @@
    for that gap is the height of the tallest compact card sharing a
    row with a SHORTER one.
 
-   Whitespace correction pass (real user visual review of production):
-   a since-removed @container(min-width:640px) override put Travel/
-   Accommodation/Travel Cost into ONE 3-column row — Travel is much
-   shorter than Travel Cost, so the shared row's track height was
-   pinned to Travel Cost's height, leaving a large empty gap below
-   Travel before Tourism could start. This was a composition problem,
-   not a missing-content or missing-CSS-shrink problem (Travel
-   genuinely has less to say than Travel Cost) — fixed by composition,
-   not by artificially inflating Travel or forcing equal heights:
-   Travel+Accommodation share row 1 (comparable natural heights, no
-   large asymmetry between them), Travel Cost gets its own full-width
-   row 2 (more room = its own text can wrap shorter, i.e. LESS height,
-   not more), Tourism is row 3. Every row's height is now pinned only
-   to items that are naturally similar in length, or to a single
-   full-width item — never to two mismatched cards sharing a track. */
+   Whitespace correction pass (real user visual review of production,
+   now SUPERSEDED — history kept for context): a since-removed
+   @container(min-width:640px) override put Travel/Accommodation/
+   Travel Cost into ONE 3-column row — Travel is much shorter than
+   Travel Cost, so the shared row's track height was pinned to Travel
+   Cost's height, leaving a large empty gap below Travel before
+   Tourism could start. The first fix put Travel Cost on its own
+   full-width row below Travel+Accommodation — it removed the gap, but
+   a second real user visual review rejected the RESULT: a long,
+   vertically stacked page dominated by one oversized full-width slab,
+   less compact/organized than the original.
+
+   Balanced two-column pass (current): rather than fighting the height
+   difference between Travel Cost and Travel/Accommodation, it is USED.
+   Travel Cost becomes one column, spanning both rows; Travel and
+   Accommodation stack in the other column. `grid-template-areas`
+   itself is what makes this correct without any hack — a named area
+   that repeats across two rows in the same column becomes ONE grid
+   item spanning both row tracks, and (per the CSS Grid track-sizing
+   algorithm, not a min-height guess) the browser distributes that
+   spanning item's own intrinsic height requirement across the two
+   rows it spans. Concretely: if Travel Cost needs more height than
+   Travel+Accommodation's own combined natural height, the two rows
+   grow to match it (Travel/Accommodation, stretched, end up with a
+   little extra internal card padding — still real cards, never fake
+   content); if Travel Cost is shorter, its own card simply stretches
+   to fill the shared track height instead of leaving a blank gap
+   below it. Either direction is the browser's own native layout math,
+   not an authored number. `align-items: stretch` (the grid default)
+   is what makes the shorter side's real content fill its track rather
+   than sit top-aligned above a gap — this is the ONE intentional
+   change from the previous pass's `align-items: start`, which is what
+   had been leaving that kind of gap possible. Tourism Insights keeps
+   its own full-width row below the two-column group — unchanged, it
+   was never part of either whitespace problem. */
 .info-cards-container {
   container-type: inline-size;
 }
@@ -210,12 +230,25 @@
 @container (min-width: 460px) {
   .info-cards-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* 3fr/2fr, not an even 1fr/1fr split — measured (real rendered
+       heights, AR+EN, 1024-1440px, not guessed): at an even split,
+       Travel Cost's own English content (its shortest-content
+       language/case) needs roughly half the stretched track height,
+       leaving a visibly empty lower half inside its own card. Giving
+       it a narrower column makes its existing real text/mini-stat-grid
+       wrap across more lines — genuinely taller content, not a faked
+       height — which measurably closes most of that gap in English
+       while still reading cleanly (no cramped/mid-word wraps) in
+       either language; a narrower 2fr/1fr split closed the gap
+       further but started visibly cramping the mini-stat-grid labels,
+       so 3fr/2fr is the smaller of the two adjustments that already
+       fixes most of the imbalance. */
+    grid-template-columns: 3fr 2fr;
     grid-template-areas:
-      'travel accommodation'
-      'travelCost travelCost'
+      'travel travelCost'
+      'accommodation travelCost'
       'tourism tourism';
-    align-items: start;
+    align-items: stretch;
     gap: 20px;
   }
   .info-cards-grid > .detail-card {
@@ -234,6 +267,10 @@
   .info-cards-grid > .accommodation-card {
     grid-area: accommodation;
   }
+  /* Spans both rows of the first two-column group (see the doc
+     comment above) — its own natural height and Travel+Accommodation's
+     combined natural height mutually balance the shared row tracks,
+     via CSS Grid's own spanning-item track-sizing math. */
   .info-cards-grid > .travel-cost-card {
     grid-area: travelCost;
   }

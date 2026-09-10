@@ -202,15 +202,29 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     expect(css).not.toContain('1fr 1fr 1fr');
   });
 
-  it('whitespace correction pass: Travel Cost carries its own full-width grid-area, distinct from the travel/accommodation row', async () => {
+  it('balanced two-column pass: DOM order stays Travel, Accommodation, Travel Cost, Tourism — the composition change (Travel Cost as a side column spanning both rows) is CSS-only, never a DOM reorder', async () => {
     const { container } = renderAt('/destination/ksa');
     await waitFor(() => expect(container.querySelector('.tourism-insights-card')).not.toBeNull());
     const grid = container.querySelector('.info-cards-grid')!;
     const travel = grid.querySelector(':scope > .travel-card')!;
     const accommodation = grid.querySelector(':scope > .accommodation-card')!;
     const travelCost = grid.querySelector(':scope > .travel-cost-card')!;
-    // DOM order unchanged (still explicit named grid-area placement,
-    // not positional) — the composition change is CSS-only.
     expect([...grid.children]).toEqual([travel, accommodation, travelCost, grid.querySelector(':scope > .tourism-insights-card')]);
+  });
+
+  it('balanced two-column pass REGRESSION: Travel Cost is a spanning side-column area (shares its grid-area with both the travel and accommodation rows), never its own standalone full-width row', async () => {
+    // Real user visual review of production, second round: the
+    // previous "Travel Cost gets its own full-width row" fix removed
+    // the whitespace gap but was itself rejected as too long/
+    // fragmented. Guards against a REGRESSION back to that exact
+    // shape — Travel Cost's grid-area must appear in the SAME rows as
+    // travel/accommodation, not in a separate 'travelCost travelCost'
+    // row of its own.
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const cssPath = path.join(import.meta.dirname, '..', 'styles', 'wejhaty.css');
+    const css = fs.readFileSync(cssPath, 'utf8');
+    expect(css).not.toMatch(/travelCost\s+travelCost/i);
+    expect(css).toMatch(/['"]\s*travel\s+travelCost\s*['"]/);
   });
 });
