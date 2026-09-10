@@ -228,16 +228,16 @@
     "iso2": "BJ",
     "iso3": "BEN",
     "countryName": "Benin",
-    "landmarkName": "Cotonou skyline banner",
+    "landmarkName": "Benin village on water Ganvié",
     "localPath": "/destinations/bj.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Cotonou_skyline_banner.jpg",
-    "author": "MVN https://www.flickr.com/photos/bigberto/",
-    "license": "CC BY 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Cotonou_skyline_banner.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-10T14:23:53.629Z",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Benin_village_on_water_Ganvi%C3%A9.jpg",
+    "author": "Dr. Ondřej Havelka (cestovatel)",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/74/Benin_village_on_water_Ganvi%C3%A9.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-10T14:40:13.142Z",
     "width": 1440,
-    "height": 206
+    "height": 732
   },
   {
     "iso2": "BN",
@@ -2190,21 +2190,6 @@
     "height": 960
   },
   {
-    "iso2": "TJ",
-    "iso3": "TJK",
-    "countryName": "Tajikistan",
-    "landmarkName": "Karakul banner",
-    "localPath": "/destinations/tj.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Karakul_banner.jpg",
-    "author": "Kondephy",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/08/Karakul_banner.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-10T14:31:36.291Z",
-    "width": 1440,
-    "height": 205
-  },
-  {
     "iso2": "TM",
     "iso3": "TKM",
     "countryName": "Turkmenistan",
@@ -2413,21 +2398,6 @@
     "retrievedAt": "2026-09-10T14:32:23.555Z",
     "width": 1440,
     "height": 810
-  },
-  {
-    "iso2": "VU",
-    "iso3": "VUT",
-    "countryName": "Vanuatu",
-    "landmarkName": "Penama banner Ocean and tree",
-    "localPath": "/destinations/vu.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Penama_banner_Ocean_and_tree.jpg",
-    "author": "Andrew Gray",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/47/Penama_banner_Ocean_and_tree.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-10T14:32:14.513Z",
-    "width": 1440,
-    "height": 206
   },
   {
     "iso2": "WS",
