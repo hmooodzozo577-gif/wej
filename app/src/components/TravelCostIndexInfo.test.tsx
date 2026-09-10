@@ -71,8 +71,13 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
     });
     renderWith(japan, 'en');
     await waitFor(() => expect(screen.getByText('Travel Cost Index')).toBeInTheDocument());
+    // PRIMARY explanation (Travel Cost clarity fix) — this is the
+    // headline sentence a traveler should read first, before the raw
+    // index number below it.
+    expect(screen.getByText('Price level is about 32% above the reference level')).toBeInTheDocument();
     expect(screen.getByText('132')).toBeInTheDocument(); // the actual numeric value, rounded for display
     expect(screen.getByText('United States = 100')).toBeInTheDocument();
+    expect(screen.getByText(/not a rating out of 100/)).toBeInTheDocument(); // baselineExplainer
     expect(screen.getByText('Very high')).toBeInTheDocument(); // tier badge still rendered, 132 >= 115
     expect(screen.getByText('Substantially higher than the United States')).toBeInTheDocument(); // relative sentence
     expect(screen.getByText('Source data: 2023 (World Bank)')).toBeInTheDocument();
@@ -80,7 +85,7 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
     vi.restoreAllMocks();
   });
 
-  it('rounds a many-decimal source value for display without altering the underlying classification', async () => {
+  it('rounds a many-decimal source value for display without altering the underlying classification or the % difference', async () => {
     vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
       countryCode: japan.countryCode,
       priceLevelIndex: 64.8679639072763, // real JP-shaped value from the actual snapshot
@@ -89,6 +94,18 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
     renderWith(japan, 'en');
     await waitFor(() => expect(screen.getByText('65')).toBeInTheDocument()); // Math.round(64.868) === 65
     expect(screen.getByText('Moderate')).toBeInTheDocument(); // 64.868 (full precision, unrounded) -> moderate
+    expect(screen.getByText('Price level is about 35% below the reference level')).toBeInTheDocument();
+  });
+
+  it('renders the "at the reference level" wording when the value rounds to a 0-point difference', async () => {
+    vi.spyOn(travelCostIndex, 'getTravelCostIndex').mockResolvedValueOnce({
+      countryCode: japan.countryCode,
+      priceLevelIndex: 100,
+      sourcePeriod: '2023',
+    });
+    renderWith(japan, 'en');
+    await waitFor(() => expect(screen.getByText('Price level is about at the reference level')).toBeInTheDocument());
+    vi.restoreAllMocks();
   });
 
   it('renders for a BASIC country too — the dynamic index does not depend on costLevel/recommendationReady', async () => {
@@ -112,6 +129,7 @@ describe('Phase 13.5c — TravelCostIndexInfo: with a mocked dynamic entry', () 
     });
     renderWith(japan, 'ar');
     await waitFor(() => expect(screen.getByText('مؤشر تكلفة السفر')).toBeInTheDocument());
+    expect(screen.getByText('مستوى الأسعار أقل بنحو 25% من المستوى المرجعي')).toBeInTheDocument();
     expect(screen.getByText('75')).toBeInTheDocument();
     expect(screen.getByText('الولايات المتحدة = 100')).toBeInTheDocument();
     expect(screen.getByText('متوسطة')).toBeInTheDocument(); // 75 -> moderate

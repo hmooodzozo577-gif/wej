@@ -36,6 +36,38 @@ export function classifyPriceLevelIndex(priceLevelIndex: number): TravelCostTier
   return 'veryHigh';
 }
 
+/** Result of comparing a priceLevelIndex to the indicator's own 100
+ *  baseline. `direction: 'at'` when the rounded difference is 0 (never
+ *  says "0% below/above", which would read as nonsensical) — see
+ *  computeBaselineDifference()'s doc comment for why this is
+ *  mathematically exact, not an approximation. */
+export interface BaselineDifference {
+  direction: 'below' | 'above' | 'at';
+  /** Always >= 0 — the direction carries the sign, this is the magnitude. */
+  percent: number;
+}
+
+/** Traveler-facing translation of the raw index into "cheaper/pricier
+ *  than the reference level, by about how much" — see
+ *  TravelCostIndexInfo.tsx for where this becomes the PRIMARY
+ *  explanation (the raw "Price Level Index: N" / "United States = 100"
+ *  numbers are secondary technical detail, not the headline).
+ *
+ *  Mathematically exact, not a heuristic: PA.NUS.GDP.PLI is published
+ *  as (this country's price level / US price level) * 100 — i.e. its
+ *  own 100 baseline already means "same price level as the US", so
+ *  priceLevelIndex - 100 IS the percent difference from the US by the
+ *  indicator's own definition (47 -> 53% below; 120 -> 20% above),
+ *  not a Wejhaty-invented rescaling. Uses the full-precision value
+ *  (same one classifyPriceLevelIndex() uses), rounding only for
+ *  display at the end. */
+export function computeBaselineDifference(priceLevelIndex: number): BaselineDifference {
+  const diff = priceLevelIndex - 100;
+  const percent = Math.round(Math.abs(diff));
+  if (percent === 0) return { direction: 'at', percent: 0 };
+  return { direction: diff < 0 ? 'below' : 'above', percent };
+}
+
 /** Presentation-only rounding for the numeric value the UI displays.
  *  The source (PA.NUS.GDP.PLI) carries many decimal places that don't
  *  represent real precision at this indicator's own level of accuracy

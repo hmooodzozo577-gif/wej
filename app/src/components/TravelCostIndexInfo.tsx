@@ -15,7 +15,12 @@
 // the source dataset doesn't actually cover.
 import { useEffect, useState } from 'react';
 import { useI18n } from '../state/hooks';
-import { classifyPriceLevelIndex, formatPriceLevelIndex, getTravelCostIndex } from '../data/travelCostIndex';
+import {
+  classifyPriceLevelIndex,
+  computeBaselineDifference,
+  formatPriceLevelIndex,
+  getTravelCostIndex,
+} from '../data/travelCostIndex';
 import type { CatalogEntry, TravelCostIndexEntry } from '../data/types';
 import { Icon } from './Icon';
 
@@ -43,13 +48,22 @@ export function TravelCostIndexInfo({ destination }: { destination: CatalogEntry
   if (!entry) return null;
 
   const tier = classifyPriceLevelIndex(entry.priceLevelIndex);
+  const diff = computeBaselineDifference(entry.priceLevelIndex);
+  const primaryTemplate = diff.direction === 'below' ? tc.differenceBelow : diff.direction === 'above' ? tc.differenceAbove : tc.differenceAt;
+  const primaryText = primaryTemplate.replace('{percent}', String(diff.percent));
 
   return (
     <div className="detail-card">
       <h3>
         <Icon name="trending" size={18} /> {tc.title}
       </h3>
-      <div className="info-grid">
+      {/* PRIMARY explanation (Travel Cost clarity fix): a plain-language
+          "cheaper/pricier than the reference level, by about how much"
+          sentence comes first — the raw index number and the raw
+          "United States = 100" baseline are secondary technical detail
+          below, never the headline a traveler reads first. */}
+      <p style={{ fontWeight: 600 }}>{primaryText}</p>
+      <div className="info-grid" style={{ marginTop: 10 }}>
         <div className="info-item">
           <div className="label">{tc.indexLabel}</div>
           <div className="value">{formatPriceLevelIndex(entry.priceLevelIndex)}</div>
@@ -60,6 +74,7 @@ export function TravelCostIndexInfo({ destination }: { destination: CatalogEntry
         </div>
       </div>
       <p style={{ marginTop: 8 }}>{tc.baselineNote}</p>
+      <p style={{ marginTop: 6 }}>{tc.baselineExplainer}</p>
       <p style={{ marginTop: 6 }}>{tc.relative[tier]}</p>
       <p style={{ marginTop: 6 }}>{tc.sourcePeriodLabel.replace('{year}', entry.sourcePeriod)}</p>
       <p style={{ marginTop: 6 }}>{tc.disclaimer}</p>

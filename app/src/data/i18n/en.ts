@@ -82,8 +82,13 @@ export const EN: I18nDict = {
   // not part of the original wejhaty.html copy.
   travelCost: {
     title: 'Travel Cost Index',
+    differenceBelow: 'Price level is about {percent}% below the reference level',
+    differenceAbove: 'Price level is about {percent}% above the reference level',
+    differenceAt: 'Price level is about at the reference level',
     indexLabel: 'Price Level Index',
     baselineNote: 'United States = 100',
+    baselineExplainer:
+      'The index uses the United States as a reference point set at 100, to compare general price levels between countries. 100 is not a rating out of 100 — and this is not a daily travel budget or a flight/hotel price.',
     tierLabel: 'Relative to the United States',
     tiers: {
       low: 'Low',

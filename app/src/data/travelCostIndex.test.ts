@@ -7,7 +7,33 @@
 // travelService.test.ts's env-dependent module) so these tests don't
 // depend on the real committed snapshot's exact current contents.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { classifyPriceLevelIndex, formatPriceLevelIndex } from './travelCostIndex';
+import { classifyPriceLevelIndex, computeBaselineDifference, formatPriceLevelIndex } from './travelCostIndex';
+
+describe('Phase 13.5c — computeBaselineDifference (traveler-facing % above/below baseline)', () => {
+  it('47 -> about 53% below the baseline', () => {
+    expect(computeBaselineDifference(47)).toEqual({ direction: 'below', percent: 53 });
+  });
+  it('120 -> about 20% above the baseline', () => {
+    expect(computeBaselineDifference(120)).toEqual({ direction: 'above', percent: 20 });
+  });
+  it('exactly 100 -> at the baseline (0%)', () => {
+    expect(computeBaselineDifference(100)).toEqual({ direction: 'at', percent: 0 });
+  });
+  it('a value that rounds to a 0-point difference is still "at", not "0% below"', () => {
+    expect(computeBaselineDifference(100.4)).toEqual({ direction: 'at', percent: 0 });
+    expect(computeBaselineDifference(99.6)).toEqual({ direction: 'at', percent: 0 });
+  });
+  it('rounds the magnitude for display, using the full-precision difference', () => {
+    expect(computeBaselineDifference(64.8679639072763)).toEqual({ direction: 'below', percent: 35 });
+  });
+  it('uses the real value directly, independent of formatPriceLevelIndex()\'s own display rounding', () => {
+    // 100.5's real difference from baseline is +0.5, rounding to 1% above.
+    expect(computeBaselineDifference(100.5)).toEqual({ direction: 'above', percent: 1 });
+  });
+  it('is deterministic', () => {
+    expect(computeBaselineDifference(72)).toEqual(computeBaselineDifference(72));
+  });
+});
 
 // classifyPriceLevelIndex's thresholds are re-asserted here as bare
 // numeric literals (not imported — travelCostIndex.ts intentionally

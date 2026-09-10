@@ -503,11 +503,27 @@ export type TravelCostTier = 'low' | 'moderate' | 'high' | 'veryHigh';
  *  equivalent. */
 export interface TravelCostStrings {
   title: string;
-  /** Label shown above the actual numeric priceLevelIndex value. */
+  /** PRIMARY explanation (Travel Cost clarity fix): a plain-language
+   *  "cheaper/pricier than the reference level, by about how much"
+   *  sentence — see computeBaselineDifference() in travelCostIndex.ts.
+   *  `{percent}` is replaced with the rounded magnitude; below/above
+   *  are separate templates (not one template with a +/- sign) so each
+   *  reads as a natural sentence in both languages. `at` is used
+   *  instead when the rounded difference is 0. */
+  differenceBelow: string;
+  differenceAbove: string;
+  differenceAt: string;
+  /** Label shown above the actual numeric priceLevelIndex value — now
+   *  SECONDARY technical detail, shown below the plain-language
+   *  difference sentence above, not as the headline. */
   indexLabel: string;
-  /** Fixed baseline explanation, e.g. "United States = 100". Not
-   *  interpolated — the source indicator's baseline never changes. */
+  /** Fixed baseline explanation, e.g. "United States = 100" — kept as
+   *  a short secondary label alongside indexLabel's value. */
   baselineNote: string;
+  /** Longer secondary explainer: what the 100 baseline actually means
+   *  (a comparison reference point) and explicitly what it is NOT (a
+   *  rating out of 100, a daily travel budget, a flight/hotel price). */
+  baselineExplainer: string;
   /** Label shown above the short tier word (tiers below). */
   tierLabel: string;
   tiers: Record<TravelCostTier, string>;
