@@ -1,10 +1,12 @@
-// Visual refinement pass — DestinationVisual is currently always a no-op
-// (data/destinationVisuals.ts's registry is empty this pass, see its own
-// doc comment: LANDMARK IMAGE — BLOCKED — LICENSED SOURCE REQUIRED).
-// These tests guard that "no entry" behavior explicitly, and prove the
-// component WOULD render a real, accessible image/attribution if a
-// registry entry existed — via a scoped module mock, not by adding a
-// fake production entry.
+// Visual refinement pass — data/destinationVisuals.ts's registry is now
+// populated with real ingested entries for most (not all — see the
+// final report's coverage sections) of the effective catalog. These
+// tests guard the "no entry" behavior for a country genuinely absent
+// from the manifest, prove the component renders REAL production data
+// end-to-end for a country that does have one (SA — part of the
+// mandatory 6-country proof), and prove the component WOULD render a
+// real, accessible image/attribution for any entry shape via a scoped
+// module mock (not by adding a fake production entry).
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { useReducer, type ReactElement, type ReactNode } from 'react';
@@ -20,17 +22,30 @@ function renderWithLang(node: ReactElement, lang: Lang = 'ar') {
   return render(<Providers>{node}</Providers>);
 }
 
-describe('DestinationVisual — no registry entry (current production state)', () => {
-  it('renders nothing for a country with no visual metadata (e.g. Saudi Arabia, SA — registry is empty this pass)', async () => {
-    const { DestinationVisual } = await import('./DestinationVisual');
-    const { container } = renderWithLang(<DestinationVisual countryCode="SA" />);
-    expect(container.innerHTML).toBe('');
-  });
-
+describe('DestinationVisual — no registry entry', () => {
   it('renders nothing for any arbitrary/unknown country code — never a broken image or placeholder box', async () => {
     const { DestinationVisual } = await import('./DestinationVisual');
     const { container } = renderWithLang(<DestinationVisual countryCode="ZZ" />);
     expect(container.innerHTML).toBe('');
+  });
+
+  it('renders nothing for IL — must never render even if somehow requested', async () => {
+    const { DestinationVisual } = await import('./DestinationVisual');
+    const { container } = renderWithLang(<DestinationVisual countryCode="IL" />);
+    expect(container.innerHTML).toBe('');
+  });
+});
+
+describe('DestinationVisual — real production data (SA, part of the mandatory 6-country proof)', () => {
+  it('renders a real image with attribution end-to-end using the actual generated manifest, no mocks', async () => {
+    const { DestinationVisual } = await import('./DestinationVisual');
+    const { container } = renderWithLang(<DestinationVisual countryCode="SA" />, 'en');
+    const img = container.querySelector('img');
+    expect(img).not.toBeNull();
+    expect(img!.getAttribute('src')).toBe(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/destinations/sa.webp`);
+    expect(img!.getAttribute('alt')).toBeTruthy();
+    expect(img!.getAttribute('loading')).toBe('lazy');
+    expect(container.querySelector('.destination-visual-attribution')).not.toBeNull();
   });
 });
 

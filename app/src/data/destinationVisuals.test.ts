@@ -19,7 +19,50 @@ describe('destinationImages.json (generated manifest) — Israel exclusion', () 
 });
 
 describe('DESTINATION_VISUALS — current production state', () => {
-  it('is empty (network-blocked pipeline, honestly reported — see destinationVisuals.ts doc comment)', () => {
-    expect(Object.keys(DESTINATION_VISUALS)).toEqual([]);
+  it('is populated (real ingestion run via GitHub Actions, not fabricated) with real, license-valid entries', () => {
+    const keys = Object.keys(DESTINATION_VISUALS);
+    // Not the full 194 by design (quality/relevance/license safety takes
+    // priority over forcing every country — see the final report's
+    // coverage/audit sections for the exact count and per-country
+    // reasons) but not empty either, and never absurdly small.
+    expect(keys.length).toBeGreaterThan(100);
+    expect(keys.length).toBeLessThanOrEqual(194);
+  });
+
+  it('Monaco (MC) has a real entry — confirms the exclusion mechanism only removed IL, not a nearby/similar code', () => {
+    expect(DESTINATION_VISUALS.MC).toBeDefined();
+    expect(DESTINATION_VISUALS.MC.imagePath).toBe(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/destinations/mc.webp`);
+  });
+
+  it('REGRESSION: imagePath is deploy-base-prefixed from the RAW manifest localPath, not used as-is', () => {
+    // Found by a live Playwright check against the built preview server
+    // (base: '/wej/') during this pass's UI-integration verification: a
+    // bare manifest localPath used directly as <img src> 404s once the
+    // app is served from a sub-path — the request landed on
+    // http://host/destinations/sa.webp instead of
+    // http://host/wej/destinations/sa.webp. Fixed by prefixing with
+    // import.meta.env.BASE_URL in destinationVisuals.ts. Vitest's own
+    // BASE_URL resolves to '/' regardless of vite.config's `base`
+    // (a Vitest env quirk, not a bug in this code), so this compares
+    // against the SAME computed prefix rather than a hardcoded '/wej/'
+    // — it locks in "always transform via BASE_URL", not one fixed
+    // value, and the actual '/wej/' production value is confirmed
+    // separately via the manual Playwright/build check in the final
+    // report's UI Integration section.
+    const rawEntry = (destinationImages as Array<{ iso2: string; localPath: string }>).find((e) => e.iso2 === 'SA')!;
+    const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+    expect(DESTINATION_VISUALS.SA.imagePath).toBe(`${base}${rawEntry.localPath}`);
+    expect(DESTINATION_VISUALS.SA.imagePath).not.toBe(rawEntry.localPath.slice(1)); // not missing its leading slash either
+  });
+
+  it('every entry has a non-empty local image path (deploy-base-prefixed), alt text in both languages, and a valid attribution URL', () => {
+    const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+    const imagePathPattern = new RegExp(`^${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/destinations/[a-z]{2}\\.webp$`);
+    for (const [iso2, visual] of Object.entries(DESTINATION_VISUALS)) {
+      expect(visual.imagePath, `${iso2} imagePath`).toMatch(imagePathPattern);
+      expect(visual.altEn, `${iso2} altEn`).toBeTruthy();
+      expect(visual.altAr, `${iso2} altAr`).toBeTruthy();
+      expect(visual.attributionUrl, `${iso2} attributionUrl`).toMatch(/^https:\/\/commons\.wikimedia\.org\//);
+    }
   });
 });

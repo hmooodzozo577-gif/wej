@@ -10,19 +10,19 @@
 // to the generated JSON; this file and DestinationVisual.tsx already
 // handle it.
 //
-// LANDMARK IMAGE — BLOCKED — LICENSED SOURCE REQUIRED (still true this
-// pass, re-verified live): Wikimedia Commons (commons.wikimedia.org,
-// upload.wikimedia.org) and every alternative open-image source tested
-// (Openverse) return EGRESS_BLOCKED / 403 from this environment's
-// outbound network proxy — an organization-level allowlist policy, not
-// a transient failure (its own explicit allowlist covers only package
-// registries and the Anthropic API, confirmed via the proxy's own status
-// endpoint). The manifest below is therefore genuinely empty
-// (`destinationImages.json` = `[]`) — a real 194-country ingestion run
-// (scripts/generate-destination-images.mjs --all) was executed this
-// pass and correctly enumerated the full effective catalog (194,
-// IL/ISR excluded, MC/MCO present), but every entry honestly reports
-// `BLOCKED — NETWORK`, not a fabricated success.
+// LANDMARK IMAGE — POPULATED via GitHub Actions (network-enabled CI
+// runner), not this Claude sandbox: commons.wikimedia.org/
+// upload.wikimedia.org are still EGRESS_BLOCKED from the sandbox itself
+// (confirmed live, an organization-level allowlist policy — its own
+// allowlist covers only package registries and the Anthropic API), so
+// scripts/generate-destination-images.mjs runs instead via
+// .github/workflows/generate-destination-images.yml, which has normal
+// internet access and commits the resulting assets/manifest directly to
+// this feature branch. Coverage is real but partial by design — see the
+// final report's Workstream C sections for the exact count, per-country
+// failure reasons, and the license/relevance/quality audits performed
+// over every entry below (quality and country-relevance safety take
+// priority over forcing 194/194).
 import destinationImages from './generated/destinationImages.json';
 
 export interface DestinationVisualMeta {
@@ -73,13 +73,25 @@ function buildAttribution(entry: DestinationImageManifestEntry): Pick<Destinatio
   };
 }
 
+// The manifest's own localPath ("/destinations/xx.webp") is
+// app-root-relative, not deployment-root-relative — this app is served
+// from a sub-path (Vite `base: '/wej/'`, a GitHub Pages project site),
+// so a bare "/destinations/xx.webp" 404s in production (confirmed live
+// via a Playwright check against the built preview server during this
+// pass's UI-integration verification: the request landed on
+// http://host/destinations/xx.webp instead of http://host/wej/destinations/xx.webp).
+// Vite injects the actual configured base as import.meta.env.BASE_URL
+// (always trailing-slash-terminated) at both build AND test time, so
+// prefixing here — once, at the single place a manifest path becomes a
+// real `<img src>` — fixes it for every deployment target without
+// hand-coding "/wej/" anywhere.
+const DEPLOY_BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 /** Keyed by CatalogEntry.countryCode (ISO 3166-1 alpha-2, uppercase).
- *  Built once, at module load, from the generated manifest — empty
- *  today (see this file's doc comment above), non-empty automatically
- *  once a future ingestion run adds real entries. */
+ *  Built once, at module load, from the generated manifest. */
 export const DESTINATION_VISUALS: Record<string, DestinationVisualMeta> = Object.fromEntries(
   (destinationImages as DestinationImageManifestEntry[]).map((entry) => [
     entry.iso2,
-    { imagePath: entry.localPath, ...buildAltText(entry), ...buildAttribution(entry) },
+    { imagePath: `${DEPLOY_BASE}${entry.localPath}`, ...buildAltText(entry), ...buildAttribution(entry) },
   ]),
 );

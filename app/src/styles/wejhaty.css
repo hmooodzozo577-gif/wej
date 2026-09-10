@@ -260,11 +260,10 @@
 }
 
 /* --- Landmark image (identity sidebar) -----------------------------------
-   Inert today (DestinationVisual.tsx renders null with no registry entry
-   — see data/destinationVisuals.ts), styled ahead of time so a future
-   pass that adds a real, licensed image needs no CSS work: responsive,
-   rounded corners matching this design's existing --radius-lg cards,
-   correct aspect-ratio box so layout never jumps once an image loads. */
+   Renders for any country with a real manifest entry (see
+   data/destinationVisuals.ts) — null (no box at all) otherwise, never a
+   broken image or placeholder. Fixed aspect-ratio box keeps layout
+   stable regardless of each source photo's native dimensions. */
 .destination-visual {
   margin-bottom: 16px;
 }
