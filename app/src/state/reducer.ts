@@ -33,6 +33,9 @@ export const initialAppState: AppState = {
   answers: {},
   satisfaction: {},
   confidence: {},
+  followup: null,
+  followupTurnsUsed: 0,
+  aiCallsUsed: 0,
   results: null,
   explore: { q: '', region: '', purpose: '', cost: '' },
   location: { status: 'idle', coords: null },
@@ -54,7 +57,19 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, lang: action.lang };
 
     case 'START_QUIZ':
-      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, satisfaction: {}, confidence: {}, results: null, path: initialPath(action.purpose) };
+      return {
+        ...state,
+        purpose: action.purpose,
+        qIndex: 0,
+        answers: {},
+        satisfaction: {},
+        confidence: {},
+        followup: null,
+        followupTurnsUsed: 0,
+        aiCallsUsed: 0,
+        results: null,
+        path: initialPath(action.purpose),
+      };
 
     case 'PRESELECT_PURPOSE':
       return { ...state, purpose: action.purpose };
@@ -63,7 +78,19 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     // URL) with no in-progress quiz for that purpose: start fresh, same as
     // clicking the purpose card would.
     case 'SYNC_QUIZ_PURPOSE':
-      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, satisfaction: {}, confidence: {}, results: null, path: initialPath(action.purpose) };
+      return {
+        ...state,
+        purpose: action.purpose,
+        qIndex: 0,
+        answers: {},
+        satisfaction: {},
+        confidence: {},
+        followup: null,
+        followupTurnsUsed: 0,
+        aiCallsUsed: 0,
+        results: null,
+        path: initialPath(action.purpose),
+      };
 
     case 'SET_ANSWER': {
       const { questionId, value, provenance = 'direct', confidence } = action;
@@ -96,23 +123,31 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           delete satisfaction[id];
           delete confidenceMap[id];
         }
-        return { ...state, answers, satisfaction, confidence: confidenceMap, path: truncatedPath, qIndex: pos };
+        // Completion pass — a pending follow-up was selected from the
+        // profile state that existed BEFORE this edit; changing an
+        // earlier answer can change what's still worth clarifying, so
+        // a stale pending follow-up is dropped rather than answered
+        // against now-invalid context. It can be re-offered fresh on
+        // the next AI interaction if still relevant.
+        return { ...state, answers, satisfaction, confidence: confidenceMap, path: truncatedPath, qIndex: pos, followup: null };
       }
       return { ...state, answers, satisfaction, confidence: confidenceMap };
     }
 
-    // Phase 16.5 — "un-apply" a confirmed AI-interpreted preference (the
+    // Phase 16.5 — "un-apply" a confirmed AI-derived preference (the
     // remove control on the "already accounted for" list). Refuses to
-    // touch anything not recorded as 'ai_interpreted' — a 'direct'
-    // answer (or one already overwritten by editing its own question
-    // directly) can never be cleared through this action, only through
-    // the normal question UI. The question was never in `path` (that's
-    // the entire point of an interpreted answer), so there is nothing
-    // to truncate: it simply becomes unknown again, and the next
-    // NEXT_QUESTION computation (selectNextQuestion, reading `answers`
-    // fresh) can offer it up as a real question once more.
+    // touch anything not recorded as 'ai_interpreted' or (completion
+    // pass) 'ai_followup' — a 'direct' answer (or one already
+    // overwritten by editing its own question directly) can never be
+    // cleared through this action, only through the normal question
+    // UI. The question was never in `path` (that's the entire point of
+    // an AI-derived answer, interpreted or follow-up), so there is
+    // nothing to truncate: it simply becomes unknown again, and the
+    // next NEXT_QUESTION computation (selectNextQuestion, reading
+    // `answers` fresh) can offer it up as a real question once more.
     case 'REMOVE_AI_ANSWER': {
-      if (state.satisfaction[action.questionId] !== 'ai_interpreted') return state;
+      const provenance = state.satisfaction[action.questionId];
+      if (provenance !== 'ai_interpreted' && provenance !== 'ai_followup') return state;
       const answers = { ...state.answers };
       const satisfaction = { ...state.satisfaction };
       const confidence = { ...state.confidence };
@@ -121,6 +156,45 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       delete confidence[action.questionId];
       return { ...state, answers, satisfaction, confidence };
     }
+
+    // Completion pass — bounded multi-turn orchestration. See
+    // PendingFollowup's own doc comment (state/types.ts) for the shape.
+    // Refuses to overwrite an already-pending follow-up (one at a time;
+    // the caller must resolve or dismiss the current one first).
+    case 'SET_PENDING_FOLLOWUP': {
+      if (state.followup) return state;
+      return { ...state, followup: action.followup };
+    }
+
+    // Applies every dimension the chosen option satisfies — provenance
+    // 'ai_followup', exactly like a confirmed interpretation otherwise
+    // (never added to `path`, so its question(s) never appear). Bumps
+    // followupTurnsUsed (bounds total follow-up turns — see
+    // adaptive/followupTemplates.ts's MAX_FOLLOWUP_TURNS) and clears
+    // the pending follow-up. An option id that doesn't exist on the
+    // current pending follow-up (stale dispatch) is a safe no-op.
+    case 'RESOLVE_FOLLOWUP_CHOICE': {
+      if (!state.followup) return state;
+      const option = state.followup.options.find((o) => o.id === action.optionId);
+      if (!option) return state;
+      const answers = { ...state.answers };
+      const satisfaction = { ...state.satisfaction };
+      for (const [questionId, value] of Object.entries(option.satisfies)) {
+        answers[questionId] = value;
+        satisfaction[questionId] = 'ai_followup';
+      }
+      return { ...state, answers, satisfaction, followup: null, followupTurnsUsed: state.followupTurnsUsed + 1 };
+    }
+
+    // Dismissed without applying anything — still counts the turn so
+    // the same (or an equally-triggered) clarification is never
+    // immediately re-offered in a loop.
+    case 'DISMISS_FOLLOWUP':
+      if (!state.followup) return state;
+      return { ...state, followup: null, followupTurnsUsed: state.followupTurnsUsed + 1 };
+
+    case 'INCREMENT_AI_CALLS':
+      return { ...state, aiCallsUsed: state.aiCallsUsed + 1 };
 
     case 'NEXT_QUESTION': {
       if (!state.purpose) return state;
@@ -144,7 +218,19 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, results: action.results };
 
     case 'RESTART_ALL':
-      return { ...state, purpose: null, qIndex: 0, path: [], answers: {}, satisfaction: {}, confidence: {}, results: null };
+      return {
+        ...state,
+        purpose: null,
+        qIndex: 0,
+        path: [],
+        answers: {},
+        satisfaction: {},
+        confidence: {},
+        followup: null,
+        followupTurnsUsed: 0,
+        aiCallsUsed: 0,
+        results: null,
+      };
 
     case 'SET_EXPLORE_FILTER':
       return { ...state, explore: { ...state.explore, [action.key]: action.value } };

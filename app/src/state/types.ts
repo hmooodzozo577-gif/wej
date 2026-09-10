@@ -35,11 +35,43 @@ export interface LocationState {
  *  language interpretation (NaturalPreferenceInput's "Apply"), and was
  *  never shown as a normal question at all — see
  *  adaptive/selectNextQuestion.ts, which now skips any question whose
- *  id already has an answer, direct or interpreted. Only
- *  `answers[id]` (not this map) is ever read by Phase 14 scoring —
- *  this is purely an interview/UI-layer concept, so it can never
- *  affect ranking. */
-export type AnswerProvenance = 'direct' | 'ai_interpreted';
+ *  id already has an answer, direct or interpreted. `'ai_followup'`
+ *  (completion pass) means it was resolved through a bounded,
+ *  AI-triggered contextual clarification (see adaptive/
+ *  followupTemplates.ts) — a distinct provenance so the Travel Profile
+ *  can honestly report HOW a dimension became known, even though it is
+ *  treated identically to 'ai_interpreted' everywhere that matters
+ *  (elimination, restoration, Phase 14 input). Only `answers[id]` (not
+ *  this map) is ever read by Phase 14 scoring — this is purely an
+ *  interview/UI-layer concept, so it can never affect ranking. */
+export type AnswerProvenance = 'direct' | 'ai_interpreted' | 'ai_followup';
+
+/** Completion pass — a single selectable answer of a pending contextual
+ *  follow-up (see adaptive/followupTemplates.ts). `satisfies` maps
+ *  question ids to the EXACT canonical value that question would have
+ *  received directly — never an arbitrary/generated score, always one
+ *  of that question's own real allowed values from QUESTION_BANKS. */
+export interface FollowupOption {
+  id: string;
+  label: Record<Lang, string>;
+  satisfies: Record<string, string | number>;
+}
+
+/** Completion pass — the currently pending AI-guided contextual
+ *  clarification, if any. Bounded and schema-shaped: a fixed template
+ *  (see followupTemplates.ts) selected deterministically from the
+ *  AI's own `unmapped` output plus the current profile — never
+ *  freshly-authored English/Arabic prose generated at request time.
+ *  `candidateDimensionIds` bounds the free-text escape hatch (if used)
+ *  to only these ids, the same safety boundary NaturalPreferenceInput
+ *  already applies to its own request. */
+export interface PendingFollowup {
+  templateId: string;
+  prompt: Record<Lang, string>;
+  options: FollowupOption[];
+  allowFreeText: boolean;
+  candidateDimensionIds: string[];
+}
 
 /** Mirrors the original's single mutable `state` object — minus `view`,
  *  `selectedId`, and `fromResults`, which react-router now owns (the URL
@@ -75,6 +107,24 @@ export interface AppState {
    *  Phase 14. See profile/travelProfile.ts, which surfaces this as
    *  part of each dimension's confirmed knowledge. */
   confidence: Record<string, 'high' | 'medium' | 'low'>;
+  /** Completion pass — the one currently active contextual follow-up
+   *  (null when none is pending). Only ever one at a time — a new one
+   *  is never offered while another is unresolved. */
+  followup: PendingFollowup | null;
+  /** Completion pass — bounded multi-turn orchestration counters. Both
+   *  reset with the rest of interview state on START_QUIZ/
+   *  SYNC_QUIZ_PURPOSE/RESTART_ALL; both are UI/orchestration-layer
+   *  only, never read by Phase 14.
+   *  `followupTurnsUsed`: how many contextual follow-ups have already
+   *  been shown (resolved OR dismissed) — bounds total follow-up
+   *  turns (see adaptive/followupTemplates.ts's MAX_FOLLOWUP_TURNS).
+   *  `aiCallsUsed`: every real network call to the interpret-
+   *  preferences endpoint (initial + any scoped free-text follow-up
+   *  interpretation) — bounds the total AI call budget per interview
+   *  (see aiService.ts's MAX_AI_CALLS_PER_INTERVIEW) and is asserted
+   *  directly by the multi-turn orchestration test suite. */
+  followupTurnsUsed: number;
+  aiCallsUsed: number;
   results: RankedResult[] | null;
   explore: ExploreFilters;
   location: LocationState;
@@ -98,6 +148,19 @@ export type AppAction =
   // affordance) — see reducer.ts. The question becomes unknown again
   // and can re-enter the remaining interview via selectNextQuestion.
   | { type: 'REMOVE_AI_ANSWER'; questionId: string }
+  // Completion pass — bounded multi-turn orchestration. SET_PENDING_FOLLOWUP
+  // offers exactly one contextual clarification (refuses if one is already
+  // pending — see reducer.ts). RESOLVE_FOLLOWUP_CHOICE applies every
+  // dimension the chosen option satisfies (provenance 'ai_followup') and
+  // clears the pending follow-up. DISMISS_FOLLOWUP clears it WITHOUT
+  // applying anything (still counts the turn, so a dismissed follow-up is
+  // never immediately re-offered). INCREMENT_AI_CALLS is dispatched by
+  // aiService callers around every real network attempt, for the AI call
+  // budget the orchestration test suite asserts directly.
+  | { type: 'SET_PENDING_FOLLOWUP'; followup: PendingFollowup }
+  | { type: 'RESOLVE_FOLLOWUP_CHOICE'; optionId: string }
+  | { type: 'DISMISS_FOLLOWUP' }
+  | { type: 'INCREMENT_AI_CALLS' }
   | { type: 'NEXT_QUESTION' }
   | { type: 'PREV_QUESTION' }
   | { type: 'SET_RESULTS'; results: RankedResult[] }

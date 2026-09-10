@@ -50,6 +50,19 @@ const MAX_TEXT_LENGTH = 500;
 const MAX_QUESTIONS = 20;
 const MAX_TOP_RESULTS = 10;
 
+// Phase 16.5 completion pass — hard AI call budget per interview. Never
+// enforced server-side (the Worker has no session concept), so every
+// CALLER (NaturalPreferenceInput's initial interpretation, and its
+// follow-up free-text escape hatch) must check `state.aiCallsUsed <
+// MAX_AI_CALLS_PER_INTERVIEW` before calling and dispatch
+// INCREMENT_AI_CALLS after. Budget: 1 initial interpretation + up to 2
+// scoped follow-up interpretations (one per contextual clarification —
+// see adaptive/followupTemplates.ts's MAX_FOLLOWUP_TURNS, which bounds
+// the number of follow-ups that can even be offered). No polling, no
+// retry loop anywhere in this file counts separately — a single
+// request's own internal timeout/abort is not a second call.
+export const MAX_AI_CALLS_PER_INTERVIEW = 3;
+
 async function fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -119,16 +132,28 @@ async function postJson(basePath: string, body: unknown): Promise<{ ok: true; bo
   return { ok: true, body: json };
 }
 
+// Phase 16.5 completion pass — location integration. A COARSE, already-
+// resolved country NAME only (see ai/buildLocationContext.ts, which
+// derives it locally from the existing voluntary location system via
+// data/geo.ts's resolveCurrentCountry — never a coordinate). Bounded
+// length client-side as an extra guard alongside the Worker's own.
+const MAX_ORIGIN_COUNTRY_LENGTH = 100;
+
 /** Interprets optional free-text user input into structured preferences
  *  over `questions` (the caller's own current question set — the SAME
  *  ids/options the questionnaire already uses, never a Worker-side
  *  copy). The result is a PROPOSAL only: callers must show it to the
  *  user for review/confirmation before dispatching SET_ANSWER — this
- *  function never mutates any application state itself. */
+ *  function never mutates any application state itself.
+ *
+ *  `originCountry`, when given, MUST already be a coarse country name
+ *  (never coordinates, never a full address) — see
+ *  ai/buildLocationContext.ts, the one place this project derives it. */
 export async function interpretPreferences(
   lang: 'ar' | 'en',
   text: string,
   questions: InterpretableQuestion[],
+  originCountry?: string,
 ): Promise<InterpretPreferencesResult> {
   const trimmed = text.trim();
   if (trimmed.length === 0) {
@@ -145,7 +170,11 @@ export async function interpretPreferences(
     return { status: 'unavailable', reason: 'AI preference interpretation is not available yet.' };
   }
 
-  const outcome = await postJson(INTERPRET_ENDPOINT_PATH, { lang, text: trimmed, questions });
+  const trimmedOrigin = originCountry?.trim().slice(0, MAX_ORIGIN_COUNTRY_LENGTH);
+  const body: Record<string, unknown> = { lang, text: trimmed, questions };
+  if (trimmedOrigin) body.originCountry = trimmedOrigin;
+
+  const outcome = await postJson(INTERPRET_ENDPOINT_PATH, body);
   if (!outcome.ok) return outcome.result;
 
   if (!isInterpretResponseShaped(outcome.body)) {

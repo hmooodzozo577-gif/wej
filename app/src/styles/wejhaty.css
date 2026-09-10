@@ -491,6 +491,32 @@
 .ai-satisfied-remove:hover {
   color: inherit;
 }
+/* Phase 16.5 completion pass — the bounded contextual follow-up card
+   (FollowupCard.tsx). Reuses the same visual language as the proposals/
+   satisfied-list blocks above (one coherent interview). */
+.ai-followup-card {
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.ai-followup-prompt {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0 0 10px;
+}
+.ai-followup-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.ai-followup-option {
+  text-align: start;
+  white-space: normal;
+}
+.ai-followup-freetext {
+  margin-top: 8px;
+}
 .ai-badge {
   display: inline-block;
   font-size: 0.7rem;

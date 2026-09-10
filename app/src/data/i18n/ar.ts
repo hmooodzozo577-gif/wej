@@ -154,6 +154,14 @@ export const AR: I18nDict = {
       satisfiedSubtitle: 'لن نعيد سؤالك عنها.',
       remove: 'إزالة',
     },
+    followup: {
+      freeTextToggle: 'ولا شيء من هذا؟ اكتب بكلماتك',
+      freeTextPlaceholder: 'مثال: أبغى أماكن ما فيها ناس كثير…',
+      freeTextSubmit: 'إرسال',
+      skip: 'تخطي',
+      freeTextLoading: 'جارٍ الفهم…',
+      freeTextError: 'تعذّر فهم النص الآن — يمكنك تخطي هذا السؤال ومتابعة الأسئلة العادية.',
+    },
     explain: {
       title: 'رؤية مخصّصة',
       badge: 'مدعوم بالذكاء الاصطناعي',

@@ -15,7 +15,7 @@ import { interpretPreferences } from '../ai/aiService';
 import { QUESTION_BANKS } from '../data/questionBanks';
 import type { AppState } from '../state/types';
 
-vi.mock('../ai/aiService', () => ({ interpretPreferences: vi.fn() }));
+vi.mock('../ai/aiService', () => ({ interpretPreferences: vi.fn(), MAX_AI_CALLS_PER_INTERVIEW: 3 }));
 
 const mockInterpret = vi.mocked(interpretPreferences);
 const questions = QUESTION_BANKS.tourism;
@@ -31,7 +31,7 @@ function renderWith(dispatchSpy?: (a: unknown) => void, presetState?: Partial<Ap
   }
   return render(
     <Providers>
-      <NaturalPreferenceInput questions={questions} />
+      <NaturalPreferenceInput purposeId="tourism" questions={questions} />
     </Providers>,
   );
 }
@@ -56,16 +56,19 @@ describe('NaturalPreferenceInput', () => {
     renderWith(dispatchSpy);
     typeAndSubmit('أبغى دولة باردة');
     await waitFor(() => expect(screen.getByText(/غير متاحة حاليًا/)).toBeInTheDocument());
-    expect(dispatchSpy).not.toHaveBeenCalled();
+    // INCREMENT_AI_CALLS is expected (a real network attempt was made,
+    // counted toward the AI call budget regardless of outcome) — but no
+    // preference/profile-mutating dispatch may occur on failure.
+    expect(dispatchSpy).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'SET_ANSWER' }));
   });
 
-  it('AI service error: shows the graceful error message, never dispatches, never crashes', async () => {
+  it('AI service error: shows the graceful error message, never mutates the profile, never crashes', async () => {
     mockInterpret.mockResolvedValue({ status: 'error', message: 'upstream failure' });
     const dispatchSpy = vi.fn();
     renderWith(dispatchSpy);
     typeAndSubmit('أبغى دولة باردة');
     await waitFor(() => expect(screen.getByText(/تعذّر فهم النص/)).toBeInTheDocument());
-    expect(dispatchSpy).not.toHaveBeenCalled();
+    expect(dispatchSpy).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'SET_ANSWER' }));
   });
 
   it('only sends questions NOT already answered — never asks the AI about a dimension already known', async () => {
@@ -121,7 +124,9 @@ describe('NaturalPreferenceInput', () => {
 
     await waitFor(() => expect(screen.getByText(/هذا ما فهمناه من رحلتك/)).toBeInTheDocument());
     expect(screen.getByRole('checkbox')).toHaveProperty('checked', true);
-    expect(dispatchSpy).not.toHaveBeenCalled(); // shown, not yet applied
+    // shown, not yet applied — no SET_ANSWER yet (INCREMENT_AI_CALLS
+    // from the network attempt itself is expected).
+    expect(dispatchSpy).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'SET_ANSWER' }));
 
     fireEvent.click(screen.getByRole('button', { name: /استخدام هذه التفضيلات/ }));
     expect(dispatchSpy).toHaveBeenCalledWith({
@@ -171,13 +176,13 @@ describe('NaturalPreferenceInput', () => {
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_ANSWER', questionId: 'climate', value, provenance: 'ai_interpreted', confidence: 'low' });
   });
 
-  it('nothing mappable: shows the graceful "none found" message, no crash, no dispatch', async () => {
+  it('nothing mappable: shows the graceful "none found" message, no crash, no profile mutation', async () => {
     mockInterpret.mockResolvedValue({ status: 'ok', interpreted: [], unmapped: ['شيء غامض'] });
     const dispatchSpy = vi.fn();
     renderWith(dispatchSpy);
     typeAndSubmit('شيء غامض');
     await waitFor(() => expect(screen.getByText(/لم يتطابق ما كتبته/)).toBeInTheDocument());
-    expect(dispatchSpy).not.toHaveBeenCalled();
+    expect(dispatchSpy).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'SET_ANSWER' }));
   });
 
   it('never calls interpretPreferences more than once per submit click', async () => {
@@ -195,7 +200,11 @@ describe('NaturalPreferenceInput', () => {
       satisfaction: { climate: 'ai_interpreted' },
     });
     expect(screen.getByText(/تم أخذ هذه التفضيلات بالحسبان/)).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(climateQuestion.text.ar))).toBeInTheDocument();
+    // Phase 16.5 UX correction: the satisfied-list entry must be the
+    // STANDALONE summary (data/summaryMeta.ts) — dimension name + clear
+    // value — never the raw question text, which can itself be vague
+    // ("ما نوع الطقس الذي تفضله؟" says nothing standalone).
+    expect(screen.getByText(/الطقس المفضل/)).toBeInTheDocument();
   });
 
   it('a DIRECT (non-AI) answer never appears in the "already accounted for" list', () => {

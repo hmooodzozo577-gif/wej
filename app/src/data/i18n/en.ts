@@ -154,6 +154,14 @@ export const EN: I18nDict = {
       satisfiedSubtitle: 'We won\'t ask about these again.',
       remove: 'Remove',
     },
+    followup: {
+      freeTextToggle: "None of these? Describe it in your own words",
+      freeTextPlaceholder: 'e.g. somewhere without big crowds…',
+      freeTextSubmit: 'Send',
+      skip: 'Skip',
+      freeTextLoading: 'Understanding…',
+      freeTextError: "Couldn't understand that right now — you can skip this and continue with the regular questions.",
+    },
     explain: {
       title: 'Personalized insight',
       badge: 'AI-enhanced',

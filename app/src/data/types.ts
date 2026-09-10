@@ -693,6 +693,18 @@ export interface AiStrings {
     /** Per-item remove/"un-apply" control on that list. */
     remove: string;
   };
+  /** Phase 16.5 completion pass — the bounded contextual follow-up card
+   *  (see adaptive/followupTemplates.ts). Per-template prompt/option
+   *  text lives in the templates themselves (already bilingual); these
+   *  are the surrounding, template-independent UI strings. */
+  followup: {
+    freeTextToggle: string;
+    freeTextPlaceholder: string;
+    freeTextSubmit: string;
+    skip: string;
+    freeTextLoading: string;
+    freeTextError: string;
+  };
   explain: {
     title: string;
     badge: string;

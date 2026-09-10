@@ -16,17 +16,21 @@
 // left UNCHECKED, so it is never silently applied. The traveler can
 // still check and apply it manually — that is an explicit confirmation,
 // not a silent elimination.
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useAppState, useI18n } from '../state/hooks';
-import { interpretPreferences } from '../ai/aiService';
+import { interpretPreferences, MAX_AI_CALLS_PER_INTERVIEW } from '../ai/aiService';
 import { mapQuestionsForAi } from '../ai/mapQuestionsForAi';
+import { buildLocationContext } from '../ai/buildLocationContext';
+import { summarizeAnswer } from '../data/summaryMeta';
+import { selectFollowup, MAX_FOLLOWUP_TURNS } from '../adaptive';
+import { FollowupCard } from './FollowupCard';
 import type { InterpretedPreference } from '../ai/types';
-import type { Question } from '../data/types';
+import type { PurposeId, Question } from '../data/types';
 import { Icon } from './Icon';
 
 type Status = 'idle' | 'loading' | 'proposed' | 'none' | 'unavailable' | 'error';
 
-export function NaturalPreferenceInput({ questions }: { questions: Question[] }) {
+export function NaturalPreferenceInput({ purposeId, questions }: { purposeId: PurposeId; questions: Question[] }) {
   const { lang, t } = useI18n();
   const { state, dispatch } = useAppState();
   const ai = t.ai.interpret;
@@ -35,17 +39,30 @@ export function NaturalPreferenceInput({ questions }: { questions: Question[] })
   const [status, setStatus] = useState<Status>('idle');
   const [proposals, setProposals] = useState<InterpretedPreference[]>([]);
   const [unmapped, setUnmapped] = useState<string[]>([]);
+  // Completion pass — location integration. Resolved ONCE per grant, a
+  // plain country name only (see buildLocationContext.ts) — never a
+  // coordinate reaches this component's own state or the AI request.
+  // undefined (never resolved / no permission) is a fully normal,
+  // fully supported state — the interview never depends on it.
+  const [originCountry, setOriginCountry] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    let cancelled = false;
+    buildLocationContext(state.location, lang).then((name) => {
+      if (!cancelled) setOriginCountry(name);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [state.location, lang]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
-  const questionById = new Map(questions.map((q) => [q.id, q]));
-
+  // Phase 16.5 UX correction: this MUST be the centralized standalone-
+  // summary builder (data/summaryMeta.ts), never `question.text +
+  // option.label` — see that module's doc comment for the real
+  // production bug this replaced ("ما الذي تفضله؟ — مزيج من الاثنين"
+  // read alone answers nothing: a mix of WHAT?).
   function labelFor(questionId: string, value: string | number): string {
-    const q = questionById.get(questionId);
-    if (!q) return String(value);
-    const opt = q.options.find((o) => o.value === value);
-    const qText = lang === 'ar' ? q.text.ar : q.text.en;
-    const optText = opt ? (lang === 'ar' ? opt.label.ar : opt.label.en) : String(value);
-    return `${qText}: ${optText}`;
+    return summarizeAnswer(purposeId, questionId, value, lang);
   }
 
   // Phase 16.5 — never ask the AI to interpret a dimension we already
@@ -54,15 +71,41 @@ export function NaturalPreferenceInput({ questions }: { questions: Question[] })
   // dimensions already satisfied" requirement.
   const openQuestions = questions.filter((q) => state.answers[q.id] === undefined);
 
+  // Completion pass — hard AI call budget (aiService.ts's
+  // MAX_AI_CALLS_PER_INTERVIEW). Checked here AND by FollowupCard's own
+  // scoped free-text call, since both draw from the same counter.
+  const aiCallsExhausted = state.aiCallsUsed >= MAX_AI_CALLS_PER_INTERVIEW;
+
+  // Completion pass — offers at most one bounded contextual follow-up,
+  // selected deterministically (zero extra AI calls) from the model's
+  // own `unmapped` output. Never overwrites an already-pending one
+  // (SET_PENDING_FOLLOWUP itself refuses that), and never exceeds
+  // MAX_FOLLOWUP_TURNS (checked via state.followupTurnsUsed here so the
+  // cap is enforced regardless of how many templates might match).
+  //
+  // Deliberately called AFTER the proposal-confirmation step resolves
+  // (onApply/dismiss below), not immediately in onSubmit: duplicate
+  // prevention (never offering a clarification for a dimension the
+  // traveler just confirmed) needs the MERGED answer set — the
+  // just-applied proposals plus whatever was already known — not the
+  // stale `state.answers` from before this exchange.
+  function maybeOfferFollowup(unmappedFragments: string[], mergedAnswers: typeof state.answers) {
+    if (state.followup || unmappedFragments.length === 0 || state.followupTurnsUsed >= MAX_FOLLOWUP_TURNS) return;
+    const followup = selectFollowup(purposeId, unmappedFragments, mergedAnswers);
+    if (followup) dispatch({ type: 'SET_PENDING_FOLLOWUP', followup });
+  }
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (status === 'loading' || text.trim().length === 0) return;
+    if (status === 'loading' || text.trim().length === 0 || aiCallsExhausted) return;
     setStatus('loading');
-    const result = await interpretPreferences(lang, text, mapQuestionsForAi(openQuestions, lang));
+    dispatch({ type: 'INCREMENT_AI_CALLS' });
+    const result = await interpretPreferences(lang, text, mapQuestionsForAi(openQuestions, lang), originCountry);
     if (result.status === 'ok') {
       setUnmapped(result.unmapped);
       if (result.interpreted.length === 0) {
         setStatus('none');
+        maybeOfferFollowup(result.unmapped, state.answers);
         return;
       }
       setProposals(result.interpreted);
@@ -86,11 +129,14 @@ export function NaturalPreferenceInput({ questions }: { questions: Question[] })
   }
 
   function onApply() {
+    const mergedAnswers = { ...state.answers };
     for (const p of proposals) {
       if (selected.has(p.questionId)) {
         dispatch({ type: 'SET_ANSWER', questionId: p.questionId, value: p.value, provenance: 'ai_interpreted', confidence: p.confidence });
+        mergedAnswers[p.questionId] = p.value;
       }
     }
+    maybeOfferFollowup(unmapped, mergedAnswers);
     reset();
   }
 
@@ -103,13 +149,14 @@ export function NaturalPreferenceInput({ questions }: { questions: Question[] })
   }
 
   // Phase 16.5 — the persistent "already accounted for" list: every
-  // question currently satisfied by a CONFIRMED interpretation (never
-  // the ones still only proposed above). This is what keeps the
-  // benefit visible for the rest of the interview, not just once right
-  // after applying — and it is the only place a satisfied dimension
-  // can be removed, restoring its question to the remaining interview.
+  // question currently satisfied by a CONFIRMED interpretation OR
+  // (completion pass) a resolved contextual follow-up — never the ones
+  // still only proposed above, and never a direct answer. This is what
+  // keeps the benefit visible for the rest of the interview, not just
+  // once right after applying — and it is the only place a satisfied
+  // AI-derived dimension can be removed, restoring its question.
   const satisfiedEntries = questions
-    .filter((q) => state.satisfaction[q.id] === 'ai_interpreted')
+    .filter((q) => state.satisfaction[q.id] === 'ai_interpreted' || state.satisfaction[q.id] === 'ai_followup')
     .map((q) => ({ id: q.id, label: labelFor(q.id, state.answers[q.id]) }));
 
   return (
@@ -132,16 +179,28 @@ export function NaturalPreferenceInput({ questions }: { questions: Question[] })
           <button
             type="submit"
             className="btn btn-primary btn-sm"
-            disabled={status === 'loading' || text.trim().length === 0}
+            disabled={status === 'loading' || text.trim().length === 0 || aiCallsExhausted}
           >
             {status === 'loading' ? ai.loading : ai.cta}
           </button>
         </div>
       </form>
 
-      {status === 'unavailable' && <p className="ai-interpret-note">{ai.unavailable}</p>}
-      {status === 'error' && <p className="ai-interpret-note">{ai.error}</p>}
-      {status === 'none' && <p className="ai-interpret-note">{ai.noneFound}</p>}
+      {status === 'unavailable' && (
+        <p className="ai-interpret-note" aria-live="polite">
+          {ai.unavailable}
+        </p>
+      )}
+      {status === 'error' && (
+        <p className="ai-interpret-note" aria-live="polite">
+          {ai.error}
+        </p>
+      )}
+      {status === 'none' && (
+        <p className="ai-interpret-note" aria-live="polite">
+          {ai.noneFound}
+        </p>
+      )}
 
       {status === 'proposed' && (
         <div className="ai-interpret-proposals">
@@ -164,6 +223,8 @@ export function NaturalPreferenceInput({ questions }: { questions: Question[] })
           </div>
         </div>
       )}
+
+      {state.followup && <FollowupCard purposeId={purposeId} followup={state.followup} />}
 
       {satisfiedEntries.length > 0 && (
         <div className="ai-satisfied-list">

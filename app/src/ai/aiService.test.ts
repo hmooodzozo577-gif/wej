@@ -105,6 +105,27 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     expect(url).toBe(`${WORKER_URL}/api/ai/interpret-preferences`);
   });
 
+  it('LOCATION: originCountry, when given, is included in the POST body as a plain string — never a coordinate', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ interpreted: [], unmapped: [] }) });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { interpretPreferences } = await import('./aiService');
+    await interpretPreferences('en', 'somewhere cold', questions, 'Saudi Arabia');
+    const [, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string);
+    expect(body.originCountry).toBe('Saudi Arabia');
+    expect(JSON.stringify(body)).not.toMatch(/-?\d{1,3}\.\d{4,}/); // no coordinate-shaped value anywhere
+  });
+
+  it('LOCATION: omitted originCountry never appears in the POST body at all', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ interpreted: [], unmapped: [] }) });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { interpretPreferences } = await import('./aiService');
+    await interpretPreferences('en', 'somewhere cold', questions);
+    const [, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string);
+    expect('originCountry' in body).toBe(false);
+  });
+
   it('interpretPreferences: a malformed Worker response maps to "error", never passed through half-validated', async () => {
     const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ nonsense: true }) });
     vi.stubGlobal('fetch', fetchSpy);
