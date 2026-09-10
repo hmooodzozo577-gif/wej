@@ -7,5 +7,20 @@
   },
   "AU": {
     "preferredQueries": ["Sydney Opera House Australia", "Uluru Australia", "Great Barrier Reef Australia", "Sydney Harbour Bridge Australia"]
+  },
+  "GB": {
+    "preferredQueries": ["Tower Bridge London United Kingdom", "Big Ben London United Kingdom", "Edinburgh Castle United Kingdom"]
+  },
+  "TR": {
+    "preferredQueries": ["Hagia Sophia Istanbul Turkey", "Cappadocia Turkey landscape", "Bosphorus Istanbul Turkey skyline"]
+  },
+  "AT": {
+    "preferredQueries": ["Schonbrunn Palace Vienna Austria", "Hallstatt Austria", "Vienna skyline Austria"]
+  },
+  "PL": {
+    "preferredQueries": ["Wawel Castle Krakow Poland", "Warsaw Old Town Poland", "Malbork Castle Poland"]
+  },
+  "PE": {
+    "preferredQueries": ["Machu Picchu Peru", "Cusco Peru landscape", "Lima skyline Peru"]
   }
 }
