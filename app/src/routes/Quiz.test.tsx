@@ -293,3 +293,45 @@ describe('Quiz — English parity (same mechanics, different language, same ids)
     expect(screen.getByText('RESULTS_PAGE')).toBeInTheDocument();
   });
 });
+
+describe('Quiz — Phase 16.5 UX correction: progress belongs to the question section, not the AI intro', () => {
+  // Real user-observed bug: the question-progress indicator rendered
+  // ABOVE the "أخبرنا عن رحلتك" AI entry section — implying it counted
+  // that section as a questionnaire question, when it is not one. This
+  // proves the actual DOM order, not just visual margins: the AI card
+  // must come first, then progress, then the question card — in every
+  // state (before AI use, and after — Quiz.tsx's structure is fixed
+  // regardless of NaturalPreferenceInput's own internal status).
+  function domOrder(container: HTMLElement): string[] {
+    const selectors = ['.ai-interpret-card', '.quiz-top', '.q-card'];
+    return selectors
+      .map((sel) => ({ sel, el: container.querySelector(sel) }))
+      .filter((x): x is { sel: string; el: Element } => x.el !== null)
+      .sort((a, b) => (a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
+      .map((x) => x.sel);
+  }
+
+  it('BEFORE any AI use: AI card -> progress -> question card, in that DOM order', () => {
+    const { container } = renderQuiz();
+    expect(domOrder(container)).toEqual(['.ai-interpret-card', '.quiz-top', '.q-card']);
+  });
+
+  it('AFTER a confirmed AI interpretation (question eliminated): order is unchanged', () => {
+    const { container, dispatch } = renderQuizExposingDispatch();
+    dispatch({ type: 'SET_ANSWER', questionId: 'climate', value: 'cold', provenance: 'ai_interpreted' });
+    expect(domOrder(container)).toEqual(['.ai-interpret-card', '.quiz-top', '.q-card']);
+    // Also proves the AI card's own persistent list rendered (still
+    // above progress) rather than a second progress-like element
+    // appearing out of order.
+    expect(container.querySelector('.ai-satisfied-list')).not.toBeNull();
+  });
+
+  it('the progress indicator (.quiz-top) never appears before the AI card in the DOM — structural, not just CSS order', () => {
+    const { container } = renderQuiz();
+    const aiCard = container.querySelector('.ai-interpret-card')!;
+    const quizTop = container.querySelector('.quiz-top')!;
+    // DOCUMENT_POSITION_FOLLOWING on aiCard-vs-quizTop means quizTop
+    // comes AFTER aiCard in source order — the required relationship.
+    expect(aiCard.compareDocumentPosition(quizTop) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+});

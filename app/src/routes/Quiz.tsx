@@ -109,6 +109,20 @@ export function Quiz() {
 
   return (
     <div className="quiz-wrap">
+      {/* Phase 16.5 UX correction: the AI natural-language entry is NOT
+          itself a numbered questionnaire question — it must read as its
+          own section, with the interview's question progress belonging
+          to the actual question card below it, not above the whole
+          page. Order is now: AI entry (+ its own review/confirmation
+          UI) -> progress -> question card. This holds in every state
+          (before/after AI use, after elimination, during fallback)
+          because NaturalPreferenceInput's own internal state governs
+          its content, while `total`/`qIndex` below are recomputed from
+          `state` on every render regardless of what the AI card is
+          doing. See ProgressBar.test.tsx / Quiz.test.tsx for the
+          regression proving this order structurally (DOM position, not
+          just visual margin). */}
+      <NaturalPreferenceInput purposeId={purposeParam} questions={questions} />
       <div className="quiz-top">
         <span className="quiz-count">
           {qz.question} {qIndex + 1} {qz.of} {total} — {purposeName}
@@ -118,12 +132,6 @@ export function Quiz() {
         </button>
       </div>
       <ProgressBar percent={progressPct} />
-      {/* Phase 16 — Capability A. Full purpose bank (all EXISTING
-          questions, adaptive order or not) so a proposal can only ever
-          land on a dimension the quiz itself already asks about. Purely
-          additive: dismissing/ignoring this box changes nothing about
-          the quiz below it. */}
-      <NaturalPreferenceInput questions={questions} />
       <div className="q-card" role="radiogroup" aria-label={lang === 'ar' ? q.text.ar : q.text.en}>
         <div className="q-eyebrow">{purposeName}</div>
         <h2 className="q-text">{lang === 'ar' ? q.text.ar : q.text.en}</h2>
