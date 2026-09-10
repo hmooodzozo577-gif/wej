@@ -75,23 +75,41 @@ describe('engine parity vs. wejhaty.html (original source, loaded live)', () => 
           }
         });
 
-        it(`rankDestinations matches original — ${name}`, () => {
+        it(`rankDestinations matches original's SCORES — ${name} (Phase 14 audit: tie ORDER is now intentionally different — see rankDestinations.ts's own doc comment for why the original's insertion-order-accident tie-breaking was replaced with an explicit, documented one; the two engines' scoring must still agree exactly)`, () => {
           const ours = portedRankDestinations(purposeId, answers);
           const theirs = original.rankDestinations(purposeId, answers);
-          expect(ours.map((r) => ({ id: r.dest.id, score: r.score }))).toEqual(
-            theirs.map((r) => ({
-              id: (r.dest as { id: string }).id,
-              score: r.score,
-            })),
+          // Same multiset of {id, score} pairs, order-independent — this is
+          // what "parity" means for scoring after the Phase 14 tie-break
+          // fix: identical scores for every destination, not identical
+          // tie order (which the original never actually guaranteed).
+          const sortById = (arr: { id: string; score: number }[]) => [...arr].sort((a, b) => a.id.localeCompare(b.id));
+          expect(sortById(ours.map((r) => ({ id: r.dest.id, score: r.score })))).toEqual(
+            sortById(theirs.map((r) => ({ id: (r.dest as { id: string }).id, score: r.score }))),
           );
+          // Our own output must be genuinely sorted score-desc, then
+          // id-asc among ties — the actual Phase 14 fix under test.
+          for (let i = 1; i < ours.length; i++) {
+            const prev = ours[i - 1]!;
+            const curr = ours[i]!;
+            expect(
+              prev.score > curr.score || (prev.score === curr.score && prev.dest.id.localeCompare(curr.dest.id) <= 0),
+            ).toBe(true);
+          }
         });
 
-        it(`buildWhyText matches original (ar + en) — ${name}`, () => {
-          const ranked = portedRankDestinations(purposeId, answers);
-          const top = ranked[0];
+        it(`buildWhyText matches original (ar + en) for the same destination — ${name}`, () => {
+          // Deliberately NOT ranked[0] from each engine (which can now
+          // legitimately differ ONLY in which same-score destination
+          // sorts first — see the rankDestinations test above): picks
+          // one fixed destination's reasons from OUR engine and compares
+          // buildWhyText's own text-building logic against the original
+          // for that same destination/reasons pair, isolating this
+          // test to buildWhyText parity alone.
+          const ourScored = portedScoreDestination(DESTINATIONS[0]!, purposeId, answers);
+          const theirScored = original.scoreDestination(DESTINATIONS[0]!, purposeId, answers);
           for (const lang of ['ar', 'en'] as const) {
-            const ours = portedBuildWhyText(lang, purposeId, top.reasons, top.dest);
-            const theirs = original.buildWhyText(lang, purposeId, top.reasons, top.dest);
+            const ours = portedBuildWhyText(lang, purposeId, ourScored.reasons, DESTINATIONS[0]!);
+            const theirs = original.buildWhyText(lang, purposeId, theirScored.reasons, DESTINATIONS[0]!);
             expect(ours).toBe(theirs);
           }
         });
