@@ -36,7 +36,14 @@ import type {
  *  two evaluated for this specific interpret/explain workload). */
 export const WORKERS_AI_MODEL = '@cf/google/gemma-4-26b-a4b-it';
 
-const RUN_TIMEOUT_MS = 15_000;
+// Deployment smoke test (see the final report's "Live Smoke Tests"
+// section) measured real gemma-4-26b-a4b-it latency: a 2-question
+// prompt completed in ~14s, several 3-question prompts exceeded an
+// original 15s budget and were cut off by this exact timeout — a
+// real, repository-side latency-budget bug (never a model-quality
+// problem), fixed here rather than by abandoning the model. 30s
+// leaves real margin above the slowest observed real call.
+const RUN_TIMEOUT_MS = 30_000;
 
 // JSON Schema (Cloudflare Workers AI JSON Mode: response_format:
 // {type:"json_schema", json_schema:{name, schema}}) constrains what

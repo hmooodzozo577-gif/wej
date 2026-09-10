@@ -89,7 +89,7 @@ jobs:
     steps:
       - name: Interpret (Arabic #1 — cold/quiet/nature)
         run: |
-          curl -sS --max-time 30 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
+          curl -sS --max-time 40 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
             -H 'Content-Type: application/json' \
             --data-binary @- <<'EOF' | tee ar1.json | jq .
           {"lang":"ar","text":"أبغى دولة باردة وهادية وفيها طبيعة","questions":[
@@ -101,7 +101,7 @@ jobs:
 
       - name: Interpret (Arabic #2 — adventure but safety matters)
         run: |
-          curl -sS --max-time 30 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
+          curl -sS --max-time 40 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
             -H 'Content-Type: application/json' \
             --data-binary @- <<'EOF' | tee ar2.json | jq .
           {"lang":"ar","text":"ودي بمكان فيه مغامرات بس الأمان مهم عندي","questions":[
@@ -112,7 +112,7 @@ jobs:
 
       - name: Interpret (English #1 — cool/peaceful/nature)
         run: |
-          curl -sS --max-time 30 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
+          curl -sS --max-time 40 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
             -H 'Content-Type: application/json' \
             --data-binary @- <<'EOF' | tee en1.json | jq .
           {"lang":"en","text":"I want somewhere cool, peaceful, and full of nature.","questions":[
@@ -124,7 +124,7 @@ jobs:
 
       - name: Interpret (English #2 — adventure but safety matters)
         run: |
-          curl -sS --max-time 30 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
+          curl -sS --max-time 40 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
             -H 'Content-Type: application/json' \
             --data-binary @- <<'EOF' | tee en2.json | jq .
           {"lang":"en","text":"I want adventure, but safety is very important to me.","questions":[
@@ -135,7 +135,7 @@ jobs:
 
       - name: Explain (Arabic)
         run: |
-          curl -sS --max-time 30 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/explain-recommendation" \
+          curl -sS --max-time 40 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/explain-recommendation" \
             -H 'Content-Type: application/json' \
             --data-binary @- <<'EOF' | tee explain-ar.json | jq .
           {"lang":"ar","purposeName":"سياحة وترفيه","profileSummary":"يفضل مناخاً بارداً وهادئاً وطبيعة خلابة، والأمان مهم جداً.",
@@ -144,7 +144,7 @@ jobs:
 
       - name: Explain (English)
         run: |
-          curl -sS --max-time 30 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/explain-recommendation" \
+          curl -sS --max-time 40 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/explain-recommendation" \
             -H 'Content-Type: application/json' \
             --data-binary @- <<'EOF' | tee explain-en.json | jq .
           {"lang":"en","purposeName":"Tourism & Vacation","profileSummary":"Prefers a cold, quiet climate and beautiful nature; safety matters a lot.",

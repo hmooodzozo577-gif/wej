@@ -94,7 +94,7 @@ describe('createCloudflareWorkersAiProvider — response parsing', () => {
     const ai = fakeAi(() => new Promise(() => {})); // never resolves
     const pending = createCloudflareWorkersAiProvider(ai).interpretPreferences(interpretReq);
     const assertion = expect(pending).rejects.toBeInstanceOf(AiTimeoutError);
-    await vi.advanceTimersByTimeAsync(20_000);
+    await vi.advanceTimersByTimeAsync(35_000);
     await assertion;
     vi.useRealTimers();
   });
