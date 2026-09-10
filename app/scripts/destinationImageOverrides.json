@@ -1,5 +1,11 @@
 {
   "SA": {
     "preferredQueries": ["AlUla Saudi Arabia", "Riyadh skyline Saudi Arabia", "Kingdom Centre Riyadh"]
+  },
+  "FR": {
+    "preferredQueries": ["Eiffel Tower Paris France", "Palace of Versailles France", "Mont Saint-Michel France", "Louvre Paris France"]
+  },
+  "AU": {
+    "preferredQueries": ["Sydney Opera House Australia", "Uluru Australia", "Great Barrier Reef Australia", "Sydney Harbour Bridge Australia"]
   }
 }
