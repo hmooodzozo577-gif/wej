@@ -1,0 +1,60 @@
+name: Deploy Cloudflare Worker
+
+# Deploys worker/ (Wejhaty's travel API + Phase 16 AI backend) to
+# Cloudflare via `wrangler deploy`. Structurally separate from
+# deploy-pages.yml (which only ever builds/publishes app/) — this Worker
+# is never bundled into, or deployed as part of, the GitHub Pages site.
+#
+# Auth: CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID, both GitHub Actions
+# repository SECRETS (never echoed, never written to a file, never put
+# in a frontend/VITE_* variable — see ../../SECRETS.md). Deployment
+# authorization is a separate concern from the Workers AI binding itself
+# (env.AI needs no API key at all — see worker/src/ai/
+# cloudflareWorkersAiProvider.ts).
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [claude/marhaba-kxry8l]
+    paths:
+      - 'worker/**'
+      - '.github/workflows/deploy-worker.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+
+      - name: Install dependencies
+        working-directory: worker
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: worker
+        run: npm run typecheck
+
+      - name: Test
+        working-directory: worker
+        run: npm test
+
+      - name: Deploy
+        working-directory: worker
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
