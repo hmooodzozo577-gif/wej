@@ -1125,6 +1125,21 @@
     "height": 1000
   },
   {
+    "iso2": "KH",
+    "iso3": "KHM",
+    "countryName": "Cambodia",
+    "landmarkName": "Phnom Penh Skyline January 2022",
+    "localPath": "/destinations/kh.webp",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Phnom_Penh_Skyline_January_2022.jpg",
+    "author": "PPS0011",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/93/Phnom_Penh_Skyline_January_2022.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-10T14:47:14.121Z",
+    "width": 1050,
+    "height": 728
+  },
+  {
     "iso2": "KM",
     "iso3": "COM",
     "countryName": "Comoros",
