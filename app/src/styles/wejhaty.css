@@ -46,3 +46,18 @@
     margin-bottom: 0;
   }
 }
+
+/* --- Global location intro banner (Workstream C) ------------------------
+   Mounted in RootLayout, outside any individual route's own .container,
+   so it needs the same max-width/centering/horizontal padding every
+   route's content already gets — see LocationIntro.tsx. */
+.location-intro-wrap {
+  max-width: 1180px;
+  margin: 16px auto 0;
+  padding-inline: 24px;
+}
+@media (max-width: 640px) {
+  .location-intro-wrap {
+    padding-inline: 18px;
+  }
+}

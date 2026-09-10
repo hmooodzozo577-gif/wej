@@ -402,6 +402,20 @@ export interface LocationStrings {
   unsupported: string;
 }
 
+/** Workstream C — Global Location Personalization: the app-wide,
+ *  first-visit "why we're asking" prompt (components/LocationIntro.tsx),
+ *  distinct from LocationStrings above (Explore's own, already-existing
+ *  location card, which this does NOT replace — see that component's
+ *  doc comment). Shown once per browser (a dismissal flag in
+ *  localStorage, never coordinates — see LocationIntro.tsx), before any
+ *  browser permission dialog ever fires. */
+export interface LocationIntroStrings {
+  title: string;
+  body: string;
+  allow: string;
+  notNow: string;
+}
+
 /** Phase 13.6 — Full Travel Integration strings. Like LocationStrings,
  *  this feature has no wejhaty.html equivalent, so it's added directly in
  *  data/i18n/ar.ts / en.ts rather than sourced from the generated JSON. */
@@ -636,6 +650,7 @@ export interface I18nDict {
   detail: DetailStrings;
   explore: ExploreStrings;
   location: LocationStrings;
+  locationIntro: LocationIntroStrings;
   travel: TravelStrings;
   accommodation: AccommodationStrings;
   travelCost: TravelCostStrings;

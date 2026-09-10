@@ -27,10 +27,20 @@
 // Diagnostic instrumentation (?debugLocation=1): unchanged from the prior
 // investigation — still shows the raw browser result alongside what was
 // passed to the resolver. See geo/geolocation.ts / this file's DEBUG panel.
+//
+// Workstream C (Global Location Personalization): the request lifecycle
+// itself (dispatch LOCATION_REQUEST -> requestBrowserLocation() ->
+// dispatch GRANTED/FAILED) now goes through the shared
+// useLocationRequest() hook — the SAME one LocationIntro.tsx (the new
+// global first-visit prompt) uses — so there is exactly one place in
+// the app that ever calls requestBrowserLocation(), never two
+// independent call sites racing each other. Everything below this
+// component's own concern (country/city resolution, nearby list, the
+// debug panel) is unchanged.
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
-import { requestBrowserLocation } from '../geo/geolocation';
+import { useLocationRequest } from '../state/useLocationRequest';
 import { haversineKm, nearbyCountries, resolveCurrentCountry, type CountryResolution } from '../data/geo';
 import { resolveNearestCity, type CityResolution } from '../data/cities';
 import { WORLD_CATALOG, countryInfoOf } from '../data/worldCatalog';
@@ -68,6 +78,7 @@ export function LocationPersonalize() {
   const { lang, t } = useI18n();
   const loc = t.location;
   const { status, coords } = state.location;
+  const { request } = useLocationRequest();
 
   const [searchParams] = useSearchParams();
   const debugEnabled = searchParams.get('debugLocation') === '1';
@@ -78,17 +89,12 @@ export function LocationPersonalize() {
   const [debugInfo, setDebugInfo] = useState<LocationDebugInfo | null>(null);
 
   const handleRequest = useCallback(() => {
-    dispatch({ type: 'LOCATION_REQUEST' });
     setResolution(undefined);
     setCityResolution(undefined);
     setDebugInfo(null);
-    requestBrowserLocation().then(async (geoResult) => {
-      if (!geoResult.ok) {
-        dispatch({ type: 'LOCATION_FAILED', status: geoResult.status });
-        return;
-      }
+    request().then(async (geoResult) => {
+      if (!geoResult.ok) return;
       const browserCoords = geoResult.coords;
-      dispatch({ type: 'LOCATION_GRANTED', coords: browserCoords });
       if (debugEnabled) {
         setDebugInfo({
           browserLat: browserCoords.lat,
@@ -113,7 +119,7 @@ export function LocationPersonalize() {
       }
       setResolving(false);
     });
-  }, [dispatch, debugEnabled]);
+  }, [request, debugEnabled]);
 
   const handleReset = useCallback(() => {
     dispatch({ type: 'LOCATION_RESET' });

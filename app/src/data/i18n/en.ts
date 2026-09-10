@@ -43,10 +43,17 @@ export const EN: I18nDict = {
     nearestCountry: 'Nearest catalog country (approximate)',
     approxNote: 'This is an approximate straight-line estimate, not a real travel distance or border detection.',
     nearbyTitle: 'Nearby countries',
-    denied: 'Location permission was denied. You can still browse and search normally.',
+    denied:
+      'Location permission was denied. You can still use Wejhaty normally — only distances, nearby destinations, and some location-based personalization may be less accurate. Country facts and tourism statistics are not affected.',
     unavailable: 'Your location could not be determined right now.',
     timeout: 'The location request took too long.',
     unsupported: 'Your browser does not support location services.',
+  },
+  locationIntro: {
+    title: 'Improve your destination suggestions',
+    body: 'We use your approximate location to improve distance accuracy, show nearby destinations, and personalize some suggestions.',
+    allow: 'Allow location',
+    notNow: 'Not now',
   },
   // Phase 13.6 — Full Travel Integration. Like location above, not part
   // of the original wejhaty.html copy.
