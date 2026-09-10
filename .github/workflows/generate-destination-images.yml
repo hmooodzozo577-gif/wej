@@ -90,9 +90,6 @@ jobs:
             echo "No changes to commit."
             exit 0
           fi
-          git commit -m "chore: update generated destination imagery (countries: ${{ inputs.countries }})
-
-Committed by the generate-destination-images workflow run ${{ github.run_id }}
-on ${{ github.ref_name }} — not authored by a Claude session directly.
-No PAT, no force-push, this feature branch only."
+          git commit -m "chore: update generated destination imagery (countries: ${{ inputs.countries }})" \
+            -m "Committed by the generate-destination-images workflow run ${{ github.run_id }} on ${{ github.ref_name }} — not authored by a Claude session directly. No PAT, no force-push, this feature branch only."
           git push origin HEAD:${{ github.ref_name }}
