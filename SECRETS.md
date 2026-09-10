@@ -116,21 +116,18 @@ calls `env.AI.run(...)`; it reads no secret of any kind.
 
 **Do not confuse this with deployment authorization**, a separate,
 unrelated requirement: actually *deploying* this Worker (so `env.AI`
-exists at a real URL at all) needs either an interactive `wrangler
-login` or a `CLOUDFLARE_API_TOKEN` environment variable holding a
-scoped Cloudflare API token — see
-https://developers.cloudflare.com/fundamentals/api/get-started/create-token/.
-Neither is configured in this repository or this development
-environment (confirmed directly: `npx wrangler deploy` here fails with
-exactly `"In a non-interactive environment, it's necessary to set a
-CLOUDFLARE_API_TOKEN environment variable..."` — a deployment-auth
-error, never an AI-credential error). `npx wrangler deploy --dry-run`
-succeeds without any of that (bundles the Worker, resolves the `[ai]`
-binding correctly, reports `env.AI -> AI` in its binding summary) —
-proving the AI integration itself is deployment-ready code, with only
-the account-authorization step outstanding. See the final report's
-"Deployment Authentication State" section for exactly what a repository
-owner needs to run.
+exists at a real URL) needs either an interactive `wrangler login` or a
+`CLOUDFLARE_API_TOKEN`. As of the Phase 16 live-deployment task, the
+repository owner has configured `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID` as GitHub Actions repository secrets (never
+inspected, echoed, or printed by any automation in this repository —
+`.github/workflows/deploy-worker.yml` references them only as
+`${{ secrets.CLOUDFLARE_API_TOKEN }}` / `${{ secrets.CLOUDFLARE_ACCOUNT_ID }}`),
+and the Worker is deployed and live at
+`https://wejhaty-travel-worker.hmooodzozo577.workers.dev` — verified
+with real Arabic and English requests, not just a dry run. See the
+repository's Phase 16 live-deployment final report for the full
+evidence and evaluation results.
 
 Legacy extension point (unused): `worker/src/ai/types.ts` still declares
 optional `AI_PROVIDER`/`AI_API_KEY` fields on `Env`, kept only in case a

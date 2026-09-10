@@ -1,10 +1,11 @@
-# Cloudflare Worker configuration for Wejhaty's travel API backend.
+# Cloudflare Worker configuration for Wejhaty's travel API + Phase 16
+# AI backend.
 #
-# NOT DEPLOYED as part of this change (Phase 13.3 implements the real
-# Amadeus integration but does not deploy it — see ../README.md and the
-# final report for the exact manual deployment step). Deploying this
-# Worker requires a Cloudflare account and `wrangler login`/API token,
-# neither of which this task sets up.
+# DEPLOYED via .github/workflows/deploy-worker.yml (see ../README.md):
+# real URL https://wejhaty-travel-worker.hmooodzozo577.workers.dev.
+# The Phase 16 AI routes (env.AI, [ai] binding below) are live. The
+# Amadeus-backed travel route is reachable but AMADEUS_API_KEY/
+# AMADEUS_API_SECRET have never been set — see ../README.md.
 name = "wejhaty-travel-worker"
 main = "src/index.ts"
 compatibility_date = "2026-09-01"
@@ -31,10 +32,8 @@ AMADEUS_ENV = "test"
 # see src/ai/cloudflareWorkersAiProvider.ts and ../SECRETS.md's Phase 16
 # section for why this is a fundamentally different mechanism from the
 # AMADEUS_* secrets above (account-scoped binding, not a bearer
-# credential). Present in this file (so `env.AI` resolves once this
-# Worker is actually deployed) even though the Worker itself remains
-# undeployed today — see the final report's "Deployment Authentication
-# State"/"Worker Deployment" sections for the exact remaining manual
-# step and why.
+# credential). Live in production — verified with real Arabic/English
+# requests against the deployed Worker (see the repository's Phase 16
+# live-deployment final report).
 [ai]
 binding = "AI"

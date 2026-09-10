@@ -11,15 +11,28 @@ Pages frontend):
 - Independently deployable via `wrangler`, on its own schedule, entirely
   separate from the GitHub Pages deploy.
 
-## Status: implemented, not deployed
+## Status: deployed (AI live; Travel/Amadeus credentials still unconfigured)
 
-Phase 13.3 implements the real Amadeus Flight Offers Search integration
-(`src/amadeus.ts`) end-to-end, with tests that mock every Amadeus call —
-**this Worker has not been deployed and has never made a real call to
-Amadeus.** Deploying it requires a Cloudflare account, `wrangler login`
-(or a `CLOUDFLARE_API_TOKEN`), and real Amadeus credentials, none of
-which this task sets up or invents. See the repository's Phase 13.3 final
-report for the exact manual steps a repository owner would run.
+This Worker is now deployed via `.github/workflows/deploy-worker.yml`
+(GitHub Actions, using the repository's `CLOUDFLARE_API_TOKEN`/
+`CLOUDFLARE_ACCOUNT_ID` secrets) — real public URL:
+`https://wejhaty-travel-worker.hmooodzozo577.workers.dev`. Redeploys
+automatically on a push touching `worker/**`, or on demand via
+`workflow_dispatch` (which can also opt into a small live Workers AI
+smoke test — see that workflow's `run_smoke_test` input).
+
+- **Phase 16 AI (`/api/ai/*`)**: live. The Workers AI binding (`env.AI`,
+  `wrangler.toml`'s `[ai]` block) needs no credential at all — verified
+  with real Arabic and English requests against the deployed Worker
+  (see the repository's Phase 16 live-deployment final report for the
+  exact evaluation set and results).
+- **Travel (`/api/travel/flights`, Amadeus)**: the Worker itself is
+  deployed and reachable, but `AMADEUS_API_KEY`/`AMADEUS_API_SECRET`
+  have never been set (`wrangler secret put`) — a request to this
+  route will safely fail with a generic `provider_error`, never a
+  fabricated flight offer (see `mapAmadeusErrorToResponseArgs` in
+  `src/index.ts`). Setting those two secrets is the only remaining
+  step to make Travel live too.
 
 ## What it does
 
