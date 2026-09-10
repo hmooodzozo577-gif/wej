@@ -75,6 +75,73 @@ describe('appReducer', () => {
     expect(state.answers[q1]).toBe(4);
   });
 
+  it('Phase 16.5: SET_ANSWER defaults provenance to \'direct\' when omitted (every pre-existing call site keeps working unchanged)', () => {
+    const state = appReducer(initialAppState, { type: 'SET_ANSWER', questionId: 'climate', value: 'hot' });
+    expect(state.satisfaction).toEqual({ climate: 'direct' });
+  });
+
+  it('Phase 16.5: SET_ANSWER records ai_interpreted provenance when given, in parallel with answers', () => {
+    const state = appReducer(initialAppState, {
+      type: 'SET_ANSWER',
+      questionId: 'climate',
+      value: 'cold',
+      provenance: 'ai_interpreted',
+    });
+    expect(state.answers).toEqual({ climate: 'cold' });
+    expect(state.satisfaction).toEqual({ climate: 'ai_interpreted' });
+  });
+
+  it('Phase 16.5 QUESTION REDUCTION: an ai_interpreted answer set BEFORE the quiz reaches that question means it never enters path', () => {
+    let state = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
+    // Satisfy two dimensions via a confirmed interpretation up front —
+    // neither has been walked through the interview at all.
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: 'climate', value: 'cold', provenance: 'ai_interpreted' });
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: 'naturecity', value: 90, provenance: 'ai_interpreted' });
+    // Walk the rest of the interview to completion.
+    for (let i = 0; i < 10; i++) {
+      const currentId = state.path[state.qIndex];
+      if (state.answers[currentId] === undefined) {
+        state = appReducer(state, { type: 'SET_ANSWER', questionId: currentId, value: 1 });
+      }
+      const before = state.path.length;
+      state = appReducer(state, { type: 'NEXT_QUESTION' });
+      if (state.path.length === before && state.qIndex === before - 1) break; // reached the true end
+    }
+    expect(state.path).not.toContain('climate');
+    expect(state.path).not.toContain('naturecity');
+  });
+
+  it('Phase 16.5 RESTORE: REMOVE_AI_ANSWER un-applies a confirmed interpretation, and the dimension becomes selectable again', () => {
+    let state = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: 'climate', value: 'cold', provenance: 'ai_interpreted' });
+    expect(state.answers.climate).toBe('cold');
+    expect(state.satisfaction.climate).toBe('ai_interpreted');
+
+    state = appReducer(state, { type: 'REMOVE_AI_ANSWER', questionId: 'climate' });
+    expect(state.answers.climate).toBeUndefined();
+    expect(state.satisfaction.climate).toBeUndefined();
+  });
+
+  it('Phase 16.5 SAFETY: REMOVE_AI_ANSWER refuses to touch a DIRECT answer', () => {
+    let state = appReducer(initialAppState, { type: 'SET_ANSWER', questionId: 'climate', value: 'hot' }); // provenance defaults to 'direct'
+    const before = state;
+    state = appReducer(state, { type: 'REMOVE_AI_ANSWER', questionId: 'climate' });
+    expect(state).toBe(before); // untouched — same reference, reducer no-op
+    expect(state.answers.climate).toBe('hot');
+  });
+
+  it('Phase 16.5: editing a PAST path question with a genuinely different value still truncates satisfaction along with answers', () => {
+    let state = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
+    const q1 = state.path[0];
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q1, value: 1 });
+    state = appReducer(state, { type: 'NEXT_QUESTION' });
+    const q2 = state.path[1];
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q2, value: 40 });
+    state = appReducer(state, { type: 'PREV_QUESTION' });
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q1, value: 4 }); // genuinely different -> truncates
+    expect(state.satisfaction[q2]).toBeUndefined();
+  });
+
   it('NEXT_QUESTION is a safe no-op with no purpose selected (nothing to compute a path from)', () => {
     const state = appReducer(initialAppState, { type: 'NEXT_QUESTION' });
     expect(state).toEqual(initialAppState);
@@ -107,10 +174,17 @@ describe('appReducer', () => {
     expect(state.qIndex).toBe(0);
   });
 
-  it('RESTART_ALL clears purpose/answers/results/path but preserves lang', () => {
-    const dirty = { ...initialAppState, lang: 'en' as const, purpose: 'work' as const, qIndex: 2, path: ['field', 'salary'] };
+  it('RESTART_ALL clears purpose/answers/results/path/satisfaction but preserves lang', () => {
+    const dirty = {
+      ...initialAppState,
+      lang: 'en' as const,
+      purpose: 'work' as const,
+      qIndex: 2,
+      path: ['field', 'salary'],
+      satisfaction: { field: 'ai_interpreted' as const },
+    };
     const next = appReducer(dirty, { type: 'RESTART_ALL' });
-    expect(next).toMatchObject({ lang: 'en', purpose: null, qIndex: 0, answers: {}, results: null, path: [] });
+    expect(next).toMatchObject({ lang: 'en', purpose: null, qIndex: 0, answers: {}, satisfaction: {}, results: null, path: [] });
   });
 
   it('SET_EXPLORE_FILTER updates one field without disturbing the others', () => {

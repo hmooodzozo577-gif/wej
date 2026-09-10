@@ -28,6 +28,19 @@ export interface LocationState {
   coords: LocationCoords | null;
 }
 
+/** Phase 16.5 — provenance of a single answered question: `'direct'`
+ *  means the traveler picked it by walking through that question in
+ *  the interview UI (the only kind Phase 15 ever produced);
+ *  `'ai_interpreted'` means it was set from a CONFIRMED natural-
+ *  language interpretation (NaturalPreferenceInput's "Apply"), and was
+ *  never shown as a normal question at all — see
+ *  adaptive/selectNextQuestion.ts, which now skips any question whose
+ *  id already has an answer, direct or interpreted. Only
+ *  `answers[id]` (not this map) is ever read by Phase 14 scoring —
+ *  this is purely an interview/UI-layer concept, so it can never
+ *  affect ranking. */
+export type AnswerProvenance = 'direct' | 'ai_interpreted';
+
 /** Mirrors the original's single mutable `state` object — minus `view`,
  *  `selectedId`, and `fromResults`, which react-router now owns (the URL
  *  and navigation `state` respectively). */
@@ -41,9 +54,19 @@ export interface AppState {
    *  order up front. `qIndex` indexes into this, not into
    *  QUESTION_BANKS[purpose] directly. Truncated (and any now-stale
    *  downstream answers removed) when the user goes back and changes
-   *  an earlier answer — see reducer.ts's SET_ANSWER case. */
+   *  an earlier answer — see reducer.ts's SET_ANSWER case.
+   *
+   *  Phase 16.5: an `'ai_interpreted'` answer is NEVER added to `path`
+   *  — the whole point is that its question never gets shown. `path`
+   *  therefore only ever lists questions the traveler actually saw. */
   path: string[];
   answers: Answers;
+  /** Phase 16.5 — parallel to `answers`: same keys, records HOW each
+   *  one was answered (see AnswerProvenance). Only ever read by the
+   *  interview UI (to show/remove the "already accounted for" list) —
+   *  never by Phase 14. Reset together with `answers` on
+   *  START_QUIZ/SYNC_QUIZ_PURPOSE/RESTART_ALL. */
+  satisfaction: Record<string, AnswerProvenance>;
   results: RankedResult[] | null;
   explore: ExploreFilters;
   location: LocationState;
@@ -58,7 +81,15 @@ export type AppAction =
   // `Object.assign(state, extra)`, which only ever touched `purpose` here.
   | { type: 'PRESELECT_PURPOSE'; purpose: PurposeId }
   | { type: 'SYNC_QUIZ_PURPOSE'; purpose: PurposeId }
-  | { type: 'SET_ANSWER'; questionId: string; value: string | number }
+  // `provenance` defaults to 'direct' when omitted — every pre-Phase-16.5
+  // call site (Quiz.tsx's onSelect) keeps working unchanged.
+  | { type: 'SET_ANSWER'; questionId: string; value: string | number; provenance?: AnswerProvenance }
+  // Phase 16.5 — "un-apply" a single AI-interpreted answer (the small
+  // remove control on the "already accounted for" list). Refuses to
+  // touch a 'direct' answer (reducer-level safety, not just a UI
+  // affordance) — see reducer.ts. The question becomes unknown again
+  // and can re-enter the remaining interview via selectNextQuestion.
+  | { type: 'REMOVE_AI_ANSWER'; questionId: string }
   | { type: 'NEXT_QUESTION' }
   | { type: 'PREV_QUESTION' }
   | { type: 'SET_RESULTS'; results: RankedResult[] }

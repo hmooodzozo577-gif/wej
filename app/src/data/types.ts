@@ -670,6 +670,9 @@ export interface TourismInsightsStrings {
 export interface AiStrings {
   interpret: {
     title: string;
+    /** Phase 16.5 — explains what the box does and why, addressing the
+     *  real user's "too vague" feedback on the plain title alone. */
+    subtitle: string;
     placeholder: string;
     cta: string;
     loading: string;
@@ -680,6 +683,15 @@ export interface AiStrings {
     dismiss: string;
     unmappedNote: string;
     noneFound: string;
+    /** Tag shown next to a low-confidence proposal (unchecked by
+     *  default — see NaturalPreferenceInput.tsx's confidence rule). */
+    lowConfidence: string;
+    /** Heading for the persistent "already accounted for" list —
+     *  Phase 16.5's core visible-benefit requirement. */
+    satisfiedTitle: string;
+    satisfiedSubtitle: string;
+    /** Per-item remove/"un-apply" control on that list. */
+    remove: string;
   };
   explain: {
     title: string;

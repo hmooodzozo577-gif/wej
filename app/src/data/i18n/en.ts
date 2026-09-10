@@ -136,17 +136,23 @@ export const EN: I18nDict = {
   // and results work identically with none of this text ever shown.
   ai: {
     interpret: {
-      title: 'Describe what you want (optional)',
-      placeholder: 'e.g. "I want somewhere cold, quiet, and full of nature, that isn\'t expensive"',
-      cta: 'Suggest answers',
-      loading: 'Interpreting…',
+      title: 'Tell us about your trip',
+      subtitle:
+        'Describe what you\'re looking for in your own words, and we\'ll use it to understand your preferences and skip asking about anything you\'ve already told us.',
+      placeholder: 'e.g. "I want somewhere cold and quiet, with nature, and good for families"',
+      cta: 'Understand my preferences',
+      loading: 'Understanding your preferences…',
       unavailable: 'This feature isn\'t available yet — you can keep answering the questions directly.',
-      error: 'Couldn\'t interpret that right now. You can keep answering the questions directly.',
-      proposedTitle: 'Proposed answers — review before applying',
-      apply: 'Apply selected',
+      error: 'Couldn\'t understand that right now. You can keep answering the questions directly.',
+      proposedTitle: 'Here\'s what we understood about your trip',
+      apply: 'Use these preferences',
       dismiss: 'Dismiss',
       unmappedNote: 'Some of what you wrote didn\'t map to a question.',
       noneFound: 'Nothing in your text mapped to a question yet — try adding more detail.',
+      lowConfidence: 'uncertain',
+      satisfiedTitle: 'Already taken into account',
+      satisfiedSubtitle: 'We won\'t ask about these again.',
+      remove: 'Remove',
     },
     explain: {
       title: 'Personalized insight',

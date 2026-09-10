@@ -2,15 +2,16 @@
 // Quiz route + reducer + adaptive engine (no mocks) — the closest a
 // Vitest/jsdom test gets to the manual browser QA in the final report.
 import { describe, expect, it } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { useReducer, type ReactNode } from 'react';
+import { useEffect, useReducer, type ReactNode } from 'react';
 import { AppStateProvider } from '../state/AppStateContext';
 import { AppStateContext } from '../state/context';
 import { appReducer, initialAppState } from '../state/reducer';
 import { Quiz } from './Quiz';
 import { QUESTION_BANKS } from '../data/questionBanks';
 import type { Lang } from '../data/types';
+import type { AppAction } from '../state/types';
 
 function renderQuiz(path = '/quiz/tourism') {
   return render(
@@ -42,6 +43,46 @@ function renderQuizWithLang(lang: Lang, path = '/quiz/tourism') {
       </MemoryRouter>
     </Providers>,
   );
+}
+
+// Phase 16.5 — exposes the real reducer's dispatch so a test can inject
+// a confirmed AI interpretation (SET_ANSWER with provenance
+// 'ai_interpreted') the same way NaturalPreferenceInput.tsx's "Apply"
+// does, without mocking aiService or driving its own UI — this file's
+// job is proving the reducer+Quiz-rendering CONSEQUENCE of that
+// action, already covered from aiService's own side elsewhere.
+function renderQuizExposingDispatch(path = '/quiz/tourism') {
+  const dispatchRef: { current: (a: AppAction) => void } = { current: () => {} };
+  function Providers({ children }: { children: ReactNode }) {
+    const [state, dispatch] = useReducer(appReducer, initialAppState);
+    // useReducer's dispatch is referentially stable across renders, so
+    // capturing it once via an effect (rather than during render body)
+    // is enough, and keeps this test helper itself lint-clean.
+    useEffect(() => {
+      dispatchRef.current = dispatch;
+    }, [dispatch]);
+    return <AppStateContext.Provider value={{ state, dispatch }}>{children}</AppStateContext.Provider>;
+  }
+  const utils = render(
+    <Providers>
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route path="/quiz/:purpose" element={<Quiz />} />
+          <Route path="/results" element={<div>RESULTS_PAGE</div>} />
+          <Route path="/purpose" element={<div>PURPOSE_PAGE</div>} />
+        </Routes>
+      </MemoryRouter>
+    </Providers>,
+  );
+  return { ...utils, dispatch: (a: AppAction) => act(() => dispatchRef.current(a)) };
+}
+
+/** Total digits shown in `.quiz-count` ("... N of TOTAL — purpose"),
+ *  language-agnostic (just extracts the last run of digits). */
+function displayedTotal(container: HTMLElement): number {
+  const text = container.querySelector('.quiz-count')!.textContent!;
+  const numbers = text.match(/\d+/g)!;
+  return Number(numbers[numbers.length - 1]);
 }
 
 function selectFirstOption() {
@@ -151,6 +192,82 @@ describe('Quiz — Phase 15 adaptive navigation (tourism bank, real reducer + ad
     clickNext();
     const changePurposeBtn = Array.from(container.querySelectorAll('button')).find((b) => b.textContent?.includes('تغيير الغرض'));
     expect(changePurposeBtn).toBeTruthy();
+  });
+});
+
+describe('Quiz — Phase 16.5 question elimination (real reducer + adaptive engine, no mocks)', () => {
+  it('QUESTION REDUCTION: two dimensions confirmed via natural-language interpretation are never shown, and the interview ends after exactly 6 (8 - 2) real questions', () => {
+    const { container, dispatch } = renderQuizExposingDispatch();
+    // Simulate NaturalPreferenceInput's "Apply" for two dimensions —
+    // real production shape (provenance:'ai_interpreted'), never
+    // walked through the UI.
+    dispatch({ type: 'SET_ANSWER', questionId: 'climate', value: 'cold', provenance: 'ai_interpreted' });
+    dispatch({ type: 'SET_ANSWER', questionId: 'naturecity', value: 90, provenance: 'ai_interpreted' });
+
+    const visitedHeadings: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      const heading = container.querySelector('.q-text');
+      if (!heading) break; // navigated to /results
+      visitedHeadings.push(heading.textContent!);
+      const options = screen.getAllByRole('radio');
+      fireEvent.click(options[0]);
+      fireEvent.click(quizNav().querySelector('.btn-primary')!);
+    }
+
+    const climateText = QUESTION_BANKS.tourism.find((q) => q.id === 'climate')!.text.ar;
+    const natureText = QUESTION_BANKS.tourism.find((q) => q.id === 'naturecity')!.text.ar;
+    expect(visitedHeadings).not.toContain(climateText);
+    expect(visitedHeadings).not.toContain(natureText);
+    expect(visitedHeadings).toHaveLength(6); // 8 real questions - 2 satisfied up front
+    expect(screen.getByText('RESULTS_PAGE')).toBeInTheDocument();
+  });
+
+  it('DYNAMIC PROGRESS: the displayed total shrinks as soon as a dimension is confirmed via interpretation', () => {
+    const { container, dispatch } = renderQuizExposingDispatch();
+    expect(displayedTotal(container)).toBe(8);
+    dispatch({ type: 'SET_ANSWER', questionId: 'climate', value: 'cold', provenance: 'ai_interpreted' });
+    expect(displayedTotal(container)).toBe(7);
+    dispatch({ type: 'SET_ANSWER', questionId: 'naturecity', value: 90, provenance: 'ai_interpreted' });
+    expect(displayedTotal(container)).toBe(6);
+  });
+
+  it('RESTORE: removing a confirmed interpretation (REMOVE_AI_ANSWER) brings its question back into the remaining interview', () => {
+    const { container, dispatch } = renderQuizExposingDispatch();
+    dispatch({ type: 'SET_ANSWER', questionId: 'climate', value: 'cold', provenance: 'ai_interpreted' });
+    expect(displayedTotal(container)).toBe(7);
+
+    dispatch({ type: 'REMOVE_AI_ANSWER', questionId: 'climate' });
+    expect(displayedTotal(container)).toBe(8); // truthful denominator restored too
+
+    const visitedHeadings: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      const heading = container.querySelector('.q-text');
+      if (!heading) break;
+      visitedHeadings.push(heading.textContent!);
+      const options = screen.getAllByRole('radio');
+      fireEvent.click(options[0]);
+      fireEvent.click(quizNav().querySelector('.btn-primary')!);
+    }
+    const climateText = QUESTION_BANKS.tourism.find((q) => q.id === 'climate')!.text.ar;
+    expect(visitedHeadings).toContain(climateText); // it's back
+    expect(visitedHeadings).toHaveLength(8); // full bank again, nothing eliminated
+  });
+
+  it('never gets stuck on the final question once elimination shrinks the real question count below the fixed bank size', () => {
+    // Regression for the exact bug this phase could have introduced:
+    // completion logic must track the REAL remaining questions, not a
+    // fixed `total`, or the app would loop forever re-clicking Next on
+    // the last real question once elimination happens.
+    const { container, dispatch } = renderQuizExposingDispatch();
+    dispatch({ type: 'SET_ANSWER', questionId: 'climate', value: 'cold', provenance: 'ai_interpreted' });
+    dispatch({ type: 'SET_ANSWER', questionId: 'naturecity', value: 90, provenance: 'ai_interpreted' });
+    for (let i = 0; i < 6; i++) {
+      const options = screen.getAllByRole('radio');
+      fireEvent.click(options[0]);
+      fireEvent.click(quizNav().querySelector('.btn-primary')!);
+    }
+    expect(screen.getByText('RESULTS_PAGE')).toBeInTheDocument();
+    expect(container.querySelector('.q-text')).toBeNull(); // moved on, not stuck
   });
 });
 

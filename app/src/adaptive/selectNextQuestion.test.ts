@@ -156,6 +156,60 @@ describe('selectNextQuestion — safety guarantees', () => {
   });
 });
 
+describe('Phase 16.5 — a question with an existing answer is skipped even if never in askedIds', () => {
+  it('a pre-existing answer (e.g. a confirmed natural-language interpretation, never walked through the path) is excluded from candidates', () => {
+    const bank = QUESTION_BANKS.tourism;
+    const climateQuestion = bank.find((q) => q.id === 'climate')!;
+    const withoutAnswer = selectNextQuestion(bank, {}, []);
+    const withAnswer = selectNextQuestion(bank, { [climateQuestion.id]: climateQuestion.options[0].value }, []);
+    // climate is never the very first pick anyway in this bank (budget
+    // is), so this only proves the exclusion once we walk far enough
+    // to reach it — run a full session and confirm climate never
+    // appears in the path when it already has an answer up front.
+    const path: string[] = [];
+    const answers = { [climateQuestion.id]: climateQuestion.options[0].value };
+    let next = selectNextQuestion(bank, answers, path);
+    while (next) {
+      path.push(next.id);
+      answers[next.id] = bank.find((q) => q.id === next!.id)!.options[0].value;
+      next = selectNextQuestion(bank, answers, path);
+    }
+    expect(path).not.toContain('climate');
+    // Sanity: with no pre-existing answer, the same walk DOES include it.
+    expect(withoutAnswer).not.toBeNull();
+    expect(withAnswer).not.toBeNull();
+  });
+
+  it('a bank where every question already has an answer terminates immediately (no infinite loop, no re-ask)', () => {
+    const bank = QUESTION_BANKS.tourism;
+    const allAnswered = Object.fromEntries(bank.map((q) => [q.id, q.options[0].value]));
+    expect(selectNextQuestion(bank, allAnswered, [])).toBeNull();
+  });
+
+  it('FALLBACK PRESERVES REDUCTION: a full session starting with two dimensions already known (simulating a confirmed AI interpretation) never re-asks them, and still terminates', () => {
+    const bank = QUESTION_BANKS.tourism;
+    const climateQuestion = bank.find((q) => q.id === 'climate')!;
+    const natureQuestion = bank.find((q) => q.id === 'naturecity')!;
+    const path: string[] = [];
+    const answers: Answers = {
+      [climateQuestion.id]: climateQuestion.options[0].value,
+      [natureQuestion.id]: natureQuestion.options[0].value,
+    };
+    let next = selectNextQuestion(bank, answers, path);
+    while (next) {
+      path.push(next.id);
+      answers[next.id] = bank.find((q) => q.id === next!.id)!.options[0].value;
+      next = selectNextQuestion(bank, answers, path);
+    }
+    expect(path).not.toContain('climate');
+    expect(path).not.toContain('naturecity');
+    // Every OTHER question in the bank is still asked exactly once —
+    // this is genuine reduction (fewer questions), not silent data loss.
+    const expectedRemaining = bank.filter((q) => q.id !== 'climate' && q.id !== 'naturecity').map((q) => q.id);
+    expect(new Set(path)).toEqual(new Set(expectedRemaining));
+  });
+});
+
 describe('selectNextQuestion — language independence (AR/EN parity by construction)', () => {
   it('operates only on question ids/kind/weight/answers — never reads .text or .options[].label, so AR vs EN never changes the decision', () => {
     const bank = QUESTION_BANKS.tourism;

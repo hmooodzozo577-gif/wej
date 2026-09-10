@@ -2,14 +2,31 @@
 // layer, completely separate from src/engine/ (Phase 14 scoring/
 // ranking, which this module never imports from and never calls) —
 // see this directory's README.md for the full audit this was built on
-// and why reordering (not skipping) was chosen.
+// and why reordering (not skipping) was chosen for a question that is
+// genuinely still unknown.
+//
+// Phase 16.5 — a question whose id ALREADY has an answer (regardless
+// of `askedIds`) is now excluded from the candidates too — see the
+// `answers[q.id] === undefined` filter below. This is deliberately
+// NOT the same thing Phase 15's own README warned against ("fabricate
+// irrelevance to fake adaptivity"): Phase 15 never left a question
+// with a real, already-known value; it only ever offered UNANSWERED
+// questions in a smarter order. Phase 16.5 adds exactly one new fact
+// this function can now observe — a question answered via a confirmed
+// natural-language interpretation (never walked through `askedIds`,
+// see state/types.ts's AnswerProvenance) is genuinely, legitimately
+// already known, the same way a directly-answered one is. Skipping a
+// question whose answer already exists is not fake adaptivity; asking
+// it again despite already knowing the answer would be the fake
+// (redundant) behavior.
 //
 // Contract: given a purpose's full question bank, the answers given so
 // far, and which question ids have already been shown, returns the
 // single next question to ask, or `null` once every question in the
-// bank has been asked. Same inputs -> same output, always: no
-// randomness, no timestamps, no dependency on object/Map iteration
-// order (arrays and explicit index lookups only), no network, no AI.
+// bank has either been asked or already has an answer. Same inputs ->
+// same output, always: no randomness, no timestamps, no dependency on
+// object/Map iteration order (arrays and explicit index lookups
+// only), no network, no AI.
 import type { Question } from '../data/types';
 // Type-only import — zero runtime coupling to engine/ (Phase 14). This
 // module never calls scoreDestination/rankDestinations and never will;
@@ -71,11 +88,15 @@ function priority(q: Question, avgImportance: number | null): number {
  *    (every candidate's index is read from the SAME `bank` array
  *    passed in, not recomputed from a Set/Map).
  *
- * Never skips a real (non-flavor) question — every one is returned
- * eventually; this is a REORDER, not a SKIP. */
+ * Never skips a real (non-flavor) question that is still UNANSWERED —
+ * every one of those is returned eventually; among the still-unknown
+ * dimensions this is a REORDER, not a fabricated skip. A question
+ * that already has an answer (Phase 16.5: direct or confirmed
+ * ai_interpreted) is the one legitimate exception — see the module
+ * doc comment above. */
 export function selectNextQuestion(bank: Question[], answers: Answers, askedIds: string[]): Question | null {
   const askedSet = new Set(askedIds);
-  const remaining = bank.filter((q) => !askedSet.has(q.id));
+  const remaining = bank.filter((q) => !askedSet.has(q.id) && answers[q.id] === undefined);
   if (remaining.length === 0) return null;
 
   const flavorRemaining = remaining.filter((q) => q.kind === 'flavor');

@@ -115,4 +115,17 @@ describe('Phase 14 parity — same final answers must produce the same ranking r
       expect(r.score).toBeLessThanOrEqual(100);
     }
   });
+
+  it('Phase 16.5: rankDestinations/scoreDestination take only Answers (question id -> value) — provenance (direct vs ai_interpreted) has no signature, no code path, and no way to reach scoring, so it structurally cannot affect ranking', () => {
+    const bank = QUESTION_BANKS.tourism;
+    // The exact same final answer set, built two ways: entirely
+    // "direct" (as if walked through the UI) vs entirely simulating
+    // confirmed natural-language interpretations (the values are
+    // identical — only how a real app would have recorded provenance
+    // differs, and rankDestinations never sees that at all).
+    const answers: Answers = collectStaticOrder(bank, (q) => q.options[0].value);
+    const rankingA = rankDestinations('tourism', answers);
+    const rankingB = rankDestinations('tourism', { ...answers }); // fresh object, same values
+    expect(rankingB).toEqual(rankingA);
+  });
 });

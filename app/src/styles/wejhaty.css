@@ -394,6 +394,12 @@
    components (textarea, checkbox proposal rows, the "AI-enhanced" badge)
    get their own rules here. Deliberately small: this is not a Results/
    Quiz redesign. */
+.ai-interpret-subtitle {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
 .ai-interpret-textarea {
   width: 100%;
   box-sizing: border-box;
@@ -433,6 +439,57 @@
   gap: 8px;
   padding: 6px 0;
   cursor: pointer;
+}
+.ai-interpret-low-confidence {
+  font-size: 0.72rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+/* Phase 16.5 — the persistent "already accounted for" list. Reuses the
+   same card the textarea/proposals live in (one coherent interview,
+   not a separate widget) — see NaturalPreferenceInput.tsx. */
+.ai-satisfied-list {
+  margin-top: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.ai-satisfied-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--teal);
+}
+.ai-satisfied-subtitle {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 2px 0 8px;
+}
+.ai-satisfied-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--bg, #f6f4ef);
+  border-radius: var(--radius-md, 10px);
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+.ai-satisfied-remove {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.ai-satisfied-remove:hover {
+  color: inherit;
 }
 .ai-badge {
   display: inline-block;

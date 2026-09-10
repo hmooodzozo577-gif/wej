@@ -10,6 +10,17 @@
 // full audit/design this was built on. The reducer stays a pure
 // function — selectNextQuestion() is itself pure/deterministic, no side
 // effects introduced here.
+//
+// Phase 16.5 — a confirmed natural-language interpretation now calls
+// SET_ANSWER with provenance:'ai_interpreted' (see
+// components/NaturalPreferenceInput.tsx) instead of ever walking
+// through that question — selectNextQuestion.ts now skips any
+// question whose id already has ANY answer (not just already-asked
+// ones), so an interpreted answer genuinely removes its question from
+// the remaining interview. `state.satisfaction` records provenance
+// per question id purely for the UI (the "already accounted for"
+// list and its remove control) — Phase 14 never reads it, only
+// `answers`' final values, so this cannot affect ranking.
 import type { AppAction, AppState } from './types';
 import { QUESTION_BANKS } from '../data/questionBanks';
 import { selectNextQuestion } from '../adaptive';
@@ -20,6 +31,7 @@ export const initialAppState: AppState = {
   qIndex: 0,
   path: [],
   answers: {},
+  satisfaction: {},
   results: null,
   explore: { q: '', region: '', purpose: '', cost: '' },
   location: { status: 'idle', coords: null },
@@ -41,7 +53,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, lang: action.lang };
 
     case 'START_QUIZ':
-      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, results: null, path: initialPath(action.purpose) };
+      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, satisfaction: {}, results: null, path: initialPath(action.purpose) };
 
     case 'PRESELECT_PURPOSE':
       return { ...state, purpose: action.purpose };
@@ -50,14 +62,15 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     // URL) with no in-progress quiz for that purpose: start fresh, same as
     // clicking the purpose card would.
     case 'SYNC_QUIZ_PURPOSE':
-      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, results: null, path: initialPath(action.purpose) };
+      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, satisfaction: {}, results: null, path: initialPath(action.purpose) };
 
     case 'SET_ANSWER': {
-      const { questionId, value } = action;
+      const { questionId, value, provenance = 'direct' } = action;
       const valueChanged = state.answers[questionId] !== value;
       const pos = state.path.indexOf(questionId);
       const isPastQuestion = pos !== -1 && pos < state.path.length - 1;
       const answers = { ...state.answers, [questionId]: value };
+      const satisfaction = { ...state.satisfaction, [questionId]: provenance };
 
       // Back / changed-answer behavior: the user navigated back to an
       // EARLIER question (not the current frontier) and picked a
@@ -68,13 +81,38 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       // an invalidated branch silently influencing the final result).
       // Re-selecting the SAME value, or editing the current frontier
       // question (nothing downstream exists yet), never truncates.
+      // An 'ai_interpreted' answer is never itself a past-path entry
+      // (see AppState.path's own doc comment), so this branch only
+      // ever fires for a 'direct' edit — unaffected by Phase 16.5.
       if (isPastQuestion && valueChanged) {
         const truncatedPath = state.path.slice(0, pos + 1);
         const staleIds = state.path.slice(pos + 1);
-        for (const id of staleIds) delete answers[id];
-        return { ...state, answers, path: truncatedPath, qIndex: pos };
+        for (const id of staleIds) {
+          delete answers[id];
+          delete satisfaction[id];
+        }
+        return { ...state, answers, satisfaction, path: truncatedPath, qIndex: pos };
       }
-      return { ...state, answers };
+      return { ...state, answers, satisfaction };
+    }
+
+    // Phase 16.5 — "un-apply" a confirmed AI-interpreted preference (the
+    // remove control on the "already accounted for" list). Refuses to
+    // touch anything not recorded as 'ai_interpreted' — a 'direct'
+    // answer (or one already overwritten by editing its own question
+    // directly) can never be cleared through this action, only through
+    // the normal question UI. The question was never in `path` (that's
+    // the entire point of an interpreted answer), so there is nothing
+    // to truncate: it simply becomes unknown again, and the next
+    // NEXT_QUESTION computation (selectNextQuestion, reading `answers`
+    // fresh) can offer it up as a real question once more.
+    case 'REMOVE_AI_ANSWER': {
+      if (state.satisfaction[action.questionId] !== 'ai_interpreted') return state;
+      const answers = { ...state.answers };
+      const satisfaction = { ...state.satisfaction };
+      delete answers[action.questionId];
+      delete satisfaction[action.questionId];
+      return { ...state, answers, satisfaction };
     }
 
     case 'NEXT_QUESTION': {
@@ -99,7 +137,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, results: action.results };
 
     case 'RESTART_ALL':
-      return { ...state, purpose: null, qIndex: 0, path: [], answers: {}, results: null };
+      return { ...state, purpose: null, qIndex: 0, path: [], answers: {}, satisfaction: {}, results: null };
 
     case 'SET_EXPLORE_FILTER':
       return { ...state, explore: { ...state.explore, [action.key]: action.value } };

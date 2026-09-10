@@ -10,6 +10,7 @@ import { ProgressBar } from '../components/ProgressBar';
 import { Icon } from '../components/Icon';
 import { rankDestinations } from '../engine';
 import { NaturalPreferenceInput } from '../components/NaturalPreferenceInput';
+import { selectNextQuestion } from '../adaptive';
 
 function isPurposeId(value: string | undefined): value is PurposeId {
   return !!value && Object.prototype.hasOwnProperty.call(QUESTION_BANKS, value);
@@ -37,19 +38,28 @@ export function Quiz() {
 
   const qz = t.quiz;
   const questions = QUESTION_BANKS[purposeParam];
-  const total = questions.length;
+  // Phase 16.5 — `total` can no longer be the fixed bank length: a
+  // confirmed natural-language interpretation genuinely REMOVES its
+  // question from the remaining interview (adaptive/selectNextQuestion.ts
+  // now skips any already-answered id), so the true number of
+  // questions the traveler will actually see shrinks. Truthful,
+  // recomputed-every-render denominator: bank size minus every
+  // dimension already satisfied by a confirmed interpretation that
+  // hasn't been walked through `path` — never less than `path.length`
+  // itself (questions already shown are never un-counted, even if
+  // more get satisfied afterward).
+  const aiSatisfiedNotInPath = questions.filter(
+    (qq) => state.satisfaction[qq.id] === 'ai_interpreted' && !state.path.includes(qq.id),
+  ).length;
+  const total = Math.max(questions.length - aiSatisfiedNotInPath, state.path.length, 1);
   const qIndex = Math.min(state.qIndex, total - 1);
   // Phase 15 — Adaptive Questions: the question actually shown at this
   // position is whichever id adaptive/selectNextQuestion.ts placed at
   // state.path[qIndex] (computed as the user progresses, one question
   // at a time — see reducer.ts), NOT questions[qIndex] by fixed array
-  // order. `total` (the progress denominator) stays questions.length —
-  // Phase 15 REORDERS the bank, it never skips a question, so every
-  // purpose's total question count is exactly what it was before this
-  // phase and "Question X of Y" remains truthful with no UI change.
-  // The questions[qIndex] fallback only matters for the one render
-  // tick between a purpose changing and SYNC_QUIZ_PURPOSE's effect
-  // populating state.path (see the effect above).
+  // order. The questions[qIndex] fallback only matters for the one
+  // render tick between a purpose changing and SYNC_QUIZ_PURPOSE's
+  // effect populating state.path (see the effect above).
   const q = questions.find((x) => x.id === state.path[qIndex]) ?? questions[qIndex];
   const progressPct = Math.round((qIndex / total) * 100 + (100 / total) * 0.15);
   const selected = state.answers[q.id];
@@ -69,12 +79,26 @@ export function Quiz() {
     if (qIndex > 0) dispatch({ type: 'PREV_QUESTION' });
   };
 
+  // Phase 16.5 — "is this the last question" can no longer be a fixed
+  // `qIndex < total - 1` comparison: `total` is now a truthful
+  // ESTIMATE (see above), not a guaranteed exact count, and
+  // overshooting it would call NEXT_QUESTION past the true end, where
+  // the reducer safely no-ops (see reducer.ts) — leaving the traveler
+  // stuck re-clicking "Next" on the final question forever. Determine
+  // the real answer the same way the reducer's own NEXT_QUESTION does:
+  // reuse a cached path entry if one exists, otherwise ask
+  // selectNextQuestion directly (state.answers already includes this
+  // question's own answer once selected — onSelect dispatches
+  // synchronously before Next can be clicked). Shared by the button
+  // label below and onNext's own decision, so they can never disagree.
+  const hasMoreQuestions = qIndex + 1 < state.path.length || selectNextQuestion(questions, state.answers, state.path) !== null;
+
   const onNext = () => {
     if (state.answers[q.id] === undefined) {
       setValidation(qz.validation);
       return;
     }
-    if (qIndex < total - 1) {
+    if (hasMoreQuestions) {
       dispatch({ type: 'NEXT_QUESTION' });
     } else {
       const results = rankDestinations(purposeParam, state.answers);
@@ -123,7 +147,7 @@ export function Quiz() {
           <Icon name="arrowStart" size={16} /> {qz.back}
         </button>
         <button type="button" className="btn btn-primary" onClick={onNext}>
-          {qIndex === total - 1 ? qz.seeResults : qz.next} <Icon name="arrowEnd" size={16} />
+          {hasMoreQuestions ? qz.next : qz.seeResults} <Icon name="arrowEnd" size={16} />
         </button>
       </div>
     </div>
