@@ -20,17 +20,28 @@ import type {
 // worker/src/index.ts's /api/ai/* routes, added alongside the existing
 // /api/travel/flights route — no second backend was created). Kept as
 // its own env var, per-concern, matching the convention
-// VITE_TRAVEL_WORKER_URL already established; once the Worker is
-// deployed, both variables would typically point at the same host.
-// Deliberately unset in this repository today: no AI provider is
-// configured (see worker/src/ai/provider.ts), so every function below
-// deterministically returns an 'unavailable' result with zero network
-// attempt.
+// VITE_TRAVEL_WORKER_URL already established. Set at build time in
+// .github/workflows/deploy-pages.yml to the real deployed Worker
+// origin — see SECRETS.md's Phase 16 section.
 const AI_WORKER_BASE_URL: string | undefined = import.meta.env.VITE_AI_WORKER_URL;
 
 const INTERPRET_ENDPOINT_PATH = '/api/ai/interpret-preferences';
 const EXPLAIN_ENDPOINT_PATH = '/api/ai/explain-recommendation';
-const REQUEST_TIMEOUT_MS = 15_000;
+// PRODUCTION-FAILURE FIX: a real user's browser request timed out here
+// (this constant was still 15s) even though the Worker's own AI-call
+// budget had already been raised to 30s in a prior pass — the browser
+// gave up and discarded the response before the Worker could ever
+// finish, collapsing to the generic "couldn't interpret" fallback.
+// Reproduced with a browser-equivalent request (production Origin,
+// real user's exact phrase, full question bank): the Worker itself
+// took 30.08s and several other real calls in the same investigation
+// exceeded even that. The Worker's own timeout
+// (worker/src/ai/cloudflareWorkersAiProvider.ts's RUN_TIMEOUT_MS) was
+// raised to 45s from that same evidence — this value MUST stay
+// strictly greater than that one, with margin for real network time,
+// or this exact failure returns. Keep the two in sync by hand (the
+// two packages don't share code — see that file's own comment).
+const REQUEST_TIMEOUT_MS = 50_000;
 
 // Mirrors worker/src/ai/validate.ts's limits — client-side pre-check so
 // an obviously oversized request never reaches the network, same

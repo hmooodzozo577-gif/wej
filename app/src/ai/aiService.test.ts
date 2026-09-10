@@ -127,6 +127,35 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     await expect(interpretPreferences('en', 'somewhere cold', questions)).resolves.toMatchObject({ status: 'error' });
   });
 
+  it('REGRESSION (real production failure): a slow-but-real Worker response (~45s, matching observed real Worker/model latency) still succeeds — the frontend timeout must not fire before the Worker has a chance to finish', async () => {
+    // A real production request with this exact phrase/bank shape
+    // measured the deployed Worker taking 30+s; the frontend's own
+    // timeout was still 15s at the time, discarding every real
+    // response before it could arrive. This proves the fix: a
+    // response arriving well past the OLD 15s cutoff, but before the
+    // current REQUEST_TIMEOUT_MS, still resolves as 'ok'.
+    vi.useFakeTimers();
+    const fetchSpy = vi.fn().mockImplementation((_url: string, init: RequestInit) => {
+      return new Promise((resolve, reject) => {
+        const timer = setTimeout(
+          () => resolve({ ok: true, status: 200, json: async () => ({ interpreted: [], unmapped: [] }) }),
+          45_000,
+        );
+        init.signal?.addEventListener('abort', () => {
+          clearTimeout(timer);
+          reject(new DOMException('Aborted', 'AbortError'));
+        });
+      });
+    });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { interpretPreferences } = await import('./aiService');
+    const pending = interpretPreferences('en', 'somewhere cold', questions);
+    const assertion = expect(pending).resolves.toEqual({ status: 'ok', interpreted: [], unmapped: [] });
+    await vi.advanceTimersByTimeAsync(45_000);
+    await assertion;
+    vi.useRealTimers();
+  });
+
   it('explainRecommendation posts to /api/ai/explain-recommendation and returns validated explanation content', async () => {
     const fetchSpy = vi.fn().mockResolvedValue({
       ok: true,

@@ -94,7 +94,22 @@ describe('createCloudflareWorkersAiProvider — response parsing', () => {
     const ai = fakeAi(() => new Promise(() => {})); // never resolves
     const pending = createCloudflareWorkersAiProvider(ai).interpretPreferences(interpretReq);
     const assertion = expect(pending).rejects.toBeInstanceOf(AiTimeoutError);
-    await vi.advanceTimersByTimeAsync(35_000);
+    await vi.advanceTimersByTimeAsync(50_000);
+    await assertion;
+    vi.useRealTimers();
+  });
+
+  it('REGRESSION (production-failure fix): a call resolving just under the 45s budget still succeeds — the timeout must not fire prematurely', async () => {
+    vi.useFakeTimers();
+    const ai = fakeAi(
+      () =>
+        new Promise((resolve) => {
+          setTimeout(() => resolve(chatResult({ interpreted: [], unmapped: [] })), 40_000);
+        }),
+    );
+    const pending = createCloudflareWorkersAiProvider(ai).interpretPreferences(interpretReq);
+    const assertion = expect(pending).resolves.toEqual({ interpreted: [], unmapped: [] });
+    await vi.advanceTimersByTimeAsync(40_000);
     await assertion;
     vi.useRealTimers();
   });

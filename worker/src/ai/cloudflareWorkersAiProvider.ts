@@ -36,14 +36,27 @@ import type {
  *  two evaluated for this specific interpret/explain workload). */
 export const WORKERS_AI_MODEL = '@cf/google/gemma-4-26b-a4b-it';
 
-// Deployment smoke test (see the final report's "Live Smoke Tests"
-// section) measured real gemma-4-26b-a4b-it latency: a 2-question
-// prompt completed in ~14s, several 3-question prompts exceeded an
-// original 15s budget and were cut off by this exact timeout — a
-// real, repository-side latency-budget bug (never a model-quality
-// problem), fixed here rather than by abandoning the model. 30s
-// leaves real margin above the slowest observed real call.
-const RUN_TIMEOUT_MS = 30_000;
+// Real gemma-4-26b-a4b-it latency, measured twice against the live
+// deployed Worker (never guessed): a first pass found calls exceeding
+// an original 15s budget, raised to 30s; a second pass (production-
+// failure investigation, browser-equivalent request, the exact real
+// user's Arabic phrase and full 8-question tourism bank) STILL hit
+// this exact 30s ceiling at 30.08s wall-clock, and several later
+// calls in that same run — including small 2-question prompts —
+// also exceeded 30s. Latency is genuinely variable, not merely
+// "sometimes a bit slow"; 30s was not a safe ceiling. 45s leaves
+// real headroom above every observed real call across both
+// measurement passes (worst case ~30s at the point curl cut it off).
+//
+// IMPORTANT — this value is a floor for app/src/ai/aiService.ts's
+// own REQUEST_TIMEOUT_MS: the frontend's fetch must never abort
+// BEFORE the Worker's own internal budget expires, or the frontend
+// discards a response the Worker would still have delivered (this
+// was the actual root cause of a real production failure — the
+// frontend timeout was left at its own old, shorter value while this
+// one was raised). If this constant changes, aiService.ts's timeout
+// must be raised to at least match it, with margin for network time.
+const RUN_TIMEOUT_MS = 45_000;
 
 // JSON Schema (Cloudflare Workers AI JSON Mode: response_format:
 // {type:"json_schema", json_schema:{name, schema}}) constrains what
