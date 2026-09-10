@@ -70,16 +70,51 @@ function parseArgs(argv) {
   return args;
 }
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Wraps fetch() with exponential-backoff retry on 429/5xx — the full
+ *  194-country run's first real attempt found Commons rate-limiting
+ *  (HTTP 429) a large tail of the catalog once requests had been
+ *  running for a few minutes straight with no backoff at all (see the
+ *  final report's "Network Test" section). Honors a numeric
+ *  Retry-After header when Commons sends one; otherwise backs off
+ *  2s/4s/8s/16s. Not retried: any non-429/5xx error (e.g. a genuine
+ *  404) — retrying those would just waste the country's attempt
+ *  budget on an error that will never resolve. */
+async function fetchWithRetry(url, options, { maxAttempts = 5 } = {}) {
+  let lastErr;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (attempt > 0) {
+      const res = lastErr?.res;
+      const retryAfterHeader = res?.headers?.get?.('retry-after');
+      const retryAfterMs = retryAfterHeader && !Number.isNaN(Number(retryAfterHeader)) ? Number(retryAfterHeader) * 1000 : null;
+      await sleep(retryAfterMs ?? 2000 * 2 ** (attempt - 1));
+    }
+    const res = await fetch(url, options);
+    if (res.ok) return res;
+    if (res.status === 429 || res.status >= 500) {
+      lastErr = { res, message: `HTTP ${res.status}` };
+      continue;
+    }
+    return res; // non-retryable status — let the caller's own !res.ok handling report it
+  }
+  return lastErr.res;
+}
+
 async function searchCommons(query) {
+  // A small fixed delay before every search call, not just on retry —
+  // proactively spaces requests out across a long --all run instead of
+  // only reacting after Commons has already started rate-limiting.
+  await sleep(300);
   const searchUrl = `${COMMONS_API}?action=query&format=json&list=search&srnamespace=6&srlimit=6&srsearch=${encodeURIComponent(query)}`;
-  const searchRes = await fetch(searchUrl, { headers: { 'User-Agent': USER_AGENT } });
+  const searchRes = await fetchWithRetry(searchUrl, { headers: { 'User-Agent': USER_AGENT } });
   if (!searchRes.ok) throw new Error(`Commons search HTTP ${searchRes.status}`);
   const searchJson = await searchRes.json();
   const titles = (searchJson.query?.search || []).map((r) => r.title);
   if (titles.length === 0) return [];
 
   const infoUrl = `${COMMONS_API}?action=query&format=json&prop=imageinfo&iiprop=url|size|mime|extmetadata&titles=${encodeURIComponent(titles.join('|'))}`;
-  const infoRes = await fetch(infoUrl, { headers: { 'User-Agent': USER_AGENT } });
+  const infoRes = await fetchWithRetry(infoUrl, { headers: { 'User-Agent': USER_AGENT } });
   if (!infoRes.ok) throw new Error(`Commons imageinfo HTTP ${infoRes.status}`);
   const infoJson = await infoRes.json();
   const pages = Object.values(infoJson.query?.pages || {});
@@ -107,7 +142,7 @@ async function searchCommons(query) {
 }
 
 async function downloadBuffer(url) {
-  const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT } });
+  const res = await fetchWithRetry(url, { headers: { 'User-Agent': USER_AGENT } });
   if (!res.ok) throw new Error(`download HTTP ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
 }
@@ -298,6 +333,25 @@ async function main() {
     const finalManifest = [...preserved, ...newEntries].sort((a, b) => a.iso2.localeCompare(b.iso2));
     fs.writeFileSync(MANIFEST_PATH, JSON.stringify(finalManifest, null, 2) + '\n');
     console.log(`\nWrote manifest (${finalManifest.length} entries) to ${MANIFEST_PATH}`);
+
+    // Orphan-file cleanup: a country that was RE-TARGETED this run but
+    // failed (network/relevance/etc.) has no manifest entry after the
+    // write above — but a prior successful run may have left its old
+    // .webp asset on disk. An asset with no manifest entry is exactly
+    // the "missing attribution / untracked file" class of bug the
+    // required quality audit checks for, so remove it here rather than
+    // leaving it to be found (and manually cleaned up) after the fact.
+    const finalIso2 = new Set(finalManifest.map((e) => e.iso2.toLowerCase()));
+    if (fs.existsSync(ASSETS_DIR)) {
+      for (const file of fs.readdirSync(ASSETS_DIR)) {
+        if (!file.endsWith('.webp')) continue;
+        const iso2 = file.slice(0, -'.webp'.length);
+        if (targetIso2.has(iso2.toUpperCase()) && !finalIso2.has(iso2)) {
+          fs.unlinkSync(path.join(ASSETS_DIR, file));
+          console.log(`Removed orphaned asset (re-targeted but failed this run): ${file}`);
+        }
+      }
+    }
   }
 }
 
