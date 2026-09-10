@@ -200,10 +200,12 @@ export function Destination() {
                 </div>
               </div>
               {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
-              <TravelInfo destination={d} />
-              <AccommodationInfo destination={d} />
-              <TravelCostIndexInfo destination={d} />
-              <TourismInsights destination={d} />
+              <div className="info-cards-grid">
+                <TravelInfo destination={d} />
+                <AccommodationInfo destination={d} />
+                <TravelCostIndexInfo destination={d} />
+                <TourismInsights destination={d} />
+              </div>
             </div>
           </div>
         </div>
@@ -357,10 +359,12 @@ export function Destination() {
               <p>{cities}</p>
             </div>
             {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
-            <TravelInfo destination={d} />
-            <AccommodationInfo destination={d} />
-            <TravelCostIndexInfo destination={d} />
-            <TourismInsights destination={d} />
+            <div className="info-cards-grid">
+              <TravelInfo destination={d} />
+              <AccommodationInfo destination={d} />
+              <TravelCostIndexInfo destination={d} />
+              <TourismInsights destination={d} />
+            </div>
           </div>
         </div>
       </div>

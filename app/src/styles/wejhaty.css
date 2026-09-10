@@ -16,3 +16,33 @@
 .top-pick {
   text-decoration: none;
 }
+
+/* --- Destination page: responsive info-card grid (targeted layout fix,
+   not a redesign) ---------------------------------------------------------
+   Travel / Accommodation / Travel Cost Index / Tourism Insights previously
+   rendered as plain stacked siblings inside .detail-grid's already-narrow
+   sidebar column (1fr of a 2fr/1fr split — see routes/Destination.tsx),
+   so on wide screens they were squeezed into one narrow strip while the
+   rest of the page had headroom. This wraps just those four cards in a
+   container-query-based 2-column grid: it activates based on the actual
+   rendered width of THIS wrapper (not the viewport), so it correctly
+   handles both a wide desktop (where the sidebar column is still fairly
+   wide) and .detail-grid's own 860px collapse to one full-width column
+   (which can then itself be wide enough on a tablet). Falls back to the
+   existing single-column stack in browsers without container query
+   support (Chrome/Firefox/Safari have all supported it since 2023) — pure
+   progressive enhancement, never a broken layout. */
+.info-cards-grid {
+  container-type: inline-size;
+}
+@container (min-width: 560px) {
+  .info-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 20px;
+  }
+  .info-cards-grid > .detail-card {
+    margin-bottom: 0;
+  }
+}
