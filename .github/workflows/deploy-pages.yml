@@ -11,6 +11,7 @@ on:
     paths:
       - 'app/**'
       - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -20,6 +21,17 @@ permissions:
 concurrency:
   group: pages
   cancel-in-progress: true
+
+# Public Worker origin (never a secret — see SECRETS.md's Phase 16
+# section) that serves BOTH the travel and AI endpoints (one deployed
+# Cloudflare Worker, see worker/wrangler.toml's `name`). Prefers a
+# repository Variable named WORKER_URL (Settings -> Actions ->
+# Variables) if one is ever configured there — the single source of
+# truth without editing this file — and falls back to the literal
+# origin `deploy-worker.yml`'s own `wrangler deploy` step reported on
+# its first real deployment.
+env:
+  WORKER_URL: ${{ vars.WORKER_URL || 'https://wejhaty-travel-worker.hmooodzozo577.workers.dev' }}
 
 jobs:
   build:
@@ -42,6 +54,9 @@ jobs:
       - name: Build
         working-directory: app
         run: npm run build
+        env:
+          VITE_AI_WORKER_URL: ${{ env.WORKER_URL }}
+          VITE_TRAVEL_WORKER_URL: ${{ env.WORKER_URL }}
 
       - name: SPA fallback (404.html = copy of index.html)
         working-directory: app
