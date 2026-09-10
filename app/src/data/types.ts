@@ -351,6 +351,13 @@ export interface DetailStrings {
   languages: string;
   callingCode: string;
   borders: string;
+  /** Hero-image correction pass — compact photo-attribution disclosure
+   *  (the Hero background image itself carries no alt text, so this is
+   *  the only accessible place source/author/license live). */
+  photoInfo: string;
+  photoSource: string;
+  photoAuthor: string;
+  photoLicense: string;
 }
 
 export interface ExploreStrings {

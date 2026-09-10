@@ -7,8 +7,13 @@
 // hardcoded JSX condition (`if (country === 'Saudi Arabia')`) and
 // deliberately NOT requiring a code change to add a country — a future
 // ingestion run that can reach an image host only needs to add an entry
-// to the generated JSON; this file and DestinationVisual.tsx already
-// handle it.
+// to the generated JSON; this file and DestinationHero.tsx/
+// HeroPhotoAttribution.tsx already handle it.
+//
+// Hero-image correction pass: the real photo is now the Destination
+// Hero's own CSS background (see DestinationHero.tsx) instead of a
+// separate sidebar card — the data layer here is unchanged, only its
+// consumer moved.
 //
 // LANDMARK IMAGE — POPULATED via GitHub Actions (network-enabled CI
 // runner), not this Claude sandbox: commons.wikimedia.org/
@@ -34,6 +39,14 @@ export interface DestinationVisualMeta {
   attributionEn?: string;
   attributionAr?: string;
   attributionUrl?: string;
+  /** Hero-image correction pass — structured fields (verified, straight
+   *  from the manifest entry, never invented) for the compact photo-info
+   *  disclosure's separate Source/Author/License rows. `landmarkName` is
+   *  also the only place the real landmark identity survives once the
+   *  photo is a CSS background instead of an <img alt="…">. */
+  landmarkName: string;
+  author: string | null;
+  license: string;
 }
 
 interface DestinationImageManifestEntry {
@@ -92,6 +105,13 @@ const DEPLOY_BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 export const DESTINATION_VISUALS: Record<string, DestinationVisualMeta> = Object.fromEntries(
   (destinationImages as DestinationImageManifestEntry[]).map((entry) => [
     entry.iso2,
-    { imagePath: `${DEPLOY_BASE}${entry.localPath}`, ...buildAltText(entry), ...buildAttribution(entry) },
+    {
+      imagePath: `${DEPLOY_BASE}${entry.localPath}`,
+      landmarkName: entry.landmarkName,
+      author: entry.author,
+      license: entry.license,
+      ...buildAltText(entry),
+      ...buildAttribution(entry),
+    },
   ]),
 );

@@ -27,6 +27,10 @@ export const EN: I18nDict = {
     languages: 'Languages',
     callingCode: 'Calling Code',
     borders: 'Borders',
+    photoInfo: 'Photo info',
+    photoSource: 'Source',
+    photoAuthor: 'Author',
+    photoLicense: 'License',
   },
   // Phase 12 — Location Personalization. Not part of the original
   // wejhaty.html copy (this feature didn't exist there), so it's a plain

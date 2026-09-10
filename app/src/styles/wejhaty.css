@@ -90,7 +90,7 @@
   }
 }
 
-/* --- Landscape-only packing for Overview / Why / Strengths / Weaknesses /
+/* --- Landscape-only packing for Overview / Strengths / Weaknesses /
    Best-For (routes/Destination.tsx, full-destination branch only) --------
    Real user visual QA: these cards often hold only a short paragraph or
    a handful of pills, but each occupied the FULL main-column width —
@@ -110,30 +110,48 @@
    width signal would have gotten portrait vs. landscape backwards. A
    plain viewport-width media query, matching the SAME 861px breakpoint
    where .detail-grid itself splits into sidebar+main, correctly tracks
-   what "landscape/sufficiently wide" means here: exactly when a large
-   main column exists alongside a narrower sidebar, which is the actual
-   condition that made these cards' full-width sizing wasteful.
+   what "landscape/sufficiently wide" means here.
 
-   No named grid-template-areas: plain DOM-order auto-placement is
-   enough (nothing spans or reorders), which keeps reading/DOM order
-   trivially correct under RTL with no extra work. 2 columns at the
-   .detail-grid breakpoint (main column ~525-737px there); 3 once the
-   main column is reliably wide enough (.container's own 1180px cap,
-   main column stabilizes at ~737px beyond that point). */
+   Landscape correction pass (real user visual review of production):
+   this grid previously switched to 3 columns at 1180px, which packed
+   Overview/Strengths/Weaknesses onto one row and left Best For alone
+   on a second row — an explicitly rejected layout. FIXED, PERMANENTLY:
+   there is no 1180px (or any other) column-count override anywhere in
+   this file anymore — 2 columns is the only landscape state this grid
+   ever has, at every supported width (1024/1180/1280/1366/1440).
+   Named `grid-template-areas` (not plain DOM-order auto-placement)
+   pins Overview+Strengths to row 1 and Weaknesses+BestFor to row 2
+   explicitly, keyed off each card's own class
+   (.overview-card/.strengths-card/.weaknesses-card/.bestfor-card,
+   routes/Destination.tsx) — so even a future DOM reorder can't
+   regenerate the orphan; auto-placement is never in the loop. RTL:
+   still no per-direction code needed — grid-template-areas respects
+   `dir` the same way flow layout does, mirroring the two columns
+   without touching the template string. */
 @media (min-width: 861px) {
   .overview-cards-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'overview strengths'
+      'weaknesses bestfor';
     align-items: start;
     gap: 20px;
   }
   .overview-cards-grid > .detail-card {
     margin-bottom: 0;
   }
-}
-@media (min-width: 1180px) {
-  .overview-cards-grid {
-    grid-template-columns: 1fr 1fr 1fr;
+  .overview-cards-grid > .overview-card {
+    grid-area: overview;
+  }
+  .overview-cards-grid > .strengths-card {
+    grid-area: strengths;
+  }
+  .overview-cards-grid > .weaknesses-card {
+    grid-area: weaknesses;
+  }
+  .overview-cards-grid > .bestfor-card {
+    grid-area: bestfor;
   }
 }
 
@@ -259,25 +277,57 @@
   min-width: 0; /* allow the flex item to shrink below its chart's intrinsic width */
 }
 
-/* --- Landmark image (identity sidebar) -----------------------------------
-   Renders for any country with a real manifest entry (see
-   data/destinationVisuals.ts) — null (no box at all) otherwise, never a
-   broken image or placeholder. Fixed aspect-ratio box keeps layout
-   stable regardless of each source photo's native dimensions. */
-.destination-visual {
-  margin-bottom: 16px;
+/* --- Hero photo-info disclosure (Hero-image correction pass) -------------
+   The destination's real photo now lives as the Hero's own CSS
+   background (routes/Destination.tsx via DestinationHero.tsx) — a
+   background-image carries no alt text, so this compact, closed-by-
+   default <details> (rendered inside .detail-hero-inner, which already
+   sits above .detail-hero's dark overlay via z-index:1 — see
+   wejhaty.generated.css) is the only place source/author/license and
+   the real landmark identity survive. `.detail-hero-inner` is already
+   `flex-wrap:wrap` (wejhaty.generated.css) with two existing children
+   (the name block, the match/browse badge) that fill one row at their
+   natural width — flex-basis:100% here forces this THIRD child onto
+   its own line below them, still inside the same padded/z-indexed
+   block, without touching that existing two-item row at all. Styled
+   for the always-dark hero overlay (not `.tc-more-details`'s ink-on-
+   paper convention), so it stays legible over any photo brightness;
+   never visually competes with the name/match content above it. */
+.hero-photo-attribution {
+  flex: 1 0 100%;
+  font-size: 0.78rem;
 }
-.destination-visual-img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--radius-lg);
+.hero-photo-attribution > summary {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 600;
+  list-style: none;
 }
-.destination-visual-attribution {
-  margin-top: 4px;
-  font-size: 11px;
-  opacity: 0.6;
+.hero-photo-attribution > summary::-webkit-details-marker {
+  display: none;
+}
+.hero-photo-attribution-body {
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.75);
+  max-width: 420px;
+}
+.hero-photo-attribution-body p {
+  margin: 0 0 6px;
+}
+.hero-photo-attribution-body a {
+  color: var(--gold-2);
+}
+.hero-photo-attribution-body dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  margin: 0;
+}
+.hero-photo-attribution-body dt {
+  opacity: 0.75;
+}
+.hero-photo-attribution-body dd {
+  margin: 0;
 }
 
 /* --- Global location intro banner (Workstream C) ------------------------

@@ -60,15 +60,23 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     expect(sidebarColumn.contains(outer)).toBe(false);
   });
 
-  it('destination identity sidebar (first .detail-grid column) renders the DestinationVisual slot ahead of country facts, both branches', () => {
+  it('destination identity sidebar (first .detail-grid column) renders country facts, both branches — Hero-image pass: no image slot here anymore', () => {
     const full = renderAt('/destination/ksa');
     const basic = renderAt('/destination/eg');
-    // DestinationVisual renders null today (no licensed image registered
-    // — data/destinationVisuals.ts is empty), so this just guards that
-    // the sidebar column itself renders without error for both branches
-    // and CountryInfoCard-derived content is present in it.
     expect(full.container.querySelector('.detail-grid')).not.toBeNull();
     expect(basic.container.querySelector('.detail-grid')).not.toBeNull();
+    // Hero-image correction pass: the destination photo moved into the
+    // Hero (see Destination.hero.test.tsx) — the sidebar column itself
+    // must never contain an image element or a photo-attribution
+    // disclosure. See detail comparison there for why: rendering the
+    // same photo in both places was the exact behavior this pass
+    // removed.
+    const fullSidebar = full.container.querySelector('.detail-grid')!.children[0];
+    const basicSidebar = basic.container.querySelector('.detail-grid')!.children[0];
+    expect(fullSidebar.querySelector('img')).toBeNull();
+    expect(fullSidebar.querySelector('.hero-photo-attribution')).toBeNull();
+    expect(basicSidebar.querySelector('img')).toBeNull();
+    expect(basicSidebar.querySelector('.hero-photo-attribution')).toBeNull();
   });
 
   it('Tourism Insights card carries the full-span marker class alongside detail-card', async () => {
@@ -143,5 +151,37 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     expect(grid.querySelectorAll(':scope > .accommodation-card')).toHaveLength(1);
     expect(grid.querySelectorAll(':scope > .travel-cost-card')).toHaveLength(1);
     expect(grid.querySelectorAll(':scope > .tourism-insights-card')).toHaveLength(1);
+  });
+
+  it('each of the four compact cards carries its own grid-area class (overview/strengths/weaknesses/bestfor) — structural two-column placement, not positional auto-placement', () => {
+    const { container } = renderAt('/destination/ksa');
+    const grid = container.querySelector('.overview-cards-grid')!;
+    expect(grid.querySelector(':scope > .overview-card')).not.toBeNull();
+    expect(grid.querySelector(':scope > .strengths-card')).not.toBeNull();
+    expect(grid.querySelector(':scope > .weaknesses-card')).not.toBeNull();
+    expect(grid.querySelector(':scope > .bestfor-card')).not.toBeNull();
+  });
+
+  it('landscape correction pass REGRESSION: no 3-column (or any other >2-column) override of .overview-cards-grid remains anywhere in the stylesheet', async () => {
+    // jsdom has no real layout engine, so this can't measure computed
+    // columns — the meaningful, non-brittle guard here is against the
+    // exact CSS rule this pass removed ever coming back: a real user
+    // rejected the 3-column-at-1180px layout it produced (Overview/
+    // Strengths/Weaknesses on one row, Best For orphaned alone on a
+    // second). Reads the actual shipped stylesheet source rather than
+    // asserting a pixel value.
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const cssPath = path.join(import.meta.dirname, '..', 'styles', 'wejhaty.css');
+    const css = fs.readFileSync(cssPath, 'utf8');
+    // Isolate just the .overview-cards-grid rule blocks (there are two:
+    // the base 2-column declaration and its grid-area sub-rules) and
+    // confirm none of them ever sets more than 2 explicit columns.
+    const gridTemplateColumnsMatches = [...css.matchAll(/\.overview-cards-grid\s*\{[^}]*grid-template-columns:\s*([^;]+);/g)];
+    expect(gridTemplateColumnsMatches.length).toBeGreaterThan(0);
+    for (const m of gridTemplateColumnsMatches) {
+      const columnCount = m[1].trim().split(/\s+/).length;
+      expect(columnCount, `grid-template-columns: ${m[1]}`).toBe(2);
+    }
   });
 });

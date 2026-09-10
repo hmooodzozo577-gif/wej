@@ -27,8 +27,8 @@ import type {
   PurposeId,
 } from '../data/types';
 import { AccommodationInfo } from '../components/AccommodationInfo';
-import { DestinationVisual } from '../components/DestinationVisual';
-import { FlagBanner, FlagChip } from '../components/flags/FlagIcon';
+import { DestinationHero } from '../components/DestinationHero';
+import { FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
 import { TravelCostIndexInfo } from '../components/TravelCostIndexInfo';
 import { TourismInsights } from '../components/TourismInsights';
@@ -160,33 +160,28 @@ export function Destination() {
             </button>
           </div>
 
-          <div className="detail-hero flag-banner" style={{ backgroundImage: regionGradientCss(continent) }}>
-            <FlagBanner dest={d} lang={lang} />
-            <div className="detail-hero-inner">
-              <div>
-                <span className="name-flag">
-                  <FlagChip dest={d} width={38} height={28} />
-                  <h1 className="display">{nameOf(d, lang)}</h1>
-                </span>
-                <div className="sub">{t.regionLabels[continent]}</div>
-              </div>
+          <DestinationHero
+            d={d}
+            fallbackBackground={regionGradientCss(continent)}
+            subContent={t.regionLabels[continent]}
+            rightContent={
               <div className="detail-match" style={{ background: 'rgba(255,255,255,0.16)', color: '#fff' }}>
                 {dt.browse}
               </div>
-            </div>
-          </div>
+            }
+          />
 
           {/* Visual refinement pass: two-zone layout. First (now narrow,
               see .detail-grid's 1fr/2fr override in wejhaty.css) column
-              is the destination IDENTITY sidebar — landmark image (inert
-              until a licensed source exists), then country facts. Second
-              (now wide) column is MAIN — the simple overview a basic
-              country gets, plus the compact Travel/Accommodation/Travel
-              Cost row and Tourism Insights, nested here rather than as a
-              separate full-width section below the whole grid. */}
+              is the destination IDENTITY sidebar — country facts (the
+              landmark image, when one exists, now lives in the Hero
+              above instead — see DestinationHero.tsx). Second (now wide)
+              column is MAIN — the simple overview a basic country gets,
+              plus the compact Travel/Accommodation/Travel Cost row and
+              Tourism Insights, nested here rather than as a separate
+              full-width section below the whole grid. */}
           <div className="detail-grid">
             <div>
-              <DestinationVisual countryCode={d.countryCode} />
               <div className="detail-card">
                 <div className="info-grid">
                   <div className="info-item">
@@ -259,19 +254,16 @@ export function Destination() {
           </button>
         </div>
 
-        <div className="detail-hero flag-banner" style={{ backgroundImage: regionGradientCss(d.region) }}>
-          <FlagBanner dest={d} lang={lang} />
-          <div className="detail-hero-inner">
-            <div>
-              <span className="name-flag">
-                <FlagChip dest={d} width={38} height={28} />
-                <h1 className="display">{nameOf(d, lang)}</h1>
-              </span>
-              <div className="sub">
-                {t.regionLabels[d.region]} · {cities}
-              </div>
-            </div>
-            {matchScore !== null ? (
+        <DestinationHero
+          d={d}
+          fallbackBackground={regionGradientCss(d.region)}
+          subContent={
+            <>
+              {t.regionLabels[d.region]} · {cities}
+            </>
+          }
+          rightContent={
+            matchScore !== null ? (
               <div className="detail-match">
                 {matchScore}% {dt.match}
               </div>
@@ -279,22 +271,21 @@ export function Destination() {
               <div className="detail-match" style={{ background: 'rgba(255,255,255,0.16)', color: '#fff' }}>
                 {dt.browse}
               </div>
-            )}
-          </div>
-        </div>
+            )
+          }
+        />
 
         {/* Visual refinement pass: two-zone layout. First (now narrow,
             see .detail-grid's 1fr/2fr override in wejhaty.css) column is
-            the destination IDENTITY sidebar — landmark image (inert
-            until a licensed source exists), quick facts, cities, country
-            info. Second (now wide) column is MAIN — overview/why/
-            strengths/weaknesses/best-for, plus the compact Travel/
-            Accommodation/Travel Cost row and Tourism Insights, nested
-            here rather than as a separate full-width section below the
-            whole grid. */}
+            the destination IDENTITY sidebar — quick facts, cities,
+            country info (the landmark image, when one exists, now lives
+            in the Hero above instead — see DestinationHero.tsx). Second
+            (now wide) column is MAIN — overview/why/strengths/
+            weaknesses/best-for, plus the compact Travel/Accommodation/
+            Travel Cost row and Tourism Insights, nested here rather than
+            as a separate full-width section below the whole grid. */}
         <div className="detail-grid">
           <div>
-            <DestinationVisual countryCode={d.countryCode} />
             <div className="detail-card">
               <div className="info-grid">
                 <div className="info-item">
@@ -354,24 +345,21 @@ export function Destination() {
                 <p>{why}</p>
               </div>
             ) : null}
-            {/* Landscape-composition pass (real user visual QA): on wide
-                screens these 4 cards often hold only a short paragraph
-                or a handful of pills each, but each used to take the
-                full main-column width — substantial empty horizontal
-                space INSIDE the cards. .overview-cards-grid below is a
-                plain multi-column grid, LANDSCAPE-ONLY via a
-                viewport-width media query (not a container query —
-                deliberately, see wejhaty.css's own doc comment for why
-                a container-width signal here would have gotten the
-                portrait/landscape distinction backwards). Below that
-                breakpoint (portrait, narrow, and the ≤860px range where
-                .detail-grid itself is already single-column) this is a
-                plain block-flow div — IDENTICAL to the previous
-                stacking, unchanged. No named grid-template-areas here:
-                plain DOM-order auto-placement is enough (nothing needs
-                to span or reorder), which also means reading/DOM order
-                is trivially preserved and correct under RTL without any
-                extra work. */}
+            {/* Landscape correction pass (real user visual review of
+                production): a prior version of .overview-cards-grid
+                switched to 3 columns at 1180px, which put Overview/
+                Strengths/Weaknesses on one row and orphaned Best For
+                alone on a second row — explicitly rejected by the user.
+                Fixed two ways together: the 1180px 3-column override is
+                REMOVED from wejhaty.css entirely (2 columns is now the
+                only landscape state this grid ever has), and each card
+                now carries its own explicit class
+                (overview-card/strengths-card/weaknesses-card/
+                bestfor-card) mapped to a named grid-template-area — so
+                even if a future change reorders this JSX, CSS
+                auto-placement can never regenerate the orphan. Fixed
+                2x2: Overview+Strengths first row, Weaknesses+BestFor
+                second row, always. */}
             <div className="overview-cards-grid">
               <div className="detail-card overview-card">
                 <h3>
@@ -379,7 +367,7 @@ export function Destination() {
                 </h3>
                 <p>{descOf(d, lang)}</p>
               </div>
-              <div className="detail-card">
+              <div className="detail-card strengths-card">
                 <h3>
                   <Icon name="check" size={18} /> {dt.strengths}
                 </h3>
@@ -391,7 +379,7 @@ export function Destination() {
                   ))}
                 </div>
               </div>
-              <div className="detail-card">
+              <div className="detail-card weaknesses-card">
                 <h3>
                   <Icon name="info" size={18} /> {dt.weaknesses}
                 </h3>
@@ -403,7 +391,7 @@ export function Destination() {
                   ))}
                 </div>
               </div>
-              <div className="detail-card">
+              <div className="detail-card bestfor-card">
                 <h3>
                   <Icon name="sparkle" size={18} /> {dt.bestFor}
                 </h3>

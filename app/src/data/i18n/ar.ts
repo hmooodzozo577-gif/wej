@@ -30,6 +30,10 @@ export const AR: I18nDict = {
     languages: 'اللغات',
     callingCode: 'رمز الاتصال',
     borders: 'الدول المجاورة',
+    photoInfo: 'معلومات الصورة',
+    photoSource: 'المصدر',
+    photoAuthor: 'المصوّر',
+    photoLicense: 'الرخصة',
   },
   // المرحلة 12 — التخصيص حسب الموقع. ليست جزءًا من نص wejhaty.html الأصلي
   // (هذه الميزة لم تكن موجودة فيه)، لذا هي مفتاح جديد كليًا هنا وليست
