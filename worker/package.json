@@ -3,15 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Cloudflare Worker backend for Wejhaty's travel API. Structurally separate from app/ (the GitHub Pages frontend) — not bundled into it, not deployed by deploy-pages.yml, and not deployed by this task.",
+  "description": "Cloudflare Worker backend for Wejhaty's travel API and (Phase 16) AI intelligence layer. Structurally separate from app/ (the GitHub Pages frontend) — not bundled into it, not deployed by deploy-pages.yml. wrangler is now a devDependency (Phase 16 needs it to validate the [ai] binding config), but this Worker is still NOT deployed by any automated step in this repository — see ../SECRETS.md.",
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "dev": "echo 'Not run in this step — see ../README.md. Requires: npx wrangler dev (wrangler not installed yet).'",
-    "deploy": "echo 'Not run in this step — see ../README.md and ../SECRETS.md before ever running: npx wrangler deploy'"
+    "dev": "wrangler dev",
+    "deploy:dry-run": "wrangler deploy --dry-run",
+    "deploy": "echo 'Not run automatically — see ../README.md and ../SECRETS.md. Requires wrangler login or CLOUDFLARE_API_TOKEN (deployment auth — NOT an AI credential) before ever running: npx wrangler deploy'"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260910.1",
     "typescript": "~6.0.2",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.0",
+    "wrangler": "^4.131.0"
   }
 }

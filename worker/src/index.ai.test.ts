@@ -190,3 +190,43 @@ describe('handleExplainRecommendation — full pipeline via the mock provider', 
     expect(status).toBe(400);
   });
 });
+
+describe('handleRequest — full pipeline through the REAL Cloudflare Workers AI adapter (env.AI mocked, never a real paid call)', () => {
+  const envWithAi: Env = {
+    ...env,
+    AI: { run: async () => ({ choices: [{ message: { role: 'assistant', content: JSON.stringify({ interpreted: [{ questionId: 'climate', value: 'hot', confidence: 'high' }], unmapped: [] }) } }] }) } as unknown as Env['AI'],
+  };
+
+  it('a fully configured env.AI binding routes a real HTTP request all the way through resolveAiProvider -> CloudflareWorkersAiProvider -> validated response — 200, no longer ai_not_configured', async () => {
+    const res = await handleRequest(postAi('/api/ai/interpret-preferences', validInterpretBody), envWithAi);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.interpreted).toEqual([{ questionId: 'climate', value: 'hot', confidence: 'high' }]);
+  });
+
+  it('a fabricated destId from the real adapter path is still dropped by server-side structured-output validation — the AI cannot introduce a destination outside the real ranking even via env.AI', async () => {
+    const sneakyEnv: Env = {
+      ...env,
+      AI: {
+        run: async () => ({
+          choices: [{ message: { role: 'assistant', content: JSON.stringify({ summary: 'x', perDestination: [{ destId: 'atlantis', explanation: 'made up' }], caveats: [] }) } }],
+        }),
+      } as unknown as Env['AI'],
+    };
+    const res = await handleRequest(postAi('/api/ai/explain-recommendation', validExplainBody), sneakyEnv);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.perDestination).toEqual([]);
+  });
+
+  it('env.AI.run throwing (e.g. a Workers AI outage) still maps to the same safe 502, through the real routing path', async () => {
+    const failingEnv: Env = {
+      ...env,
+      AI: { run: async () => { throw new Error('upstream Workers AI failure detail'); } } as unknown as Env['AI'],
+    };
+    const res = await handleRequest(postAi('/api/ai/interpret-preferences', validInterpretBody), failingEnv);
+    expect(res.status).toBe(502);
+    const body = await res.json();
+    expect(JSON.stringify(body)).not.toContain('upstream Workers AI failure detail');
+  });
+});

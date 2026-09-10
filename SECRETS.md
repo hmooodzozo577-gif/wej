@@ -101,31 +101,40 @@ run, and the Worker has not been deployed (see the final report's
 Deployment section for the exact manual steps a repository owner would
 run, with their own real Amadeus credentials, to actually deploy it).
 
-## Phase 16 — AI provider secrets (architecture only; no provider selected)
+## Phase 16 — AI provider: Cloudflare Workers AI (native binding, NO API key)
 
-`worker/src/ai/types.ts` declares `Env` with two OPTIONAL fields for a
-future AI provider:
+The provider decision has been made: **Cloudflare Workers AI**, via the
+native `env.AI` binding (`worker/wrangler.toml`'s `[ai] binding = "AI"`).
+This is a fundamentally different mechanism from every credential
+documented above — there is **no `AI_API_KEY` for this provider, and
+none should ever be added for it.** Cloudflare injects `env.AI` into
+the Worker at request time based on the Worker's own Cloudflare account
+context — the same mechanism that lets the Worker run at all — not a
+bearer token this repository holds, stores, or could accidentally leak.
+`worker/src/ai/cloudflareWorkersAiProvider.ts` is the only file that
+calls `env.AI.run(...)`; it reads no secret of any kind.
 
-- `AI_PROVIDER` — the provider adapter name (e.g. `"anthropic"`,
-  `"openai"`) — **not itself a secret**, but never set in this
-  repository either, since no vendor has been chosen (see
-  `worker/src/ai/provider.ts`'s own extensive comment: a full-repo audit
-  found no prior AI vendor decision anywhere in this project).
-- `AI_API_KEY` — the chosen provider's API key. Same rules as
-  `AMADEUS_API_KEY`/`AMADEUS_API_SECRET` above apply in full: Worker
-  secret only (`npx wrangler secret put AI_API_KEY`), never a `VITE_*`
-  variable, never committed, never a fake/placeholder-looking value,
-  never logged or echoed in an error message
-  (`worker/src/ai/provider.ts`, `worker/src/ai/mockProvider.ts` — the
-  test/dev-only stand-in used until a real provider exists — read/return
-  no credential of any kind).
+**Do not confuse this with deployment authorization**, a separate,
+unrelated requirement: actually *deploying* this Worker (so `env.AI`
+exists at a real URL at all) needs either an interactive `wrangler
+login` or a `CLOUDFLARE_API_TOKEN` environment variable holding a
+scoped Cloudflare API token — see
+https://developers.cloudflare.com/fundamentals/api/get-started/create-token/.
+Neither is configured in this repository or this development
+environment (confirmed directly: `npx wrangler deploy` here fails with
+exactly `"In a non-interactive environment, it's necessary to set a
+CLOUDFLARE_API_TOKEN environment variable..."` — a deployment-auth
+error, never an AI-credential error). `npx wrangler deploy --dry-run`
+succeeds without any of that (bundles the Worker, resolves the `[ai]`
+binding correctly, reports `env.AI -> AI` in its binding summary) —
+proving the AI integration itself is deployment-ready code, with only
+the account-authorization step outstanding. See the final report's
+"Deployment Authentication State" section for exactly what a repository
+owner needs to run.
 
-**This document states the expected secret NAME only — `AI_API_KEY` —
-never a value.** `resolveAiProvider(env)` returns `null` whenever
-`AI_PROVIDER`/`AI_API_KEY` are absent (this repository's real state
-today) or when `AI_PROVIDER` names a vendor with no registered adapter;
-in neither case does it fabricate a response or crash. See the final
-report's "Live AI Provider" status line for why this remains
-architecture-only: a real vendor decision and a real credential are both
-required before any live call can happen, and neither exists in this
-repository.
+Legacy extension point (unused): `worker/src/ai/types.ts` still declares
+optional `AI_PROVIDER`/`AI_API_KEY` fields on `Env`, kept only in case a
+second, non-Workers-AI vendor is ever added later — no adapter is
+registered for either today (`resolveAiProvider(env)` checks `env.AI`
+first and only falls back to this pair, which resolves to `null`, when
+`env.AI` is absent), and neither is set anywhere in this repository.

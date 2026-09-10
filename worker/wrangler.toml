@@ -25,3 +25,16 @@ AMADEUS_ENV = "test"
 # which stores each value encrypted in Cloudflare's platform and injects
 # it into `env` at runtime only; neither is ever written to this file,
 # this repository, or any build output.
+
+# Phase 16 — AI API Integration. Native Cloudflare Workers AI binding:
+# makes inference available at `env.AI` with NO API key of any kind —
+# see src/ai/cloudflareWorkersAiProvider.ts and ../SECRETS.md's Phase 16
+# section for why this is a fundamentally different mechanism from the
+# AMADEUS_* secrets above (account-scoped binding, not a bearer
+# credential). Present in this file (so `env.AI` resolves once this
+# Worker is actually deployed) even though the Worker itself remains
+# undeployed today — see the final report's "Deployment Authentication
+# State"/"Worker Deployment" sections for the exact remaining manual
+# step and why.
+[ai]
+binding = "AI"

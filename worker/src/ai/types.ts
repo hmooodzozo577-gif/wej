@@ -7,18 +7,28 @@
 // SECRETS: no AI API key is ever read outside ai/provider.ts, logged,
 // included in an error message, or returned to a caller — same
 // discipline as AMADEUS_API_KEY/AMADEUS_API_SECRET in amadeus.ts (see
-// ../../../SECRETS.md, extended to document the AI provider's expected
-// secret NAME only once a provider is actually selected).
+// ../../../SECRETS.md). Note that the SELECTED provider below (native
+// Cloudflare Workers AI, see cloudflareWorkersAiProvider.ts) needs no
+// API key at all — see that file's own doc comment for why.
+import type { Ai } from '@cloudflare/workers-types';
+
 export interface Env {
-  /** Which AI provider adapter to use (e.g. 'anthropic', 'openai') —
-   *  absent today: no provider has been selected for this project (see
-   *  ai/provider.ts's resolveAiProvider() and the final report's "AI
-   *  Provider Status" section). A real value here with no matching
-   *  credential is treated identically to no provider at all — never a
-   *  crash, never a fabricated response. */
+  /** Native Cloudflare Workers AI binding (wrangler.toml's `[ai]
+   *  binding = "AI"`) — Cloudflare injects this directly, no API key
+   *  involved. Absent in any environment that hasn't configured the
+   *  binding (e.g. a unit test's plain object `Env`), which
+   *  resolveAiProvider() treats exactly like "no provider available",
+   *  never a crash. This is the PRIMARY provider path now that
+   *  Cloudflare Workers AI has been selected — see provider.ts. */
+  AI?: Ai;
+  /** Legacy extension point for a hypothetical non-Workers-AI vendor
+   *  requiring its own API key — kept only because resolveAiProvider()
+   *  still falls back to it when `AI` is absent; no such vendor is
+   *  registered (see provider.ts), so this is never actually read for
+   *  a live call today. Absent from this repository's real
+   *  configuration. */
   AI_PROVIDER?: string;
-  /** The chosen provider's API key, if one is ever configured. Never
-   *  set in this repository, never committed, never logged. */
+  /** See AI_PROVIDER above — same "never actually used today" status. */
   AI_API_KEY?: string;
 }
 

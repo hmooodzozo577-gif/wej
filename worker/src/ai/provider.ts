@@ -1,31 +1,34 @@
 // Phase 16 — provider resolution. This is the ONLY function index.ts
 // calls to obtain an AiProvider; it is the sole place a real vendor
-// adapter would ever be registered.
+// adapter is ever registered.
 //
-// AI PROVIDER STATUS (checked directly, not assumed): no AI provider
-// has been selected anywhere in this repository — grepped for every
-// major vendor name across every genuine project document
-// (WEJHATY_PROJECT_CONTEXT.md, CLAUDE.md, this Worker's own
-// wrangler.toml/SECRETS.md) and found none. Per this task's own rule
-// ("do NOT silently choose an AI vendor... do NOT fabricate a key"),
-// no vendor was picked here either. `env.AI_API_KEY` is therefore
-// never set in this repository — resolveAiProvider() always returns
-// `null` today, and every AI endpoint responds with a clear
-// "not configured" result (see index.ts) rather than ever pretending
-// to call a live model.
+// AI PROVIDER STATUS: Cloudflare Workers AI, via the native `env.AI`
+// binding (wrangler.toml's `[ai] binding = "AI"`) — the provider
+// decision this task made explicitly, after a full-repo audit found no
+// prior vendor selection anywhere (WEJHATY_PROJECT_CONTEXT.md,
+// CLAUDE.md, this Worker's own wrangler.toml/SECRETS.md, all checked
+// directly). See cloudflareWorkersAiProvider.ts for the adapter itself
+// and SECRETS.md's Phase 16 section for exactly what this DOES and
+// does NOT require (no AI_API_KEY — a Cloudflare deployment
+// authorization is a separate, unrelated concern from AI inference).
 //
-// Once a provider IS selected: add one adapter file here (e.g.
-// `anthropicProvider.ts`) implementing `AiProvider` from ./types
-// (interpretPreferences/explainRecommendation), using
-// ai/prompts.ts's system/user split and this project's fetchWithTimeout
-// convention (see amadeus.ts), and register it below keyed by
-// `env.AI_PROVIDER`. No other file needs to change — index.ts and the
-// frontend already speak only the provider-neutral contract.
+// `env.AI` is only actually populated once this Worker is deployed
+// with the binding active — in any environment without it (including
+// every unit test's plain object `Env`, and this repository's current
+// real undeployed state), it is `undefined`, and resolution falls
+// through to the legacy AI_PROVIDER/AI_API_KEY extension point below
+// (kept for a hypothetical future non-Workers-AI vendor; nothing is
+// registered there, so it still always resolves to `null` today).
+// Either way, an unavailable provider is never a crash and never a
+// silent fabricated fallback — see index.ts's "ai_not_configured" path.
+import { createCloudflareWorkersAiProvider } from './cloudflareWorkersAiProvider';
 import type { AiProvider, Env } from './types';
 
 export function resolveAiProvider(env: Env): AiProvider | null {
+  if (env.AI) return createCloudflareWorkersAiProvider(env.AI);
+
   if (!env.AI_API_KEY || !env.AI_PROVIDER) return null;
-  // No adapter is registered for any provider name today (see the
+  // No adapter is registered for any other provider name (see the
   // module doc comment above) — a configured-but-unimplemented
   // provider name is treated the same as unconfigured: never a crash,
   // never a silent fallback to fabricated output.
