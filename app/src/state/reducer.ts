@@ -32,6 +32,7 @@ export const initialAppState: AppState = {
   path: [],
   answers: {},
   satisfaction: {},
+  confidence: {},
   results: null,
   explore: { q: '', region: '', purpose: '', cost: '' },
   location: { status: 'idle', coords: null },
@@ -53,7 +54,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, lang: action.lang };
 
     case 'START_QUIZ':
-      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, satisfaction: {}, results: null, path: initialPath(action.purpose) };
+      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, satisfaction: {}, confidence: {}, results: null, path: initialPath(action.purpose) };
 
     case 'PRESELECT_PURPOSE':
       return { ...state, purpose: action.purpose };
@@ -62,15 +63,18 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     // URL) with no in-progress quiz for that purpose: start fresh, same as
     // clicking the purpose card would.
     case 'SYNC_QUIZ_PURPOSE':
-      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, satisfaction: {}, results: null, path: initialPath(action.purpose) };
+      return { ...state, purpose: action.purpose, qIndex: 0, answers: {}, satisfaction: {}, confidence: {}, results: null, path: initialPath(action.purpose) };
 
     case 'SET_ANSWER': {
-      const { questionId, value, provenance = 'direct' } = action;
+      const { questionId, value, provenance = 'direct', confidence } = action;
       const valueChanged = state.answers[questionId] !== value;
       const pos = state.path.indexOf(questionId);
       const isPastQuestion = pos !== -1 && pos < state.path.length - 1;
       const answers = { ...state.answers, [questionId]: value };
       const satisfaction = { ...state.satisfaction, [questionId]: provenance };
+      const confidenceMap = { ...state.confidence };
+      if (confidence) confidenceMap[questionId] = confidence;
+      else delete confidenceMap[questionId];
 
       // Back / changed-answer behavior: the user navigated back to an
       // EARLIER question (not the current frontier) and picked a
@@ -90,10 +94,11 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         for (const id of staleIds) {
           delete answers[id];
           delete satisfaction[id];
+          delete confidenceMap[id];
         }
-        return { ...state, answers, satisfaction, path: truncatedPath, qIndex: pos };
+        return { ...state, answers, satisfaction, confidence: confidenceMap, path: truncatedPath, qIndex: pos };
       }
-      return { ...state, answers, satisfaction };
+      return { ...state, answers, satisfaction, confidence: confidenceMap };
     }
 
     // Phase 16.5 — "un-apply" a confirmed AI-interpreted preference (the
@@ -110,9 +115,11 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       if (state.satisfaction[action.questionId] !== 'ai_interpreted') return state;
       const answers = { ...state.answers };
       const satisfaction = { ...state.satisfaction };
+      const confidence = { ...state.confidence };
       delete answers[action.questionId];
       delete satisfaction[action.questionId];
-      return { ...state, answers, satisfaction };
+      delete confidence[action.questionId];
+      return { ...state, answers, satisfaction, confidence };
     }
 
     case 'NEXT_QUESTION': {
@@ -137,7 +144,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, results: action.results };
 
     case 'RESTART_ALL':
-      return { ...state, purpose: null, qIndex: 0, path: [], answers: {}, satisfaction: {}, results: null };
+      return { ...state, purpose: null, qIndex: 0, path: [], answers: {}, satisfaction: {}, confidence: {}, results: null };
 
     case 'SET_EXPLORE_FILTER':
       return { ...state, explore: { ...state.explore, [action.key]: action.value } };

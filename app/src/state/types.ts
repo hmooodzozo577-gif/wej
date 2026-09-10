@@ -67,6 +67,14 @@ export interface AppState {
    *  never by Phase 14. Reset together with `answers` on
    *  START_QUIZ/SYNC_QUIZ_PURPOSE/RESTART_ALL. */
   satisfaction: Record<string, AnswerProvenance>;
+  /** Phase 16.5 completion pass — Travel Profile support: the model's
+   *  own reported confidence for an 'ai_interpreted' answer, carried
+   *  alongside `satisfaction` (only ever populated for that provenance
+   *  — a 'direct' answer has no AI confidence to record). Same
+   *  UI/interview-layer-only guarantee as `satisfaction`: never read by
+   *  Phase 14. See profile/travelProfile.ts, which surfaces this as
+   *  part of each dimension's confirmed knowledge. */
+  confidence: Record<string, 'high' | 'medium' | 'low'>;
   results: RankedResult[] | null;
   explore: ExploreFilters;
   location: LocationState;
@@ -83,7 +91,7 @@ export type AppAction =
   | { type: 'SYNC_QUIZ_PURPOSE'; purpose: PurposeId }
   // `provenance` defaults to 'direct' when omitted — every pre-Phase-16.5
   // call site (Quiz.tsx's onSelect) keeps working unchanged.
-  | { type: 'SET_ANSWER'; questionId: string; value: string | number; provenance?: AnswerProvenance }
+  | { type: 'SET_ANSWER'; questionId: string; value: string | number; provenance?: AnswerProvenance; confidence?: 'high' | 'medium' | 'low' }
   // Phase 16.5 — "un-apply" a single AI-interpreted answer (the small
   // remove control on the "already accounted for" list). Refuses to
   // touch a 'direct' answer (reducer-level safety, not just a UI

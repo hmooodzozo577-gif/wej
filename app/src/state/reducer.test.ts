@@ -91,6 +91,32 @@ describe('appReducer', () => {
     expect(state.satisfaction).toEqual({ climate: 'ai_interpreted' });
   });
 
+  it('Phase 16.5 completion pass: SET_ANSWER records the model\'s reported confidence in a parallel map, never touching a direct answer\'s confidence', () => {
+    let state = appReducer(initialAppState, {
+      type: 'SET_ANSWER',
+      questionId: 'naturecity',
+      value: 15,
+      provenance: 'ai_interpreted',
+      confidence: 'high',
+    });
+    expect(state.confidence).toEqual({ naturecity: 'high' });
+
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: 'climate', value: 'hot' }); // direct, no confidence
+    expect(state.confidence).toEqual({ naturecity: 'high' }); // unaffected
+  });
+
+  it('Phase 16.5 completion pass: removing an AI answer clears its confidence too', () => {
+    let state = appReducer(initialAppState, {
+      type: 'SET_ANSWER',
+      questionId: 'naturecity',
+      value: 15,
+      provenance: 'ai_interpreted',
+      confidence: 'medium',
+    });
+    state = appReducer(state, { type: 'REMOVE_AI_ANSWER', questionId: 'naturecity' });
+    expect(state.confidence).toEqual({});
+  });
+
   it('Phase 16.5 QUESTION REDUCTION: an ai_interpreted answer set BEFORE the quiz reaches that question means it never enters path', () => {
     let state = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
     // Satisfy two dimensions via a confirmed interpretation up front —
@@ -130,16 +156,17 @@ describe('appReducer', () => {
     expect(state.answers.climate).toBe('hot');
   });
 
-  it('Phase 16.5: editing a PAST path question with a genuinely different value still truncates satisfaction along with answers', () => {
+  it('Phase 16.5: editing a PAST path question with a genuinely different value still truncates satisfaction (and confidence) along with answers', () => {
     let state = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
     const q1 = state.path[0];
     state = appReducer(state, { type: 'SET_ANSWER', questionId: q1, value: 1 });
     state = appReducer(state, { type: 'NEXT_QUESTION' });
     const q2 = state.path[1];
-    state = appReducer(state, { type: 'SET_ANSWER', questionId: q2, value: 40 });
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: q2, value: 40, provenance: 'ai_interpreted', confidence: 'high' });
     state = appReducer(state, { type: 'PREV_QUESTION' });
     state = appReducer(state, { type: 'SET_ANSWER', questionId: q1, value: 4 }); // genuinely different -> truncates
     expect(state.satisfaction[q2]).toBeUndefined();
+    expect(state.confidence[q2]).toBeUndefined();
   });
 
   it('NEXT_QUESTION is a safe no-op with no purpose selected (nothing to compute a path from)', () => {
@@ -174,7 +201,7 @@ describe('appReducer', () => {
     expect(state.qIndex).toBe(0);
   });
 
-  it('RESTART_ALL clears purpose/answers/results/path/satisfaction but preserves lang', () => {
+  it('RESTART_ALL clears purpose/answers/results/path/satisfaction/confidence but preserves lang', () => {
     const dirty = {
       ...initialAppState,
       lang: 'en' as const,
@@ -182,9 +209,10 @@ describe('appReducer', () => {
       qIndex: 2,
       path: ['field', 'salary'],
       satisfaction: { field: 'ai_interpreted' as const },
+      confidence: { field: 'high' as const },
     };
     const next = appReducer(dirty, { type: 'RESTART_ALL' });
-    expect(next).toMatchObject({ lang: 'en', purpose: null, qIndex: 0, answers: {}, satisfaction: {}, results: null, path: [] });
+    expect(next).toMatchObject({ lang: 'en', purpose: null, qIndex: 0, answers: {}, satisfaction: {}, confidence: {}, results: null, path: [] });
   });
 
   it('SET_EXPLORE_FILTER updates one field without disturbing the others', () => {
