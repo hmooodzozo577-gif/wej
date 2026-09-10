@@ -188,6 +188,34 @@ export function buildManifestEntry({ entry, candidate, license, localPath, width
 // place-name disambiguation in general.
 const US_STATE_ABBREV_HOMONYM_PATTERN = /,\s*[A-Z][a-z]{1,4}\.(?:\)|,|\s|$)/;
 
+// Many US towns share a name with a world country (Angola IN, Brazil IN,
+// Lebanon OH/PA/NH/TN/KY, Peru IL/NE/IN, Chile?—not a state so out of
+// scope here, etc.) — the comma-abbreviation pattern above only catches
+// prose captions ("Brazil, Ind."). A real live example this audit
+// caught: a Commons file titled "Angola-indiana-panorama.jpg" (a
+// hyphenated filename slug, no comma, no abbreviation) — the full state
+// name spelled out, hyphen-joined. Checked for full names (case-
+// insensitive, word-boundary) within a small window around every
+// country-name occurrence, not just the comma-abbreviation form.
+const US_STATE_NAMES = [
+  'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut', 'delaware', 'florida', 'georgia',
+  'hawaii', 'idaho', 'illinois', 'indiana', 'iowa', 'kansas', 'kentucky', 'louisiana', 'maine', 'maryland',
+  'massachusetts', 'michigan', 'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada',
+  'new hampshire', 'new jersey', 'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio', 'oklahoma',
+  'oregon', 'pennsylvania', 'rhode island', 'south carolina', 'south dakota', 'tennessee', 'texas', 'utah',
+  'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming',
+];
+
+function looksLikeUsStateHomonym(tail, entry) {
+  if (US_STATE_ABBREV_HOMONYM_PATTERN.test(tail)) return true;
+  // Skip the full-name check for the (rare) case where the country's
+  // own name IS a US state name (e.g. Georgia) — the heuristic can't
+  // distinguish those and would only produce false rejections.
+  const entryIsAStateNameToo = US_STATE_NAMES.includes(entry.nameEn.toLowerCase());
+  if (entryIsAStateNameToo) return false;
+  return US_STATE_NAMES.some((state) => new RegExp(`\\b${state}\\b`, 'i').test(tail));
+}
+
 export function checkCountryRelevance(candidate, entry, { fromOverride = false } = {}) {
   if (fromOverride) return { relevant: true, reason: 'from curated override' };
 
@@ -210,11 +238,15 @@ export function checkCountryRelevance(candidate, entry, { fromOverride = false }
   // Check EVERY occurrence, not just the first — a homonym-indicating
   // mention anywhere (e.g. a country name appearing again later as
   // "Brazil, Ind." even though it appeared earlier in an unrelated
-  // phrase) is reason enough to distrust this candidate.
+  // phrase) is reason enough to distrust this candidate. Checks both
+  // the text immediately AFTER the match ("Angola-indiana-panorama")
+  // and immediately BEFORE it ("...indiana-angola...", "New Angola" —
+  // symmetric risk) within a small window.
   for (const m of occurrences) {
-    const tail = freeText.slice(m.index + m[0].length, m.index + m[0].length + 12);
-    if (US_STATE_ABBREV_HOMONYM_PATTERN.test(tail)) {
-      return { relevant: false, reason: `"${entry.nameEn}" appears to name a place OTHER than the country itself (e.g. "${entry.nameEn}${tail.trim()}" reads like a homonym town) — rejected` };
+    const tail = freeText.slice(m.index + m[0].length, m.index + m[0].length + 16);
+    const head = freeText.slice(Math.max(0, m.index - 16), m.index);
+    if (looksLikeUsStateHomonym(tail, entry) || looksLikeUsStateHomonym(head, entry)) {
+      return { relevant: false, reason: `"${entry.nameEn}" appears to name a place OTHER than the country itself (nearby text reads like a homonym US town/state) — rejected` };
     }
   }
   return { relevant: true, reason: 'country name matched in title/description (no Categories metadata available)' };

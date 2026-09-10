@@ -90,21 +90,6 @@
     "height": 810
   },
   {
-    "iso2": "AO",
-    "iso3": "AGO",
-    "countryName": "Angola",
-    "landmarkName": "Angola-indiana-panorama",
-    "localPath": "/destinations/ao.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Angola-indiana-panorama.jpg",
-    "author": null,
-    "license": "Public domain",
-    "licenseUrl": null,
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/81/Angola-indiana-panorama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-10T14:23:31.816Z",
-    "width": 1440,
-    "height": 630
-  },
-  {
     "iso2": "AR",
     "iso3": "ARG",
     "countryName": "Argentina",
@@ -1140,21 +1125,6 @@
     "height": 1000
   },
   {
-    "iso2": "KH",
-    "iso3": "KHM",
-    "countryName": "Cambodia",
-    "landmarkName": "Cambodia Town Founding Members of Long Beach, California",
-    "localPath": "/destinations/kh.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Cambodia_Town_Founding_Members_of_Long_Beach,_California.jpg",
-    "author": "AryasatyaSO",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Cambodia_Town_Founding_Members_of_Long_Beach%2C_California.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-10T14:24:14.803Z",
-    "width": 1440,
-    "height": 974
-  },
-  {
     "iso2": "KM",
     "iso3": "COM",
     "countryName": "Comoros",
@@ -2008,36 +1978,6 @@
     "retrievedAt": "2026-09-10T14:30:57.382Z",
     "width": 1440,
     "height": 688
-  },
-  {
-    "iso2": "SD",
-    "iso3": "SDN",
-    "countryName": "Sudan",
-    "landmarkName": "Sudan Texas grain elevator 2010",
-    "localPath": "/destinations/sd.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Sudan_Texas_grain_elevator_2010.jpg",
-    "author": "Leaflet",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Sudan_Texas_grain_elevator_2010.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-10T14:31:27.800Z",
-    "width": 1440,
-    "height": 1154
-  },
-  {
-    "iso2": "SE",
-    "iso3": "SWE",
-    "countryName": "Sweden",
-    "landmarkName": "Sweden, Maine (10510245296)",
-    "localPath": "/destinations/se.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Sweden,_Maine_(10510245296).jpg",
-    "author": "Doug Kerr from Albany, NY, United States",
-    "license": "CC BY-SA 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/82/Sweden%2C_Maine_%2810510245296%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-10T14:34:10.422Z",
-    "width": 1440,
-    "height": 1080
   },
   {
     "iso2": "SG",

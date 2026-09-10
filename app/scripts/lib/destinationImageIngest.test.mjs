@@ -309,6 +309,23 @@ describe('checkCountryRelevance', () => {
     expect(checkCountryRelevance(candidate, brazilEntry).relevant).toBe(false);
   });
 
+  it('REGRESSION (Angola, Indiana): rejects a hyphenated filename-slug homonym with no comma/abbreviation at all', () => {
+    // Real live result found by the post-ingestion quality audit: the
+    // manifest's AO (Angola) entry selected "Angola-indiana-panorama.jpg"
+    // — the full state name, hyphen-joined, no comma, no abbreviation —
+    // which the original comma-abbreviation-only pattern completely
+    // missed (it shipped in a real manifest before this fix).
+    const angolaEntry = { iso2: 'AO', iso3: 'AGO', nameEn: 'Angola' };
+    const candidate = makeCandidate({ title: 'File:Angola-indiana-panorama.jpg', extmetadata: {} });
+    expect(checkCountryRelevance(candidate, angolaEntry).relevant).toBe(false);
+  });
+
+  it('does not false-positive when the country name itself is also a US state name (Georgia)', () => {
+    const georgiaEntry = { iso2: 'GE', iso3: 'GEO', nameEn: 'Georgia' };
+    const candidate = makeCandidate({ title: 'File:Tbilisi skyline, Georgia.jpg', extmetadata: {} });
+    expect(checkCountryRelevance(candidate, georgiaEntry).relevant).toBe(true);
+  });
+
   it('still accepts a genuine, unambiguous title-only match for the same country (Brazil) when no homonym pattern follows', () => {
     const brazilEntry = { iso2: 'BR', iso3: 'BRA', nameEn: 'Brazil' };
     const candidate = makeCandidate({ title: 'File:Christ the Redeemer, Rio de Janeiro, Brazil.jpg', extmetadata: {} });
