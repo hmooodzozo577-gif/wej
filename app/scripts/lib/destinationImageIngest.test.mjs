@@ -320,6 +320,49 @@ describe('checkCountryRelevance', () => {
     expect(checkCountryRelevance(candidate, angolaEntry).relevant).toBe(false);
   });
 
+  it('REGRESSION (Angola, Indiana via Commons Categories itself): the Categories branch must apply the SAME homonym check, not just accept on a bare word match', () => {
+    // The real live bug: the first homonym-heuristic fix only checked
+    // freeText (title/description) — but Commons' own Categories field
+    // can itself literally be "Angola, Indiana" (the town's own
+    // category), which the OLD Categories branch accepted immediately
+    // on a bare word-boundary match without ever reaching the homonym
+    // check at all. Re-running the exact same real candidate after the
+    // freeText-only fix reproduced the identical wrong image — this is
+    // what actually fixed it.
+    const angolaEntry = { iso2: 'AO', iso3: 'AGO', nameEn: 'Angola' };
+    const candidate = makeCandidate({
+      title: 'File:Angola-indiana-panorama.jpg',
+      extmetadata: { Categories: 'Angola, Indiana|Panoramas of the United States' },
+    });
+    expect(checkCountryRelevance(candidate, angolaEntry).relevant).toBe(false);
+  });
+
+  it('REGRESSION (Sudan, Texas / Sweden, Maine / Cambodia Town Long Beach California): three more real live wrong-place matches', () => {
+    const cases = [
+      { iso2: 'SD', iso3: 'SDN', nameEn: 'Sudan', title: 'File:Sudan Texas grain elevator 2010.jpg' },
+      { iso2: 'SE', iso3: 'SWE', nameEn: 'Sweden', title: 'File:Sweden, Maine (10510245296).jpg' },
+      { iso2: 'KH', iso3: 'KHM', nameEn: 'Cambodia', title: 'File:Cambodia Town Founding Members of Long Beach, California.jpg' },
+    ];
+    for (const { iso2, iso3, nameEn, title } of cases) {
+      const entry = { iso2, iso3, nameEn };
+      const candidate = makeCandidate({ title, extmetadata: {} });
+      expect(checkCountryRelevance(candidate, entry).relevant, `${nameEn} should be rejected`).toBe(false);
+    }
+  });
+
+  it('REGRESSION (false positive: "Embassy of Afghanistan, Tokyo."): a short capitalized word before a period is NOT a US state abbreviation just because it is short', () => {
+    // Found re-auditing the full committed manifest: the first
+    // abbreviation pattern matched any comma + short capitalized word +
+    // period (",Tokyo.") regardless of whether that word was an actual
+    // US state abbreviation — flagging this genuinely correct Afghanistan
+    // entry as a false-positive homonym. Fixed by matching against an
+    // explicit list of real state abbreviations instead of a generic
+    // shape.
+    const afghanistanEntry = { iso2: 'AF', iso3: 'AFG', nameEn: 'Afghanistan' };
+    const candidate = makeCandidate({ title: 'File:Embassy of Afghanistan, Tokyo. Rooftop patio.jpg', extmetadata: {} });
+    expect(checkCountryRelevance(candidate, afghanistanEntry).relevant).toBe(true);
+  });
+
   it('does not false-positive when the country name itself is also a US state name (Georgia)', () => {
     const georgiaEntry = { iso2: 'GE', iso3: 'GEO', nameEn: 'Georgia' };
     const candidate = makeCandidate({ title: 'File:Tbilisi skyline, Georgia.jpg', extmetadata: {} });

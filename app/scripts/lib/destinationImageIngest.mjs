@@ -186,7 +186,20 @@ export function buildManifestEntry({ entry, candidate, license, localPath, width
 // misleading caption could still pass. It is a real, demonstrated
 // improvement over a plain substring check, not a claim of solving
 // place-name disambiguation in general.
-const US_STATE_ABBREV_HOMONYM_PATTERN = /,\s*[A-Z][a-z]{1,4}\.(?:\)|,|\s|$)/;
+// Traditional (pre-ZIP-code) US state abbreviations, as they actually
+// appear in prose captions ("Brazil, Ind.") — NOT a generic "short
+// capitalized word + period" shape. An earlier version of this pattern
+// matched any ≤5-letter capitalized word before a period (",Tokyo."),
+// which flagged "Embassy of Afghanistan, Tokyo." as a false-positive
+// homonym purely because "Tokyo." happens to be short — caught by
+// re-auditing the full committed manifest against this heuristic.
+const US_STATE_ABBREVIATIONS = [
+  'Ala', 'Ariz', 'Ark', 'Calif', 'Colo', 'Conn', 'Del', 'Fla', 'Ga', 'Ill',
+  'Ind', 'Kans', 'Kan', 'Ky', 'La', 'Mass', 'Md', 'Mich', 'Minn', 'Miss',
+  'Mo', 'Mont', 'Neb', 'Nebr', 'Nev', 'Okla', 'Ore', 'Oreg', 'Pa', 'Penn',
+  'Tenn', 'Tex', 'Va', 'Vt', 'Wash', 'Wis', 'Wisc', 'Wyo',
+];
+const US_STATE_ABBREV_HOMONYM_PATTERN = new RegExp(`,\\s*(?:${US_STATE_ABBREVIATIONS.join('|')})\\.(?:\\)|,|\\s|$)`);
 
 // Many US towns share a name with a world country (Angola IN, Brazil IN,
 // Lebanon OH/PA/NH/TN/KY, Peru IL/NE/IN, Chile?—not a state so out of
@@ -206,48 +219,60 @@ const US_STATE_NAMES = [
   'vermont', 'virginia', 'washington', 'west virginia', 'wisconsin', 'wyoming',
 ];
 
-function looksLikeUsStateHomonym(tail, entry) {
-  if (US_STATE_ABBREV_HOMONYM_PATTERN.test(tail)) return true;
+/** True if `text` contains a US-state-homonym signal anywhere — not
+ *  windowed around the country-name match. A real live case ("Cambodia
+ *  Town Founding Members of Long Beach, California") had the state
+ *  name ~40 characters after the country match, well outside any small
+ *  window; a genuinely country-relevant photo essentially never needs
+ *  to mention a US state at all, so a whole-text check is both simpler
+ *  and safer than trying to guess a window size. */
+function looksLikeUsStateHomonym(text, entry) {
+  if (US_STATE_ABBREV_HOMONYM_PATTERN.test(text)) return true;
   // Skip the full-name check for the (rare) case where the country's
   // own name IS a US state name (e.g. Georgia) — the heuristic can't
   // distinguish those and would only produce false rejections.
   const entryIsAStateNameToo = US_STATE_NAMES.includes(entry.nameEn.toLowerCase());
   if (entryIsAStateNameToo) return false;
-  return US_STATE_NAMES.some((state) => new RegExp(`\\b${state}\\b`, 'i').test(tail));
+  return US_STATE_NAMES.some((state) => new RegExp(`\\b${state}\\b`, 'i').test(text));
+}
+
+/** Checks one text blob (Categories OR title/description) for both a
+ *  country-name match AND a homonym escape — used identically for
+ *  whichever source checkCountryRelevance ends up trusting, so a
+ *  homonym-indicating Commons Category (e.g. literally "Angola,
+ *  Indiana" as its OWN category text — a real live case this audit
+ *  found, where Categories itself named the US town) can't shortcut
+ *  past the same check a plain title/description would have to pass. */
+function matchesCountryWithoutHomonym(text, entry, nameEscaped) {
+  const wordBoundary = new RegExp(`\\b${nameEscaped}\\b`, 'i');
+  if (!wordBoundary.test(text)) return { found: false };
+  return { found: true, homonym: looksLikeUsStateHomonym(text, entry) };
 }
 
 export function checkCountryRelevance(candidate, entry, { fromOverride = false } = {}) {
   if (fromOverride) return { relevant: true, reason: 'from curated override' };
 
   const nameEscaped = entry.nameEn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const wordBoundary = new RegExp(`\\b${nameEscaped}\\b`, 'i');
 
   const categories = candidate.extmetadata?.Categories || '';
   if (categories) {
-    return wordBoundary.test(categories)
-      ? { relevant: true, reason: 'country name matched in Commons Categories (structured metadata)' }
-      : { relevant: false, reason: `"${entry.nameEn}" not found in Commons Categories — rejected (Categories present but doesn't mention the country)` };
+    const result = matchesCountryWithoutHomonym(categories, entry, nameEscaped);
+    if (!result.found) {
+      return { relevant: false, reason: `"${entry.nameEn}" not found in Commons Categories — rejected (Categories present but doesn't mention the country)` };
+    }
+    if (result.homonym) {
+      return { relevant: false, reason: `"${entry.nameEn}" appears to name a place OTHER than the country itself (Commons Categories text reads like a homonym US town/state) — rejected` };
+    }
+    return { relevant: true, reason: 'country name matched in Commons Categories (structured metadata)' };
   }
 
   const freeText = `${candidate.title} ${candidate.extmetadata?.ImageDescription || ''}`;
-  const globalMatcher = new RegExp(`\\b${nameEscaped}\\b`, 'gi');
-  const occurrences = [...freeText.matchAll(globalMatcher)];
-  if (occurrences.length === 0) {
+  const result = matchesCountryWithoutHomonym(freeText, entry, nameEscaped);
+  if (!result.found) {
     return { relevant: false, reason: `"${entry.nameEn}" not found in candidate title/description — weak relevance confidence, rejected` };
   }
-  // Check EVERY occurrence, not just the first — a homonym-indicating
-  // mention anywhere (e.g. a country name appearing again later as
-  // "Brazil, Ind." even though it appeared earlier in an unrelated
-  // phrase) is reason enough to distrust this candidate. Checks both
-  // the text immediately AFTER the match ("Angola-indiana-panorama")
-  // and immediately BEFORE it ("...indiana-angola...", "New Angola" —
-  // symmetric risk) within a small window.
-  for (const m of occurrences) {
-    const tail = freeText.slice(m.index + m[0].length, m.index + m[0].length + 16);
-    const head = freeText.slice(Math.max(0, m.index - 16), m.index);
-    if (looksLikeUsStateHomonym(tail, entry) || looksLikeUsStateHomonym(head, entry)) {
-      return { relevant: false, reason: `"${entry.nameEn}" appears to name a place OTHER than the country itself (nearby text reads like a homonym US town/state) — rejected` };
-    }
+  if (result.homonym) {
+    return { relevant: false, reason: `"${entry.nameEn}" appears to name a place OTHER than the country itself (nearby text reads like a homonym US town/state) — rejected` };
   }
   return { relevant: true, reason: 'country name matched in title/description (no Categories metadata available)' };
 }
