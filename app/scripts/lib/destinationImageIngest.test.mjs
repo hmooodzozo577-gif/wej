@@ -226,6 +226,29 @@ describe('buildManifestEntry / validateManifestEntry', () => {
     expect(result.errors.some((e) => e.includes('non-landscape'))).toBe(true);
   });
 
+  it('REGRESSION (Benin/Tajikistan/Vanuatu banner crops): rejects an extreme banner-strip aspect ratio even though width > height', () => {
+    // Real candidates the live pipeline selected before this fix: e.g.
+    // "Cotonou skyline banner.jpg" at 1440x206 (~7:1) — technically
+    // landscape (width > height) but crops to an unrecognizable sliver
+    // under this UI's fixed 4:3 object-fit:cover box.
+    const result = validateManifestEntry({
+      iso2: 'BJ', iso3: 'BEN', countryName: 'Benin', localPath: '/x.webp',
+      sourcePage: 'https://example.org', license: 'CC0', originalUrl: 'https://example.org/x.jpg',
+      retrievedAt: '2026-01-01T00:00:00Z', width: 1440, height: 206,
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes('extreme aspect ratio'))).toBe(true);
+  });
+
+  it('accepts a normal landscape-photo aspect ratio (e.g. 4:3, 16:9)', () => {
+    const result = validateManifestEntry({
+      iso2: 'FR', iso3: 'FRA', countryName: 'France', localPath: '/x.webp',
+      sourcePage: 'https://example.org', license: 'CC0', originalUrl: 'https://example.org/x.jpg',
+      retrievedAt: '2026-01-01T00:00:00Z', width: 1440, height: 810,
+    });
+    expect(result.valid).toBe(true);
+  });
+
   it('rejects an entry with an invalid/unrecognized license', () => {
     const result = validateManifestEntry({
       iso2: 'FR', iso3: 'FRA', countryName: 'France', localPath: '/x.webp',

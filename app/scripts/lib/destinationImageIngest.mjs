@@ -241,6 +241,16 @@ export function validateManifestEntry(entry) {
   if (typeof entry.width === 'number' && typeof entry.height === 'number' && entry.width <= entry.height) {
     errors.push('non-landscape image (width <= height)');
   }
+  // Extreme banner/strip crops (e.g. 1440x206, a ~7:1 aspect ratio) pass
+  // the width>height check above but crop to an unrecognizable sliver
+  // under this UI's fixed 4:3 object-fit:cover box — caught live in the
+  // quality audit (Benin/Tajikistan/Vanuatu all selected a "skyline
+  // banner" image at this ratio). A real landscape photo is essentially
+  // never wider than ~2.5:1; reject anything beyond that band rather
+  // than accept a technically-landscape but practically-useless crop.
+  if (typeof entry.width === 'number' && typeof entry.height === 'number' && entry.height > 0 && entry.width / entry.height > 2.5) {
+    errors.push(`extreme aspect ratio (${entry.width}x${entry.height}) — banner/strip crop, not a usable landscape photo`);
+  }
   const license = classifyLicense(entry.license);
   if (!license.allowed) errors.push(`invalid license in manifest: ${license.reason}`);
   return { valid: errors.length === 0, errors };
