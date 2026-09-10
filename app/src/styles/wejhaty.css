@@ -17,6 +17,37 @@
   text-decoration: none;
 }
 
+/* --- Header nav: fix real horizontal overflow at very narrow widths ----
+   Root cause (found via Playwright bounding-rect diagnostics, not
+   guessed): `.nav-row` (wejhaty.generated.css) is `display:flex` with no
+   `flex-wrap` and no shrink allowance. `.nav-right` holds three
+   fixed-intrinsic-width items — the AR/EN LanguageSwitch pill, the
+   "Start Now"/t.nav.cta button, and (at <=860px) the hamburger button —
+   which together need ~254px. At a 390px viewport in English specifically
+   (the English CTA label renders wider than the Arabic one, so Arabic
+   never triggered this), only ~215px remains after `.brand`, a ~39px
+   deficit with nowhere to go: `document.documentElement.scrollWidth`
+   measured 411px against a 390px viewport, and the overflowing element
+   was traced exactly to `.nav-right`/`.hamburger` (right edge 411.3px) —
+   not the decorative flag-banner SVG (a separate, larger bounding rect
+   that a properly-clipping ancestor keeps from ever reaching real page
+   scroll).
+   Fix: let `.nav-row` wrap. This is NOT `overflow-x:hidden` (nothing is
+   clipped — every nav item stays fully visible and interactive) and not
+   an arbitrary magic-number breakpoint (checked: content already fits
+   on one line from ~420px up, so wrap only ever activates in the narrow
+   band that actually needs it — everything from ~420px upward is
+   unaffected, confirmed by direct measurement). `.nav-right` wrapping to
+   its own line below `.brand` is direction-agnostic (flexbox's own
+   per-line alignment for a lone wrapped item respects `dir` on its own,
+   no LTR/RTL-specific code needed) and changes nothing about the
+   `.info-cards-container`/`.info-cards-grid` container-query
+   architecture on the Destination page — this rule only touches the
+   global header. */
+.nav-row {
+  flex-wrap: wrap;
+}
+
 /* --- Destination page: two-zone layout (visual refinement pass) --------
    User-approved information architecture: a narrow identity SIDEBAR
    (country/destination info + image) and a wider MAIN zone (Travel /
