@@ -152,6 +152,32 @@ export function buildManifestEntry({ entry, candidate, license, localPath, width
   };
 }
 
+// --- Country relevance -------------------------------------------------------
+// A beautiful image from the WRONG country is worse than no image. Cheap,
+// honest heuristic (not claimed to be semantically perfect): the
+// candidate's own title/description/categories must actually mention the
+// target country by name, OR the query that found it came from a
+// human-curated override (destinationImageOverrides.json) — a human
+// already vouched for that query's relevance, so a generic Commons
+// search filename mismatch (e.g. a file titled only after a city, not
+// the country) doesn't wrongly reject a genuinely good curated result.
+export function checkCountryRelevance(candidate, entry, { fromOverride = false } = {}) {
+  if (fromOverride) return { relevant: true, reason: 'from curated override' };
+  const haystack = `${candidate.title} ${candidate.extmetadata?.Categories || ''} ${candidate.extmetadata?.ImageDescription || ''}`.toLowerCase();
+  if (haystack.includes(entry.nameEn.toLowerCase())) return { relevant: true, reason: 'country name matched in metadata' };
+  return { relevant: false, reason: `"${entry.nameEn}" not found in candidate title/description/categories — weak relevance confidence, rejected` };
+}
+
+// --- Duplicate detection -----------------------------------------------------
+// The SAME image (by content hash, not just by URL — two different
+// Commons file pages can serve byte-identical content) must never be
+// assigned to two different countries. `seenHashes` is owned by the
+// CALLER (the CLI, across one run) — this function is a pure decision
+// given that state, not a hidden global.
+export function isDuplicateHash(hash, seenHashes) {
+  return seenHashes.has(hash);
+}
+
 const REQUIRED_MANIFEST_FIELDS = ['iso2', 'iso3', 'countryName', 'localPath', 'sourcePage', 'license', 'originalUrl', 'retrievedAt', 'width', 'height'];
 
 export function validateManifestEntry(entry) {

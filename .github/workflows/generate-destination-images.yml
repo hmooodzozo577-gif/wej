@@ -1,0 +1,77 @@
+name: Generate Destination Images
+
+# Destination Imagery System — manual, network-enabled ingestion run.
+# Claude's own sandbox denies commons.wikimedia.org/upload.wikimedia.org
+# by organization egress policy (confirmed live, not assumed); a
+# GitHub-hosted runner has normal internet access, so this workflow is
+# the actual execution environment for scripts/generate-destination-images.mjs
+# (discovery -> license validation -> selection -> country-relevance ->
+# duplicate check -> download -> sharp optimization -> manifest).
+#
+# Deliberately does NOT commit or push anything itself (contents: read
+# only, no git config/push step) — it uploads the generated WebP assets
+# and manifest as a build artifact for a human/Claude session to review
+# and commit explicitly. This sidesteps every concern an auto-committing
+# workflow would raise (branch protection, infinite self-retrigger,
+# needing contents:write) without needing the "Allow GitHub Actions to
+# create and approve pull requests" repository setting either — this
+# workflow never opens a PR, so that known block does not apply here.
+on:
+  workflow_dispatch:
+    inputs:
+      countries:
+        description: 'Comma-separated ISO2 codes, or "all" for the full effective catalog'
+        required: true
+        default: 'SA,FR,JP,BR,ZA,AU'
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Run ingestion
+        working-directory: app
+        run: |
+          if [ "${{ inputs.countries }}" = "all" ]; then
+            node scripts/generate-destination-images.mjs --all
+          else
+            IFS=',' read -ra CODES <<< "${{ inputs.countries }}"
+            for code in "${CODES[@]}"; do
+              node scripts/generate-destination-images.mjs --country "$code"
+            done
+          fi
+
+      - name: Report asset size
+        working-directory: app
+        run: |
+          echo "--- Generated assets ---"
+          ls -la public/destinations/ 2>/dev/null || echo "(no assets directory — nothing downloaded)"
+          du -sh public/destinations/ 2>/dev/null || true
+          echo "--- Manifest ---"
+          cat src/data/generated/destinationImages.json
+
+      - name: Upload generated assets + manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: destination-images
+          path: |
+            app/public/destinations/
+            app/src/data/generated/destinationImages.json
+          if-no-files-found: warn
+          retention-days: 14

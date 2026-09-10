@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   buildManifestEntry,
   buildSearchQueries,
+  checkCountryRelevance,
   classifyLicense,
+  isDuplicateHash,
   loadEffectiveCatalog,
   scoreCandidate,
   selectBestCandidate,
@@ -231,5 +233,37 @@ describe('buildManifestEntry / validateManifestEntry', () => {
       retrievedAt: '2026-01-01T00:00:00Z', width: 2000, height: 1200,
     });
     expect(result.valid).toBe(false);
+  });
+});
+
+describe('checkCountryRelevance', () => {
+  const entry = { iso2: 'FR', iso3: 'FRA', nameEn: 'France' };
+
+  it('accepts a candidate whose metadata actually mentions the country', () => {
+    const candidate = makeCandidate({ title: 'File:Eiffel Tower, France.jpg' });
+    expect(checkCountryRelevance(candidate, entry).relevant).toBe(true);
+  });
+
+  it('rejects a candidate with no mention of the target country anywhere in its metadata', () => {
+    const candidate = makeCandidate({ title: 'File:Some tower.jpg', extmetadata: { Categories: 'Towers', ImageDescription: 'A tower' } });
+    expect(checkCountryRelevance(candidate, entry).relevant).toBe(false);
+  });
+
+  it('trusts a curated override without requiring a metadata mention (a human already vouched for it)', () => {
+    const candidate = makeCandidate({ title: 'File:AlUla canyon.jpg', extmetadata: {} }); // no "Saudi Arabia" mention
+    const saEntry = { iso2: 'SA', iso3: 'SAU', nameEn: 'Saudi Arabia' };
+    expect(checkCountryRelevance(candidate, saEntry, { fromOverride: true }).relevant).toBe(true);
+  });
+});
+
+describe('isDuplicateHash', () => {
+  it('flags a hash already present in the seen set', () => {
+    const seen = new Set(['abc123']);
+    expect(isDuplicateHash('abc123', seen)).toBe(true);
+  });
+
+  it('does not flag a genuinely new hash', () => {
+    const seen = new Set(['abc123']);
+    expect(isDuplicateHash('def456', seen)).toBe(false);
   });
 });
