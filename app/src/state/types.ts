@@ -133,6 +133,10 @@ export interface AppState {
    *  Phase 14. See profile/travelProfile.ts, which surfaces this as
    *  part of each dimension's confirmed knowledge. */
   confidence: Record<string, 'high' | 'medium' | 'low'>;
+  /** Explicit phrases from the optional natural-language description that
+   *  Capability A could not map directly. Kept in memory for Capability C's
+   *  first contextual clarification; never read by Phase 14 or persisted. */
+  unresolvedPreferences: string[];
   /** Completion pass — the one currently active contextual follow-up
    *  (null when none is pending). Only ever one at a time — a new one
    *  is never offered while another is unresolved. */
@@ -211,6 +215,7 @@ export type AppAction =
   // affordance) — see reducer.ts. The question becomes unknown again
   // and can re-enter the remaining interview via selectNextQuestion.
   | { type: 'REMOVE_AI_ANSWER'; questionId: string }
+  | { type: 'SET_UNRESOLVED_PREFERENCES'; values: string[] }
   // Completion pass — bounded multi-turn orchestration. SET_PENDING_FOLLOWUP
   // offers exactly one contextual clarification (refuses if one is already
   // pending — see reducer.ts). RESOLVE_FOLLOWUP_CHOICE applies every

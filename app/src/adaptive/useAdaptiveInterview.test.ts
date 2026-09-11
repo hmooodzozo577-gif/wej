@@ -3,11 +3,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { createElement, StrictMode, useReducer, type PropsWithChildren } from 'react';
-import { decideAdaptiveInterviewStep, toPendingFollowup, useAdaptiveInterview } from './useAdaptiveInterview';
+import { decideAdaptiveInterviewStep, hasSufficientRankingEvidence, toPendingFollowup, useAdaptiveInterview } from './useAdaptiveInterview';
 import { nextTurn } from '../ai/aiService';
 import type { NextTurnServiceResult } from '../ai/types';
 import { appReducer, initialAppState } from '../state/reducer';
 import type { PendingFollowup } from '../state/types';
+import { QUESTION_BANKS } from '../data/questionBanks';
+import { buildDimensionCatalog } from '../ai/buildDimensionCatalog';
 
 vi.mock('../ai/aiService', () => ({ nextTurn: vi.fn() }));
 
@@ -20,6 +22,7 @@ beforeEach(() => {
 const baseState = {
   answers: {},
   askedDimensionIds: [] as string[],
+  unresolvedPreferences: [] as string[],
   interviewStatus: 'active' as const,
   interviewComplete: false,
   followup: null as PendingFollowup | null,
@@ -81,6 +84,26 @@ describe('decideAdaptiveInterviewStep', () => {
     if (decision.action === 'call') {
       expect(decision.confirmedProfile).toEqual({ climate: 'cold' });
     }
+  });
+
+  it('passes unresolved natural-language phrases only to the first contextual turn', () => {
+    const first = decideAdaptiveInterviewStep('tourism', { ...baseState, unresolvedPreferences: ['هادئة'] }, 'ar');
+    expect(first.action).toBe('call');
+    if (first.action === 'call') expect(first.unresolvedPreferences).toEqual(['هادئة']);
+    const later = decideAdaptiveInterviewStep('tourism', { ...baseState, unresolvedPreferences: ['هادئة'], turnCount: 1 }, 'ar');
+    expect(later.action).toBe('call');
+    if (later.action === 'call') expect(later.unresolvedPreferences).toEqual([]);
+  });
+
+  it('stops once a meaningful weighted majority is resolved instead of completing the bank as a checklist', () => {
+    const bank = QUESTION_BANKS.tourism;
+    const chosen = ['budget', 'climate', 'naturecity', 'safety', 'culture'];
+    const answers = Object.fromEntries(
+      bank.filter((question) => chosen.includes(question.id)).map((question) => [question.id, question.options[0]!.value]),
+    );
+    const catalog = buildDimensionCatalog('tourism', { answers, askedDimensionIds: chosen }, 'ar');
+    expect(hasSufficientRankingEvidence(catalog)).toBe(true);
+    expect(decideAdaptiveInterviewStep('tourism', { ...baseState, answers, askedDimensionIds: chosen }, 'ar')).toEqual({ action: 'complete' });
   });
 });
 

@@ -133,12 +133,14 @@ describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability 
     purposeName: 'Tourism & Vacation',
     turnNumber: 2,
     confirmedProfile: { climate: 'cold' },
+    unresolvedPreferences: ['هادئة'],
     catalog: [
-      { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+      { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingWeight: 8, rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
       {
         id: 'naturecity',
         kind: 'target',
         question: 'Nature or cities?',
+        rankingWeight: 10,
         rankingSupported: true,
         resolved: false,
         alreadyAsked: false,
@@ -167,9 +169,25 @@ describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability 
     expect(system).toContain('"status": "complete"');
   });
 
-  it('instructs multi-dimension updates only when clearly implied, never to artificially save a turn', () => {
+  it('treats the catalog as constraints rather than a checklist and allows completion with unresolved dimensions', () => {
     const { system } = buildNextTurnPrompt(req);
-    expect(system).toMatch(/only do this when both are clearly implied/i);
+    expect(system).toMatch(/NOT a checklist/i);
+    expect(system).toMatch(/even when catalog dimensions remain unresolved/i);
+    expect(system).toContain('rankingWeight=10');
+  });
+
+  it('prioritizes unresolved traveler wording and requires fresh contextual options', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toContain('هادئة');
+    expect(system).toMatch(/Use these phrases first/i);
+    expect(system).toMatch(/Every option must resolve EVERY declared target dimension/i);
+    expect(system).toMatch(/NEVER copy or lightly rephrase catalog option labels/i);
+  });
+
+  it('adds a fixed repair instruction on retry without including rejected model content', () => {
+    const { system } = buildNextTurnPrompt(req, 'choice_options');
+    expect(system).toMatch(/REPAIR REQUIRED/i);
+    expect(system).toMatch(/2 to 4 distinct, contextual option labels/i);
   });
 
   it('never requests chain-of-thought', () => {

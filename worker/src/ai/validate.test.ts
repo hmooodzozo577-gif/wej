@@ -193,7 +193,7 @@ describe('validateNextTurnRequest — Phase 16.5 TRUE adaptive-interview Capabil
     turnNumber: 1,
     confirmedProfile: {},
     catalog: [
-      { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: false, alreadyAsked: false, options: [{ value: 'cold', label: 'Cold' }] },
+      { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingWeight: 8, rankingSupported: true, resolved: false, alreadyAsked: false, options: [{ value: 'cold', label: 'Cold' }] },
     ],
   };
 
@@ -238,6 +238,12 @@ describe('validateNextTurnRequest — Phase 16.5 TRUE adaptive-interview Capabil
   it('LOCATION: rejects a coordinate-shaped originCountry', () => {
     expect(validateNextTurnRequest({ ...validNextTurnBody, originCountry: '24.7136, 46.6753' }).length).toBeGreaterThan(0);
   });
+
+  it('accepts bounded unresolved phrases and rejects coordinates or invalid ranking weights', () => {
+    expect(validateNextTurnRequest({ ...validNextTurnBody, unresolvedPreferences: ['هادئة'] })).toEqual([]);
+    expect(validateNextTurnRequest({ ...validNextTurnBody, unresolvedPreferences: ['24.7136, 46.6753'] }).length).toBeGreaterThan(0);
+    expect(validateNextTurnRequest({ ...validNextTurnBody, catalog: [{ ...validNextTurnBody.catalog[0]!, rankingWeight: -1 }] }).length).toBeGreaterThan(0);
+  });
 });
 
 describe('validateNextTurnResult — the authoritative gate for Capability C (never trust the model)', () => {
@@ -247,7 +253,7 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     turnNumber: 2,
     confirmedProfile: { climate: 'cold' },
     catalog: [
-      { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+      { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingWeight: 8, rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
       {
         id: 'naturecity',
         kind: 'target',
@@ -268,7 +274,10 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
         questionType: 'choice',
         targetDimensions: ['naturecity'],
         prompt: 'Since you prefer cold weather, which setting would make the trip feel right?',
-        options: [{ id: 'a', label: 'Nature', updates: { naturecity: 15 } }],
+        options: [
+          { id: 'a', label: 'Open landscapes and quiet trails', updates: { naturecity: 15 } },
+          { id: 'b', label: 'Lively neighborhoods and cultural venues', updates: { naturecity: 90 } },
+        ],
       },
       request,
     );
@@ -277,7 +286,10 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
       questionType: 'choice',
       targetDimensions: ['naturecity'],
       prompt: 'Since you prefer cold weather, which setting would make the trip feel right?',
-      options: [{ id: 'a', label: 'Nature', updates: { naturecity: 15 } }],
+      options: [
+        { id: 'a', label: 'Open landscapes and quiet trails', updates: { naturecity: 15 } },
+        { id: 'b', label: 'Lively neighborhoods and cultural venues', updates: { naturecity: 90 } },
+      ],
     });
   });
 
@@ -304,6 +316,37 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     );
     expect(copied).toEqual({ status: 'invalid' });
     expect(lightlyReworded).toEqual({ status: 'invalid' });
+  });
+
+  it('rejects copied bank option labels even when the question itself is fresh', () => {
+    const result = validateNextTurnResult(
+      {
+        status: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['naturecity'],
+        prompt: 'Since cold weather matters, what kind of daily setting feels most restorative?',
+        options: [
+          { id: 'a', label: 'Nature', updates: { naturecity: 15 } },
+          { id: 'b', label: 'Cities', updates: { naturecity: 90 } },
+        ],
+      },
+      request,
+    );
+    expect(result).toEqual({ status: 'invalid' });
+  });
+
+  it('rejects a choice with only one option', () => {
+    const result = validateNextTurnResult(
+      {
+        status: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['naturecity'],
+        prompt: 'Which setting fits your trip?',
+        options: [{ id: 'a', label: 'Open landscapes and quiet trails', updates: { naturecity: 15 } }],
+      },
+      request,
+    );
+    expect(result).toEqual({ status: 'invalid' });
   });
 
   it('accepts a valid free_text turn', () => {
@@ -351,14 +394,17 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     expect(result).toEqual({ status: 'invalid' });
   });
 
-  it('MULTI-DIMENSION: accepts one option updating two eligible dimensions at once', () => {
+  it('MULTI-DIMENSION: accepts contextual options that each update both eligible dimensions', () => {
     const result = validateNextTurnResult(
       {
         status: 'ask',
         questionType: 'choice',
         targetDimensions: ['naturecity', 'adventure'],
         prompt: 'Describe your ideal day',
-        options: [{ id: 'a', label: 'Quiet nature walk', updates: { naturecity: 15, adventure: 10 } }],
+        options: [
+          { id: 'a', label: 'Quiet nature walks at an easy pace', updates: { naturecity: 15, adventure: 10 } },
+          { id: 'b', label: 'Active days exploring lively neighborhoods', updates: { naturecity: 90, adventure: 90 } },
+        ],
       },
       request,
     );
@@ -366,6 +412,23 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     if (result.status === 'ask' && result.questionType === 'choice') {
       expect(result.options[0]?.updates).toEqual({ naturecity: 15, adventure: 10 });
     }
+  });
+
+  it('MULTI-DIMENSION: rejects an option that leaves any declared target unresolved', () => {
+    const result = validateNextTurnResult(
+      {
+        status: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['naturecity', 'adventure'],
+        prompt: 'Describe your ideal day',
+        options: [
+          { id: 'a', label: 'Quiet nature walks at an easy pace', updates: { naturecity: 15, adventure: 10 } },
+          { id: 'b', label: 'Lively neighborhoods', updates: { naturecity: 90 } },
+        ],
+      },
+      request,
+    );
+    expect(result).toEqual({ status: 'invalid' });
   });
 
   it('requires budget to be a standalone target so the frontend can render canonical numeric ranges', () => {

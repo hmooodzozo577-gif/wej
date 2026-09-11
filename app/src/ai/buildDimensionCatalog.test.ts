@@ -47,6 +47,13 @@ describe('buildDimensionCatalog', () => {
     expect(nature.options.every((o) => typeof o.label === 'string' && o.label.length > 0)).toBe(true);
   });
 
+  it('carries the existing deterministic weight so AI can prioritize without inventing importance', () => {
+    const catalog = buildDimensionCatalog('tourism', { answers: {}, askedDimensionIds: [] }, 'en');
+    for (const dimension of catalog) {
+      expect(dimension.rankingWeight).toBe(QUESTION_BANKS.tourism.find((question) => question.id === dimension.id)!.weight);
+    }
+  });
+
   it('includes localized bank wording so the Worker can reject copied questions', () => {
     const ar = buildDimensionCatalog('tourism', { answers: {}, askedDimensionIds: [] }, 'ar');
     const en = buildDimensionCatalog('tourism', { answers: {}, askedDimensionIds: [] }, 'en');

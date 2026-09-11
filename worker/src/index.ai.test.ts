@@ -291,11 +291,13 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
 
   it('retries one semantically invalid AI decision and accepts a valid second decision before fallback', async () => {
     let calls = 0;
+    const retryDiagnostics: Array<string | undefined> = [];
     const recoveringProvider: AiProvider = {
       interpretPreferences: mock.interpretPreferences,
       explainRecommendation: mock.explainRecommendation,
-      nextTurn: async () => {
+      nextTurn: async (_request, retryDiagnostic) => {
         calls += 1;
+        retryDiagnostics.push(retryDiagnostic);
         if (calls === 1) {
           return {
             status: 'ask',
@@ -309,8 +311,11 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
           status: 'ask',
           questionType: 'choice',
           targetDimensions: ['climate'],
-          prompt: 'Choose a climate',
-          options: [{ id: 'cold', label: 'Cold', updates: { climate: 'cold' } }],
+          prompt: 'Which atmosphere would make this trip comfortable for you?',
+          options: [
+            { id: 'cold', label: 'Crisp days with cool evenings', updates: { climate: 'cold' } },
+            { id: 'mild', label: 'Gentle days with balanced temperatures', updates: { climate: 'mild' } },
+          ],
         };
       },
     };
@@ -318,6 +323,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
     const [body, status] = await handleNextTurn(recoveringProvider, validNextTurnBody);
     expect(status).toBe(200);
     expect(calls).toBe(2);
+    expect(retryDiagnostics).toEqual([undefined, 'choice_options']);
     expect(body).toMatchObject({ status: 'ask', targetDimensions: ['climate'] });
   });
 

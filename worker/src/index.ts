@@ -34,6 +34,7 @@ import {
   type ExplainRecommendationRequest,
   type InterpretPreferencesRequest,
   type NextTurnRequest,
+  type NextTurnRetryDiagnostic,
 } from './ai/types';
 import {
   validateExplainRecommendationRequest,
@@ -286,11 +287,11 @@ export async function handleNextTurn(provider: AiProvider | null, body: unknown)
     return [{ error: 'ai_not_configured', message: 'The adaptive interview is not available yet.' }, 503];
   }
   const req = body as NextTurnRequest;
-  let invalidDiagnostic = 'decision_shape';
+  let invalidDiagnostic: NextTurnRetryDiagnostic = 'decision_shape';
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
-      const raw: unknown = await provider.nextTurn(req);
-      let diagnostic = 'decision_shape';
+      const raw: unknown = await provider.nextTurn(req, attempt === 0 ? undefined : invalidDiagnostic);
+      let diagnostic: NextTurnRetryDiagnostic = 'decision_shape';
       const result = validateNextTurnResult(raw, req, (reason) => { diagnostic = reason; });
       if (result.status !== 'invalid') return [result, 200];
       invalidDiagnostic = diagnostic;

@@ -102,6 +102,7 @@ export function Quiz() {
     {
       answers: state.answers,
       askedDimensionIds: state.askedDimensionIds,
+      unresolvedPreferences: state.unresolvedPreferences,
       interviewStatus: effectiveInterviewStatus,
       interviewComplete: state.interviewComplete,
       followup: state.followup,

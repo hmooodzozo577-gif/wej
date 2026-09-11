@@ -295,6 +295,7 @@ export async function nextTurn(
   confirmedProfile: Record<string, string | number>,
   turnNumber: number,
   originCountry?: string,
+  unresolvedPreferences?: string[],
 ): Promise<NextTurnServiceResult> {
   if (catalog.length === 0) {
     return { status: 'invalid_request', message: 'No dimensions to ask about.' };
@@ -313,6 +314,11 @@ export async function nextTurn(
   const trimmedOrigin = originCountry?.trim().slice(0, MAX_ORIGIN_COUNTRY_LENGTH);
   const body: Record<string, unknown> = { lang, purposeName, catalog, confirmedProfile, turnNumber };
   if (trimmedOrigin) body.originCountry = trimmedOrigin;
+  const safeUnresolved = (unresolvedPreferences ?? [])
+    .map((value) => value.trim().slice(0, 200))
+    .filter((value) => value.length > 0 && !/-?\d{1,3}\.\d{2,},\s*-?\d{1,3}\.\d{2,}/.test(value))
+    .slice(0, 10);
+  if (safeUnresolved.length > 0) body.unresolvedPreferences = safeUnresolved;
 
   const outcome = await postJson(NEXT_TURN_ENDPOINT_PATH, body);
   if (!outcome.ok) return outcome.result;

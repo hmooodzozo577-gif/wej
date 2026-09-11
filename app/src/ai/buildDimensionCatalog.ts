@@ -30,6 +30,7 @@ export function buildDimensionCatalog(
       id: q.id,
       kind: q.kind,
       question: lang === 'ar' ? q.text.ar : q.text.en,
+      rankingWeight: q.weight,
       rankingSupported: classifyQuestion(q) === 'RANKING_SUPPORTED',
       // A resolved dimension is, by construction, also "already asked" —
       // the model has no reason to ever revisit it either way; this

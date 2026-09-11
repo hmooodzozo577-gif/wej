@@ -123,6 +123,7 @@ export function NaturalPreferenceInput({ purposeId, questions }: { purposeId: Pu
         dispatch({ type: 'SET_ANSWER', questionId: p.questionId, value: p.value, provenance: 'ai_interpreted', confidence: p.confidence });
       }
     }
+    dispatch({ type: 'SET_UNRESOLVED_PREFERENCES', values: unmapped });
     reset();
   }
 

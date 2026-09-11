@@ -256,8 +256,8 @@ export function createCloudflareWorkersAiProvider(ai: Ai): AiProvider {
       const raw = await runJsonCompletion(ai, system, user, 'explain_recommendation', EXPLAIN_JSON_SCHEMA);
       return raw as ExplainRecommendationResult;
     },
-    async nextTurn(req: NextTurnRequest): Promise<NextTurnResult> {
-      const { system, user } = buildNextTurnPrompt(req);
+    async nextTurn(req: NextTurnRequest, retryDiagnostic): Promise<NextTurnResult> {
+      const { system, user } = buildNextTurnPrompt(req, retryDiagnostic);
       const raw = await runJsonCompletion(ai, system, user, 'next_turn', buildNextTurnJsonSchema(req), { conciseStructuredOutput: true });
       // Cast only to satisfy AiProvider's declared return type —
       // index.ts's caller treats this as `unknown` regardless (see

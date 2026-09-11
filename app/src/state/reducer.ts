@@ -33,6 +33,7 @@ export const initialAppState: AppState = {
   answers: {},
   satisfaction: {},
   confidence: {},
+  unresolvedPreferences: [],
   followup: null,
   followupTurnsUsed: 0,
   aiCallsUsed: 0,
@@ -68,6 +69,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         answers: {},
         satisfaction: {},
         confidence: {},
+        unresolvedPreferences: [],
         followup: null,
         followupTurnsUsed: 0,
         aiCallsUsed: 0,
@@ -93,6 +95,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         answers: {},
         satisfaction: {},
         confidence: {},
+        unresolvedPreferences: [],
         followup: null,
         followupTurnsUsed: 0,
         aiCallsUsed: 0,
@@ -166,6 +169,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       }
       return { ...state, answers, satisfaction, confidence: confidenceMap };
     }
+
+    case 'SET_UNRESOLVED_PREFERENCES':
+      return { ...state, unresolvedPreferences: action.values };
 
     // Phase 16.5 — "un-apply" a confirmed AI-derived preference (the
     // remove control on the "already accounted for" list). Refuses to
@@ -293,6 +299,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         answers: {},
         satisfaction: {},
         confidence: {},
+        unresolvedPreferences: [],
         followup: null,
         followupTurnsUsed: 0,
         aiCallsUsed: 0,

@@ -12,7 +12,10 @@ const requestBody = {
 };
 const validTurn = {
   status: 'ask', questionType: 'choice', targetDimensions: ['budget'], prompt: 'Which cost level suits you?',
-  options: [{ id: 'low', label: 'Low', updates: { budget: 1 } }],
+  options: [
+    { id: 'low', label: 'Low', updates: { budget: 1 } },
+    { id: 'medium', label: 'Medium', updates: { budget: 2 } },
+  ],
 };
 const privateMarker = 'PRIVATE_MODEL_TEXT_MUST_NEVER_LEAVE_WORKER';
 

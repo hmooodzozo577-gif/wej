@@ -20,10 +20,10 @@ import type { AppAction, AppState, PendingFollowup } from '../state/types';
 import type { DimensionCatalogEntry } from '../ai/types';
 import type { PurposeId, Lang } from '../data/types';
 
-type InterviewSnapshot = Pick<AppState, 'answers' | 'askedDimensionIds' | 'interviewStatus' | 'interviewComplete' | 'followup' | 'turnCount'>;
+type InterviewSnapshot = Pick<AppState, 'answers' | 'askedDimensionIds' | 'interviewStatus' | 'interviewComplete' | 'followup' | 'turnCount' | 'unresolvedPreferences'>;
 
 export type AdaptiveInterviewDecision =
-  | { action: 'call'; catalog: DimensionCatalogEntry[]; confirmedProfile: Record<string, string | number>; turnNumber: number }
+  | { action: 'call'; catalog: DimensionCatalogEntry[]; confirmedProfile: Record<string, string | number>; unresolvedPreferences: string[]; turnNumber: number }
   // Nothing eligible left to ask, or the turn ceiling was reached —
   // settle the interview deterministically, without spending a real AI
   // call just to be told what is already knowable locally (Section 21 —
@@ -32,6 +32,20 @@ export type AdaptiveInterviewDecision =
   // Not active, already has a pending turn, or already complete — do
   // nothing this tick.
   | { action: 'idle' };
+
+/** Phase 14 can rank a partial canonical profile. Stop the AI interview
+ *  once it covers a meaningful majority of both supported dimensions and
+ *  their existing deterministic weights; unresolved catalog entries are
+ *  possibilities, not a checklist the traveler must complete. */
+export function hasSufficientRankingEvidence(catalog: DimensionCatalogEntry[]): boolean {
+  const supported = catalog.filter((dimension) => dimension.rankingSupported);
+  if (supported.length === 0) return true;
+  const resolved = supported.filter((dimension) => dimension.resolved);
+  const requiredCount = Math.min(supported.length, Math.max(3, Math.ceil(supported.length * 0.6)));
+  const totalWeight = supported.reduce((sum, dimension) => sum + dimension.rankingWeight, 0);
+  const resolvedWeight = resolved.reduce((sum, dimension) => sum + dimension.rankingWeight, 0);
+  return resolved.length >= requiredCount && (totalWeight === 0 || resolvedWeight / totalWeight >= 0.6);
+}
 
 /** Pure decision: given the current interview state, what should happen
  *  next? Never calls the network itself. */
@@ -42,6 +56,7 @@ export function decideAdaptiveInterviewStep(purposeId: PurposeId | null, state: 
   if (state.followup) return { action: 'idle' }; // one turn resolved/dismissed at a time
 
   const catalog = buildDimensionCatalog(purposeId, state, lang);
+  if (hasSufficientRankingEvidence(catalog)) return { action: 'complete' };
   const maxTurns = computeMaxInterviewTurns(catalog);
   if (state.turnCount >= maxTurns) return { action: 'complete' };
 
@@ -52,7 +67,13 @@ export function decideAdaptiveInterviewStep(purposeId: PurposeId | null, state: 
   for (const d of catalog) {
     if (d.resolved) confirmedProfile[d.id] = state.answers[d.id] as string | number;
   }
-  return { action: 'call', catalog, confirmedProfile, turnNumber: state.turnCount + 1 };
+  return {
+    action: 'call',
+    catalog,
+    confirmedProfile,
+    unresolvedPreferences: state.turnCount === 0 ? state.unresolvedPreferences : [],
+    turnNumber: state.turnCount + 1,
+  };
 }
 
 /** Turns a validated AI next-turn "ask" outcome into the existing
@@ -137,12 +158,20 @@ export function useAdaptiveInterview(
     if (!purposeId) return;
     // Reducer-owned references detect both value edits and a fresh empty
     // session for the same purpose. Unrelated renders preserve them.
-    const context = [purposeId, purposeName, lang, originCountry, state.answers, state.askedDimensionIds, state.turnCount, dispatch];
+    const context = [purposeId, purposeName, lang, originCountry, state.answers, state.askedDimensionIds, state.unresolvedPreferences, state.turnCount, dispatch];
     let request = inFlightRef.current;
     if (!request || request.context.some((value, index) => value !== context[index])) {
       request = {
         context,
-        promise: nextTurn(lang, purposeName, decision.catalog, decision.confirmedProfile, decision.turnNumber, originCountry),
+        promise: nextTurn(
+          lang,
+          purposeName,
+          decision.catalog,
+          decision.confirmedProfile,
+          decision.turnNumber,
+          originCountry,
+          decision.unresolvedPreferences,
+        ),
       };
       inFlightRef.current = request;
     }
@@ -171,5 +200,5 @@ export function useAdaptiveInterview(
     // see react-best-practices review in the final report). Answer values
     // affect the AI's context even when eligibility/counts stay the same.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [purposeId, purposeName, lang, originCountry, state.interviewStatus, state.interviewComplete, state.followup, state.turnCount, state.answers, state.askedDimensionIds, dispatch]);
+  }, [purposeId, purposeName, lang, originCountry, state.interviewStatus, state.interviewComplete, state.followup, state.turnCount, state.answers, state.askedDimensionIds, state.unresolvedPreferences, dispatch]);
 }

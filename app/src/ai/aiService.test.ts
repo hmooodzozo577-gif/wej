@@ -17,11 +17,12 @@ const topResults: RankedDestinationContext[] = [
 
 // Phase 16.5 TRUE adaptive-interview pass — Capability C fixtures.
 const catalog: DimensionCatalogEntry[] = [
-  { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+  { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingWeight: 8, rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
   {
     id: 'naturecity',
     kind: 'target',
     question: 'Nature or cities?',
+    rankingWeight: 10,
     rankingSupported: true,
     resolved: false,
     alreadyAsked: false,
@@ -334,5 +335,14 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     await nextTurn('en', 'Tourism', catalog, {}, 1);
     const without = JSON.parse((fetchSpy.mock.calls[1] as [string, RequestInit])[1].body as string);
     expect('originCountry' in without).toBe(false);
+  });
+
+  it('nextTurn sends bounded unresolved phrases but drops coordinate-shaped content', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ status: 'complete' }) });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    await nextTurn('ar', 'Tourism', catalog, { climate: 'cold' }, 1, undefined, ['هادئة', '24.7136, 46.6753']);
+    const body = JSON.parse((fetchSpy.mock.calls[0] as [string, RequestInit])[1].body as string);
+    expect(body.unresolvedPreferences).toEqual(['هادئة']);
   });
 });

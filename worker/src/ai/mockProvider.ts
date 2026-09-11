@@ -55,7 +55,14 @@ export function createMockAiProvider(): AiProvider {
         questionType: 'choice',
         targetDimensions: [eligible.id],
         prompt: `Mock question about ${eligible.id}`,
-        options: opts.map((o, i) => ({ id: `opt${i}`, label: String(o.label), updates: { [eligible.id]: o.value } })),
+        options: opts.map((o, i) => ({
+          id: `opt${i}`,
+          // The production validator deliberately rejects labels copied
+          // from the deterministic bank. Keep this test double inside
+          // the same contract instead of weakening validation for tests.
+          label: `Mock contextual choice ${i + 1}`,
+          updates: { [eligible.id]: o.value },
+        })),
       };
     },
 

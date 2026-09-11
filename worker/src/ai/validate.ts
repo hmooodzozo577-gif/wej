@@ -34,6 +34,8 @@ export const MAX_NEXT_TURN_PROMPT_LENGTH = 300;
 export const MAX_NEXT_TURN_OPTIONS = 4;
 export const MAX_NEXT_TURN_OPTION_LABEL_LENGTH = 120;
 export const MAX_TURN_NUMBER = 20;
+export const MAX_UNRESOLVED_PREFERENCES = 10;
+export const MAX_UNRESOLVED_PREFERENCE_LENGTH = 200;
 
 const LANGS = new Set(['ar', 'en']);
 
@@ -137,6 +139,21 @@ export function validateNextTurnRequest(body: unknown): string[] {
       }
     }
   }
+  if (b.unresolvedPreferences !== undefined) {
+    if (
+      !Array.isArray(b.unresolvedPreferences) ||
+      b.unresolvedPreferences.length > MAX_UNRESOLVED_PREFERENCES ||
+      b.unresolvedPreferences.some(
+        (value) =>
+          typeof value !== 'string' ||
+          value.trim().length === 0 ||
+          value.length > MAX_UNRESOLVED_PREFERENCE_LENGTH ||
+          /-?\d{1,3}\.\d{2,},\s*-?\d{1,3}\.\d{2,}/.test(value),
+      )
+    ) {
+      errors.push('unresolvedPreferences must contain only bounded non-coordinate strings.');
+    }
+  }
   if (!Array.isArray(b.catalog) || b.catalog.length === 0) {
     errors.push('catalog must be a non-empty array.');
   } else if (b.catalog.length > MAX_CATALOG_ENTRIES) {
@@ -150,6 +167,8 @@ export function validateNextTurnRequest(body: unknown): string[] {
         typeof entry.kind !== 'string' ||
         (entry.question !== undefined &&
           (typeof entry.question !== 'string' || entry.question.trim().length === 0 || entry.question.length > MAX_NEXT_TURN_PROMPT_LENGTH)) ||
+        (entry.rankingWeight !== undefined &&
+          (typeof entry.rankingWeight !== 'number' || !Number.isFinite(entry.rankingWeight) || entry.rankingWeight < 0)) ||
         typeof entry.rankingSupported !== 'boolean' ||
         typeof entry.resolved !== 'boolean' ||
         typeof entry.alreadyAsked !== 'boolean' ||
@@ -354,6 +373,11 @@ export function validateNextTurnResult(
 
   // questionType === 'choice'
   const options: NextTurnOption[] = [];
+  const budgetOnly = targetDimensions.length === 1 && targetDimensions[0] === 'budget';
+  const bankOptionLabels = targetDimensions.flatMap((id) => eligible.get(id)?.options.map((option) => option.label) ?? []);
+  const optionIds = new Set<string>();
+  const optionLabels = new Set<string>();
+  let rejectedCopiedOrDuplicateOption = false;
   if (Array.isArray(r.options)) {
     for (const raw of r.options.slice(0, MAX_NEXT_TURN_OPTIONS)) {
       const candidate = raw as Partial<NextTurnOption> | null;
@@ -369,6 +393,15 @@ export function validateNextTurnResult(
       ) {
         continue;
       }
+      const normalizedLabel = normalizeQuestion(candidate.label);
+      if (
+        optionIds.has(candidate.id) ||
+        optionLabels.has(normalizedLabel) ||
+        (!budgetOnly && bankOptionLabels.some((label) => copiesBankQuestion(candidate.label as string, label)))
+      ) {
+        rejectedCopiedOrDuplicateOption = true;
+        break;
+      }
       const updates: Record<string, string | number> = {};
       let allValid = true;
       for (const [dimId, value] of Object.entries(candidate.updates)) {
@@ -383,11 +416,15 @@ export function validateNextTurnResult(
         }
         updates[dimId] = value;
       }
+      if (targetDimensions.some((id) => updates[id] === undefined)) allValid = false;
       if (allValid && Object.keys(updates).length > 0) {
-        options.push({ id: candidate.id, label: candidate.label.trim(), updates });
+        const label = candidate.label.trim();
+        options.push({ id: candidate.id, label, updates });
+        optionIds.add(candidate.id);
+        optionLabels.add(normalizedLabel);
       }
     }
   }
-  if (options.length === 0) return invalid('choice_options');
+  if (rejectedCopiedOrDuplicateOption || options.length < 2) return invalid('choice_options');
   return { status: 'ask', questionType: 'choice', targetDimensions, prompt, options };
 }

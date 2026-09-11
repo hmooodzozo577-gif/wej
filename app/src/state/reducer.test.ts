@@ -8,9 +8,15 @@ describe('appReducer', () => {
   });
 
   it('START_QUIZ resets qIndex/answers/results and sets purpose', () => {
-    const dirty = { ...initialAppState, qIndex: 3, answers: { a: 1 }, results: [] as never[] };
+    const dirty = { ...initialAppState, qIndex: 3, answers: { a: 1 }, unresolvedPreferences: ['quiet'], results: [] as never[] };
     const next = appReducer(dirty, { type: 'START_QUIZ', purpose: 'tourism' });
-    expect(next).toMatchObject({ purpose: 'tourism', qIndex: 0, answers: {}, results: null });
+    expect(next).toMatchObject({ purpose: 'tourism', qIndex: 0, answers: {}, unresolvedPreferences: [], results: null });
+  });
+
+  it('keeps unresolved natural-language context in interview state only', () => {
+    const state = appReducer(initialAppState, { type: 'SET_UNRESOLVED_PREFERENCES', values: ['هادئة'] });
+    expect(state.unresolvedPreferences).toEqual(['هادئة']);
+    expect(appReducer(state, { type: 'RESTART_ALL' }).unresolvedPreferences).toEqual([]);
   });
 
   it('Phase 15: START_QUIZ seeds an adaptively-computed single-question path (deterministic, same purpose -> same first question every time)', () => {

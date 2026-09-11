@@ -127,6 +127,9 @@ export interface DimensionCatalogEntry {
    *  and for server-side duplicate-question rejection. Optional only for
    *  a safe rolling deployment with the previous frontend contract. */
   question?: string;
+  /** Existing deterministic engine weight. Optional only during the rolling
+   *  deployment of the updated frontend contract. */
+  rankingWeight?: number;
   /** Whether this id is an actual Phase 14 scoring input (every
    *  non-'flavor' kind) or interview-context only (flavor questions,
    *  excluded from scoring — see engine/scoreDestination.ts). Told to
@@ -152,6 +155,9 @@ export interface NextTurnRequest {
    *  via the adventure dimension) without re-deriving it from scratch. */
   confirmedProfile: Record<string, string | number>;
   turnNumber: number;
+  /** Explicit fragments Capability A could not map. Bounded and supplied
+   *  only to make the next clarification genuinely case-specific. */
+  unresolvedPreferences?: string[];
   /** See InterpretPreferencesRequest's own doc comment — identical
    *  coarse-context-only contract, identical non-inference instruction. */
   originCountry?: string;
@@ -192,6 +198,20 @@ export type NextTurnResult =
    *  falsely claim the interview has enough information) and never
    *  passed through to the frontend as if it were a real decision. */
   | { status: 'invalid' };
+
+/** Fixed, content-free reason passed only between the Worker validator and
+ *  provider adapter when a second generation attempt is needed. It never
+ *  contains model output or traveler text. */
+export type NextTurnRetryDiagnostic =
+  | 'decision_shape'
+  | 'question_type'
+  | 'target_dimensions'
+  | 'question_prompt'
+  | 'choice_options'
+  | 'output_empty'
+  | 'output_json'
+  | 'output_truncated'
+  | 'invalid_output';
 
 // ---- Capability B: personalized recommendation explanation ----------------
 
@@ -242,7 +262,7 @@ export interface ExplainRecommendationResult {
 export interface AiProvider {
   interpretPreferences(req: InterpretPreferencesRequest): Promise<InterpretPreferencesResult>;
   explainRecommendation(req: ExplainRecommendationRequest): Promise<ExplainRecommendationResult>;
-  nextTurn(req: NextTurnRequest): Promise<NextTurnResult>;
+  nextTurn(req: NextTurnRequest, retryDiagnostic?: NextTurnRetryDiagnostic): Promise<NextTurnResult>;
 }
 
 // ---- Typed, safe-to-log-free errors ----------------------------------------

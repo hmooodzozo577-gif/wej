@@ -122,7 +122,7 @@ describe('NaturalPreferenceInput', () => {
     mockInterpret.mockResolvedValue({
       status: 'ok',
       interpreted: [{ questionId: 'climate', value: coldValue, confidence: 'medium' }],
-      unmapped: [],
+      unmapped: ['هادئة'],
     });
     const dispatchSpy = vi.fn();
     renderWith(dispatchSpy);
@@ -142,6 +142,7 @@ describe('NaturalPreferenceInput', () => {
       provenance: 'ai_interpreted',
       confidence: 'medium',
     });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_UNRESOLVED_PREFERENCES', values: ['هادئة'] });
   });
 
   it('CONFIDENCE RULE: a low-confidence proposal starts UNCHECKED (never silently eliminates the question)', async () => {

@@ -62,6 +62,9 @@ export interface DimensionCatalogEntry {
   /** Original bank wording. Sent as reference so the Worker can reject
    *  model output that merely copies the deterministic question. */
   question: string;
+  /** Existing deterministic Phase 14 question weight. The AI may use it
+   *  to prioritize gaps but may never alter or invent it. */
+  rankingWeight: number;
   rankingSupported: boolean;
   resolved: boolean;
   alreadyAsked: boolean;
@@ -74,6 +77,7 @@ export interface NextTurnCatalogRequest {
   catalog: DimensionCatalogEntry[];
   confirmedProfile: Record<string, string | number>;
   turnNumber: number;
+  unresolvedPreferences?: string[];
   /** See InterpretPreferencesRequest's own doc comment — identical
    *  coarse-context-only contract. */
   originCountry?: string;
