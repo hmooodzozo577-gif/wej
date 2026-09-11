@@ -23,15 +23,27 @@ Neither replaces `impeccable`; do not invoke every design skill on every UI task
 
 ## Project State Recovery
 
-At the start of any substantial task — and especially after context
-compaction/reset, or when continuing an old/handed-off conversation:
+Before substantial work — and especially after context compaction/
+reset, or when continuing an old/handed-off conversation:
 
-1. Read `.claude/PROJECT_STATE.md`.
-2. Verify the actual Git branch/HEAD against what it claims.
-3. Inspect relevant current code before implementing anything.
-4. If `PROJECT_STATE.md` conflicts with current code/Git, current
-   repository state wins.
-5. Update `PROJECT_STATE.md` whenever a task materially changes
-   roadmap status, architecture status, external-configuration
-   readiness, or the current phase (see that file's own Update Policy
-   for what counts as material).
+1. Read `/PROJECT_STATE.md` (root, vendor-neutral — the canonical
+   current-state snapshot for any agent).
+2. Read `/AGENTS.md` (root, vendor-neutral working rules for any
+   agent).
+3. Verify the actual Git branch/HEAD against what those files claim.
+4. Inspect relevant current code before implementing anything.
+5. Then apply the Claude-specific skill policy in this file, below.
+
+If `PROJECT_STATE.md` conflicts with current code/Git, current
+repository state wins (see that file's own Source-of-Truth Priority).
+Update `PROJECT_STATE.md` (not this file) whenever a task materially
+changes roadmap status, architecture status, external-configuration
+readiness, or the current phase.
+
+This file (`CLAUDE.md`) and `.claude/skills/` hold Claude Code-specific
+policy only — skill selection, Caveman, `impeccable`, `emil-design-eng`,
+`apple-design`, `playwright-skill`, `find-skill`, and any other
+Claude-specific workflow convention. Project-wide product truth
+(non-negotiable rules, roadmap, architecture) belongs in the root
+files above, not here — the repository remembers Wejhaty, not any one
+agent's chat history (`PROJECT_STATE.md`'s own opening line).
