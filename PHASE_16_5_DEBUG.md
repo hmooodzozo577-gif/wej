@@ -1,7 +1,8 @@
 # Phase 16.5 Production Debug Record
 
-Current status: **TECHNICALLY FIXED AND LIVE VERIFIED — PENDING FINAL USER
-ACCEPTANCE AND BACK/UNDO DECISION — NOT COMPLETE**.
+Current status: **IMPLEMENTED — TESTED — DEPLOYED — FULL AUTOMATED PRODUCTION
+PATH VERIFIED — PENDING FINAL USER ACCEPTANCE AND BACK/UNDO DECISION — NOT
+COMPLETE**.
 
 This file records bounded evidence for the current Capability C incident.
 It does not contain credentials, precise coordinates, raw model output, or
@@ -74,11 +75,53 @@ production-browser run of the original Arabic scenario then confirmed
 `climate=cold` and `naturecity=15`, rendered the generated budget question, and
 did not enter the Phase 15 fallback.
 
+## Corrective pass after the user's full-interview failure
+
+The user's later full production test superseded that first-turn-only check:
+the page replaced every answered question with a loading card and eventually
+showed an ordinary Phase 15 question. The exact historical HTTP response and
+fixed diagnostic category were not captured, so the specific model-validation
+failure for that session remains unknown.
+
+Verified causes and corrections:
+
+- The loading behavior was deterministic frontend behavior: resolving or
+  skipping a generated turn cleared `state.followup` immediately, so `Quiz`
+  rendered a standalone loading card for the full next-turn request.
+- Generated questions had also been changed from the accepted `q-card` /
+  radio-option / select-then-Next controls to small immediate-action buttons.
+  That unrequested design change was removed.
+- `Quiz` now retains the answered turn while its successor is requested.
+  The selected option remains visible, the existing controls are disabled, and
+  an accessible busy status is announced without replacing the question card.
+- Capability C previously entered Phase 15 after one syntactically or
+  semantically invalid model response. The Worker now makes one bounded second
+  AI attempt for those response categories only. Timeouts, provider failures,
+  missing configuration, and a second invalid result still use the existing
+  Phase 15 fallback.
+
+Commit `aef8e87` contains this corrective implementation. Cloudflare Worker
+deployment run `34608471869` and GitHub Pages deployment run `34608471857`
+both completed successfully.
+
+A fresh full production-browser run on 2026-09-12 used:
+
+`أبغى دولة باردة وهادئة وفيها طبيعة`
+
+The interpretation response was HTTP 200 and preserved `climate=cold` plus
+`naturecity=15`. Four real Capability C responses were HTTP 200 (approximately
+6.1 s, 5.5 s, 3.4 s, and 5.3 s). The interview gathered budget, beach/mountain,
+adventure, and culture preferences through generated turns, then reached the
+AI completion card with six confirmed dimensions. No Phase 15 question was
+rendered. This is automated production verification; final user acceptance is
+still pending.
+
 ## Verification completed locally
 
-- Frontend: 60 test files, 1078 tests passed; production build passed.
-- Worker after the structured-output hardening: 9 test files, 181 tests
-  passed; TypeScript check and `wrangler deploy --dry-run` passed.
+- Frontend: 60 test files, 1080 tests passed; TypeScript, lint, production
+  build, and visual AR/EN + desktop/mobile checks passed.
+- Worker: 9 test files, 183 tests passed; TypeScript check and
+  `wrangler deploy --dry-run` passed.
 
 ## Required next step
 

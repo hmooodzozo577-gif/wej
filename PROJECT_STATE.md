@@ -13,10 +13,10 @@ vendor-neutral pair every agent should read first.
 
 ## State Metadata
 
-- State document version: 3
-- Last verified date: 2026-09-11
+- State document version: 4
+- Last verified date: 2026-09-12
 - Last verified branch: `claude/marhaba-kxry8l`
-- Last verified code HEAD: `6a93efab05d815e53e2862b98babfca8d4132ea6`
+- Last verified code HEAD: `aef8e8743d67537c04ae733499173ee23078e013`
 
 **Branch and HEAD above are recovery references, not permanent
 requirements.** Always verify current Git state before starting work
@@ -63,10 +63,13 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
   production verification happened in an earlier session; not
   independently re-checked from every later session (no guaranteed
   network path to the deployed Worker URL from every environment).
-- **Phase 16.5 — IMPLEMENTED — TESTED — DEPLOYED — LIVE VERIFIED — PENDING
-  FINAL USER ACCEPTANCE; NOT COMPLETE.** The production Capability C incident
-  is technically resolved. Full incident evidence remains in
-  `PHASE_16_5_DEBUG.md`.
+- **Phase 16.5 — IMPLEMENTED — TESTED — DEPLOYED — FULL AUTOMATED PRODUCTION
+  PATH VERIFIED — USER ACCEPTANCE PENDING — NOT COMPLETE.** The latest user
+  test had reported a loading replacement after every answer and an eventual
+  Phase 15 question. The subsequent corrective pass restored the accepted
+  question UI, kept the answered card visible while the next AI turn loads,
+  and added one bounded retry for malformed/semantically invalid Capability C
+  output. Full incident evidence remains in `PHASE_16_5_DEBUG.md`.
   - **VERIFIED on 2026-09-11:** the frontend request-context race is fixed;
     obsolete success/error/complete responses cannot mutate a changed profile
     or session. Pages deployment #65 published commit `08e6728` successfully.
@@ -78,11 +81,21 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
   - **VERIFIED LIVE:** a direct Arabic request with `climate=cold` and
     `naturecity=15` confirmed returned HTTP 200 in 4.77 seconds and generated a
     budget question without re-targeting either resolved dimension.
-  - **VERIFIED PRODUCTION BROWSER E2E:** the exact Arabic scenario
-    `أبغى دولة باردة وهادئة وفيها طبيعة` mapped to `climate=cold` and
-    `naturecity=15`; after explicit confirmation, the UI displayed an
-    AI-generated budget question, `/api/ai/next-turn` returned 200, and the UI
-    did not fall back to the Phase 15 question bank.
+  - **VERIFIED FULL PRODUCTION BROWSER PATH on 2026-09-12:** the exact Arabic
+    scenario `أبغى دولة باردة وهادئة وفيها طبيعة` mapped to
+    `climate=cold` and `naturecity=15`, completed four generated adaptive
+    choice turns, and reached the AI interview completion card. The
+    interpretation request and all four `/api/ai/next-turn` requests returned
+    HTTP 200; no Phase 15 question appeared.
+  - **VERIFIED UI:** generated choice turns reuse the accepted `q-card` /
+    radio-option / select-then-Next interaction. While a next-turn request is
+    in flight, the answered card and selected option stay visible and disabled;
+    the UI does not replace them with a loading card. AR/RTL, EN/LTR, desktop,
+    and 390px mobile layouts were checked without horizontal overflow.
+  - **USER'S PRIOR FAILURE DIAGNOSTIC:** the exact HTTP status/validation
+    category from the user's earlier failed session remains UNKNOWN because
+    that historical browser request was not captured. Do not claim a more
+    specific root cause without new evidence.
   - Safe fixed diagnostics distinguish provider output parsing/validation
     failures without returning raw model/user content.
   - Turn-by-turn Back/Undo is NOT implemented for the AI-active
