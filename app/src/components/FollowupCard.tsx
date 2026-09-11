@@ -58,24 +58,33 @@ export function FollowupCard({ purposeId, followup }: { purposeId: PurposeId; fo
     setFreeTextStatus('idle');
   }
 
+  // Phase 16.5 TRUE adaptive-interview pass — Section 10: when the AI
+  // itself decided a free-text clarification is more useful than a fixed
+  // choice, the text input IS the primary UI, not a secondary escape
+  // hatch behind a toggle (options is empty for this questionType — see
+  // adaptive/useAdaptiveInterview.ts's toPendingFollowup).
+  const isFreeTextPrimary = followup.questionType === 'free_text';
+
   return (
     <div className="ai-followup-card">
       <p className="ai-followup-prompt">{followup.prompt[lang]}</p>
-      <div className="ai-followup-options">
-        {followup.options.map((opt) => (
-          <button key={opt.id} type="button" className="btn btn-ghost btn-sm ai-followup-option" onClick={() => choose(opt.id)}>
-            {opt.label[lang]}
-          </button>
-        ))}
-      </div>
+      {followup.options.length > 0 && (
+        <div className="ai-followup-options">
+          {followup.options.map((opt) => (
+            <button key={opt.id} type="button" className="btn btn-ghost btn-sm ai-followup-option" onClick={() => choose(opt.id)}>
+              {opt.label[lang]}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {followup.allowFreeText && !showFreeText && (
+      {followup.allowFreeText && !isFreeTextPrimary && !showFreeText && (
         <button type="button" className="btn btn-ghost btn-sm" onClick={() => setShowFreeText(true)}>
           {fu.freeTextToggle}
         </button>
       )}
 
-      {showFreeText && (
+      {(isFreeTextPrimary || showFreeText) && (
         <div className="ai-followup-freetext">
           <textarea
             className="ai-interpret-textarea"

@@ -9,9 +9,11 @@
 // caller, and never blocks the deterministic questionnaire/results from
 // working with AI absent entirely.
 import type {
+  DimensionCatalogEntry,
   ExplainRecommendationResult,
   InterpretableQuestion,
   InterpretPreferencesResult,
+  NextTurnServiceResult,
   RankedDestinationContext,
 } from './types';
 
@@ -27,6 +29,19 @@ const AI_WORKER_BASE_URL: string | undefined = import.meta.env.VITE_AI_WORKER_UR
 
 const INTERPRET_ENDPOINT_PATH = '/api/ai/interpret-preferences';
 const EXPLAIN_ENDPOINT_PATH = '/api/ai/explain-recommendation';
+const NEXT_TURN_ENDPOINT_PATH = '/api/ai/next-turn';
+
+// Phase 16.5 TRUE adaptive-interview pass — a single, synchronous "is the
+// AI capability configured at all" check, shared by every capability
+// (interpret/explain/next-turn all live behind the same Worker). Used by
+// adaptive/useAdaptiveInterview.ts to decide, once, whether the AI-driven
+// interview loop should even attempt to run — "never configured" is
+// treated as ordinary unavailability (Section 19/20), i.e. the SAME
+// fallback outcome a runtime failure produces, just decided up front
+// instead of after one wasted request.
+export function isAiConfigured(): boolean {
+  return !!AI_WORKER_BASE_URL;
+}
 // PRODUCTION-FAILURE FIX: a real user's browser request timed out here
 // (this constant was still 15s) even though the Worker's own AI-call
 // budget had already been raised to 30s in a prior pass — the browser
@@ -235,5 +250,90 @@ export async function explainRecommendation(
     summary: outcome.body.summary,
     perDestination: outcome.body.perDestination,
     caveats: outcome.body.caveats,
+  };
+}
+
+// ---- Capability C: AI-driven interview next-turn decision ------------------
+// Phase 16.5 TRUE adaptive-interview pass. Mirrors worker/src/ai/validate.ts's
+// own limits — client-side pre-check only; the Worker's own validation is
+// the real, authoritative gate (see that file's validateNextTurnRequest/
+// validateNextTurnResult).
+const MAX_CATALOG_ENTRIES = 20;
+
+function isNextTurnOptionShaped(value: unknown): value is { id: string; label: string; updates: Record<string, string | number> } {
+  const v = value as Record<string, unknown> | null;
+  if (!v || typeof v.id !== 'string' || typeof v.label !== 'string' || typeof v.updates !== 'object' || v.updates === null) return false;
+  return Object.values(v.updates as Record<string, unknown>).every((val) => typeof val === 'string' || typeof val === 'number');
+}
+
+function isNextTurnResponseShaped(body: unknown): body is
+  | { status: 'ask'; questionType: 'choice'; targetDimensions: string[]; prompt: string; options: unknown[] }
+  | { status: 'ask'; questionType: 'free_text'; targetDimensions: string[]; prompt: string }
+  | { status: 'complete' } {
+  const b = body as Record<string, unknown> | null;
+  if (!b || typeof b.status !== 'string') return false;
+  if (b.status === 'complete') return true;
+  if (b.status !== 'ask') return false;
+  if (typeof b.prompt !== 'string' || !Array.isArray(b.targetDimensions) || !b.targetDimensions.every((d) => typeof d === 'string')) return false;
+  if (b.questionType === 'free_text') return true;
+  return b.questionType === 'choice' && Array.isArray(b.options) && b.options.every(isNextTurnOptionShaped);
+}
+
+/** Requests ONE next-turn decision from the AI: the next contextual
+ *  question to ask (choice or free-text), or that the interview has
+ *  enough information already. `catalog` must reflect the FULL current
+ *  dimension set (resolved and unresolved, asked and unasked — see
+ *  ai/buildDimensionCatalog.ts) so the model can see what it must never
+ *  re-target; the Worker re-validates this server-side regardless. Never
+ *  called on every render/keystroke — see adaptive/useAdaptiveInterview.ts
+ *  for the one call site and its own guards against duplicate/overlapping
+ *  requests. */
+export async function nextTurn(
+  lang: 'ar' | 'en',
+  purposeName: string,
+  catalog: DimensionCatalogEntry[],
+  confirmedProfile: Record<string, string | number>,
+  turnNumber: number,
+  originCountry?: string,
+): Promise<NextTurnServiceResult> {
+  if (catalog.length === 0) {
+    return { status: 'invalid_request', message: 'No dimensions to ask about.' };
+  }
+  if (catalog.length > MAX_CATALOG_ENTRIES) {
+    return { status: 'invalid_request', message: `Too many catalog entries (max ${MAX_CATALOG_ENTRIES}).` };
+  }
+  if (turnNumber < 1) {
+    return { status: 'invalid_request', message: 'turnNumber must be at least 1.' };
+  }
+
+  if (!AI_WORKER_BASE_URL) {
+    return { status: 'unavailable', reason: 'The adaptive interview is not available yet.' };
+  }
+
+  const trimmedOrigin = originCountry?.trim().slice(0, MAX_ORIGIN_COUNTRY_LENGTH);
+  const body: Record<string, unknown> = { lang, purposeName, catalog, confirmedProfile, turnNumber };
+  if (trimmedOrigin) body.originCountry = trimmedOrigin;
+
+  const outcome = await postJson(NEXT_TURN_ENDPOINT_PATH, body);
+  if (!outcome.ok) return outcome.result;
+
+  if (!isNextTurnResponseShaped(outcome.body)) {
+    return { status: 'error', message: 'Received an unexpected response from the AI service.' };
+  }
+  if (outcome.body.status === 'complete') {
+    return { status: 'ok', outcome: { kind: 'complete' } };
+  }
+  if (outcome.body.questionType === 'free_text') {
+    return { status: 'ok', outcome: { kind: 'ask', questionType: 'free_text', targetDimensions: outcome.body.targetDimensions, prompt: outcome.body.prompt } };
+  }
+  return {
+    status: 'ok',
+    outcome: {
+      kind: 'ask',
+      questionType: 'choice',
+      targetDimensions: outcome.body.targetDimensions,
+      prompt: outcome.body.prompt,
+      options: outcome.body.options as { id: string; label: string; updates: Record<string, string | number> }[],
+    },
   };
 }

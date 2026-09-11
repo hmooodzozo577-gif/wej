@@ -1,5 +1,22 @@
 // Ports renderQuiz() and its quiz-option/back/next event bindings from
 // wejhaty.html.
+//
+// Phase 16.5 TRUE adaptive-interview pass — this now branches between two
+// structurally distinct interview drivers, chosen by `effectiveInterviewStatus`:
+//
+// 'active'   — the NORMAL path (Section 0). adaptive/useAdaptiveInterview.ts
+//              drives the AI next-turn loop; this component only renders
+//              whatever it decides (a generated question via FollowupCard,
+//              a loading state while one is being decided, or a completion
+//              card) and never itself picks the next dimension to ask about.
+// 'fallback' — Phase 15, FAILURE-FALLBACK ONLY (Section 19): the exact
+//              original deterministic path/qIndex/selectNextQuestion-driven
+//              question card, UNCHANGED, continuing from the CURRENT
+//              confirmed profile. Entered either because the AI capability
+//              was never configured (see ai/aiService.ts's isAiConfigured)
+//              or because a real AI next-turn call failed/errored/timed
+//              out/returned something invalid/hit quota — see
+//              state/reducer.ts's SET_INTERVIEW_FALLBACK, a one-way switch.
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
@@ -10,7 +27,12 @@ import { ProgressBar } from '../components/ProgressBar';
 import { Icon } from '../components/Icon';
 import { rankDestinations } from '../engine';
 import { NaturalPreferenceInput } from '../components/NaturalPreferenceInput';
-import { selectNextQuestion } from '../adaptive';
+import { FollowupCard } from '../components/FollowupCard';
+import { selectNextQuestion, useAdaptiveInterview } from '../adaptive';
+import { isAiConfigured } from '../ai/aiService';
+import { buildLocationContext } from '../ai/buildLocationContext';
+import { buildTravelProfile } from '../profile/travelProfile';
+import { summarizeAnswer } from '../data/summaryMeta';
 
 function isPurposeId(value: string | undefined): value is PurposeId {
   return !!value && Object.prototype.hasOwnProperty.call(QUESTION_BANKS, value);
@@ -24,6 +46,11 @@ export function Quiz() {
   const [validation, setValidation] = useState('');
 
   const validPurpose = isPurposeId(purposeParam);
+  // True once SYNC_QUIZ_PURPOSE's effect (below) has landed — before that,
+  // `state.answers`/`askedDimensionIds`/etc still belong to whatever
+  // purpose was active previously, so the adaptive-interview hook must
+  // not act on them yet (see its own purposeId-gating below).
+  const purposeSynced = validPurpose && state.purpose === purposeParam;
 
   // Land on /quiz/:purpose fresh (direct nav, back/forward, or a purpose
   // switch that didn't go through startQuiz) — sync context to the URL.
@@ -33,11 +60,130 @@ export function Quiz() {
     }
   }, [validPurpose, purposeParam, state.purpose, dispatch]);
 
+  // Phase 16.5 completion pass — location integration, same derivation
+  // NaturalPreferenceInput.tsx uses for its own request: a coarse country
+  // NAME only, never a coordinate (see ai/buildLocationContext.ts).
+  // Needed here too since the AI next-turn loop runs independently of
+  // whether the traveler ever touches that card's textbox.
+  const [originCountry, setOriginCountry] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    let cancelled = false;
+    buildLocationContext(state.location, lang).then((name) => {
+      if (!cancelled) setOriginCountry(name);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [state.location, lang]);
+
+  // Phase 16.5 TRUE adaptive-interview pass — "never configured" is
+  // treated as ordinary AI unavailability (Sections 19-20): render
+  // exactly the fallback UI from the first tick, rather than flashing an
+  // AI-loading state that can never resolve. A real mid-interview
+  // failure instead flips `state.interviewStatus` itself (one-way, see
+  // reducer.ts) once useAdaptiveInterview reports it.
+  const aiConfigured = isAiConfigured();
+  const effectiveInterviewStatus: 'active' | 'fallback' = aiConfigured ? state.interviewStatus : 'fallback';
+
+  // Hooks must run unconditionally, before the early returns below — a
+  // null purposeId (invalid route, or purpose not yet synced) makes the
+  // hook a safe no-op rather than acting on stale/foreign-purpose state.
+  useAdaptiveInterview(
+    purposeSynced ? (purposeParam as PurposeId) : null,
+    purposeSynced ? t.purposes[purposeParam as PurposeId].n : '',
+    lang,
+    originCountry,
+    {
+      answers: state.answers,
+      askedDimensionIds: state.askedDimensionIds,
+      interviewStatus: effectiveInterviewStatus,
+      interviewComplete: state.interviewComplete,
+      followup: state.followup,
+      turnCount: state.turnCount,
+    },
+    dispatch,
+  );
+
   if (!validPurpose) return <Navigate to="/purpose" replace />;
-  if (state.purpose !== purposeParam) return null; // one tick until the sync effect above lands
+  if (!purposeSynced) return null; // one tick until the sync effect above lands
 
   const qz = t.quiz;
   const questions = QUESTION_BANKS[purposeParam];
+  const purposeName = t.purposes[purposeParam].n;
+
+  const onBackToPurpose = () => navigate('/purpose');
+
+  // ---- 'active' mode: the AI next-turn loop is the normal driver -----------
+  if (effectiveInterviewStatus === 'active') {
+    const travelProfile = buildTravelProfile(purposeParam, state);
+    const rankingFields = travelProfile.fields.filter((f) => f.classification === 'RANKING_SUPPORTED');
+    const rankingResolved = rankingFields.filter((f) => f.status === 'confirmed').length;
+    // Section 26 — truthful, profile-completion-based progress: never a
+    // fixed "Question X of Y" promise the AI-driven path cannot honor
+    // (the AI may finish early, or spend an extra turn clarifying).
+    const progressPct = rankingFields.length > 0 ? Math.round((rankingResolved / rankingFields.length) * 100) : 100;
+
+    const confirmedEntries = travelProfile.fields
+      .filter((f) => f.classification === 'RANKING_SUPPORTED' && f.status === 'confirmed')
+      // Section 32 — persistent summaries always come from the canonical
+      // summaryMeta, never the AI turn's own transient prompt/option text.
+      .map((f) => ({ id: f.questionId, label: summarizeAnswer(purposeParam, f.questionId, f.value!, lang) }));
+
+    return (
+      <div className="quiz-wrap">
+        <NaturalPreferenceInput purposeId={purposeParam} questions={questions} />
+        <div className="quiz-top">
+          <span className="quiz-count">
+            {t.ai.turn.progressLabel} {rankingResolved} {qz.of} {rankingFields.length}
+          </span>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={onBackToPurpose}>
+            {qz.changePurpose}
+          </button>
+        </div>
+        <ProgressBar percent={progressPct} />
+
+        {state.interviewComplete ? (
+          <div className="ai-turn-card ai-turn-complete">
+            <h2 className="q-text">{t.ai.turn.completeTitle}</h2>
+            <p className="ai-interpret-subtitle">{t.ai.turn.completeBody}</p>
+            {confirmedEntries.length > 0 && (
+              <ul className="ai-turn-confirmed-list">
+                {confirmedEntries.map((entry) => (
+                  <li key={entry.id}>{entry.label}</li>
+                ))}
+              </ul>
+            )}
+            <div className="quiz-nav">
+              <button type="button" className="btn btn-ghost" onClick={onBackToPurpose}>
+                <Icon name="arrowStart" size={16} /> {qz.changePurpose}
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  const results = rankDestinations(purposeParam, state.answers);
+                  dispatch({ type: 'SET_RESULTS', results });
+                  navigate('/results');
+                }}
+              >
+                {qz.seeResults} <Icon name="arrowEnd" size={16} />
+              </button>
+            </div>
+          </div>
+        ) : state.followup ? (
+          <div className="ai-turn-card">
+            <FollowupCard purposeId={purposeParam} followup={state.followup} />
+          </div>
+        ) : (
+          <div className="ai-turn-card ai-turn-loading" aria-live="polite">
+            {t.ai.turn.loading}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ---- 'fallback' mode: the ORIGINAL Phase 15 deterministic bank card ------
   // Phase 16.5 — `total` can no longer be the fixed bank length: a
   // confirmed natural-language interpretation genuinely REMOVES its
   // question from the remaining interview (adaptive/selectNextQuestion.ts
@@ -63,7 +209,6 @@ export function Quiz() {
   const q = questions.find((x) => x.id === state.path[qIndex]) ?? questions[qIndex];
   const progressPct = Math.round((qIndex / total) * 100 + (100 / total) * 0.15);
   const selected = state.answers[q.id];
-  const purposeName = t.purposes[purposeParam].n;
 
   const hasDesc = q.options.some((o) => o.desc);
   let optsClass = 'q-options';
@@ -127,7 +272,7 @@ export function Quiz() {
         <span className="quiz-count">
           {qz.question} {qIndex + 1} {qz.of} {total} — {purposeName}
         </span>
-        <button type="button" className="btn btn-ghost btn-sm" onClick={() => navigate('/purpose')}>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onBackToPurpose}>
           {qz.changePurpose}
         </button>
       </div>

@@ -48,6 +48,54 @@ export type InterpretPreferencesResult =
   | { status: 'invalid_request'; message: string }
   | { status: 'error'; message: string };
 
+// ---- Capability C: AI-driven interview next-turn decision ------------------
+// Phase 16.5 TRUE adaptive-interview pass. Mirrors
+// worker/src/ai/types.ts's own Capability C section — see that file's doc
+// comments for the full security/duplicate-prevention rationale. The
+// Worker (worker/src/ai/validate.ts's validateNextTurnResult) is the
+// authoritative gate: every value here has already been checked against
+// the real catalog by the time this frontend module sees it.
+
+export interface DimensionCatalogEntry {
+  id: string;
+  kind: string;
+  rankingSupported: boolean;
+  resolved: boolean;
+  alreadyAsked: boolean;
+  options: InterpretableOption[];
+}
+
+export interface NextTurnCatalogRequest {
+  lang: 'ar' | 'en';
+  purposeName: string;
+  catalog: DimensionCatalogEntry[];
+  confirmedProfile: Record<string, string | number>;
+  turnNumber: number;
+  /** See InterpretPreferencesRequest's own doc comment — identical
+   *  coarse-context-only contract. */
+  originCountry?: string;
+}
+
+export interface NextTurnOption {
+  id: string;
+  /** Single-language, AI-generated text (the request's own `lang`) —
+   *  see PendingFollowup's doc comment (state/types.ts) for how this is
+   *  stored alongside the pre-translated template shape. */
+  label: string;
+  updates: Record<string, string | number>;
+}
+
+/** Discriminated union covering every outcome the Worker's own
+ *  `/api/ai/next-turn` route can return, including its transport-level
+ *  failure modes — same convention as InterpretPreferencesResult. */
+export type NextTurnServiceResult =
+  | { status: 'ok'; outcome: { kind: 'ask'; questionType: 'choice'; targetDimensions: string[]; prompt: string; options: NextTurnOption[] } }
+  | { status: 'ok'; outcome: { kind: 'ask'; questionType: 'free_text'; targetDimensions: string[]; prompt: string } }
+  | { status: 'ok'; outcome: { kind: 'complete' } }
+  | { status: 'unavailable'; reason: string }
+  | { status: 'invalid_request'; message: string }
+  | { status: 'error'; message: string };
+
 // ---- Capability B: personalized recommendation explanation ----------------
 
 export interface RankedDestinationContext {

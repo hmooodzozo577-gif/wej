@@ -36,6 +36,10 @@ export const initialAppState: AppState = {
   followup: null,
   followupTurnsUsed: 0,
   aiCallsUsed: 0,
+  interviewStatus: 'active',
+  interviewComplete: false,
+  turnCount: 0,
+  askedDimensionIds: [],
   results: null,
   explore: { q: '', region: '', purpose: '', cost: '' },
   location: { status: 'idle', coords: null },
@@ -67,6 +71,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         followup: null,
         followupTurnsUsed: 0,
         aiCallsUsed: 0,
+        interviewStatus: 'active',
+        interviewComplete: false,
+        turnCount: 0,
+        askedDimensionIds: [],
         results: null,
         path: initialPath(action.purpose),
       };
@@ -88,6 +96,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         followup: null,
         followupTurnsUsed: 0,
         aiCallsUsed: 0,
+        interviewStatus: 'active',
+        interviewComplete: false,
+        turnCount: 0,
+        askedDimensionIds: [],
         results: null,
         path: initialPath(action.purpose),
       };
@@ -154,7 +166,21 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       delete answers[action.questionId];
       delete satisfaction[action.questionId];
       delete confidence[action.questionId];
-      return { ...state, answers, satisfaction, confidence };
+      // Phase 16.5 TRUE adaptive-interview pass — Section 34 (edit
+      // invalidation). This IS the edit/undo mechanism for an AI-driven
+      // dimension (the AI-active loop has no traditional back-question
+      // stepper — see Quiz.tsx). Un-asking it lets
+      // adaptive/buildDimensionCatalog.ts mark it eligible again, and
+      // clearing `interviewComplete` lets the AI loop reconsider it
+      // instead of staying stuck at a stale "done" state.
+      return {
+        ...state,
+        answers,
+        satisfaction,
+        confidence,
+        askedDimensionIds: state.askedDimensionIds.filter((id) => id !== action.questionId),
+        interviewComplete: false,
+      };
     }
 
     // Completion pass — bounded multi-turn orchestration. See
@@ -163,7 +189,14 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     // the caller must resolve or dismiss the current one first).
     case 'SET_PENDING_FOLLOWUP': {
       if (state.followup) return state;
-      return { ...state, followup: action.followup };
+      // Phase 16.5 TRUE adaptive-interview pass — this is the ONE place a
+      // follow-up (legacy template or, normally now, a real AI next-turn
+      // decision) becomes pending, so it's the one place to record
+      // dimension-level "already asked" state (Section 12) and count the
+      // turn (Section 22's ceiling) — regardless of whether it's ever
+      // resolved or dismissed.
+      const askedDimensionIds = Array.from(new Set([...state.askedDimensionIds, ...action.followup.candidateDimensionIds]));
+      return { ...state, followup: action.followup, askedDimensionIds, turnCount: state.turnCount + 1 };
     }
 
     // Applies every dimension the chosen option satisfies — provenance
@@ -195,6 +228,19 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case 'INCREMENT_AI_CALLS':
       return { ...state, aiCallsUsed: state.aiCallsUsed + 1 };
+
+    // Phase 16.5 TRUE adaptive-interview pass — see AppState.interviewStatus's
+    // own doc comment for the one-way-switch rationale. Clears any pending
+    // AI-turn follow-up as moot (it was decided under a capability that just
+    // failed) — the traveler lands on the deterministic Phase 15 bank
+    // continuing from `state.answers`/`path` exactly as they are now.
+    case 'SET_INTERVIEW_FALLBACK':
+      if (state.interviewStatus === 'fallback') return state;
+      return { ...state, interviewStatus: 'fallback', followup: null };
+
+    case 'SET_INTERVIEW_COMPLETE':
+      if (state.interviewComplete) return state;
+      return { ...state, interviewComplete: true };
 
     case 'NEXT_QUESTION': {
       if (!state.purpose) return state;
@@ -229,6 +275,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         followup: null,
         followupTurnsUsed: 0,
         aiCallsUsed: 0,
+        interviewStatus: 'active',
+        interviewComplete: false,
+        turnCount: 0,
+        askedDimensionIds: [],
         results: null,
       };
 

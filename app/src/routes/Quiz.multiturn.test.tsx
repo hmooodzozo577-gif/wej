@@ -1,21 +1,34 @@
-// Phase 16.5 completion pass — end-to-end multi-turn orchestration
-// through the real Quiz route + reducer + adaptive engine, with ONLY
-// the network boundary (aiService.interpretPreferences) mocked. Unlike
-// Quiz.test.tsx (deliberately mock-free), this file's whole point is
-// proving the AI-guided contextual follow-up loop end-to-end.
-import { describe, expect, it, vi } from 'vitest';
+// Phase 16.5 TRUE adaptive-interview pass — end-to-end tests through the
+// REAL Quiz route + reducer + adaptive/useAdaptiveInterview.ts, with only
+// the network boundary (aiService.interpretPreferences/nextTurn) mocked,
+// same convention as before. Unlike Quiz.test.tsx (deliberately mock-free,
+// exercises the 'fallback' Phase 15 path since no AI is configured in the
+// test env), this file mocks `isAiConfigured` -> true so the NORMAL
+// AI-driven path (Section 0) actually runs.
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from '../state/AppStateContext';
 import { Quiz } from './Quiz';
 import { QUESTION_BANKS } from '../data/questionBanks';
-import { interpretPreferences } from '../ai/aiService';
+import { interpretPreferences, nextTurn } from '../ai/aiService';
+import type { NextTurnServiceResult } from '../ai/types';
 
 vi.mock('../ai/aiService', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../ai/aiService')>();
-  return { ...actual, interpretPreferences: vi.fn() };
+  return { ...actual, isAiConfigured: () => true, interpretPreferences: vi.fn(), nextTurn: vi.fn() };
 });
 const mockInterpret = vi.mocked(interpretPreferences);
+const mockNextTurn = vi.mocked(nextTurn);
+
+// Every test queues its own exact mockResolvedValueOnce sequence — reset
+// between tests so a previous test's leftover/unused queued resolution
+// (e.g. one that ended early on a fallback) can never bleed into the
+// next one's call count/order.
+beforeEach(() => {
+  mockInterpret.mockReset();
+  mockNextTurn.mockReset();
+});
 
 function renderQuiz(path = '/quiz/tourism') {
   return render(
@@ -24,6 +37,7 @@ function renderQuiz(path = '/quiz/tourism') {
         <Routes>
           <Route path="/quiz/:purpose" element={<Quiz />} />
           <Route path="/results" element={<div>RESULTS_PAGE</div>} />
+          <Route path="/purpose" element={<div>PURPOSE_PAGE</div>} />
         </Routes>
       </MemoryRouter>
     </AppStateProvider>,
@@ -35,8 +49,29 @@ function submitNaturalText(text: string) {
   fireEvent.click(screen.getByRole('button', { name: /فهم تفضيلاتي/ }));
 }
 
-describe('§35 SCENARIO A — "أبغى دولة باردة وهادئة وفيها طبيعة" end-to-end', () => {
-  it('climate + nature confirmed, quietness follow-up offered and resolvable, both original questions eliminated, no semantic duplicate', async () => {
+const complete: NextTurnServiceResult = { status: 'ok', outcome: { kind: 'complete' } };
+
+describe('§35/40 SCENARIO A — "أبغى دولة باردة وهادئة وفيها طبيعة": AI generates the follow-up, never the fixed quietness template', () => {
+  it('a GENERATED (not verbatim questionBanks.ts) choice question is asked next, resolves nightlife, then the interview completes', async () => {
+    // Call #1 fires immediately on mount (empty profile — the AI-driven
+    // loop runs even before the traveler ever touches the optional
+    // natural-language box, Section 13). Freshly-authored wording, never
+    // questionBanks.ts's own nightlife question text or the OLD
+    // deterministic template's "أي تجربة أقرب لك؟" — proving this is a
+    // real generated question, not a fixed bank/template string.
+    mockNextTurn.mockResolvedValueOnce({
+      status: 'ok',
+      outcome: {
+        kind: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['nightlife'],
+        prompt: 'كيف تشوف أمسياتك في الوجهة المثالية لك؟',
+        options: [
+          { id: 'quiet_evenings', label: 'أمسيات هادئة بعيدة عن الصخب', updates: { nightlife: 10 } },
+          { id: 'lively_evenings', label: 'أمسيات نابضة بالحياة الليلية', updates: { nightlife: 100 } },
+        ],
+      },
+    });
     mockInterpret.mockResolvedValueOnce({
       status: 'ok',
       interpreted: [
@@ -45,50 +80,118 @@ describe('§35 SCENARIO A — "أبغى دولة باردة وهادئة وفي�
       ],
       unmapped: ['هادئة'],
     });
-    renderQuiz();
-    submitNaturalText('أبغى دولة باردة وهادئة وفيها طبيعة');
+    mockNextTurn.mockResolvedValueOnce(complete);
 
+    renderQuiz();
+    await waitFor(() => expect(screen.getByText('كيف تشوف أمسياتك في الوجهة المثالية لك؟')).toBeInTheDocument());
+    // Never the OLD deterministic template's fixed wording.
+    expect(screen.queryByText(/أي تجربة أقرب لك؟/)).toBeNull();
+    // Never the bank's own verbatim nightlife question text either.
+    const nightlifeQ = QUESTION_BANKS.tourism.find((q) => q.id === 'nightlife')!;
+    expect(screen.queryByText(nightlifeQ.text.ar)).toBeNull();
+
+    // Proves the optional natural-language entry still works even while
+    // an AI-generated turn is already pending (Section 13 preserved).
+    submitNaturalText('أبغى دولة باردة وهادئة وفيها طبيعة');
     await waitFor(() => expect(screen.getByText(/هذا ما فهمناه من رحلتك/)).toBeInTheDocument());
     fireEvent.click(screen.getByRole('button', { name: /استخدام هذه التفضيلات/ }));
+    await waitFor(() => expect(screen.queryByText(/هذا ما فهمناه من رحلتك/)).toBeNull());
 
-    // Confirmed -> both eliminated from the remaining interview, AND a
-    // contextual follow-up for "هادئة" is offered (not force-mapped).
-    await waitFor(() => expect(screen.getByText(/أي تجربة أقرب لك؟/)).toBeInTheDocument());
-    expect(screen.queryByText(/ما نوع الطقس الذي تفضله؟/)).toBeNull();
-    expect(screen.queryByText(/ما الذي تفضله؟/)).toBeNull();
+    fireEvent.click(screen.getByText('أمسيات هادئة بعيدة عن الصخب'));
+    await waitFor(() => expect(screen.queryByText('كيف تشوف أمسياتك في الوجهة المثالية لك؟')).toBeNull());
 
-    // Resolve the follow-up with the "nature, away from crowds" option —
-    // maps to naturecity, but naturecity is ALREADY known, so that
-    // option must not even be offered (duplicate prevention); pick the
-    // nightlife-based option instead.
-    expect(screen.queryByText('طبيعة هادئة بعيدة عن الزحام')).toBeNull();
-    fireEvent.click(screen.getByText('أماكن أقل صخبًا (حياة ليلية أقل)'));
-
-    // "هادئة" is now resolved via nightlife — never re-asked through any
-    // path (original bank question, generated question, or otherwise).
-    await waitFor(() => expect(screen.queryByText(/أي تجربة أقرب لك؟/)).toBeNull());
-
-    // Continue the interview: neither climate, naturecity, NOR nightlife
-    // (now satisfied via the follow-up) ever appear as a question again.
-    let sawEliminated = false;
-    for (let i = 0; i < 10; i++) {
-      const heading = screen.queryByRole('heading', { level: 2 });
-      if (!heading) break;
-      const text = heading.textContent ?? '';
-      if (/الطقس|تفضله؟$|الحياة الليلية/.test(text)) sawEliminated = true;
-      const options = screen.queryAllByRole('radio');
-      if (options.length === 0) break;
-      fireEvent.click(options[0]);
-      const nextBtn = screen.getByRole('button', { name: /التالي|عرض النتائج/ });
-      fireEvent.click(nextBtn);
-      if (screen.queryByText('RESULTS_PAGE')) break;
+    // DUPLICATE PREVENTION: the SECOND call's catalog already marks
+    // climate/naturecity/nightlife resolved+asked — a real AI is told
+    // not to re-target any of them.
+    await waitFor(() => expect(mockNextTurn).toHaveBeenCalledTimes(2));
+    const secondCallCatalog = mockNextTurn.mock.calls[1]?.[2];
+    for (const id of ['climate', 'naturecity', 'nightlife']) {
+      expect(secondCallCatalog?.find((d) => d.id === id)).toMatchObject({ resolved: true, alreadyAsked: true });
     }
-    expect(sawEliminated).toBe(false);
+
+    // AI decides the interview is done -> completion card, with a
+    // canonical (summaryMeta-sourced) summary of everything confirmed.
+    await waitFor(() => expect(screen.getByText(/لدينا معلومات كافية/)).toBeInTheDocument());
+    const climateText = QUESTION_BANKS.tourism.find((q) => q.id === 'climate')!.text.ar;
+    expect(screen.queryByText(climateText)).toBeNull(); // never shown as a real bank question at all
+
+    fireEvent.click(screen.getByRole('button', { name: /عرض النتائج/ }));
+    expect(screen.getByText('RESULTS_PAGE')).toBeInTheDocument();
   });
 });
 
-describe('§42 FALLBACK — AI resolves climate+nature, next AI turn fails, Phase 15 continues without re-asking', () => {
-  it('a failed second interpretation never re-introduces climate/naturecity, and the interview still reaches completion', async () => {
+describe('§37 MULTI-DIMENSION — one AI-generated choice resolves two supported dimensions at once', () => {
+  it('a single option updates BOTH naturecity and adventure; neither is ever asked again', async () => {
+    mockInterpret.mockResolvedValueOnce({ status: 'ok', interpreted: [], unmapped: [] });
+    mockNextTurn.mockResolvedValueOnce({
+      status: 'ok',
+      outcome: {
+        kind: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['naturecity', 'adventure'],
+        prompt: 'صف يومك المثالي في الرحلة؟',
+        options: [
+          { id: 'calm_nature_day', label: 'نزهة هادئة وسط الطبيعة', updates: { naturecity: 15, adventure: 10 } },
+          { id: 'active_city_day', label: 'يوم نشيط في المدينة', updates: { naturecity: 90, adventure: 90 } },
+        ],
+      },
+    });
+    mockNextTurn.mockResolvedValueOnce(complete);
+
+    renderQuiz();
+    submitNaturalText('نص عام');
+    await waitFor(() => expect(screen.getByText(/لم يتطابق ما كتبته/)).toBeInTheDocument());
+
+    await waitFor(() => expect(screen.getByText('صف يومك المثالي في الرحلة؟')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('نزهة هادئة وسط الطبيعة'));
+
+    await waitFor(() => expect(screen.getByText(/لدينا معلومات كافية/)).toBeInTheDocument());
+    // Both dimensions resolved from the ONE click — both appear in the
+    // canonical confirmed-summary list.
+    const naturecityQ = QUESTION_BANKS.tourism.find((q) => q.id === 'naturecity')!;
+    void naturecityQ;
+    expect(mockNextTurn.mock.calls[1]?.[3]).toMatchObject({ naturecity: 15, adventure: 10 });
+  });
+});
+
+describe('§36/41 SCENARIO B — "بسافر مع عائلتي وأبغى مكان مختلف عن المعتاد": AI-generated FREE-TEXT clarification', () => {
+  it('the free-text input is the PRIMARY UI (no toggle needed) — never infers religion/culture from origin', async () => {
+    mockInterpret.mockResolvedValueOnce({ status: 'ok', interpreted: [], unmapped: ['مختلف عن المعتاد', 'عائلتي'] });
+    mockNextTurn.mockResolvedValueOnce({
+      status: 'ok',
+      outcome: { kind: 'ask', questionType: 'free_text', targetDimensions: ['culture'], prompt: 'كيف تحب أن يكون الاختلاف الثقافي في رحلتك؟' },
+    });
+    mockNextTurn.mockResolvedValueOnce(complete);
+    mockInterpret.mockResolvedValueOnce({ status: 'ok', interpreted: [{ questionId: 'culture', value: 50, confidence: 'high' }], unmapped: [] });
+
+    renderQuiz();
+    submitNaturalText('بسافر مع عائلتي وأبغى مكان مختلف عن المعتاد');
+    await waitFor(() => expect(screen.getByText(/لم يتطابق ما كتبته/)).toBeInTheDocument());
+
+    await waitFor(() => expect(screen.getByText('كيف تحب أن يكون الاختلاف الثقافي في رحلتك؟')).toBeInTheDocument());
+    // PRIMARY, not behind the "none of these" toggle.
+    const textarea = screen.getByPlaceholderText(/أماكن ما فيها ناس/) as HTMLTextAreaElement;
+    expect(textarea).toBeInTheDocument();
+    expect(screen.queryByText(/ولا شيء من هذا/)).toBeNull();
+
+    fireEvent.change(textarea, { target: { value: 'أبغى بعض الاختلاف بس مو كثير' } });
+    fireEvent.click(screen.getByText('إرسال'));
+
+    await waitFor(() => expect(mockInterpret).toHaveBeenCalledTimes(2));
+    const scopedQuestions = mockInterpret.mock.calls[1]?.[2] as Array<{ id: string }>;
+    expect(scopedQuestions.map((q) => q.id)).toEqual(['culture']);
+
+    await waitFor(() => expect(screen.getByText(/لدينا معلومات كافية/)).toBeInTheDocument());
+
+    // CULTURAL NON-INFERENCE: no location was ever granted in this test,
+    // yet the interview completed normally — proves nothing about
+    // religion/ethnicity/culture is silently inferred from origin.
+    expect(mockNextTurn.mock.calls.every((call) => call[5] === undefined)).toBe(true);
+  });
+});
+
+describe('§39/42 FALLBACK PRESERVATION — a failed AI next-turn call flips to Phase 15, never re-asking resolved dimensions', () => {
+  it('climate+nature stay resolved; the deterministic bank drives the rest to completion', async () => {
     mockInterpret.mockResolvedValueOnce({
       status: 'ok',
       interpreted: [
@@ -97,24 +200,24 @@ describe('§42 FALLBACK — AI resolves climate+nature, next AI turn fails, Phas
       ],
       unmapped: [],
     });
+    mockNextTurn.mockResolvedValueOnce({ status: 'error', message: 'upstream failure' });
+
     renderQuiz();
     submitNaturalText('أبغى دولة باردة وفيها طبيعة');
     await waitFor(() => expect(screen.getByText(/هذا ما فهمناه من رحلتك/)).toBeInTheDocument());
     fireEvent.click(screen.getByRole('button', { name: /استخدام هذه التفضيلات/ }));
-    await waitFor(() => expect(screen.queryByText(/هذا ما فهمناه من رحلتك/)).toBeNull());
 
-    // A second AI attempt (e.g. the user tries the box again) fails —
-    // Phase 15 deterministic fallback must still drive the rest.
-    mockInterpret.mockResolvedValueOnce({ status: 'error', message: 'upstream failure' });
-    fireEvent.change(screen.getByPlaceholderText(/أبغى دولة/), { target: { value: 'نص إضافي' } });
-    fireEvent.click(screen.getByRole('button', { name: /فهم تفضيلاتي/ }));
-    await waitFor(() => expect(screen.getByText(/تعذّر فهم النص/)).toBeInTheDocument());
+    // Fallback lands on the real deterministic bank card.
+    await waitFor(() => expect(document.querySelector('.q-card')).not.toBeNull());
 
     let sawEliminated = false;
     for (let i = 0; i < 10; i++) {
       const heading = screen.queryByRole('heading', { level: 2 });
       if (!heading) break;
-      if (/الطقس|^ما الذي تفضله؟$/.test(heading.textContent ?? '')) sawEliminated = true;
+      const text = heading.textContent ?? '';
+      const climateText = QUESTION_BANKS.tourism.find((q) => q.id === 'climate')!.text.ar;
+      const natureText = QUESTION_BANKS.tourism.find((q) => q.id === 'naturecity')!.text.ar;
+      if (text === climateText || text === natureText) sawEliminated = true;
       const options = screen.queryAllByRole('radio');
       if (options.length === 0) break;
       fireEvent.click(options[0]);
@@ -123,76 +226,43 @@ describe('§42 FALLBACK — AI resolves climate+nature, next AI turn fails, Phas
     }
     expect(sawEliminated).toBe(false);
     expect(screen.getByText('RESULTS_PAGE')).toBeInTheDocument();
+    // The AI capability is never retried once fallback engaged (one-way
+    // switch — Section 19's "no unnecessary... requests" / no flapping).
+    expect(mockNextTurn).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('§25 AI CALL BUDGET — enforced across initial + follow-up interpretation calls', () => {
   it('MAX_AI_CALLS_PER_INTERVIEW bounds total real network attempts; the submit button disables once exhausted', async () => {
     mockInterpret.mockResolvedValue({ status: 'ok', interpreted: [], unmapped: [] });
+    mockNextTurn.mockResolvedValue(complete);
     renderQuiz();
     for (let i = 0; i < 3; i++) {
       fireEvent.change(screen.getByPlaceholderText(/أبغى دولة/), { target: { value: `نص ${i}` } });
       fireEvent.click(screen.getByRole('button', { name: /فهم تفضيلاتي/ }));
       await waitFor(() => expect(mockInterpret).toHaveBeenCalledTimes(i + 1));
     }
-    // Budget (3) now exhausted — the button must be disabled, preventing
-    // a 4th call regardless of text entered.
     fireEvent.change(screen.getByPlaceholderText(/أبغى دولة/), { target: { value: 'نص إضافي رابع' } });
     expect(screen.getByRole('button', { name: /فهم تفضيلاتي/ })).toHaveProperty('disabled', true);
   });
 });
 
-describe('§36 SCENARIO B — "بسافر مع عائلتي وأبغى مكان مختلف عن المعتاد"', () => {
-  it('recognizes the cultural-novelty signal and offers a respectful clarification — never infers religion/culture from origin', async () => {
-    mockInterpret.mockResolvedValueOnce({ status: 'ok', interpreted: [], unmapped: ['مختلف عن المعتاد', 'عائلتي'] });
-    renderQuiz();
-    submitNaturalText('بسافر مع عائلتي وأبغى مكان مختلف عن المعتاد');
-    await waitFor(() => expect(screen.getByText(/لم يتطابق ما كتبته/)).toBeInTheDocument());
-
-    // The cultural-novelty follow-up fires from the EXPLICIT "different
-    // from usual" text signal — never from origin/location/nationality
-    // (this test never touches state.location at all, proving the
-    // trigger has no dependency on it).
-    await waitFor(() => expect(screen.getByText(/كم تحب أن يكون الاختلاف؟/)).toBeInTheDocument());
-    expect(screen.getByText('أبغى تجربة ثقافية مختلفة تمامًا عمّا اعتدت عليه')).toBeInTheDocument();
-    fireEvent.click(screen.getByText('أبغى بعض الاختلاف، لكن مع شيء مألوف'));
-    await waitFor(() => expect(screen.queryByText(/كم تحب أن يكون الاختلاف؟/)).toBeNull());
-  });
-});
-
-describe('§37 SCENARIO C — "I only have four days and I want somewhere relaxing" (English)', () => {
+describe('§37 (English) SCENARIO C — "I only have four days and I want somewhere relaxing" (English, AI-driven path)', () => {
   it('recognizes duration context (left unmapped, no fabricated dimension) and relaxation preference; no redundant re-asking', async () => {
     mockInterpret.mockResolvedValueOnce({
       status: 'ok',
       interpreted: [{ questionId: 'adventure', value: 10, confidence: 'high' }],
       unmapped: ['four days'],
     });
+    mockNextTurn.mockResolvedValue(complete);
     renderQuiz('/quiz/tourism');
     fireEvent.change(screen.getByPlaceholderText(/أبغى دولة/), { target: { value: 'I only have four days and I want somewhere relaxing' } });
     fireEvent.click(screen.getByRole('button', { name: /فهم تفضيلاتي/ }));
     await waitFor(() => expect(screen.getByText(/هذا ما فهمناه من رحلتك/)).toBeInTheDocument());
-    // Duration ("four days") has no ranking-supported dimension in this
-    // bank — honestly surfaced as unmapped, never forced into a
-    // fabricated "duration" score.
     expect(screen.getByText(/بعض ما كتبته لم يتطابق مع أي سؤال/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /استخدام هذه التفضيلات/ }));
-    // Relaxation (adventure=10) confirmed -> its normal question never
-    // appears again.
-    await waitFor(() => expect(screen.queryByText(/هذا ما فهمناه من رحلتك/)).toBeNull());
+    await waitFor(() => expect(screen.getByText(/لدينا معلومات كافية/)).toBeInTheDocument());
     expect(screen.queryByText('كيف تفضل قضاء وقتك؟')).toBeNull();
-  });
-});
-
-describe('§44 CULTURAL NON-INFERENCE — origin context never implies a cultural/religious preference', () => {
-  it('a granted Saudi-origin location never pre-fills or suggests culture/language-comfort answers on its own', async () => {
-    mockInterpret.mockResolvedValue({ status: 'ok', interpreted: [], unmapped: [] });
-    renderQuiz();
-    // No natural-language submission at all — location alone (even if
-    // granted) must never, by itself, populate any answer.
-    submitNaturalText('نص عام لا علاقة له بأي تفضيل');
-    await waitFor(() => expect(screen.getByText(/لم يتطابق ما كتبته/)).toBeInTheDocument());
-    expect(screen.queryByText(/أي تجربة أقرب لك؟/)).toBeNull();
-    expect(screen.queryByText(/كم تحب أن يكون الاختلاف؟/)).toBeNull();
   });
 });
 

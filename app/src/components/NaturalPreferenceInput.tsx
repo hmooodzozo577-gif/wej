@@ -22,8 +22,6 @@ import { interpretPreferences, MAX_AI_CALLS_PER_INTERVIEW } from '../ai/aiServic
 import { mapQuestionsForAi } from '../ai/mapQuestionsForAi';
 import { buildLocationContext } from '../ai/buildLocationContext';
 import { summarizeAnswer } from '../data/summaryMeta';
-import { selectFollowup, MAX_FOLLOWUP_TURNS } from '../adaptive';
-import { FollowupCard } from './FollowupCard';
 import type { InterpretedPreference } from '../ai/types';
 import type { PurposeId, Question } from '../data/types';
 import { Icon } from './Icon';
@@ -76,24 +74,16 @@ export function NaturalPreferenceInput({ purposeId, questions }: { purposeId: Pu
   // scoped free-text call, since both draw from the same counter.
   const aiCallsExhausted = state.aiCallsUsed >= MAX_AI_CALLS_PER_INTERVIEW;
 
-  // Completion pass — offers at most one bounded contextual follow-up,
-  // selected deterministically (zero extra AI calls) from the model's
-  // own `unmapped` output. Never overwrites an already-pending one
-  // (SET_PENDING_FOLLOWUP itself refuses that), and never exceeds
-  // MAX_FOLLOWUP_TURNS (checked via state.followupTurnsUsed here so the
-  // cap is enforced regardless of how many templates might match).
-  //
-  // Deliberately called AFTER the proposal-confirmation step resolves
-  // (onApply/dismiss below), not immediately in onSubmit: duplicate
-  // prevention (never offering a clarification for a dimension the
-  // traveler just confirmed) needs the MERGED answer set — the
-  // just-applied proposals plus whatever was already known — not the
-  // stale `state.answers` from before this exchange.
-  function maybeOfferFollowup(unmappedFragments: string[], mergedAnswers: typeof state.answers) {
-    if (state.followup || unmappedFragments.length === 0 || state.followupTurnsUsed >= MAX_FOLLOWUP_TURNS) return;
-    const followup = selectFollowup(purposeId, unmappedFragments, mergedAnswers);
-    if (followup) dispatch({ type: 'SET_PENDING_FOLLOWUP', followup });
-  }
+  // Phase 16.5 TRUE adaptive-interview pass — this card no longer offers
+  // its own deterministic contextual follow-up after a submission (that
+  // was Task 3's rejected "deterministic classifier picks the next
+  // clarification" architecture — see Section 0/4). Confirming or
+  // dismissing an interpretation simply updates `answers`/`satisfaction`;
+  // adaptive/useAdaptiveInterview.ts (mounted in Quiz.tsx, so it runs
+  // even if this card is never touched) picks up from there and decides
+  // the next AI turn itself, over the FULL dimension catalog rather than
+  // only the fragments this one card's own `unmapped` output happened to
+  // contain.
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -105,7 +95,6 @@ export function NaturalPreferenceInput({ purposeId, questions }: { purposeId: Pu
       setUnmapped(result.unmapped);
       if (result.interpreted.length === 0) {
         setStatus('none');
-        maybeOfferFollowup(result.unmapped, state.answers);
         return;
       }
       setProposals(result.interpreted);
@@ -129,14 +118,11 @@ export function NaturalPreferenceInput({ purposeId, questions }: { purposeId: Pu
   }
 
   function onApply() {
-    const mergedAnswers = { ...state.answers };
     for (const p of proposals) {
       if (selected.has(p.questionId)) {
         dispatch({ type: 'SET_ANSWER', questionId: p.questionId, value: p.value, provenance: 'ai_interpreted', confidence: p.confidence });
-        mergedAnswers[p.questionId] = p.value;
       }
     }
-    maybeOfferFollowup(unmapped, mergedAnswers);
     reset();
   }
 
@@ -223,8 +209,6 @@ export function NaturalPreferenceInput({ purposeId, questions }: { purposeId: Pu
           </div>
         </div>
       )}
-
-      {state.followup && <FollowupCard purposeId={purposeId} followup={state.followup} />}
 
       {satisfiedEntries.length > 0 && (
         <div className="ai-satisfied-list">

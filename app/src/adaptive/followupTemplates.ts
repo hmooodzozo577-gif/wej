@@ -142,6 +142,7 @@ export function selectFollowup(purposeId: PurposeId, unmapped: string[], answers
       options,
       allowFreeText: true,
       candidateDimensionIds: template.targetDimensionIds,
+      questionType: 'choice',
     };
   }
   return null;

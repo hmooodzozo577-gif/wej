@@ -21,6 +21,7 @@ const followup: PendingFollowup = {
   ],
   allowFreeText: true,
   candidateDimensionIds: ['nightlife', 'naturecity', 'adventure'],
+  questionType: 'choice',
 };
 
 function renderWith(dispatchSpy?: (a: unknown) => void, presetState?: Partial<AppState>) {
@@ -114,5 +115,61 @@ describe('FollowupCard', () => {
     fireEvent.click(screen.getByText(/ولا شيء من هذا/));
     fireEvent.change(screen.getByPlaceholderText(/أماكن ما فيها ناس/), { target: { value: 'نص' } });
     expect(screen.getByText('إرسال')).toHaveProperty('disabled', true);
+  });
+});
+
+describe('FollowupCard — Phase 16.5 TRUE adaptive-interview pass — questionType: \'free_text\' (Section 10 — primary, not a secondary escape hatch)', () => {
+  const freeTextFollowup: PendingFollowup = {
+    templateId: 'ai-turn-1',
+    prompt: { ar: 'كيف تحب أن يكون الاختلاف؟', en: 'How different would you like it?' },
+    options: [],
+    allowFreeText: true,
+    candidateDimensionIds: ['culture'],
+    questionType: 'free_text',
+  };
+
+  function renderFreeText(dispatchSpy?: (a: unknown) => void) {
+    function Providers({ children }: { children: import('react').ReactNode }) {
+      const [state, dispatch] = useReducer(appReducer, { ...initialAppState, followup: freeTextFollowup });
+      const wrapped: typeof dispatch = (action) => {
+        dispatchSpy?.(action);
+        dispatch(action);
+      };
+      return <AppStateContext.Provider value={{ state, dispatch: wrapped }}>{children}</AppStateContext.Provider>;
+    }
+    return render(
+      <Providers>
+        <FollowupCard purposeId="tourism" followup={freeTextFollowup} />
+      </Providers>,
+    );
+  }
+
+  it('the free-text input is immediately visible — no toggle needed, and no toggle button rendered at all', () => {
+    renderFreeText();
+    expect(screen.getByPlaceholderText(/أماكن ما فيها ناس/)).toBeInTheDocument();
+    expect(screen.queryByText(/ولا شيء من هذا/)).toBeNull();
+  });
+
+  it('no choice options render (options is empty for a free_text turn)', () => {
+    renderFreeText();
+    expect(document.querySelector('.ai-followup-options')).toBeNull();
+  });
+
+  it('submitting still goes through the same scoped interpretPreferences + SET_ANSWER(ai_followup) flow as a choice-type follow-up', async () => {
+    mockInterpret.mockResolvedValue({ status: 'ok', interpreted: [{ questionId: 'culture', value: 50, confidence: 'high' }], unmapped: [] });
+    const dispatchSpy = vi.fn();
+    renderFreeText(dispatchSpy);
+    fireEvent.change(screen.getByPlaceholderText(/أماكن ما فيها ناس/), { target: { value: 'أبغى بعض الاختلاف' } });
+    fireEvent.click(screen.getByText('إرسال'));
+    await waitFor(() =>
+      expect(dispatchSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'SET_ANSWER', questionId: 'culture', value: 50, provenance: 'ai_followup' })),
+    );
+  });
+
+  it('Skip still works exactly as for a choice-type follow-up', () => {
+    const dispatchSpy = vi.fn();
+    renderFreeText(dispatchSpy);
+    fireEvent.click(screen.getByText('تخطي'));
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'DISMISS_FOLLOWUP' });
   });
 });

@@ -169,5 +169,14 @@ export const EN: I18nDict = {
       unavailable: 'A personalized AI explanation isn\'t available right now — your results above are unaffected.',
       error: 'Couldn\'t generate a personalized explanation right now — your results above are unaffected.',
     },
+    // Phase 16.5 (TRUE AI-driven adaptive interview completion) — fixed
+    // chrome around the AI next-turn question; the question's own text is
+    // AI-generated and never lives here.
+    turn: {
+      loading: 'Preparing your next question…',
+      progressLabel: 'Confirmed so far',
+      completeTitle: 'We have enough information about your trip',
+      completeBody: 'You can see your results now, or go back to change anything confirmed above.',
+    },
   },
 };

@@ -57,20 +57,42 @@ export interface FollowupOption {
   satisfies: Record<string, string | number>;
 }
 
-/** Completion pass — the currently pending AI-guided contextual
- *  clarification, if any. Bounded and schema-shaped: a fixed template
- *  (see followupTemplates.ts) selected deterministically from the
- *  AI's own `unmapped` output plus the current profile — never
- *  freshly-authored English/Arabic prose generated at request time.
- *  `candidateDimensionIds` bounds the free-text escape hatch (if used)
- *  to only these ids, the same safety boundary NaturalPreferenceInput
- *  already applies to its own request. */
+/** Completion pass — the currently pending contextual clarification, if
+ *  any. Originally always a fixed template (see followupTemplates.ts)
+ *  selected deterministically from the AI's own `unmapped` output.
+ *
+ *  Phase 16.5 TRUE adaptive-interview pass — this is now ALSO (and
+ *  normally) populated from a real AI next-turn decision (see
+ *  adaptive/useAdaptiveInterview.ts): freshly-generated prompt/option
+ *  text, never verbatim questionBanks.ts wording, already validated
+ *  server-side (worker/src/ai/validate.ts's validateNextTurnResult) so
+ *  every `satisfies`/`updates` value is a real canonical value for its
+ *  dimension. The type itself is reused UNCHANGED from the template era
+ *  (minimal-churn decision, reported in the final report) — only
+ *  `questionType` is new. `candidateDimensionIds` doubles as the AI
+ *  turn's own `targetDimensions`, feeding `askedDimensionIds` (see
+ *  AppState) for dimension-level duplicate prevention.
+ *
+ *  `prompt`/option `label` stay `Record<Lang, string>` for template
+ *  compatibility; an AI-generated turn (single-language by nature — the
+ *  model answers in the request's own `lang`) stores its one string
+ *  under BOTH keys. This only matters if the traveler switches UI
+ *  language while a generated turn is pending — a narrow, accepted edge
+ *  case (documented, not silently hidden) rather than a reason to
+ *  restructure every template's already-translated bilingual text. */
 export interface PendingFollowup {
   templateId: string;
   prompt: Record<Lang, string>;
   options: FollowupOption[];
   allowFreeText: boolean;
   candidateDimensionIds: string[];
+  /** 'choice': the options above are the primary UI (free text, if
+   *  allowed, stays a secondary escape hatch — the original template
+   *  interaction). 'free_text': the AI decided a bounded free-text
+   *  clarification is more useful than forcing a fixed choice — the
+   *  text input is the PRIMARY UI (see FollowupCard.tsx), `options` is
+   *  empty. */
+  questionType: 'choice' | 'free_text';
 }
 
 /** Mirrors the original's single mutable `state` object — minus `view`,
@@ -125,6 +147,43 @@ export interface AppState {
    *  directly by the multi-turn orchestration test suite. */
   followupTurnsUsed: number;
   aiCallsUsed: number;
+  /** Phase 16.5 TRUE adaptive-interview pass — one-way switch (see
+   *  reducer.ts's SET_INTERVIEW_FALLBACK). 'active': the AI next-turn
+   *  loop (adaptive/useAdaptiveInterview.ts) is the NORMAL question
+   *  driver — see Quiz.tsx. 'fallback': the AI failed/errored/timed
+   *  out/was invalid/unavailable/quota-exhausted at least once this
+   *  session, or was never configured at all (see
+   *  ai/aiService.ts's isAiConfigured) — the interview permanently
+   *  reverts to the deterministic Phase 15 bank (path/qIndex/
+   *  selectNextQuestion), continuing from the CURRENT confirmed
+   *  profile, never restarting or erasing answers. Never flips back to
+   *  'active' once 'fallback' — a predictable, non-flapping session,
+   *  not a requirement stated verbatim in the spec but the direct
+   *  reading of "Phase 15 ... continue from CURRENT confirmed
+   *  profile" combined with never re-attempting a capability that just
+   *  failed mid-interview. */
+  interviewStatus: 'active' | 'fallback';
+  /** Meaningful only while `interviewStatus === 'active'`: the AI
+   *  itself decided (or the turn ceiling was reached — see
+   *  ai/buildDimensionCatalog.ts's computeMaxInterviewTurns) that no
+   *  further question is worth asking. 'fallback' mode reuses the
+   *  existing derived-at-render `selectNextQuestion(...) === null`
+   *  check instead — no separate flag needed there. */
+  interviewComplete: boolean;
+  /** How many real AI next-turn DECISIONS have been requested this
+   *  session (not merely offered/shown) — bounds total interview length
+   *  against computeMaxInterviewTurns's ceiling (Section 22: replaces
+   *  the old artificial MAX_FOLLOWUP_TURNS=2 cap for the normal AI-
+   *  driven path). Distinct from `followupTurnsUsed`, which still
+   *  tracks the legacy template-bank turn count only. */
+  turnCount: number;
+  /** Every dimension id ANY AI turn has ever targeted this session,
+   *  resolved or not — semantic (dimension-level, not question-id- or
+   *  template-level) duplicate prevention (Section 12). Checked
+   *  alongside `answers` by adaptive/buildDimensionCatalog.ts's
+   *  `alreadyAsked` flag so a targeted-but-unresolved dimension is
+   *  never re-offered either. */
+  askedDimensionIds: string[];
   results: RankedResult[] | null;
   explore: ExploreFilters;
   location: LocationState;
@@ -161,6 +220,15 @@ export type AppAction =
   | { type: 'RESOLVE_FOLLOWUP_CHOICE'; optionId: string }
   | { type: 'DISMISS_FOLLOWUP' }
   | { type: 'INCREMENT_AI_CALLS' }
+  // Phase 16.5 TRUE adaptive-interview pass. SET_INTERVIEW_FALLBACK is the
+  // one-way switch to deterministic Phase 15 (see AppState.interviewStatus's
+  // own doc comment) — dispatched by adaptive/useAdaptiveInterview.ts on any
+  // AI next-turn failure (error/timeout/invalid/unavailable/quota). Clears
+  // any pending AI-turn follow-up as moot. SET_INTERVIEW_COMPLETE marks the
+  // AI-driven interview done (AI-decided or turn-ceiling-reached) — see
+  // AppState.interviewComplete.
+  | { type: 'SET_INTERVIEW_FALLBACK' }
+  | { type: 'SET_INTERVIEW_COMPLETE' }
   | { type: 'NEXT_QUESTION' }
   | { type: 'PREV_QUESTION' }
   | { type: 'SET_RESULTS'; results: RankedResult[] }

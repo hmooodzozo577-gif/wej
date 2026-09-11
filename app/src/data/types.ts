@@ -712,6 +712,20 @@ export interface AiStrings {
     unavailable: string;
     error: string;
   };
+  /** Phase 16.5 TRUE adaptive-interview pass — surrounding UI strings for
+   *  the AI-driven next-turn card (see adaptive/useAdaptiveInterview.ts).
+   *  The turn's own prompt/option text is AI-generated per request, never
+   *  from here — these are only the fixed chrome around it. */
+  turn: {
+    /** Shown while waiting for the next AI turn decision. */
+    loading: string;
+    /** Truthful profile-completion progress label (Section 26) — used as
+     *  "{turnProgressLabel} 3 من 7", never a fixed "Question X of Y"
+     *  promise the AI-driven path cannot honor. */
+    progressLabel: string;
+    completeTitle: string;
+    completeBody: string;
+  };
 }
 
 export interface I18nDict {

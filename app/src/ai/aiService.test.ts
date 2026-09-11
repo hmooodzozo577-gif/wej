@@ -5,7 +5,7 @@
 // network call; (2) Worker-configured behavior with global fetch
 // mocked — never a real network call, never a real credential.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { InterpretableQuestion, RankedDestinationContext } from './types';
+import type { DimensionCatalogEntry, InterpretableQuestion, RankedDestinationContext } from './types';
 
 const questions: InterpretableQuestion[] = [
   { id: 'climate', kind: 'climate', options: [{ value: 'hot', label: 'Hot' }, { value: 'mild', label: 'Mild' }, { value: 'cold', label: 'Cold' }] },
@@ -13,6 +13,19 @@ const questions: InterpretableQuestion[] = [
 
 const topResults: RankedDestinationContext[] = [
   { destId: 'japan', name: 'Japan', score: 82, reasons: ['Strong climate match'], facts: 'Climate: Mild.' },
+];
+
+// Phase 16.5 TRUE adaptive-interview pass — Capability C fixtures.
+const catalog: DimensionCatalogEntry[] = [
+  { id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+  {
+    id: 'naturecity',
+    kind: 'target',
+    rankingSupported: true,
+    resolved: false,
+    alreadyAsked: false,
+    options: [{ value: 15, label: 'Nature' }, { value: 90, label: 'Cities' }],
+  },
 ];
 
 describe('Phase 16 — aiService (unconfigured Worker: this repo\'s real current state)', () => {
@@ -60,6 +73,41 @@ describe('Phase 16 — aiService (unconfigured Worker: this repo\'s real current
     const { explainRecommendation } = await import('./aiService');
     const result = await explainRecommendation('en', 'Tourism', 'x', []);
     expect(result.status).toBe('unavailable');
+  });
+
+  it('isAiConfigured is false — this repository\'s real current unconfigured state', async () => {
+    const { isAiConfigured } = await import('./aiService');
+    expect(isAiConfigured()).toBe(false);
+  });
+
+  it('nextTurn returns "unavailable" for a well-formed request and never calls fetch', async () => {
+    const fetchSpy = vi.fn();
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    const result = await nextTurn('en', 'Tourism', catalog, { climate: 'cold' }, 1);
+    expect(result.status).toBe('unavailable');
+    expect(fetchSpy).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('nextTurn rejects an empty catalog and never calls fetch', async () => {
+    const fetchSpy = vi.fn();
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    const result = await nextTurn('en', 'Tourism', [], {}, 1);
+    expect(result.status).toBe('invalid_request');
+    expect(fetchSpy).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('nextTurn rejects turnNumber < 1 and never calls fetch', async () => {
+    const fetchSpy = vi.fn();
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    const result = await nextTurn('en', 'Tourism', catalog, {}, 0);
+    expect(result.status).toBe('invalid_request');
+    expect(fetchSpy).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
   });
 
   it('neither result ever contains anything secret-shaped', async () => {
@@ -215,5 +263,75 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
       const requestedIds = new Set(topResults.map((r) => r.destId));
       for (const item of result.perDestination) expect(requestedIds.has(item.destId)).toBe(true);
     }
+  });
+
+  it('isAiConfigured is true once VITE_AI_WORKER_URL is set', async () => {
+    const { isAiConfigured } = await import('./aiService');
+    expect(isAiConfigured()).toBe(true);
+  });
+
+  it('nextTurn posts to /api/ai/next-turn and returns a validated "ask" outcome', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ status: 'ask', questionType: 'choice', targetDimensions: ['naturecity'], prompt: 'x', options: [{ id: 'a', label: 'Nature', updates: { naturecity: 15 } }] }),
+    });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    const result = await nextTurn('en', 'Tourism', catalog, { climate: 'cold' }, 1);
+    expect(result.status).toBe('ok');
+    if (result.status === 'ok' && result.outcome.kind === 'ask' && result.outcome.questionType === 'choice') {
+      expect(result.outcome.options).toEqual([{ id: 'a', label: 'Nature', updates: { naturecity: 15 } }]);
+    }
+    const [url] = fetchSpy.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`${WORKER_URL}/api/ai/next-turn`);
+  });
+
+  it('nextTurn returns a validated "complete" outcome', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ status: 'complete' }) });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    const result = await nextTurn('en', 'Tourism', catalog, { climate: 'cold' }, 1);
+    expect(result).toEqual({ status: 'ok', outcome: { kind: 'complete' } });
+  });
+
+  it('nextTurn returns a validated free_text "ask" outcome', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ status: 'ask', questionType: 'free_text', targetDimensions: ['naturecity'], prompt: 'Tell us more?' }),
+    });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    const result = await nextTurn('en', 'Tourism', catalog, { climate: 'cold' }, 1);
+    expect(result).toEqual({ status: 'ok', outcome: { kind: 'ask', questionType: 'free_text', targetDimensions: ['naturecity'], prompt: 'Tell us more?' } });
+  });
+
+  it('nextTurn: a malformed Worker response maps to "error", never passed through half-validated', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ nonsense: true }) });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    const result = await nextTurn('en', 'Tourism', catalog, {}, 1);
+    expect(result.status).toBe('error');
+  });
+
+  it('nextTurn: a 502 ai_provider_error Worker response (e.g. a DUPLICATE PREVENTION rejection) maps to "error" with the Worker\'s own message', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({ ok: false, status: 502, json: async () => ({ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.' }) });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    const result = await nextTurn('en', 'Tourism', catalog, {}, 1);
+    expect(result).toEqual({ status: 'error', message: 'The AI service returned an unexpected response.' });
+  });
+
+  it('LOCATION: nextTurn includes originCountry as a plain string when given, omits it otherwise — never a coordinate', async () => {
+    const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ status: 'complete' }) });
+    vi.stubGlobal('fetch', fetchSpy);
+    const { nextTurn } = await import('./aiService');
+    await nextTurn('en', 'Tourism', catalog, {}, 1, 'Saudi Arabia');
+    const withLocation = JSON.parse((fetchSpy.mock.calls[0] as [string, RequestInit])[1].body as string);
+    expect(withLocation.originCountry).toBe('Saudi Arabia');
+    await nextTurn('en', 'Tourism', catalog, {}, 1);
+    const without = JSON.parse((fetchSpy.mock.calls[1] as [string, RequestInit])[1].body as string);
+    expect('originCountry' in without).toBe(false);
   });
 });

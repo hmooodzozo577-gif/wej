@@ -272,6 +272,7 @@ describe('Phase 16.5 completion pass — bounded contextual follow-up orchestrat
     ],
     allowFreeText: true,
     candidateDimensionIds: ['nightlife', 'naturecity', 'adventure'],
+    questionType: 'choice',
   };
 
   it('SET_PENDING_FOLLOWUP sets state.followup', () => {
@@ -346,5 +347,71 @@ describe('Phase 16.5 completion pass — bounded contextual follow-up orchestrat
     expect(appReducer(dirty, { type: 'START_QUIZ', purpose: 'tourism' })).toMatchObject({ followup: null, followupTurnsUsed: 0, aiCallsUsed: 0 });
     expect(appReducer(dirty, { type: 'SYNC_QUIZ_PURPOSE', purpose: 'tourism' })).toMatchObject({ followup: null, followupTurnsUsed: 0, aiCallsUsed: 0 });
     expect(appReducer(dirty, { type: 'RESTART_ALL' })).toMatchObject({ followup: null, followupTurnsUsed: 0, aiCallsUsed: 0 });
+  });
+});
+
+describe('Phase 16.5 TRUE adaptive-interview pass — interviewStatus/interviewComplete/turnCount/askedDimensionIds', () => {
+  const sampleFollowup: PendingFollowup = {
+    templateId: 'quietness_clarify',
+    prompt: { ar: 'test ar', en: 'test en' },
+    options: [
+      { id: 'less_nightlife', label: { ar: 'أقل صخبًا', en: 'quieter' }, satisfies: { nightlife: 10 } },
+      { id: 'nature_quiet', label: { ar: 'طبيعة هادئة', en: 'quiet nature' }, satisfies: { naturecity: 15 } },
+    ],
+    allowFreeText: true,
+    candidateDimensionIds: ['nightlife', 'naturecity', 'adventure'],
+    questionType: 'choice',
+  };
+
+  it('initial state starts active, incomplete, zero turns, nothing asked', () => {
+    expect(initialAppState).toMatchObject({ interviewStatus: 'active', interviewComplete: false, turnCount: 0, askedDimensionIds: [] });
+  });
+
+  it('SET_PENDING_FOLLOWUP records every targetDimension as asked and bumps turnCount, whether or not it is ever resolved', () => {
+    const next = appReducer(initialAppState, { type: 'SET_PENDING_FOLLOWUP', followup: sampleFollowup });
+    expect(next.askedDimensionIds.sort()).toEqual(['adventure', 'naturecity', 'nightlife'].sort());
+    expect(next.turnCount).toBe(1);
+  });
+
+  it('SET_PENDING_FOLLOWUP never records the same dimension twice across turns', () => {
+    let state = appReducer(initialAppState, { type: 'SET_PENDING_FOLLOWUP', followup: sampleFollowup });
+    state = appReducer(state, { type: 'DISMISS_FOLLOWUP' });
+    const other = { ...sampleFollowup, candidateDimensionIds: ['naturecity', 'culture'] };
+    state = appReducer(state, { type: 'SET_PENDING_FOLLOWUP', followup: other });
+    expect(state.askedDimensionIds.sort()).toEqual(['adventure', 'culture', 'naturecity', 'nightlife'].sort());
+    expect(state.turnCount).toBe(2);
+  });
+
+  it('SET_INTERVIEW_FALLBACK is one-way, clears any pending follow-up, and is a true no-op once already fallback', () => {
+    const withFollowup = { ...initialAppState, followup: sampleFollowup };
+    const next = appReducer(withFollowup, { type: 'SET_INTERVIEW_FALLBACK' });
+    expect(next.interviewStatus).toBe('fallback');
+    expect(next.followup).toBeNull();
+    const again = appReducer(next, { type: 'SET_INTERVIEW_FALLBACK' });
+    expect(again).toBe(next);
+  });
+
+  it('SET_INTERVIEW_COMPLETE sets interviewComplete and is a true no-op once already complete', () => {
+    const next = appReducer(initialAppState, { type: 'SET_INTERVIEW_COMPLETE' });
+    expect(next.interviewComplete).toBe(true);
+    const again = appReducer(next, { type: 'SET_INTERVIEW_COMPLETE' });
+    expect(again).toBe(next);
+  });
+
+  it('EDIT INVALIDATION: REMOVE_AI_ANSWER un-asks the dimension and reopens a completed interview', () => {
+    let state: typeof initialAppState = { ...initialAppState, interviewComplete: true, askedDimensionIds: ['naturecity'] };
+    state = appReducer(state, { type: 'SET_ANSWER', questionId: 'naturecity', value: 90, provenance: 'ai_followup' });
+    const next = appReducer(state, { type: 'REMOVE_AI_ANSWER', questionId: 'naturecity' });
+    expect(next.answers.naturecity).toBeUndefined();
+    expect(next.askedDimensionIds).not.toContain('naturecity');
+    expect(next.interviewComplete).toBe(false);
+  });
+
+  it('START_QUIZ/SYNC_QUIZ_PURPOSE/RESTART_ALL all reset interviewStatus/interviewComplete/turnCount/askedDimensionIds', () => {
+    const dirty = { ...initialAppState, interviewStatus: 'fallback' as const, interviewComplete: true, turnCount: 5, askedDimensionIds: ['climate'] };
+    const fresh = { interviewStatus: 'active', interviewComplete: false, turnCount: 0, askedDimensionIds: [] };
+    expect(appReducer(dirty, { type: 'START_QUIZ', purpose: 'tourism' })).toMatchObject(fresh);
+    expect(appReducer(dirty, { type: 'SYNC_QUIZ_PURPOSE', purpose: 'tourism' })).toMatchObject(fresh);
+    expect(appReducer(dirty, { type: 'RESTART_ALL' })).toMatchObject(fresh);
   });
 });
