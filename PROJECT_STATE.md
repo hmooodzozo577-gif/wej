@@ -16,7 +16,7 @@ vendor-neutral pair every agent should read first.
 - State document version: 5
 - Last verified date: 2026-09-12
 - Last verified branch: `claude/marhaba-kxry8l`
-- Last verified code HEAD: `9533cb02d5c8f022c313751a432b733e8027d694`
+- Last verified code HEAD: `54d81cedb9bb44c9b25c2104e72a2617b4a7682f`
 
 **Branch and HEAD above are recovery references, not permanent
 requirements.** Always verify current Git state before starting work
@@ -105,6 +105,11 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
     validation rejects copied or lightly reworded bank questions before the
     existing bounded retry. Budget is required to be a standalone target so its
     canonical numeric ranges are always used.
+  - **VERIFIED LIVE AFTER PROMPT HARDENING:** Worker run `34654506703` deployed
+    commit `54d81ce`. One minimal Arabic Capability C request with only cold and
+    nature confirmed returned HTTP 200 and asked a contextual adventure question
+    using exactly those meanings, without adding mountains, forests, beaches, or
+    snow.
   - **USER'S PRIOR FAILURE DIAGNOSTIC:** the exact HTTP status/validation
     category from the user's earlier failed session remains UNKNOWN because
     that historical browser request was not captured. Do not claim a more
@@ -382,8 +387,7 @@ actually checking.
 
 - Branch: `claude/marhaba-kxry8l` (last verified — re-check, don't
   assume permanent).
-- Last verified deployed code HEAD:
-  `9533cb02d5c8f022c313751a432b733e8027d694`.
+- Last verified source HEAD: `54d81cedb9bb44c9b25c2104e72a2617b4a7682f`.
 - Pages deploys automatically on push touching `app/**`
   (`.github/workflows/deploy-pages.yml`).
 - Worker deploys automatically on push touching `worker/**`
@@ -393,8 +397,10 @@ actually checking.
 - 2026-09-12: Pages run `34653930099` and Worker run `34653930145`
   successfully deployed code commit `9533cb0`. A fresh full production browser
   run then verified the contextual adaptive path through completion with no
-  fallback. The only remaining Phase 16.5 gates are user acceptance and the
-  Back/Undo product decision.
+  fallback. Worker run `34654506703` then deployed the prompt hardening at
+  `54d81ce`, followed by a successful minimal live Capability C request. The
+  only remaining Phase 16.5 gates are user acceptance and the Back/Undo product
+  decision.
 
 ## Source-of-Truth Priority
 
