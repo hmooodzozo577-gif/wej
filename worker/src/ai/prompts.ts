@@ -4,7 +4,7 @@
 // chosen provider's API expects (every major provider's API supports
 // this split) — never concatenated into one string, so untrusted user
 // text can never be mistaken for, or override, a server instruction.
-import type { ExplainRecommendationRequest, InterpretPreferencesRequest } from './types';
+import type { ExplainRecommendationRequest, InterpretPreferencesRequest, NextTurnRequest } from './types';
 
 /** Shared grounding rules — verbatim project policy, not paraphrased
  *  per call site, so both capabilities enforce the identical
@@ -87,6 +87,72 @@ export function buildInterpretPreferencesPrompt(req: InterpretPreferencesRequest
   ].join('\n');
 
   const user = req.text;
+  return { system, user };
+}
+
+// Phase 16.5 TRUE adaptive-interview pass — Capability C. This is the
+// NORMAL path's question-selection mechanism now (see
+// app/src/adaptive/interviewOrchestrator.ts): the model reads the full
+// dimension catalog and decides ONE next turn. It never invents a
+// dimension, never returns a value outside a dimension's real allowed
+// set, and never re-targets a resolved/already-asked dimension — all
+// re-checked by ai/validate.ts, never trusted from the model's claim.
+export function buildNextTurnPrompt(req: NextTurnRequest): { system: string; user: string } {
+  const catalogDescription = req.catalog
+    .map((d) => {
+      const values = d.options.map((o) => `${JSON.stringify(o.value)} = ${JSON.stringify(o.label)}`).join(', ');
+      const flags = [
+        d.rankingSupported ? 'ranking-supported' : 'context-only',
+        d.resolved ? 'RESOLVED' : 'unresolved',
+        d.alreadyAsked ? 'already-asked' : 'never-asked',
+      ].join(', ');
+      return `- id="${d.id}" kind="${d.kind}" [${flags}] allowed values: [${values}]`;
+    })
+    .join('\n');
+
+  const profileDescription =
+    Object.keys(req.confirmedProfile).length > 0
+      ? Object.entries(req.confirmedProfile)
+          .map(([id, value]) => `${id}=${JSON.stringify(value)}`)
+          .join(', ')
+      : '(nothing confirmed yet)';
+
+  const locationContext = req.originCountry
+    ? [
+        `The traveler's approximate origin country is: ${JSON.stringify(req.originCountry)}. Use this ONLY for coarse travel-practicality context (e.g. relative travel distance, whether long-haul tolerance is worth asking) if relevant.`,
+        'Never infer religion, ethnicity, political views, personal values, or cultural tolerance/familiarity from this origin country. Never mention it in your response.',
+      ].join('\n')
+    : '';
+
+  const system = [
+    `You are conducting a short adaptive interview for a "${req.purposeName}" traveler, deciding ONE next turn at a time. This is turn number ${req.turnNumber}.`,
+    '',
+    'Full dimension catalog for this session (every question this interview supports):',
+    catalogDescription,
+    '',
+    `Confirmed profile so far: ${profileDescription}`,
+    '',
+    'Your job: pick the single most useful UNRESOLVED, NEVER-ASKED dimension (or a short clarification that could resolve one or more of them) and decide how to ask about it. NEVER target a dimension already marked RESOLVED or already-asked above — the request will be rejected if you do.',
+    '',
+    'Respond with a JSON object in exactly one of these three shapes:',
+    '1. Choice question: { "status": "ask", "questionType": "choice", "targetDimensions": [string, ...], "prompt": string, "options": [{ "id": string, "label": string, "updates": { [dimensionId]: value } }, ...] }',
+    '2. Free-text clarification: { "status": "ask", "questionType": "free_text", "targetDimensions": [string, ...], "prompt": string }',
+    '3. Interview complete: { "status": "complete" }',
+    '',
+    'Rules for "choice": use it when the target dimension(s) have a small number of clear alternatives with known canonical values. Each option\'s "updates" must use ONLY dimension ids from the catalog above and ONLY that dimension\'s own listed allowed values (exactly as given, not the label) — never invent a value, a score, or a new dimension. One option MAY set more than one dimension when a single answer genuinely resolves both (e.g. a single lifestyle description implies both a pace and a nature/city preference) — only do this when both are clearly implied, never to save a turn artificially. Offer at most 4 options.',
+    'Rules for "free_text": use it only when a fixed choice would be unnecessarily constraining, or when clarifying free-form wording (like a vague word the traveler already used) is more natural than guessing at options. Keep the prompt short and specific about what you need to know.',
+    'Rules for "complete": return this once enough ranking-supported dimensions are resolved to produce a meaningful recommendation, or once no remaining unresolved dimension is worth asking about (low marginal value). Do not require every context-only preference to be resolved.',
+    '',
+    'The prompt and any option labels must be short, natural, and in the language specified below. Do not request or include chain-of-thought or reasoning — return only the JSON object.',
+    '',
+    locationContext,
+    '',
+    languageInstruction(req.lang),
+    '',
+    GROUNDING_RULES,
+  ].join('\n');
+
+  const user = 'Decide the next interview turn now.';
   return { system, user };
 }
 

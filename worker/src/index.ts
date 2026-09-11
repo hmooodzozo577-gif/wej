@@ -33,12 +33,15 @@ import {
   type Env as AiEnv,
   type ExplainRecommendationRequest,
   type InterpretPreferencesRequest,
+  type NextTurnRequest,
 } from './ai/types';
 import {
   validateExplainRecommendationRequest,
   validateExplainRecommendationResult,
   validateInterpretPreferencesRequest,
   validateInterpretPreferencesResult,
+  validateNextTurnRequest,
+  validateNextTurnResult,
 } from './ai/validate';
 
 export type Env = AmadeusEnv & AiEnv;
@@ -184,6 +187,14 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
     }
     return handleExplainRecommendationRoute(request, env, origin);
   }
+  // Phase 16.5 TRUE adaptive-interview pass — Capability C. Same Worker,
+  // same CORS/validation/error-shape discipline as the two routes above.
+  if (url.pathname === '/api/ai/next-turn') {
+    if (request.method !== 'POST') {
+      return json({ error: 'method_not_allowed', message: 'Use POST.' }, 405, origin);
+    }
+    return handleNextTurnRoute(request, env, origin);
+  }
 
   return json({ error: 'not_found', message: 'Unknown endpoint.' }, 404, origin);
 }
@@ -258,6 +269,44 @@ export async function handleExplainRecommendation(provider: AiProvider | null, b
   } catch (err) {
     return mapAiErrorToResponseArgs(err);
   }
+}
+
+// Phase 16.5 TRUE adaptive-interview pass — Capability C. `{status:
+// 'invalid'}` from validateNextTurnResult (a syntactically valid but
+// semantically rejected AI response) is mapped to the SAME 502
+// ai_provider_error contract a malformed-JSON AiInvalidResponseError
+// gets — the frontend already knows how to treat that as "unavailable,
+// fall back to Phase 15", so no new error shape reaches it.
+export async function handleNextTurn(provider: AiProvider | null, body: unknown): Promise<[body: unknown, status: number]> {
+  const fieldErrors = validateNextTurnRequest(body);
+  if (fieldErrors.length > 0) {
+    return [{ error: 'invalid_request', message: 'Request failed validation.', fields: fieldErrors }, 400];
+  }
+  if (!provider) {
+    return [{ error: 'ai_not_configured', message: 'The adaptive interview is not available yet.' }, 503];
+  }
+  const req = body as NextTurnRequest;
+  try {
+    const raw: unknown = await provider.nextTurn(req);
+    const result = validateNextTurnResult(raw, req);
+    if (result.status === 'invalid') {
+      return [{ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.' }, 502];
+    }
+    return [result, 200];
+  } catch (err) {
+    return mapAiErrorToResponseArgs(err);
+  }
+}
+
+async function handleNextTurnRoute(request: Request, env: Env, origin: string | null): Promise<Response> {
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'invalid_request', message: 'Request body must be valid JSON.' }, 400, origin);
+  }
+  const [resBody, status] = await handleNextTurn(resolveAiProvider(env), body);
+  return json(resBody, status, origin);
 }
 
 async function handleInterpretPreferencesRoute(request: Request, env: Env, origin: string | null): Promise<Response> {

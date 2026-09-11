@@ -3,10 +3,14 @@
 // ever includes it in a response — invalid AI output fails safely
 // (dropped/rejected), never passed through to the frontend unvalidated.
 import type {
+  DimensionCatalogEntry,
   ExplainRecommendationRequest,
   ExplainRecommendationResult,
   InterpretPreferencesRequest,
   InterpretPreferencesResult,
+  NextTurnOption,
+  NextTurnRequest,
+  NextTurnResult,
   RankedDestinationContext,
 } from './types';
 
@@ -24,6 +28,12 @@ export const MAX_PROFILE_SUMMARY_LENGTH = 1000;
 // Phase 16.5 completion pass — location integration: a coarse country
 // name only (e.g. "Saudi Arabia"), never a coordinate or address.
 export const MAX_ORIGIN_COUNTRY_LENGTH = 100;
+// Phase 16.5 TRUE adaptive-interview pass — Capability C bounds.
+export const MAX_CATALOG_ENTRIES = 20;
+export const MAX_NEXT_TURN_PROMPT_LENGTH = 300;
+export const MAX_NEXT_TURN_OPTIONS = 4;
+export const MAX_NEXT_TURN_OPTION_LABEL_LENGTH = 120;
+export const MAX_TURN_NUMBER = 20;
 
 const LANGS = new Set(['ar', 'en']);
 
@@ -75,6 +85,77 @@ export function validateInterpretPreferencesRequest(body: unknown): string[] {
         !optionsValid
       ) {
         errors.push('every entry in questions must have {id: string, kind: string, options: {value: string|number, label: string}[]}.');
+        break;
+      }
+    }
+  }
+  return errors;
+}
+
+function isValidInterpretableOptionsArray(options: unknown): boolean {
+  return (
+    Array.isArray(options) &&
+    options.every(
+      (o) =>
+        typeof o === 'object' &&
+        o !== null &&
+        (typeof (o as { value?: unknown }).value === 'string' || typeof (o as { value?: unknown }).value === 'number') &&
+        typeof (o as { label?: unknown }).label === 'string',
+    )
+  );
+}
+
+export function validateNextTurnRequest(body: unknown): string[] {
+  const errors: string[] = [];
+  if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+    return ['Request body must be a JSON object.'];
+  }
+  const b = body as Partial<NextTurnRequest>;
+
+  if (typeof b.lang !== 'string' || !LANGS.has(b.lang)) {
+    errors.push('lang must be "ar" or "en".');
+  }
+  if (typeof b.purposeName !== 'string' || b.purposeName.trim().length === 0) {
+    errors.push('purposeName must be a non-empty string.');
+  }
+  if (typeof b.turnNumber !== 'number' || !Number.isInteger(b.turnNumber) || b.turnNumber < 1 || b.turnNumber > MAX_TURN_NUMBER) {
+    errors.push(`turnNumber must be an integer between 1 and ${MAX_TURN_NUMBER}.`);
+  }
+  if (b.originCountry !== undefined && (typeof b.originCountry !== 'string' || b.originCountry.length > MAX_ORIGIN_COUNTRY_LENGTH)) {
+    errors.push(`originCountry, if present, must be a string of at most ${MAX_ORIGIN_COUNTRY_LENGTH} characters.`);
+  }
+  if (typeof b.originCountry === 'string' && /-?\d{1,3}\.\d{2,},\s*-?\d{1,3}\.\d{2,}/.test(b.originCountry)) {
+    errors.push('originCountry must not contain coordinate-shaped values.');
+  }
+  if (typeof b.confirmedProfile !== 'object' || b.confirmedProfile === null || Array.isArray(b.confirmedProfile)) {
+    errors.push('confirmedProfile must be an object.');
+  } else {
+    for (const value of Object.values(b.confirmedProfile)) {
+      if (typeof value !== 'string' && typeof value !== 'number') {
+        errors.push('every confirmedProfile value must be a string or number.');
+        break;
+      }
+    }
+  }
+  if (!Array.isArray(b.catalog) || b.catalog.length === 0) {
+    errors.push('catalog must be a non-empty array.');
+  } else if (b.catalog.length > MAX_CATALOG_ENTRIES) {
+    errors.push(`catalog must contain at most ${MAX_CATALOG_ENTRIES} entries.`);
+  } else {
+    for (const d of b.catalog) {
+      const entry = d as Partial<DimensionCatalogEntry> | null;
+      if (
+        !entry ||
+        typeof entry.id !== 'string' ||
+        typeof entry.kind !== 'string' ||
+        typeof entry.rankingSupported !== 'boolean' ||
+        typeof entry.resolved !== 'boolean' ||
+        typeof entry.alreadyAsked !== 'boolean' ||
+        !isValidInterpretableOptionsArray(entry.options)
+      ) {
+        errors.push(
+          'every entry in catalog must have {id, kind: string, rankingSupported, resolved, alreadyAsked: boolean, options: {value, label}[]}.',
+        );
         break;
       }
     }
@@ -180,4 +261,77 @@ export function validateExplainRecommendationResult(raw: unknown, request: Expla
   }
 
   return { summary, perDestination, caveats };
+}
+
+// Phase 16.5 TRUE adaptive-interview pass — the authoritative gate for
+// Capability C. This is the ONE place an AI-chosen turn is trusted: every
+// target dimension must exist in the request's own catalog AND be both
+// unresolved and never-asked (semantic, dimension-level duplicate
+// prevention — never just an id-string coincidence); every option's
+// updates must use only the request's own real allowed values for that
+// dimension. Anything that fails re-validation becomes `{status:
+// 'invalid'}` — NEVER silently coerced to 'complete' (which would falsely
+// claim sufficient information exists) and never passed through
+// unvalidated.
+export function validateNextTurnResult(raw: unknown, request: NextTurnRequest): NextTurnResult {
+  const eligible = new Map(request.catalog.filter((d) => !d.resolved && !d.alreadyAsked).map((d) => [d.id, d]));
+  const r = raw as
+    | { status?: unknown; questionType?: unknown; targetDimensions?: unknown; prompt?: unknown; options?: unknown }
+    | null;
+
+  if (!r || typeof r !== 'object') return { status: 'invalid' };
+  if (r.status === 'complete') return { status: 'complete' };
+  if (r.status !== 'ask') return { status: 'invalid' };
+
+  const questionType = r.questionType === 'choice' || r.questionType === 'free_text' ? r.questionType : null;
+  const targetDimensions = Array.isArray(r.targetDimensions)
+    ? r.targetDimensions.filter((id): id is string => typeof id === 'string' && eligible.has(id))
+    : [];
+  const prompt =
+    typeof r.prompt === 'string' && r.prompt.trim().length > 0 && r.prompt.length <= MAX_NEXT_TURN_PROMPT_LENGTH ? r.prompt.trim() : null;
+
+  if (!questionType || targetDimensions.length === 0 || !prompt) return { status: 'invalid' };
+
+  if (questionType === 'free_text') {
+    return { status: 'ask', questionType: 'free_text', targetDimensions, prompt };
+  }
+
+  // questionType === 'choice'
+  const options: NextTurnOption[] = [];
+  if (Array.isArray(r.options)) {
+    for (const raw of r.options.slice(0, MAX_NEXT_TURN_OPTIONS)) {
+      const candidate = raw as Partial<NextTurnOption> | null;
+      if (
+        !candidate ||
+        typeof candidate.id !== 'string' ||
+        typeof candidate.label !== 'string' ||
+        candidate.label.trim().length === 0 ||
+        candidate.label.length > MAX_NEXT_TURN_OPTION_LABEL_LENGTH ||
+        typeof candidate.updates !== 'object' ||
+        candidate.updates === null ||
+        Array.isArray(candidate.updates)
+      ) {
+        continue;
+      }
+      const updates: Record<string, string | number> = {};
+      let allValid = true;
+      for (const [dimId, value] of Object.entries(candidate.updates)) {
+        // Every updated dimension must be one this turn actually
+        // declared as a target (never a side-channel update to an
+        // unrelated or resolved dimension) and the value must be one of
+        // that dimension's own real allowed values — never invented.
+        const dim = targetDimensions.includes(dimId) ? eligible.get(dimId) : undefined;
+        if (!dim || (typeof value !== 'string' && typeof value !== 'number') || !dim.options.some((o) => o.value === value)) {
+          allValid = false;
+          break;
+        }
+        updates[dimId] = value;
+      }
+      if (allValid && Object.keys(updates).length > 0) {
+        options.push({ id: candidate.id, label: candidate.label.trim(), updates });
+      }
+    }
+  }
+  if (options.length === 0) return { status: 'invalid' };
+  return { status: 'ask', questionType: 'choice', targetDimensions, prompt, options };
 }

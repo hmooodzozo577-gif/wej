@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildExplainRecommendationPrompt, buildInterpretPreferencesPrompt } from './prompts';
-import type { ExplainRecommendationRequest, InterpretPreferencesRequest } from './types';
+import { buildExplainRecommendationPrompt, buildInterpretPreferencesPrompt, buildNextTurnPrompt } from './prompts';
+import type { ExplainRecommendationRequest, InterpretPreferencesRequest, NextTurnRequest } from './types';
 
 describe('buildInterpretPreferencesPrompt', () => {
   const req: InterpretPreferencesRequest = {
@@ -124,6 +124,75 @@ describe('buildExplainRecommendationPrompt', () => {
     const { user } = buildExplainRecommendationPrompt(req);
     expect(user).toContain(req.profileSummary);
     expect(user).not.toMatch(/\d{1,3}\.\d{4,}/); // no lat/lng-shaped float ever appears
+  });
+});
+
+describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability C', () => {
+  const req: NextTurnRequest = {
+    lang: 'ar',
+    purposeName: 'Tourism & Vacation',
+    turnNumber: 2,
+    confirmedProfile: { climate: 'cold' },
+    catalog: [
+      { id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+      {
+        id: 'naturecity',
+        kind: 'target',
+        rankingSupported: true,
+        resolved: false,
+        alreadyAsked: false,
+        options: [{ value: 15, label: 'Nature' }, { value: 90, label: 'Cities' }],
+      },
+    ],
+  };
+
+  it('lists the full catalog with resolved/asked flags — never omits a resolved dimension (the model must see it to avoid re-asking)', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toContain('climate');
+    expect(system).toContain('naturecity');
+    expect(system).toMatch(/RESOLVED/);
+    expect(system).toMatch(/unresolved/);
+  });
+
+  it('instructs the model never to target a resolved or already-asked dimension', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toMatch(/NEVER target a dimension already marked RESOLVED or already-asked/i);
+  });
+
+  it('includes all three response shapes (choice, free_text, complete)', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toContain('"questionType": "choice"');
+    expect(system).toContain('"questionType": "free_text"');
+    expect(system).toContain('"status": "complete"');
+  });
+
+  it('instructs multi-dimension updates only when clearly implied, never to artificially save a turn', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toMatch(/only do this when both are clearly implied/i);
+  });
+
+  it('never requests chain-of-thought', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toMatch(/do not request or include chain-of-thought/i);
+  });
+
+  it('includes the confirmed profile so far', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toContain('climate="cold"');
+  });
+
+  it('LOCATION: originCountry included with non-inference instruction when present, absent otherwise', () => {
+    const withLocation = buildNextTurnPrompt({ ...req, originCountry: 'Saudi Arabia' });
+    expect(withLocation.system).toContain('Saudi Arabia');
+    expect(withLocation.system).toMatch(/never infer religion, ethnicity, political views, personal values, or cultural tolerance/i);
+    const without = buildNextTurnPrompt(req);
+    expect(without.system).not.toMatch(/origin country/i);
+  });
+
+  it('includes the grounding rules and language instruction', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toMatch(/never invent/i);
+    expect(system).toMatch(/Modern Standard Arabic/i);
   });
 });
 

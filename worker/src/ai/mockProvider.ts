@@ -18,6 +18,8 @@ import type {
   ExplainRecommendationResult,
   InterpretPreferencesRequest,
   InterpretPreferencesResult,
+  NextTurnRequest,
+  NextTurnResult,
 } from './types';
 
 export function createMockAiProvider(): AiProvider {
@@ -36,6 +38,25 @@ export function createMockAiProvider(): AiProvider {
         }
       }
       return { interpreted, unmapped: interpreted.length === 0 ? [req.text] : [] };
+    },
+
+    // Phase 16.5 TRUE adaptive-interview pass — deterministic, test-only
+    // "AI": picks the first eligible (unresolved, never-asked) catalog
+    // entry and offers its first two allowed values as a choice, or
+    // declares the interview complete once nothing is eligible. Just
+    // enough behavior to exercise the real request/validation/response
+    // pipeline end-to-end without a live model call.
+    async nextTurn(req: NextTurnRequest): Promise<NextTurnResult> {
+      const eligible = req.catalog.find((d) => !d.resolved && !d.alreadyAsked);
+      if (!eligible) return { status: 'complete' };
+      const opts = eligible.options.slice(0, 2);
+      return {
+        status: 'ask',
+        questionType: 'choice',
+        targetDimensions: [eligible.id],
+        prompt: `Mock question about ${eligible.id}`,
+        options: opts.map((o, i) => ({ id: `opt${i}`, label: String(o.label), updates: { [eligible.id]: o.value } })),
+      };
     },
 
     async explainRecommendation(req: ExplainRecommendationRequest): Promise<ExplainRecommendationResult> {

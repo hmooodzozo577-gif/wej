@@ -104,6 +104,91 @@ export interface InterpretPreferencesResult {
   unmapped: string[];
 }
 
+// ---- Capability C: AI-driven interview next-turn decision ------------------
+// Phase 16.5 TRUE adaptive-interview pass — replaces a deterministic
+// keyword-classified template bank as the NORMAL question-selection path.
+// The frontend sends the full dimension catalog (every question the current
+// purpose bank supports, resolved or not) and the model decides ONE next
+// turn: ask a bounded CHOICE, ask a bounded FREE-TEXT clarification, or
+// declare the interview COMPLETE. The model never invents a dimension,
+// never returns a value outside a dimension's real allowed set, and never
+// re-targets an already-resolved or already-asked dimension — all
+// re-checked here (ai/validate.ts), never trusted from the model's own
+// claim.
+
+/** One dimension (question) in the current purpose bank, as the model
+ *  needs to understand it — resolved state and ranking-support status
+ *  included so the model can reason about what's actually worth asking,
+ *  never inferring importance from a bare id string. */
+export interface DimensionCatalogEntry {
+  id: string;
+  kind: string;
+  /** Whether this id is an actual Phase 14 scoring input (every
+   *  non-'flavor' kind) or interview-context only (flavor questions,
+   *  excluded from scoring — see engine/scoreDestination.ts). Told to
+   *  the model so it can prioritize ranking-supported gaps first. */
+  rankingSupported: boolean;
+  /** Already has a confirmed value (direct, AI-interpreted, or a prior
+   *  turn) — the model must never target a resolved dimension again. */
+  resolved: boolean;
+  /** Already targeted by an earlier turn in this session (whether or
+   *  not it ended up resolved) — also never re-targeted, the semantic-
+   *  dimension-level duplicate prevention this phase requires. */
+  alreadyAsked: boolean;
+  options: InterpretableOption[];
+}
+
+export interface NextTurnRequest {
+  lang: 'ar' | 'en';
+  purposeName: string;
+  catalog: DimensionCatalogEntry[];
+  /** Confirmed values for every `resolved` catalog entry — lets the
+   *  model reason about the traveler's existing profile (e.g. already
+   *  cold+nature, so a "relaxing four days" mention might best resolve
+   *  via the adventure dimension) without re-deriving it from scratch. */
+  confirmedProfile: Record<string, string | number>;
+  turnNumber: number;
+  /** See InterpretPreferencesRequest's own doc comment — identical
+   *  coarse-context-only contract, identical non-inference instruction. */
+  originCountry?: string;
+}
+
+export interface NextTurnOption {
+  id: string;
+  label: string;
+  /** Canonical dimension -> value updates this option applies if
+   *  chosen. Every key MUST be a catalog dimension id targeted by this
+   *  turn; every value MUST be one of that dimension's real allowed
+   *  values — re-validated here, never trusted from the model. May
+   *  cover more than one dimension (a single answer resolving multiple
+   *  supported preferences at once). */
+  updates: Record<string, string | number>;
+}
+
+export type NextTurnResult =
+  | {
+      status: 'ask';
+      questionType: 'choice';
+      targetDimensions: string[];
+      prompt: string;
+      options: NextTurnOption[];
+    }
+  | {
+      status: 'ask';
+      questionType: 'free_text';
+      targetDimensions: string[];
+      prompt: string;
+    }
+  | { status: 'complete' }
+  /** The model's response was syntactically valid JSON but failed
+   *  semantic re-validation (e.g. targeted an already-resolved
+   *  dimension, invented a value, or was otherwise malformed) — index.ts
+   *  maps this to the SAME 502 ai_provider_error response a malformed-
+   *  JSON failure gets, never silently treated as 'complete' (that would
+   *  falsely claim the interview has enough information) and never
+   *  passed through to the frontend as if it were a real decision. */
+  | { status: 'invalid' };
+
 // ---- Capability B: personalized recommendation explanation ----------------
 
 export interface RankedDestinationContext {
@@ -153,6 +238,7 @@ export interface ExplainRecommendationResult {
 export interface AiProvider {
   interpretPreferences(req: InterpretPreferencesRequest): Promise<InterpretPreferencesResult>;
   explainRecommendation(req: ExplainRecommendationRequest): Promise<ExplainRecommendationResult>;
+  nextTurn(req: NextTurnRequest): Promise<NextTurnResult>;
 }
 
 // ---- Typed, safe-to-log-free errors ----------------------------------------

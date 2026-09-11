@@ -7,7 +7,7 @@
 // error-throwing provider — never a real paid API call (task's own
 // explicit requirement).
 import { describe, expect, it } from 'vitest';
-import { handleExplainRecommendation, handleInterpretPreferences, handleRequest, type Env } from './index';
+import { handleExplainRecommendation, handleInterpretPreferences, handleNextTurn, handleRequest, type Env } from './index';
 import { createMockAiProvider } from './ai/mockProvider';
 import { AiInvalidResponseError, AiProviderError, AiTimeoutError, type AiProvider } from './ai/types';
 
@@ -40,6 +40,23 @@ const validExplainBody = {
   topResults: [{ destId: 'japan', name: 'Japan', score: 80, reasons: ['Climate match'], facts: 'Climate: Mild.' }],
 };
 
+const validNextTurnBody = {
+  lang: 'en',
+  purposeName: 'Tourism',
+  turnNumber: 1,
+  confirmedProfile: {},
+  catalog: [
+    {
+      id: 'climate',
+      kind: 'climate',
+      rankingSupported: true,
+      resolved: false,
+      alreadyAsked: false,
+      options: [{ value: 'hot', label: 'Hot' }, { value: 'mild', label: 'Mild' }, { value: 'cold', label: 'Cold' }],
+    },
+  ],
+};
+
 describe('handleRequest — AI routing isolation', () => {
   it('POST /api/ai/interpret-preferences with no provider configured returns 503 ai_not_configured (this repo\'s real current state) — never a crash', async () => {
     const res = await handleRequest(postAi('/api/ai/interpret-preferences', validInterpretBody), env);
@@ -50,6 +67,13 @@ describe('handleRequest — AI routing isolation', () => {
 
   it('POST /api/ai/explain-recommendation with no provider configured returns 503 ai_not_configured', async () => {
     const res = await handleRequest(postAi('/api/ai/explain-recommendation', validExplainBody), env);
+    expect(res.status).toBe(503);
+    const body = await res.json();
+    expect(body.error).toBe('ai_not_configured');
+  });
+
+  it('POST /api/ai/next-turn with no provider configured returns 503 ai_not_configured', async () => {
+    const res = await handleRequest(postAi('/api/ai/next-turn', validNextTurnBody), env);
     expect(res.status).toBe(503);
     const body = await res.json();
     expect(body.error).toBe('ai_not_configured');
@@ -111,6 +135,7 @@ describe('handleInterpretPreferences — full pipeline via the mock provider (ne
     const brokenProvider: AiProvider = {
       interpretPreferences: async () => ({ interpreted: 'not an array' }) as never,
       explainRecommendation: mock.explainRecommendation,
+      nextTurn: mock.nextTurn,
     };
     const [body, status] = await handleInterpretPreferences(brokenProvider, validInterpretBody);
     expect(status).toBe(200); // the ROUTE succeeds; the CONTENT is safely empty
@@ -123,6 +148,7 @@ describe('handleInterpretPreferences — full pipeline via the mock provider (ne
         throw new AiTimeoutError('timed out');
       },
       explainRecommendation: mock.explainRecommendation,
+      nextTurn: mock.nextTurn,
     };
     const [body, status] = await handleInterpretPreferences(timingOutProvider, validInterpretBody);
     expect(status).toBe(504);
@@ -135,6 +161,7 @@ describe('handleInterpretPreferences — full pipeline via the mock provider (ne
         throw new AiProviderError('upstream 500', 500);
       },
       explainRecommendation: mock.explainRecommendation,
+      nextTurn: mock.nextTurn,
     };
     const [body, status] = await handleInterpretPreferences(failingProvider, validInterpretBody);
     expect(status).toBe(502);
@@ -147,6 +174,7 @@ describe('handleInterpretPreferences — full pipeline via the mock provider (ne
         throw new AiInvalidResponseError('could not parse model output');
       },
       explainRecommendation: mock.explainRecommendation,
+      nextTurn: mock.nextTurn,
     };
     const [, status] = await handleInterpretPreferences(badShapeProvider, validInterpretBody);
     expect(status).toBe(502);
@@ -174,6 +202,7 @@ describe('handleExplainRecommendation — full pipeline via the mock provider', 
   it('a request claiming a destination outside the real ranking is rejected by structured-output validation, not trusted', async () => {
     const sneakyProvider: AiProvider = {
       interpretPreferences: mock.interpretPreferences,
+      nextTurn: mock.nextTurn,
       explainRecommendation: async () => ({
         summary: 'x',
         perDestination: [{ destId: 'made-up-destination', explanation: 'x' }],
@@ -188,6 +217,113 @@ describe('handleExplainRecommendation — full pipeline via the mock provider', 
     const topResults = Array.from({ length: 15 }, (_, i) => ({ destId: `d${i}`, name: `D${i}`, score: 1, reasons: [], facts: '' }));
     const [, status] = await handleExplainRecommendation(mock, { ...validExplainBody, topResults });
     expect(status).toBe(400);
+  });
+});
+
+describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRUE adaptive-interview Capability C)', () => {
+  const mock = createMockAiProvider();
+
+  it('provider not configured (null) -> 503, before ever touching a provider', async () => {
+    const [body, status] = await handleNextTurn(null, validNextTurnBody);
+    expect(status).toBe(503);
+    expect((body as { error: string }).error).toBe('ai_not_configured');
+  });
+
+  it('server-side request validation rejects a malformed request before calling the provider', async () => {
+    const [body, status] = await handleNextTurn(mock, { lang: 'xx' });
+    expect(status).toBe(400);
+    expect((body as { error: string }).error).toBe('invalid_request');
+  });
+
+  it('a valid request with a real (mock) provider succeeds and asks about the one unresolved catalog entry', async () => {
+    const [body, status] = await handleNextTurn(mock, validNextTurnBody);
+    expect(status).toBe(200);
+    expect((body as { status: string }).status).toBe('ask');
+  });
+
+  it('every catalog entry already resolved/asked -> 200 status complete, not a fabricated question', async () => {
+    const [body, status] = await handleNextTurn(mock, {
+      ...validNextTurnBody,
+      confirmedProfile: { climate: 'cold' },
+      catalog: [{ ...validNextTurnBody.catalog[0], resolved: true, alreadyAsked: true }],
+    });
+    expect(status).toBe(200);
+    expect((body as { status: string }).status).toBe('complete');
+  });
+
+  // Task 5 Section 12 — semantic (dimension-level) duplicate prevention is
+  // the real security gate: a provider claiming to target an already-
+  // resolved dimension is rejected at the ROUTE level, never trusted and
+  // never silently downgraded to {status:'complete'} (that would falsely
+  // claim the profile is sufficient).
+  it('DUPLICATE PREVENTION: a provider targeting an already-resolved dimension is rejected -> 502 ai_provider_error, not passed through', async () => {
+    const sneakyProvider: AiProvider = {
+      interpretPreferences: mock.interpretPreferences,
+      explainRecommendation: mock.explainRecommendation,
+      nextTurn: async () => ({
+        status: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['climate'],
+        prompt: 'What climate do you like?',
+        options: [{ id: 'a', label: 'Cold', updates: { climate: 'cold' } }],
+      }),
+    };
+    const [body, status] = await handleNextTurn(sneakyProvider, {
+      ...validNextTurnBody,
+      confirmedProfile: { climate: 'cold' },
+      catalog: [{ ...validNextTurnBody.catalog[0], resolved: true, alreadyAsked: true }],
+    });
+    expect(status).toBe(502);
+    expect((body as { error: string }).error).toBe('ai_provider_error');
+  });
+
+  it('malformed model response (bad shape) is validated and fails safely -> 502, never a raw pass-through', async () => {
+    const brokenProvider: AiProvider = {
+      interpretPreferences: mock.interpretPreferences,
+      explainRecommendation: mock.explainRecommendation,
+      nextTurn: async () => ('not an object' as never),
+    };
+    const [body, status] = await handleNextTurn(brokenProvider, validNextTurnBody);
+    expect(status).toBe(502);
+    expect((body as { error: string }).error).toBe('ai_provider_error');
+  });
+
+  it('provider timeout maps to 504 ai_timeout, no raw error/stack ever reaches the response', async () => {
+    const timingOutProvider: AiProvider = {
+      interpretPreferences: mock.interpretPreferences,
+      explainRecommendation: mock.explainRecommendation,
+      nextTurn: async () => {
+        throw new AiTimeoutError('timed out');
+      },
+    };
+    const [body, status] = await handleNextTurn(timingOutProvider, validNextTurnBody);
+    expect(status).toBe(504);
+    expect(JSON.stringify(body)).not.toMatch(/stack|at Object|at async/);
+  });
+
+  it('provider unavailable/error maps to 502 ai_provider_error, never the raw upstream body', async () => {
+    const failingProvider: AiProvider = {
+      interpretPreferences: mock.interpretPreferences,
+      explainRecommendation: mock.explainRecommendation,
+      nextTurn: async () => {
+        throw new AiProviderError('upstream 500', 500);
+      },
+    };
+    const [body, status] = await handleNextTurn(failingProvider, validNextTurnBody);
+    expect(status).toBe(502);
+    expect((body as { message: string }).message).not.toContain('upstream 500');
+  });
+
+  it('invalid-response-shape provider error maps to 502 as well', async () => {
+    const badShapeProvider: AiProvider = {
+      interpretPreferences: mock.interpretPreferences,
+      explainRecommendation: mock.explainRecommendation,
+      nextTurn: async () => {
+        throw new AiInvalidResponseError('could not parse model output');
+      },
+    };
+    const [, status] = await handleNextTurn(badShapeProvider, validNextTurnBody);
+    expect(status).toBe(502);
   });
 });
 

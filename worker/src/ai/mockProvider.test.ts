@@ -43,6 +43,39 @@ describe('createMockAiProvider — test/dev-only, never live AI', () => {
     expect(result.caveats.some((c) => c.toLowerCase().includes('mock'))).toBe(true);
   });
 
+  it('nextTurn asks about the first eligible (unresolved, never-asked) catalog entry', async () => {
+    const result = await provider.nextTurn({
+      lang: 'en',
+      purposeName: 'Tourism',
+      turnNumber: 1,
+      confirmedProfile: {},
+      catalog: [
+        { id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+        {
+          id: 'naturecity',
+          kind: 'target',
+          rankingSupported: true,
+          resolved: false,
+          alreadyAsked: false,
+          options: [{ value: 15, label: 'Nature' }, { value: 90, label: 'Cities' }],
+        },
+      ],
+    });
+    expect(result.status).toBe('ask');
+    if (result.status === 'ask') expect(result.targetDimensions).toEqual(['naturecity']);
+  });
+
+  it('nextTurn returns complete when every catalog entry is resolved or already asked', async () => {
+    const result = await provider.nextTurn({
+      lang: 'en',
+      purposeName: 'Tourism',
+      turnNumber: 1,
+      confirmedProfile: { climate: 'cold' },
+      catalog: [{ id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] }],
+    });
+    expect(result.status).toBe('complete');
+  });
+
   it('never fabricates a flight/hotel/budget currency value in either capability\'s output', async () => {
     const interp = await provider.interpretPreferences({ lang: 'en', text: 'x', questions: [] });
     const expl = await provider.explainRecommendation({

@@ -14,7 +14,7 @@
 // Worker (wrangler login / a CI API token) is a separate concern from
 // AI inference — see ../../SECRETS.md's Phase 16 section.
 import type { Ai } from '@cloudflare/workers-types';
-import { buildExplainRecommendationPrompt, buildInterpretPreferencesPrompt } from './prompts';
+import { buildExplainRecommendationPrompt, buildInterpretPreferencesPrompt, buildNextTurnPrompt } from './prompts';
 import { AiInvalidResponseError, AiProviderError, AiTimeoutError } from './types';
 import type {
   AiProvider,
@@ -22,6 +22,8 @@ import type {
   ExplainRecommendationResult,
   InterpretPreferencesRequest,
   InterpretPreferencesResult,
+  NextTurnRequest,
+  NextTurnResult,
 } from './types';
 
 /** The ONE place this model id is written — change it here only (task's
@@ -84,6 +86,33 @@ const INTERPRET_JSON_SCHEMA = {
     unmapped: { type: 'array', items: { type: 'string' } },
   },
   required: ['interpreted', 'unmapped'],
+} as const;
+
+// Phase 16.5 TRUE adaptive-interview pass — Capability C. Deliberately
+// permissive here (a soft hint only, same as the two schemas above) —
+// ai/validate.ts's validateNextTurnResult is the real, authoritative gate
+// (dimension eligibility, allowed-value re-checking, bounded counts).
+const NEXT_TURN_JSON_SCHEMA = {
+  type: 'object',
+  properties: {
+    status: { type: 'string', enum: ['ask', 'complete'] },
+    questionType: { type: 'string', enum: ['choice', 'free_text'] },
+    targetDimensions: { type: 'array', items: { type: 'string' } },
+    prompt: { type: 'string' },
+    options: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'string' },
+          label: { type: 'string' },
+          updates: { type: 'object' },
+        },
+        required: ['id', 'label', 'updates'],
+      },
+    },
+  },
+  required: ['status'],
 } as const;
 
 const EXPLAIN_JSON_SCHEMA = {
@@ -186,6 +215,14 @@ export function createCloudflareWorkersAiProvider(ai: Ai): AiProvider {
       const { system, user } = buildExplainRecommendationPrompt(req);
       const raw = await runJsonCompletion(ai, system, user, 'explain_recommendation', EXPLAIN_JSON_SCHEMA);
       return raw as ExplainRecommendationResult;
+    },
+    async nextTurn(req: NextTurnRequest): Promise<NextTurnResult> {
+      const { system, user } = buildNextTurnPrompt(req);
+      const raw = await runJsonCompletion(ai, system, user, 'next_turn', NEXT_TURN_JSON_SCHEMA);
+      // Cast only to satisfy AiProvider's declared return type —
+      // index.ts's caller treats this as `unknown` regardless (see
+      // validate.ts's validateNextTurnResult, the real gate).
+      return raw as NextTurnResult;
     },
   };
 }
