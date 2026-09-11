@@ -86,7 +86,7 @@ describe('decideAdaptiveInterviewStep', () => {
 
 describe('toPendingFollowup', () => {
   it('choice: maps AI options to FollowupOption.satisfies, stores the single-language prompt/label under both lang keys', () => {
-    const followup = toPendingFollowup(2, {
+    const followup = toPendingFollowup('tourism', 2, {
       kind: 'ask',
       questionType: 'choice',
       targetDimensions: ['naturecity'],
@@ -104,7 +104,7 @@ describe('toPendingFollowup', () => {
   });
 
   it('free_text: options empty, allowFreeText true, questionType free_text — renders as the PRIMARY UI (FollowupCard.tsx)', () => {
-    const followup = toPendingFollowup(1, { kind: 'ask', questionType: 'free_text', targetDimensions: ['culture'], prompt: 'Tell us more' });
+    const followup = toPendingFollowup('tourism', 1, { kind: 'ask', questionType: 'free_text', targetDimensions: ['culture'], prompt: 'Tell us more' });
     expect(followup.options).toEqual([]);
     expect(followup.allowFreeText).toBe(true);
     expect(followup.questionType).toBe('free_text');
@@ -112,7 +112,7 @@ describe('toPendingFollowup', () => {
   });
 
   it('MULTI-DIMENSION: a single option can carry updates for more than one dimension', () => {
-    const followup = toPendingFollowup(1, {
+    const followup = toPendingFollowup('tourism', 1, {
       kind: 'ask',
       questionType: 'choice',
       targetDimensions: ['naturecity', 'adventure'],
@@ -120,6 +120,23 @@ describe('toPendingFollowup', () => {
       options: [{ id: 'a', label: 'Calm nature walk', updates: { naturecity: 15, adventure: 10 } }],
     });
     expect(followup.options[0]?.satisfies).toEqual({ naturecity: 15, adventure: 10 });
+  });
+
+  it('BUDGET: preserves the AI prompt but replaces generated options with the canonical numeric bands', () => {
+    const followup = toPendingFollowup('tourism', 1, {
+      kind: 'ask',
+      questionType: 'choice',
+      targetDimensions: ['budget'],
+      prompt: 'What budget fits your cold nature trip?',
+      options: [{ id: 'vague', label: 'Good', updates: { budget: 2 } }],
+    });
+    expect(followup.prompt.en).toBe('What budget fits your cold nature trip?');
+    expect(followup.options).toHaveLength(4);
+    expect(followup.options[0]).toMatchObject({
+      label: { ar: 'منخفضة', en: 'Low' },
+      desc: { ar: 'حتى 5,000 ريال', en: 'Up to 5,000 SAR' },
+      satisfies: { budget: 1 },
+    });
   });
 });
 

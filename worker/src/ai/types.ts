@@ -123,6 +123,10 @@ export interface InterpretPreferencesResult {
 export interface DimensionCatalogEntry {
   id: string;
   kind: string;
+  /** The deterministic bank wording, supplied only as semantic reference
+   *  and for server-side duplicate-question rejection. Optional only for
+   *  a safe rolling deployment with the previous frontend contract. */
+  question?: string;
   /** Whether this id is an actual Phase 14 scoring input (every
    *  non-'flavor' kind) or interview-context only (flavor questions,
    *  excluded from scoring — see engine/scoreDestination.ts). Told to

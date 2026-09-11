@@ -41,6 +41,7 @@ const nextTurnReq: NextTurnRequest = {
     {
       id: 'budget',
       kind: 'target',
+      question: 'What is your approximate budget?',
       rankingSupported: true,
       resolved: false,
       alreadyAsked: false,

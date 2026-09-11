@@ -47,6 +47,14 @@ describe('buildDimensionCatalog', () => {
     expect(nature.options.every((o) => typeof o.label === 'string' && o.label.length > 0)).toBe(true);
   });
 
+  it('includes localized bank wording so the Worker can reject copied questions', () => {
+    const ar = buildDimensionCatalog('tourism', { answers: {}, askedDimensionIds: [] }, 'ar');
+    const en = buildDimensionCatalog('tourism', { answers: {}, askedDimensionIds: [] }, 'en');
+    const source = QUESTION_BANKS.tourism.find((question) => question.id === 'budget')!;
+    expect(ar.find((dimension) => dimension.id === 'budget')?.question).toBe(source.text.ar);
+    expect(en.find((dimension) => dimension.id === 'budget')?.question).toBe(source.text.en);
+  });
+
   it('language switches option labels (Arabic vs English) without changing ids/values/resolved state', () => {
     const ar = buildDimensionCatalog('tourism', { answers: {}, askedDimensionIds: [] }, 'ar');
     const en = buildDimensionCatalog('tourism', { answers: {}, askedDimensionIds: [] }, 'en');

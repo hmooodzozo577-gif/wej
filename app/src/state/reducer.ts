@@ -143,6 +143,27 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         // the next AI interaction if still relevant.
         return { ...state, answers, satisfaction, confidence: confidenceMap, path: truncatedPath, qIndex: pos, followup: null };
       }
+
+      // The first AI turn may finish while the traveler is still typing
+      // the optional natural-language description. Once that description
+      // is confirmed, the pending turn was chosen from an obsolete empty
+      // profile. Drop it, release its target dimensions, and let the
+      // adaptive driver request a fresh question using the newly confirmed
+      // context. This prevents a generic pre-profile question from being
+      // presented as though it were personalized.
+      if (provenance === 'ai_interpreted' && state.followup) {
+        const staleTargets = new Set(state.followup.candidateDimensionIds);
+        return {
+          ...state,
+          answers,
+          satisfaction,
+          confidence: confidenceMap,
+          followup: null,
+          askedDimensionIds: state.askedDimensionIds.filter((id) => !staleTargets.has(id)),
+          turnCount: Math.max(0, state.turnCount - 1),
+          interviewComplete: false,
+        };
+      }
       return { ...state, answers, satisfaction, confidence: confidenceMap };
     }
 

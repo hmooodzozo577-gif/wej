@@ -15,6 +15,7 @@
 import { useEffect, useRef } from 'react';
 import { nextTurn } from '../ai/aiService';
 import { buildDimensionCatalog, computeMaxInterviewTurns } from '../ai/buildDimensionCatalog';
+import { QUESTION_BANKS } from '../data/questionBanks';
 import type { AppAction, AppState, PendingFollowup } from '../state/types';
 import type { DimensionCatalogEntry } from '../ai/types';
 import type { PurposeId, Lang } from '../data/types';
@@ -59,6 +60,7 @@ export function decideAdaptiveInterviewStep(purposeId: PurposeId | null, state: 
  *  comment in state/types.ts for why). Exported standalone so the
  *  mapping itself is unit-testable without mounting the hook. */
 export function toPendingFollowup(
+  purposeId: PurposeId,
   turnNumber: number,
   outcome:
     | { kind: 'ask'; questionType: 'choice'; targetDimensions: string[]; prompt: string; options: { id: string; label: string; updates: Record<string, string | number> }[] }
@@ -67,6 +69,30 @@ export function toPendingFollowup(
   const prompt = { ar: outcome.prompt, en: outcome.prompt };
   if (outcome.questionType === 'free_text') {
     return { templateId: `ai-turn-${turnNumber}`, prompt, options: [], allowFreeText: true, candidateDimensionIds: outcome.targetDimensions, questionType: 'free_text' };
+  }
+
+  // The model chooses and phrases the question, but budget ranges are
+  // product data. Reuse the purpose's canonical options so the traveler
+  // sees the original approximate SAR bands instead of qualitative or
+  // newly generated descriptions. Investment intentionally keeps its
+  // existing non-numeric scale because that bank has no trip-cost bands.
+  if (outcome.targetDimensions.length === 1 && outcome.targetDimensions[0] === 'budget') {
+    const budgetQuestion = QUESTION_BANKS[purposeId].find((question) => question.id === 'budget');
+    if (budgetQuestion) {
+      return {
+        templateId: `ai-turn-${turnNumber}`,
+        prompt,
+        options: budgetQuestion.options.map((option) => ({
+          id: `budget-${String(option.value)}`,
+          label: option.label,
+          desc: option.desc,
+          satisfies: { budget: option.value },
+        })),
+        allowFreeText: false,
+        candidateDimensionIds: outcome.targetDimensions,
+        questionType: 'choice',
+      };
+    }
   }
   return {
     templateId: `ai-turn-${turnNumber}`,
@@ -106,6 +132,9 @@ export function useAdaptiveInterview(
       dispatch({ type: 'SET_INTERVIEW_COMPLETE' });
       return;
     }
+    // A call decision is impossible without a purpose, but keep the
+    // runtime/type boundary explicit before using it below.
+    if (!purposeId) return;
     // Reducer-owned references detect both value edits and a fresh empty
     // session for the same purpose. Unrelated renders preserve them.
     const context = [purposeId, purposeName, lang, originCountry, state.answers, state.askedDimensionIds, state.turnCount, dispatch];
@@ -129,7 +158,7 @@ export function useAdaptiveInterview(
         dispatch({ type: 'SET_INTERVIEW_COMPLETE' });
         return;
       }
-      dispatch({ type: 'SET_PENDING_FOLLOWUP', followup: toPendingFollowup(decision.turnNumber, result.outcome) });
+      dispatch({ type: 'SET_PENDING_FOLLOWUP', followup: toPendingFollowup(purposeId, decision.turnNumber, result.outcome) });
     });
     return () => {
       active = false;

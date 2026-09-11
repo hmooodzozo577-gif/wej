@@ -50,10 +50,11 @@ describe('createMockAiProvider — test/dev-only, never live AI', () => {
       turnNumber: 1,
       confirmedProfile: {},
       catalog: [
-        { id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+        { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
         {
           id: 'naturecity',
           kind: 'target',
+          question: 'Nature or cities?',
           rankingSupported: true,
           resolved: false,
           alreadyAsked: false,
@@ -71,7 +72,7 @@ describe('createMockAiProvider — test/dev-only, never live AI', () => {
       purposeName: 'Tourism',
       turnNumber: 1,
       confirmedProfile: { climate: 'cold' },
-      catalog: [{ id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] }],
+      catalog: [{ id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] }],
     });
     expect(result.status).toBe('complete');
   });

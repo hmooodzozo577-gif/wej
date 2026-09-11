@@ -193,7 +193,7 @@ describe('validateNextTurnRequest — Phase 16.5 TRUE adaptive-interview Capabil
     turnNumber: 1,
     confirmedProfile: {},
     catalog: [
-      { id: 'climate', kind: 'climate', rankingSupported: true, resolved: false, alreadyAsked: false, options: [{ value: 'cold', label: 'Cold' }] },
+      { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: false, alreadyAsked: false, options: [{ value: 'cold', label: 'Cold' }] },
     ],
   };
 
@@ -206,6 +206,7 @@ describe('validateNextTurnRequest — Phase 16.5 TRUE adaptive-interview Capabil
     const bigCatalog = Array.from({ length: MAX_CATALOG_ENTRIES + 1 }, (_, i) => ({
       id: `d${i}`,
       kind: 'target',
+      question: 'Choose a value',
       rankingSupported: true,
       resolved: false,
       alreadyAsked: false,
@@ -217,6 +218,12 @@ describe('validateNextTurnRequest — Phase 16.5 TRUE adaptive-interview Capabil
   it('rejects a catalog entry missing the resolved/alreadyAsked/rankingSupported flags', () => {
     const errs = validateNextTurnRequest({ ...validNextTurnBody, catalog: [{ id: 'x', kind: 'target', options: [{ value: 1, label: 'x' }] }] });
     expect(errs.length).toBeGreaterThan(0);
+  });
+
+  it('temporarily accepts a legacy catalog entry without bank wording during a frontend/Worker rollout, but rejects an empty value', () => {
+    const { question: _question, ...withoutQuestion } = validNextTurnBody.catalog[0]!;
+    expect(validateNextTurnRequest({ ...validNextTurnBody, catalog: [withoutQuestion] })).toEqual([]);
+    expect(validateNextTurnRequest({ ...validNextTurnBody, catalog: [{ ...validNextTurnBody.catalog[0]!, question: '' }] }).length).toBeGreaterThan(0);
   });
 
   it('rejects a non-object confirmedProfile', () => {
@@ -240,16 +247,17 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     turnNumber: 2,
     confirmedProfile: { climate: 'cold' },
     catalog: [
-      { id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+      { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
       {
         id: 'naturecity',
         kind: 'target',
+        question: 'Nature or cities?',
         rankingSupported: true,
         resolved: false,
         alreadyAsked: false,
         options: [{ value: 15, label: 'Nature' }, { value: 90, label: 'Cities' }],
       },
-      { id: 'adventure', kind: 'target', rankingSupported: true, resolved: false, alreadyAsked: false, options: [{ value: 10, label: 'Relax' }, { value: 90, label: 'Adventure' }] },
+      { id: 'adventure', kind: 'target', question: 'How adventurous?', rankingSupported: true, resolved: false, alreadyAsked: false, options: [{ value: 10, label: 'Relax' }, { value: 90, label: 'Adventure' }] },
     ],
   };
 
@@ -259,7 +267,7 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
         status: 'ask',
         questionType: 'choice',
         targetDimensions: ['naturecity'],
-        prompt: 'Nature or cities?',
+        prompt: 'Since you prefer cold weather, which setting would make the trip feel right?',
         options: [{ id: 'a', label: 'Nature', updates: { naturecity: 15 } }],
       },
       request,
@@ -268,9 +276,34 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
       status: 'ask',
       questionType: 'choice',
       targetDimensions: ['naturecity'],
-      prompt: 'Nature or cities?',
+      prompt: 'Since you prefer cold weather, which setting would make the trip feel right?',
       options: [{ id: 'a', label: 'Nature', updates: { naturecity: 15 } }],
     });
+  });
+
+  it('rejects a prompt copied or lightly reworded from the deterministic bank question', () => {
+    const copied = validateNextTurnResult(
+      {
+        status: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['naturecity'],
+        prompt: 'Nature or cities?',
+        options: [{ id: 'a', label: 'Nature', updates: { naturecity: 15 } }],
+      },
+      request,
+    );
+    const lightlyReworded = validateNextTurnResult(
+      {
+        status: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['naturecity'],
+        prompt: 'Nature or the cities?',
+        options: [{ id: 'a', label: 'Nature', updates: { naturecity: 15 } }],
+      },
+      request,
+    );
+    expect(copied).toEqual({ status: 'invalid' });
+    expect(lightlyReworded).toEqual({ status: 'invalid' });
   });
 
   it('accepts a valid free_text turn', () => {
@@ -333,6 +366,28 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     if (result.status === 'ask' && result.questionType === 'choice') {
       expect(result.options[0]?.updates).toEqual({ naturecity: 15, adventure: 10 });
     }
+  });
+
+  it('requires budget to be a standalone target so the frontend can render canonical numeric ranges', () => {
+    const withBudget = {
+      ...request,
+      catalog: [
+        ...request.catalog,
+        { id: 'budget', kind: 'target', question: 'What is your approximate budget?', rankingSupported: true, resolved: false, alreadyAsked: false, options: [{ value: 1, label: 'Low' }] },
+      ],
+    };
+    expect(
+      validateNextTurnResult(
+        {
+          status: 'ask',
+          questionType: 'choice',
+          targetDimensions: ['budget', 'adventure'],
+          prompt: 'Considering your cold-weather preference, which trip style fits?',
+          options: [{ id: 'a', label: 'Simple and calm', updates: { budget: 1, adventure: 10 } }],
+        },
+        withBudget,
+      ),
+    ).toEqual({ status: 'invalid' });
   });
 
   it('bounds option count to MAX_NEXT_TURN_OPTIONS', () => {

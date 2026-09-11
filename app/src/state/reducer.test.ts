@@ -342,6 +342,21 @@ describe('Phase 16.5 completion pass — bounded contextual follow-up orchestrat
     expect(state.followup).toBeNull();
   });
 
+  it('NATURAL PROFILE INVALIDATION: confirming interpreted preferences discards a generic pending turn and releases its dimensions', () => {
+    const pending = appReducer(initialAppState, { type: 'SET_PENDING_FOLLOWUP', followup: sampleFollowup });
+    const next = appReducer(pending, {
+      type: 'SET_ANSWER',
+      questionId: 'climate',
+      value: 'cold',
+      provenance: 'ai_interpreted',
+      confidence: 'high',
+    });
+    expect(next.followup).toBeNull();
+    expect(next.askedDimensionIds).toEqual([]);
+    expect(next.turnCount).toBe(0);
+    expect(next.answers.climate).toBe('cold');
+  });
+
   it('START_QUIZ/SYNC_QUIZ_PURPOSE/RESTART_ALL all reset followup/followupTurnsUsed/aiCallsUsed', () => {
     const dirty = { ...initialAppState, followup: sampleFollowup, followupTurnsUsed: 2, aiCallsUsed: 3 };
     expect(appReducer(dirty, { type: 'START_QUIZ', purpose: 'tourism' })).toMatchObject({ followup: null, followupTurnsUsed: 0, aiCallsUsed: 0 });

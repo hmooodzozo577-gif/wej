@@ -73,13 +73,13 @@ describe('§35/40 SCENARIO A — "أبغى دولة باردة وهادئة وف
 
     renderQuiz();
     await waitFor(() => expect(screen.getByText('ما مستوى الميزانية المناسب لك؟')).toBeInTheDocument());
-    fireEvent.click(screen.getByRole('radio', { name: 'اقتصادية' }));
-    fireEvent.click(screen.getByRole('button', { name: /التالي/ }));
+    fireEvent.click(screen.getByRole('radio', { name: /منخفضة/ }));
 
     await waitFor(() => expect(mockNextTurn).toHaveBeenCalledTimes(2));
     expect(screen.getByText('ما مستوى الميزانية المناسب لك؟')).toBeInTheDocument();
     expect(screen.getByRole('radiogroup')).toHaveAttribute('aria-busy', 'true');
     expect(screen.getAllByRole('radio').every((option) => (option as HTMLButtonElement).disabled)).toBe(true);
+    expect(screen.getByRole('status')).toHaveTextContent(/جارٍ تحضير السؤال التالي/);
     expect(document.querySelector('.ai-turn-loading')).toBeNull();
 
     resolveNext(complete);
@@ -87,23 +87,16 @@ describe('§35/40 SCENARIO A — "أبغى دولة باردة وهادئة وف
   });
 
   it('a GENERATED (not verbatim questionBanks.ts) choice question is asked next, resolves nightlife, then the interview completes', async () => {
-    // Call #1 fires immediately on mount (empty profile — the AI-driven
-    // loop runs even before the traveler ever touches the optional
-    // natural-language box, Section 13). Freshly-authored wording, never
-    // questionBanks.ts's own nightlife question text or the OLD
-    // deterministic template's "أي تجربة أقرب لك؟" — proving this is a
-    // real generated question, not a fixed bank/template string.
+    // Call #1 fires on mount with an empty profile. It must be discarded
+    // once the traveler confirms natural-language preferences.
     mockNextTurn.mockResolvedValueOnce({
       status: 'ok',
       outcome: {
         kind: 'ask',
         questionType: 'choice',
-        targetDimensions: ['nightlife'],
-        prompt: 'كيف تشوف أمسياتك في الوجهة المثالية لك؟',
-        options: [
-          { id: 'quiet_evenings', label: 'أمسيات هادئة بعيدة عن الصخب', updates: { nightlife: 10 } },
-          { id: 'lively_evenings', label: 'أمسيات نابضة بالحياة الليلية', updates: { nightlife: 100 } },
-        ],
+        targetDimensions: ['budget'],
+        prompt: 'ما النطاق المناسب للميزانية؟',
+        options: [{ id: 'low', label: 'منخفضة', updates: { budget: 1 } }],
       },
     });
     mockInterpret.mockResolvedValueOnce({
@@ -114,10 +107,23 @@ describe('§35/40 SCENARIO A — "أبغى دولة باردة وهادئة وف
       ],
       unmapped: ['هادئة'],
     });
+    mockNextTurn.mockResolvedValueOnce({
+      status: 'ok',
+      outcome: {
+        kind: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['nightlife'],
+        prompt: 'بما أنك تفضّل البرد والطبيعة، كيف تتخيّل أمسيات رحلتك الهادئة؟',
+        options: [
+          { id: 'quiet_evenings', label: 'أمسيات هادئة بعيدة عن الصخب', updates: { nightlife: 10 } },
+          { id: 'lively_evenings', label: 'أمسيات نابضة بالحياة الليلية', updates: { nightlife: 100 } },
+        ],
+      },
+    });
     mockNextTurn.mockResolvedValueOnce(complete);
 
     renderQuiz();
-    await waitFor(() => expect(screen.getByText('كيف تشوف أمسياتك في الوجهة المثالية لك؟')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('ما النطاق المناسب للميزانية؟')).toBeInTheDocument());
     expect(document.querySelector('.q-card')).not.toBeNull();
     expect(screen.getAllByRole('radio').length).toBeGreaterThan(0);
     // Never the OLD deterministic template's fixed wording.
@@ -132,18 +138,18 @@ describe('§35/40 SCENARIO A — "أبغى دولة باردة وهادئة وف
     await waitFor(() => expect(screen.getByText(/هذا ما فهمناه من رحلتك/)).toBeInTheDocument());
     fireEvent.click(screen.getByRole('button', { name: /استخدام هذه التفضيلات/ }));
     await waitFor(() => expect(screen.queryByText(/هذا ما فهمناه من رحلتك/)).toBeNull());
+    await waitFor(() => expect(screen.getByText(/بما أنك تفضّل البرد والطبيعة/)).toBeInTheDocument());
 
     fireEvent.click(screen.getByText('أمسيات هادئة بعيدة عن الصخب'));
-    fireEvent.click(screen.getByRole('button', { name: /التالي/ }));
-    await waitFor(() => expect(screen.queryByText('كيف تشوف أمسياتك في الوجهة المثالية لك؟')).toBeNull());
+    await waitFor(() => expect(screen.queryByText(/بما أنك تفضّل البرد والطبيعة/)).toBeNull());
 
-    // DUPLICATE PREVENTION: the SECOND call's catalog already marks
+    // DUPLICATE PREVENTION: the THIRD call's catalog already marks
     // climate/naturecity/nightlife resolved+asked — a real AI is told
     // not to re-target any of them.
-    await waitFor(() => expect(mockNextTurn).toHaveBeenCalledTimes(2));
-    const secondCallCatalog = mockNextTurn.mock.calls[1]?.[2];
+    await waitFor(() => expect(mockNextTurn).toHaveBeenCalledTimes(3));
+    const thirdCallCatalog = mockNextTurn.mock.calls[2]?.[2];
     for (const id of ['climate', 'naturecity', 'nightlife']) {
-      expect(secondCallCatalog?.find((d) => d.id === id)).toMatchObject({ resolved: true, alreadyAsked: true });
+      expect(thirdCallCatalog?.find((d) => d.id === id)).toMatchObject({ resolved: true, alreadyAsked: true });
     }
 
     // AI decides the interview is done -> completion card, with a
@@ -181,7 +187,6 @@ describe('§37 MULTI-DIMENSION — one AI-generated choice resolves two supporte
 
     await waitFor(() => expect(screen.getByText('صف يومك المثالي في الرحلة؟')).toBeInTheDocument());
     fireEvent.click(screen.getByText('نزهة هادئة وسط الطبيعة'));
-    fireEvent.click(screen.getByRole('button', { name: /التالي/ }));
 
     await waitFor(() => expect(screen.getByText(/لدينا معلومات كافية/)).toBeInTheDocument());
     // Both dimensions resolved from the ONE click — both appear in the
@@ -189,6 +194,49 @@ describe('§37 MULTI-DIMENSION — one AI-generated choice resolves two supporte
     const naturecityQ = QUESTION_BANKS.tourism.find((q) => q.id === 'naturecity')!;
     void naturecityQ;
     expect(mockNextTurn.mock.calls[1]?.[3]).toMatchObject({ naturecity: 15, adventure: 10 });
+  });
+
+  it('discards a generic turn created before natural preferences and requests a contextual replacement', async () => {
+    mockNextTurn
+      .mockResolvedValueOnce({
+        status: 'ok',
+        outcome: {
+          kind: 'ask',
+          questionType: 'choice',
+          targetDimensions: ['budget'],
+          prompt: 'ما هي ميزانيتك التقريبية؟',
+          options: [{ id: 'low', label: 'منخفضة', updates: { budget: 1 } }],
+        },
+      })
+      .mockResolvedValueOnce({
+        status: 'ok',
+        outcome: {
+          kind: 'ask',
+          questionType: 'choice',
+          targetDimensions: ['budget'],
+          prompt: 'بما أنك تفضّل البرد والطبيعة، ما النطاق المناسب لميزانية رحلتك؟',
+          options: [{ id: 'low', label: 'منخفضة', updates: { budget: 1 } }],
+        },
+      });
+    mockInterpret.mockResolvedValueOnce({
+      status: 'ok',
+      interpreted: [
+        { questionId: 'climate', value: 'cold', confidence: 'high' },
+        { questionId: 'naturecity', value: 15, confidence: 'high' },
+      ],
+      unmapped: [],
+    });
+
+    renderQuiz();
+    await waitFor(() => expect(screen.getByText('ما هي ميزانيتك التقريبية؟')).toBeInTheDocument());
+    submitNaturalText('أبغى دولة باردة وفيها طبيعة');
+    await waitFor(() => expect(screen.getByText(/هذا ما فهمناه من رحلتك/)).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: /استخدام هذه التفضيلات/ }));
+
+    await waitFor(() => expect(mockNextTurn).toHaveBeenCalledTimes(2));
+    expect(mockNextTurn.mock.calls[1]?.[3]).toEqual({ climate: 'cold', naturecity: 15 });
+    expect(screen.queryByText('ما هي ميزانيتك التقريبية؟')).toBeNull();
+    expect(await screen.findByText(/بما أنك تفضّل البرد والطبيعة/)).toBeInTheDocument();
   });
 });
 

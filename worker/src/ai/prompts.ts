@@ -106,14 +106,19 @@ export function buildNextTurnPrompt(req: NextTurnRequest): { system: string; use
         d.resolved ? 'RESOLVED' : 'unresolved',
         d.alreadyAsked ? 'already-asked' : 'never-asked',
       ].join(', ');
-      return `- id="${d.id}" kind="${d.kind}" [${flags}] allowed values: [${values}]`;
+      const bankQuestion = d.question ? JSON.stringify(d.question) : '(not supplied by legacy client)';
+      return `- id="${d.id}" kind="${d.kind}" [${flags}] reference bank question=${bankQuestion} allowed values: [${values}]`;
     })
     .join('\n');
 
   const profileDescription =
     Object.keys(req.confirmedProfile).length > 0
       ? Object.entries(req.confirmedProfile)
-          .map(([id, value]) => `${id}=${JSON.stringify(value)}`)
+          .map(([id, value]) => {
+            const dimension = req.catalog.find((entry) => entry.id === id);
+            const option = dimension?.options.find((candidate) => candidate.value === value);
+            return `${id}=${JSON.stringify(option?.label ?? value)} (canonical value ${JSON.stringify(value)})`;
+          })
           .join(', ')
       : '(nothing confirmed yet)';
 
@@ -133,6 +138,8 @@ export function buildNextTurnPrompt(req: NextTurnRequest): { system: string; use
     `Confirmed profile so far: ${profileDescription}`,
     '',
     'Your job: pick the single most useful UNRESOLVED, NEVER-ASKED dimension (or a short clarification that could resolve one or more of them) and decide how to ask about it. NEVER target a dimension already marked RESOLVED or already-asked above — the request will be rejected if you do.',
+    'Each reference bank question is supplied only to explain its dimension. NEVER copy, restate, or lightly paraphrase that wording. Write a fresh question suited to this traveler and this moment in the interview.',
+    'When the confirmed profile is not empty, the prompt must naturally build on at least one relevant confirmed preference so it is clearly contextual rather than a standalone generic bank question.',
     '',
     'Respond with one JSON object containing ALL five keys: "status", "questionType", "targetDimensions", "prompt", and "options".',
     '1. Choice question: { "status": "ask", "questionType": "choice", "targetDimensions": [string, ...], "prompt": string, "options": [{ "id": string, "label": string, "updates": { [dimensionId]: value } }, ...] }',
@@ -140,6 +147,7 @@ export function buildNextTurnPrompt(req: NextTurnRequest): { system: string; use
     '3. Interview complete: { "status": "complete", "questionType": "none", "targetDimensions": [], "prompt": "", "options": [] }',
     '',
     'Rules for "choice": use it when the target dimension(s) have a small number of clear alternatives with known canonical values. Each option\'s "updates" must use ONLY dimension ids from the catalog above and ONLY that dimension\'s own listed allowed values (exactly as given, not the label) — never invent a value, a score, or a new dimension. One option MAY set more than one dimension when a single answer genuinely resolves both (e.g. a single lifestyle description implies both a pace and a nature/city preference) — only do this when both are clearly implied, never to save a turn artificially. Offer at most 4 options.',
+    'When asking about the "budget" dimension, target budget alone. The application will render its canonical numeric SAR ranges; do not combine budget with another dimension or invent price ranges.',
     'Rules for "free_text": use it only when a fixed choice would be unnecessarily constraining, or when clarifying free-form wording (like a vague word the traveler already used) is more natural than guessing at options. Keep the prompt short and specific about what you need to know.',
     'Rules for "complete": return this once enough ranking-supported dimensions are resolved to produce a meaningful recommendation, or once no remaining unresolved dimension is worth asking about (low marginal value). Do not require every context-only preference to be resolved.',
     '',

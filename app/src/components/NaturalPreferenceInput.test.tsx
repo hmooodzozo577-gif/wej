@@ -42,6 +42,12 @@ function typeAndSubmit(text: string) {
 }
 
 describe('NaturalPreferenceInput', () => {
+  it('marks the natural-language trip description as optional in red', () => {
+    renderWith();
+    const badge = screen.getByText('اختياري');
+    expect(badge).toHaveClass('ai-optional-label');
+  });
+
   it('the submit button stays disabled until text is entered', () => {
     renderWith();
     const button = screen.getByRole('button', { name: /فهم تفضيلاتي/ });

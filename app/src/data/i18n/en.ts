@@ -140,6 +140,7 @@ export const EN: I18nDict = {
   ai: {
     interpret: {
       title: 'Tell us about your trip',
+      optional: 'Optional',
       subtitle:
         'Describe what you\'re looking for in your own words, and we\'ll use it to understand your preferences and skip asking about anything you\'ve already told us.',
       placeholder: 'e.g. "I want somewhere cold and quiet, with nature, and good for families"',

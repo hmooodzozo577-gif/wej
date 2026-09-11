@@ -134,10 +134,11 @@ describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability 
     turnNumber: 2,
     confirmedProfile: { climate: 'cold' },
     catalog: [
-      { id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+      { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
       {
         id: 'naturecity',
         kind: 'target',
+        question: 'Nature or cities?',
         rankingSupported: true,
         resolved: false,
         alreadyAsked: false,
@@ -178,7 +179,14 @@ describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability 
 
   it('includes the confirmed profile so far', () => {
     const { system } = buildNextTurnPrompt(req);
-    expect(system).toContain('climate="cold"');
+    expect(system).toContain('climate="Cold" (canonical value "cold")');
+  });
+
+  it('treats bank wording as reference-only and requires a contextual fresh question', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toContain('reference bank question="Nature or cities?"');
+    expect(system).toMatch(/NEVER copy, restate, or lightly paraphrase/i);
+    expect(system).toMatch(/naturally build on at least one relevant confirmed preference/i);
   });
 
   it('LOCATION: originCountry included with non-inference instruction when present, absent otherwise', () => {

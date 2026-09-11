@@ -147,8 +147,10 @@ export function NaturalPreferenceInput({ purposeId, questions }: { purposeId: Pu
 
   return (
     <div className="detail-card ai-interpret-card">
-      <h3>
-        <Icon name="sparkle" size={16} /> {ai.title}
+      <h3 className="ai-interpret-heading">
+        <Icon name="sparkle" size={16} />
+        <span>{ai.title}</span>
+        <span className="ai-optional-label">{ai.optional}</span>
       </h3>
       <p className="ai-interpret-subtitle">{ai.subtitle}</p>
       <form onSubmit={onSubmit}>

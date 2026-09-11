@@ -49,6 +49,7 @@ const validNextTurnBody = {
     {
       id: 'climate',
       kind: 'climate',
+      question: 'What climate do you prefer?',
       rankingSupported: true,
       resolved: false,
       alreadyAsked: false,

@@ -59,6 +59,9 @@ export type InterpretPreferencesResult =
 export interface DimensionCatalogEntry {
   id: string;
   kind: string;
+  /** Original bank wording. Sent as reference so the Worker can reject
+   *  model output that merely copies the deterministic question. */
+  question: string;
   rankingSupported: boolean;
   resolved: boolean;
   alreadyAsked: boolean;

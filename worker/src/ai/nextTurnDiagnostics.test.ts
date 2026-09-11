@@ -6,8 +6,8 @@ const requestBody = {
   lang: 'ar', purposeName: 'Tourism', turnNumber: 1,
   confirmedProfile: { climate: 'cold' },
   catalog: [
-    { id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
-    { id: 'budget', kind: 'target', rankingSupported: true, resolved: false, alreadyAsked: false, options: [{ value: 1, label: 'Low' }, { value: 2, label: 'Medium' }] },
+    { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+    { id: 'budget', kind: 'target', question: 'What is your approximate budget?', rankingSupported: true, resolved: false, alreadyAsked: false, options: [{ value: 1, label: 'Low' }, { value: 2, label: 'Medium' }] },
   ],
 };
 const validTurn = {

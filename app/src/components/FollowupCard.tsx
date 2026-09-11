@@ -7,7 +7,6 @@
 // dimensions and to the same AI call budget as NaturalPreferenceInput.
 import { useState } from 'react';
 import { useAppState, useI18n } from '../state/hooks';
-import { Icon } from './Icon';
 import { interpretPreferences, MAX_AI_CALLS_PER_INTERVIEW } from '../ai/aiService';
 import { mapQuestionsForAi } from '../ai/mapQuestionsForAi';
 import { QUESTION_BANKS } from '../data/questionBanks';
@@ -35,24 +34,14 @@ export function FollowupCard({
   const [freeText, setFreeText] = useState('');
   const [freeTextStatus, setFreeTextStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
-  const [validation, setValidation] = useState('');
 
   const aiCallsExhausted = state.aiCallsUsed >= MAX_AI_CALLS_PER_INTERVIEW;
 
   function choose(optionId: string) {
     if (advancing) return;
     setSelectedOptionId(optionId);
-    setValidation('');
-  }
-
-  function confirmChoice() {
-    if (advancing) return;
-    if (!selectedOptionId) {
-      setValidation(t.quiz.validation);
-      return;
-    }
     onAdvanceStart?.(followup);
-    dispatch({ type: 'RESOLVE_FOLLOWUP_CHOICE', optionId: selectedOptionId });
+    dispatch({ type: 'RESOLVE_FOLLOWUP_CHOICE', optionId });
   }
 
   function skip() {
@@ -114,7 +103,7 @@ export function FollowupCard({
                 <button
                   key={opt.id}
                   type="button"
-                  className={`q-option${selected ? ' selected' : ''}`}
+                  className={`q-option${selected ? ' selected' : ''}${opt.desc ? ' has-desc' : ''}`}
                   role="radio"
                   aria-checked={selected}
                   disabled={advancing}
@@ -123,6 +112,7 @@ export function FollowupCard({
                   <span className="radio" />
                   <span className="opt-text">
                     <span className="opt-label">{opt.label[lang]}</span>
+                    {opt.desc && <span className="opt-desc">{opt.desc[lang]}</span>}
                   </span>
                 </button>
               );
@@ -174,21 +164,18 @@ export function FollowupCard({
           </div>
         )}
 
-        <div className="quiz-validation" aria-live="polite">
-          {validation}
-        </div>
-        {advancing && <span className="visually-hidden" aria-live="polite">{t.ai.turn.loading}</span>}
+        {advancing && (
+          <div className="ai-turn-inline-loading" role="status">
+            <span className="ai-turn-spinner" aria-hidden="true" />
+            <span>{t.ai.turn.loading}</span>
+          </div>
+        )}
       </div>
 
       <div className="quiz-nav">
         <button type="button" className="btn btn-ghost" onClick={skip} disabled={advancing}>
           {fu.skip}
         </button>
-        {!isFreeTextPrimary && (
-          <button type="button" className="btn btn-primary" onClick={confirmChoice} disabled={advancing}>
-            {t.quiz.next} <Icon name="arrowEnd" size={16} />
-          </button>
-        )}
       </div>
     </>
   );

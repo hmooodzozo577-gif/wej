@@ -48,15 +48,14 @@ describe('FollowupCard', () => {
     expect(screen.getByText('طبيعة هادئة')).toBeInTheDocument();
   });
 
-  it('CHOICE: reuses the accepted radio-option interaction and resolves only after Next', () => {
+  it('CHOICE: resolves immediately when the traveler selects an option', () => {
     const dispatchSpy = vi.fn();
     renderWith(dispatchSpy);
     const option = screen.getByRole('radio', { name: 'طبيعة هادئة' });
     fireEvent.click(option);
     expect(option).toHaveAttribute('aria-checked', 'true');
-    expect(dispatchSpy).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'RESOLVE_FOLLOWUP_CHOICE' }));
-    fireEvent.click(screen.getByRole('button', { name: 'التالي' }));
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'RESOLVE_FOLLOWUP_CHOICE', optionId: 'nature_quiet' });
+    expect(screen.queryByRole('button', { name: 'التالي' })).toBeNull();
   });
 
   it('CHOICE: preserves the current question while the next AI turn is advancing', () => {
@@ -71,8 +70,32 @@ describe('FollowupCard', () => {
     expect(screen.getByText('أي تجربة أقرب لك؟')).toBeInTheDocument();
     expect(screen.getByRole('radiogroup')).toHaveAttribute('aria-busy', 'true');
     expect(screen.getAllByRole('radio').every((option) => (option as HTMLButtonElement).disabled)).toBe(true);
-    expect(screen.getByRole('button', { name: 'التالي' })).toBeDisabled();
+    expect(screen.getByRole('status')).toHaveTextContent('جارٍ تحضير السؤال التالي');
     expect(document.querySelector('.ai-turn-loading')).toBeNull();
+  });
+
+  it('BUDGET: renders the original canonical numeric ranges instead of AI-authored qualitative labels', () => {
+    const budgetFollowup: PendingFollowup = {
+      templateId: 'ai-turn-budget',
+      prompt: { ar: 'ما الميزانية المناسبة لهذه الرحلة؟', en: 'What budget fits this trip?' },
+      options: [
+        {
+          id: 'budget-1',
+          label: { ar: 'منخفضة', en: 'Low' },
+          desc: { ar: 'حتى 5,000 ريال', en: 'Up to 5,000 SAR' },
+          satisfies: { budget: 1 },
+        },
+      ],
+      allowFreeText: false,
+      candidateDimensionIds: ['budget'],
+      questionType: 'choice',
+    };
+    render(
+      <AppStateContext.Provider value={{ state: { ...initialAppState, followup: budgetFollowup }, dispatch: vi.fn() }}>
+        <FollowupCard purposeId="tourism" followup={budgetFollowup} />
+      </AppStateContext.Provider>,
+    );
+    expect(screen.getByText('حتى 5,000 ريال')).toBeInTheDocument();
   });
 
   it('SKIP dispatches DISMISS_FOLLOWUP', () => {

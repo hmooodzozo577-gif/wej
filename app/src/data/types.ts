@@ -681,6 +681,7 @@ export interface TourismInsightsStrings {
 export interface AiStrings {
   interpret: {
     title: string;
+    optional: string;
     /** Phase 16.5 — explains what the box does and why, addressing the
      *  real user's "too vague" feedback on the plain title alone. */
     subtitle: string;

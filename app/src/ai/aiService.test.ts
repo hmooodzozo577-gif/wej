@@ -17,10 +17,11 @@ const topResults: RankedDestinationContext[] = [
 
 // Phase 16.5 TRUE adaptive-interview pass — Capability C fixtures.
 const catalog: DimensionCatalogEntry[] = [
-  { id: 'climate', kind: 'climate', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
+  { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
   {
     id: 'naturecity',
     kind: 'target',
+    question: 'Nature or cities?',
     rankingSupported: true,
     resolved: false,
     alreadyAsked: false,

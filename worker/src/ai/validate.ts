@@ -148,13 +148,15 @@ export function validateNextTurnRequest(body: unknown): string[] {
         !entry ||
         typeof entry.id !== 'string' ||
         typeof entry.kind !== 'string' ||
+        (entry.question !== undefined &&
+          (typeof entry.question !== 'string' || entry.question.trim().length === 0 || entry.question.length > MAX_NEXT_TURN_PROMPT_LENGTH)) ||
         typeof entry.rankingSupported !== 'boolean' ||
         typeof entry.resolved !== 'boolean' ||
         typeof entry.alreadyAsked !== 'boolean' ||
         !isValidInterpretableOptionsArray(entry.options)
       ) {
         errors.push(
-          'every entry in catalog must have {id, kind: string, rankingSupported, resolved, alreadyAsked: boolean, options: {value, label}[]}.',
+          'every entry in catalog must have {id, kind, question?: string, rankingSupported, resolved, alreadyAsked: boolean, options: {value, label}[]}.',
         );
         break;
       }
@@ -275,6 +277,42 @@ export function validateExplainRecommendationResult(raw: unknown, request: Expla
 // unvalidated.
 export type NextTurnValidationDiagnostic = 'decision_shape' | 'question_type' | 'target_dimensions' | 'question_prompt' | 'choice_options';
 
+function normalizeQuestion(value: string): string {
+  return value
+    .normalize('NFKC')
+    .toLocaleLowerCase()
+    .replace(/[\u064B-\u065F\u0670]/gu, '')
+    .replace(/[أإآ]/gu, 'ا')
+    .replace(/[^\p{L}\p{N}]+/gu, '');
+}
+
+function editDistance(a: string, b: string): number {
+  const previous = Array.from({ length: b.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= a.length; i += 1) {
+    let diagonal = previous[0] as number;
+    previous[0] = i;
+    for (let j = 1; j <= b.length; j += 1) {
+      const above = previous[j] as number;
+      previous[j] = Math.min(
+        (previous[j] as number) + 1,
+        (previous[j - 1] as number) + 1,
+        diagonal + (a[i - 1] === b[j - 1] ? 0 : 1),
+      );
+      diagonal = above;
+    }
+  }
+  return previous[b.length] as number;
+}
+
+function copiesBankQuestion(prompt: string, bankQuestion: string): boolean {
+  const candidate = normalizeQuestion(prompt);
+  const source = normalizeQuestion(bankQuestion);
+  if (!candidate || !source) return false;
+  if (candidate === source) return true;
+  const longest = Math.max(candidate.length, source.length);
+  return longest > 0 && 1 - editDistance(candidate, source) / longest >= 0.82;
+}
+
 export function validateNextTurnResult(
   raw: unknown,
   request: NextTurnRequest,
@@ -305,6 +343,10 @@ export function validateNextTurnResult(
   if (!questionType) return invalid('question_type');
   if (targetDimensions.length === 0) return invalid('target_dimensions');
   if (!prompt) return invalid('question_prompt');
+  if (request.catalog.some((dimension) => copiesBankQuestion(prompt, dimension.question ?? ''))) {
+    return invalid('question_prompt');
+  }
+  if (targetDimensions.includes('budget') && targetDimensions.length !== 1) return invalid('target_dimensions');
 
   if (questionType === 'free_text') {
     return { status: 'ask', questionType: 'free_text', targetDimensions, prompt };

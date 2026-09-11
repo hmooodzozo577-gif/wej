@@ -54,6 +54,9 @@ export type AnswerProvenance = 'direct' | 'ai_interpreted' | 'ai_followup';
 export interface FollowupOption {
   id: string;
   label: Record<Lang, string>;
+  /** Optional canonical supporting text, used for ranges such as the
+   *  existing approximate travel-budget bands. */
+  desc?: Record<Lang, string>;
   satisfies: Record<string, string | number>;
 }
 
@@ -67,9 +70,10 @@ export interface FollowupOption {
  *  text, never verbatim questionBanks.ts wording, already validated
  *  server-side (worker/src/ai/validate.ts's validateNextTurnResult) so
  *  every `satisfies`/`updates` value is a real canonical value for its
- *  dimension. The type itself is reused UNCHANGED from the template era
- *  (minimal-churn decision, reported in the final report) — only
- *  `questionType` is new. `candidateDimensionIds` doubles as the AI
+ *  dimension. The shape remains compatible with the template era;
+ *  options may additionally carry canonical supporting descriptions
+ *  such as the original numeric budget ranges. `candidateDimensionIds`
+ *  doubles as the AI
  *  turn's own `targetDimensions`, feeding `askedDimensionIds` (see
  *  AppState) for dimension-level duplicate prevention.
  *
