@@ -13,10 +13,10 @@ vendor-neutral pair every agent should read first.
 
 ## State Metadata
 
-- State document version: 1
+- State document version: 2
 - Last verified date: 2026-09-11
 - Last verified branch: `claude/marhaba-kxry8l`
-- Last verified HEAD: `b84aa56a0c81439ff6f029347b28c2c71dc4a965`
+- Last verified HEAD: `c468ed3e7bac0c474826b42fcbd47d4bf9d8597d`
 
 **Branch and HEAD above are recovery references, not permanent
 requirements.** Always verify current Git state before starting work
@@ -63,14 +63,34 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
   production verification happened in an earlier session; not
   independently re-checked from every later session (no guaranteed
   network path to the deployed Worker URL from every environment).
-- **Phase 16.5 — IMPLEMENTED — TESTED — DEPLOYED — USER ACCEPTANCE
-  PENDING.** TRUE AI-driven adaptive interview (Capability C,
-  `/api/ai/next-turn`) replaced the old deterministic template-bank
-  follow-up as the NORMAL interview driver. Explicit caveats — do not
-  silently drop these:
-  - Capability C has NOT yet received a fresh live production/provider
-    verification call (Capabilities A/B were; worker tests use a mock
-    provider and an `env.AI`-mocked adapter, never a real paid call).
+- **Phase 16.5 — PRODUCTION E2E FAILED — NOT COMPLETE.** The user's
+  latest production test succeeded at initial cold/nature interpretation,
+  then showed the old Phase 15 questions after loading instead of a
+  Capability C AI-generated adaptive question.
+  - **VERIFIED on 2026-09-11:** a fresh browser run sent Capability C
+    immediately on Quiz entry with an EMPTY confirmed profile. It returned
+    HTTP 502 / ai_provider_error / unexpected response after about 20s.
+    Initial interpretation separately returned HTTP 200 with climate=cold
+    and naturecity=15; proposals in this run were low-confidence, so the
+    automation did not complete preference confirmation. This is failure
+    evidence, not a successful post-confirmation E2E.
+  - **VERIFIED:** one additional production C request, based on the captured
+    real catalog with cold/nature explicitly marked confirmed, returned
+    HTTP 504 / ai_timeout after about 48s. The exact model-output or
+    validation cause of the earlier 502 remains UNKNOWN; do not assume
+    the timeout and 502 have the same cause.
+  - **LOCAL CHANGES, NOT DEPLOYED:** a confirmed frontend request-context
+    race is fixed and regression-tested; obsolete success/error/complete
+    responses cannot mutate the current interview. A verified adapter defect
+    is corrected locally: native Workers AI expects a bare JSON Schema, while
+    the deployed code sends the OpenAI partner-model `{name, schema}` envelope.
+    Capability C now asks for one complete response envelope with thinking
+    disabled and bounded output. Safe diagnostics distinguish output parsing
+    from semantic rejection without returning raw model/user content. These
+    changes are NOT a verified production fix until deployed and retested.
+  - GitHub push authentication and local Wrangler authentication are not
+    available in this environment. Do not confuse this deployment-access
+    limitation with the production env.AI binding being absent.
   - Turn-by-turn Back/Undo is NOT implemented for the AI-active
     interview. The edit mechanism today is: remove a confirmed
     preference (the "already accounted for" chip's × control), which
@@ -133,9 +153,10 @@ Traveler
 - Current model (verified in code,
   `worker/src/ai/cloudflareWorkersAiProvider.ts`):
   `@cf/google/gemma-4-26b-a4b-it`.
-- Phase 16 Capabilities A/B: REPORTED live-verified in production
-  (earlier session). Phase 16.5 Capability C: code-complete and tested,
-  needs a fresh production E2E check (roadmap caveat above).
+- Phase 16 Capabilities A/B: REPORTED live-verified in an earlier session;
+  Capability A additionally returned HTTP 200 in the 2026-09-11 browser
+  investigation. Capability C returned real 502/504 failures during that
+  investigation; its production path remains open (roadmap caveat above).
 - Phase 15 (`app/src/adaptive/selectNextQuestion.ts`) is the AI-failure
   fallback ONLY — `state.interviewStatus` is a one-way switch to
   `'fallback'` on any Capability-C failure (timeout/error/invalid/
@@ -288,10 +309,14 @@ Preserved, NOT cancelled — do not delete or reinterpret as blocked:
 
 ## Current Backlog / External Actions
 
-1. Real production user E2E acceptance for Phase 16.5 Capability C.
-2. Decide whether true turn-by-turn AI-interview Back/Undo is required
+1. Publish the tested request-context guard and safe C diagnostics once
+   deployment access is available; isolate and fix the real C 502/504
+   failures using fresh evidence. Preserve NO HYBRID and current-error
+   fallback; never accept mocks as proof of production success.
+2. Fresh successful production C request and browser E2E, followed by
+   final user acceptance.
+3. Decide whether true turn-by-turn AI-interview Back/Undo is required
    before Phase 16.5 is considered fully closed.
-3. Fresh live provider verification for Capability C.
 4. Provision `AMADEUS_API_KEY` (Cloudflare Worker secret).
 5. Provision `AMADEUS_API_SECRET` (Cloudflare Worker secret).
 6. Implement live hotel Worker/frontend integration if desired
@@ -343,13 +368,22 @@ actually checking.
 
 - Branch: `claude/marhaba-kxry8l` (last verified — re-check, don't
   assume permanent).
-- Last verified HEAD: `b84aa56a0c81439ff6f029347b28c2c71dc4a965`.
+- Last verified HEAD: `c468ed3e7bac0c474826b42fcbd47d4bf9d8597d`.
 - Pages deploys automatically on push touching `app/**`
   (`.github/workflows/deploy-pages.yml`).
 - Worker deploys automatically on push touching `worker/**`
   (`.github/workflows/deploy-worker.yml`).
 - Do not treat any specific workflow-run ID as a standing guarantee —
   always re-check current Actions runs for the CURRENT state.
+- 2026-09-11 recovery: branch/HEAD fetched and verified. Latest successful
+  Worker deploy ef0d253 and Pages deploy eee8f23 contain the same relevant
+  source/config as recovery HEAD c468ed3. The published Pages bundle
+  index-I626fm-B.js contains the expected Worker URL and /api/ai/next-turn;
+  live GET on that route returns 405 with the correct CORS origin. No
+  deployment mismatch was demonstrated by those checks.
+- Current request-context/diagnostic changes are local and uncommitted;
+  neither workflow has deployed them. See PHASE_16_5_DEBUG.md for bounded
+  reproduction evidence, verification results, and the next diagnostic step.
 
 ## Source-of-Truth Priority
 

@@ -79,9 +79,11 @@ export function toPendingFollowup(
 }
 
 /** Drives the AI-turn loop for the CURRENT purpose/quiz session. Fires
- *  whenever the decision changes to 'call' or 'complete'; a ref guard
- *  prevents a second overlapping request while one is already in
- *  flight (Section 21 — "no duplicate call for identical state"). Any
+ *  whenever the decision changes to 'call' or 'complete'; requests are
+ *  shared only while their context is unchanged, including StrictMode's
+ *  effect replay (Section 21 — "no duplicate call for identical state").
+ *  A response from an obsolete profile/session never changes current
+ *  interview state. Any CURRENT request's
  *  non-'ok' result (unavailable/invalid_request/error — covers not-
  *  configured, timeout, provider error, quota exhaustion, and malformed/
  *  rejected responses alike, see aiService.ts's nextTurn) is treated as
@@ -95,21 +97,30 @@ export function useAdaptiveInterview(
   state: InterviewSnapshot,
   dispatch: (action: AppAction) => void,
 ): void {
-  const inFlightRef = useRef(false);
-  const answeredCount = Object.keys(state.answers).length;
-  const askedCount = state.askedDimensionIds.length;
+  const inFlightRef = useRef<{ context: readonly unknown[]; promise: ReturnType<typeof nextTurn> } | null>(null);
 
   useEffect(() => {
-    if (inFlightRef.current) return;
     const decision = decideAdaptiveInterviewStep(purposeId, state, lang);
     if (decision.action === 'idle') return;
     if (decision.action === 'complete') {
       dispatch({ type: 'SET_INTERVIEW_COMPLETE' });
       return;
     }
-    inFlightRef.current = true;
-    nextTurn(lang, purposeName, decision.catalog, decision.confirmedProfile, decision.turnNumber, originCountry).then((result) => {
-      inFlightRef.current = false;
+    // Reducer-owned references detect both value edits and a fresh empty
+    // session for the same purpose. Unrelated renders preserve them.
+    const context = [purposeId, purposeName, lang, originCountry, state.answers, state.askedDimensionIds, state.turnCount, dispatch];
+    let request = inFlightRef.current;
+    if (!request || request.context.some((value, index) => value !== context[index])) {
+      request = {
+        context,
+        promise: nextTurn(lang, purposeName, decision.catalog, decision.confirmedProfile, decision.turnNumber, originCountry),
+      };
+      inFlightRef.current = request;
+    }
+    let active = true;
+    request.promise.then((result) => {
+      if (!active || inFlightRef.current !== request) return;
+      inFlightRef.current = null;
       if (result.status !== 'ok') {
         dispatch({ type: 'SET_INTERVIEW_FALLBACK' });
         return;
@@ -120,14 +131,16 @@ export function useAdaptiveInterview(
       }
       dispatch({ type: 'SET_PENDING_FOLLOWUP', followup: toPendingFollowup(decision.turnNumber, result.outcome) });
     });
+    return () => {
+      active = false;
+      // Keep the promise for an identical-context StrictMode replay.
+      // The service owns the network timeout; cleanup only detaches this
+      // subscriber so an old success/error/complete cannot be dispatched.
+    };
     // Deliberately NOT depending on the whole `state` object (a fresh
     // object every render would re-run this on every unrelated render —
-    // see react-best-practices review in the final report). These
-    // primitives/lengths are exactly the signals that can change
-    // ELIGIBILITY (a new resolved answer, a removed one, a new asked
-    // dimension, a status/completion/pending-turn transition) — editing
-    // an already-resolved dimension's VALUE without changing which keys
-    // exist does not change eligibility and correctly does not re-fire.
+    // see react-best-practices review in the final report). Answer values
+    // affect the AI's context even when eligibility/counts stay the same.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [purposeId, purposeName, lang, originCountry, state.interviewStatus, state.interviewComplete, state.followup, state.turnCount, answeredCount, askedCount, dispatch]);
+  }, [purposeId, purposeName, lang, originCountry, state.interviewStatus, state.interviewComplete, state.followup, state.turnCount, state.answers, state.askedDimensionIds, dispatch]);
 }

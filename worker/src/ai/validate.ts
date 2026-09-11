@@ -273,15 +273,27 @@ export function validateExplainRecommendationResult(raw: unknown, request: Expla
 // 'invalid'}` — NEVER silently coerced to 'complete' (which would falsely
 // claim sufficient information exists) and never passed through
 // unvalidated.
-export function validateNextTurnResult(raw: unknown, request: NextTurnRequest): NextTurnResult {
+export type NextTurnValidationDiagnostic = 'decision_shape' | 'question_type' | 'target_dimensions' | 'question_prompt' | 'choice_options';
+
+export function validateNextTurnResult(
+  raw: unknown,
+  request: NextTurnRequest,
+  onInvalid?: (diagnostic: NextTurnValidationDiagnostic) => void,
+): NextTurnResult {
+  // Keep the existing validation/result contract; the route may collect
+  // a fixed rejection category without logging any model/user content.
+  const invalid = (diagnostic: NextTurnValidationDiagnostic): NextTurnResult => {
+    onInvalid?.(diagnostic);
+    return { status: 'invalid' };
+  };
   const eligible = new Map(request.catalog.filter((d) => !d.resolved && !d.alreadyAsked).map((d) => [d.id, d]));
   const r = raw as
     | { status?: unknown; questionType?: unknown; targetDimensions?: unknown; prompt?: unknown; options?: unknown }
     | null;
 
-  if (!r || typeof r !== 'object') return { status: 'invalid' };
+  if (!r || typeof r !== 'object') return invalid('decision_shape');
   if (r.status === 'complete') return { status: 'complete' };
-  if (r.status !== 'ask') return { status: 'invalid' };
+  if (r.status !== 'ask') return invalid('decision_shape');
 
   const questionType = r.questionType === 'choice' || r.questionType === 'free_text' ? r.questionType : null;
   const targetDimensions = Array.isArray(r.targetDimensions)
@@ -290,7 +302,9 @@ export function validateNextTurnResult(raw: unknown, request: NextTurnRequest): 
   const prompt =
     typeof r.prompt === 'string' && r.prompt.trim().length > 0 && r.prompt.length <= MAX_NEXT_TURN_PROMPT_LENGTH ? r.prompt.trim() : null;
 
-  if (!questionType || targetDimensions.length === 0 || !prompt) return { status: 'invalid' };
+  if (!questionType) return invalid('question_type');
+  if (targetDimensions.length === 0) return invalid('target_dimensions');
+  if (!prompt) return invalid('question_prompt');
 
   if (questionType === 'free_text') {
     return { status: 'ask', questionType: 'free_text', targetDimensions, prompt };
@@ -332,6 +346,6 @@ export function validateNextTurnResult(raw: unknown, request: NextTurnRequest): 
       }
     }
   }
-  if (options.length === 0) return { status: 'invalid' };
+  if (options.length === 0) return invalid('choice_options');
   return { status: 'ask', questionType: 'choice', targetDimensions, prompt, options };
 }

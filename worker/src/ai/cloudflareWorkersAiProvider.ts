@@ -60,9 +60,11 @@ export const WORKERS_AI_MODEL = '@cf/google/gemma-4-26b-a4b-it';
 // must be raised to at least match it, with margin for network time.
 const RUN_TIMEOUT_MS = 45_000;
 
-// JSON Schema (Cloudflare Workers AI JSON Mode: response_format:
-// {type:"json_schema", json_schema:{name, schema}}) constrains what
-// shape the model MUST reply in. This is a real safety layer, not
+// JSON Schema (Cloudflare Workers AI native JSON Mode: response_format:
+// {type:"json_schema", json_schema:<bare JSON Schema>}) constrains what
+// shape the model MUST reply in. The OpenAI-compatible `{name, schema}`
+// envelope is for partner-model routes, not native `@cf/...` bindings.
+// This is a real safety layer, not
 // decoration — but per Cloudflare's own docs, it is NOT a guarantee (a
 // model can still fail to satisfy it), so validate.ts's structured-
 // output re-validation against the actual request's real allowed
@@ -94,25 +96,30 @@ const INTERPRET_JSON_SCHEMA = {
 // (dimension eligibility, allowed-value re-checking, bounded counts).
 const NEXT_TURN_JSON_SCHEMA = {
   type: 'object',
+  additionalProperties: false,
   properties: {
     status: { type: 'string', enum: ['ask', 'complete'] },
-    questionType: { type: 'string', enum: ['choice', 'free_text'] },
+    questionType: { type: 'string', enum: ['choice', 'free_text', 'none'] },
     targetDimensions: { type: 'array', items: { type: 'string' } },
     prompt: { type: 'string' },
     options: {
       type: 'array',
       items: {
         type: 'object',
+        additionalProperties: false,
         properties: {
           id: { type: 'string' },
           label: { type: 'string' },
-          updates: { type: 'object' },
+          updates: {
+            type: 'object',
+            additionalProperties: { type: ['string', 'number'] },
+          },
         },
         required: ['id', 'label', 'updates'],
       },
     },
   },
-  required: ['status'],
+  required: ['status', 'questionType', 'targetDimensions', 'prompt', 'options'],
 } as const;
 
 const EXPLAIN_JSON_SCHEMA = {
@@ -165,22 +172,42 @@ async function runJsonCompletion(
   user: string,
   schemaName: string,
   schema: Record<string, unknown>,
+  options?: { conciseStructuredOutput?: boolean },
 ): Promise<unknown> {
-  let result: { choices?: Array<{ message?: { content?: string | null } }> };
+  let result: { choices?: Array<{ message?: { content?: string | null }; finish_reason?: string }> };
   try {
-    result = await withTimeout(
-      ai.run(WORKERS_AI_MODEL, {
+    // The generated @cloudflare/workers-types currently models this
+    // native binding field as the OpenAI partner-model envelope. The
+    // native Workers AI runtime and Cloudflare's own adapter require a
+    // bare JSON Schema instead, so keep the type escape at this exact
+    // vendor boundary rather than weakening types throughout the Worker.
+    const runNative = ai.run as unknown as (model: string, input: Record<string, unknown>) => Promise<unknown>;
+    result = (await withTimeout(
+      runNative(WORKERS_AI_MODEL, {
         messages: [
           { role: 'system', content: system },
           { role: 'user', content: user },
         ],
         response_format: {
           type: 'json_schema',
-          json_schema: { name: schemaName, schema },
+          // Native Workers AI requires the bare schema here. `title`
+          // preserves the human-readable schema name without wrapping it
+          // in the incompatible OpenAI partner-model envelope.
+          json_schema: { title: schemaName, ...schema },
         },
+        ...(options?.conciseStructuredOutput
+          ? {
+              // Gemma 4 enables reasoning by default. Capability C only
+              // needs one short structured decision, so reasoning adds
+              // latency without improving the trusted output contract.
+              chat_template_kwargs: { enable_thinking: false },
+              max_completion_tokens: 512,
+              temperature: 0,
+            }
+          : {}),
       }),
       RUN_TIMEOUT_MS,
-    );
+    )) as typeof result;
   } catch (err) {
     if (err instanceof AiTimeoutError) throw err;
     // Never the raw upstream error/stack — a short, generic message
@@ -188,14 +215,18 @@ async function runJsonCompletion(
     throw new AiProviderError(err instanceof Error ? err.message : 'Cloudflare Workers AI request failed.', 0);
   }
 
-  const text = result.choices?.[0]?.message?.content;
+  const choice = result.choices?.[0];
+  const text = choice?.message?.content;
+  // Only a fixed category leaves the adapter. Never retain/return raw
+  // model content, reasoning, or provider-supplied diagnostic strings.
+  const truncated = choice?.finish_reason === 'length';
   if (typeof text !== 'string' || text.trim().length === 0) {
-    throw new AiInvalidResponseError('Cloudflare Workers AI returned no text output.');
+    throw new AiInvalidResponseError('Cloudflare Workers AI returned no text output.', truncated ? 'output_truncated' : 'output_empty');
   }
   try {
     return JSON.parse(text) as unknown;
   } catch {
-    throw new AiInvalidResponseError('Cloudflare Workers AI did not return valid JSON.');
+    throw new AiInvalidResponseError('Cloudflare Workers AI did not return valid JSON.', truncated ? 'output_truncated' : 'output_json');
   }
 }
 
@@ -218,7 +249,7 @@ export function createCloudflareWorkersAiProvider(ai: Ai): AiProvider {
     },
     async nextTurn(req: NextTurnRequest): Promise<NextTurnResult> {
       const { system, user } = buildNextTurnPrompt(req);
-      const raw = await runJsonCompletion(ai, system, user, 'next_turn', NEXT_TURN_JSON_SCHEMA);
+      const raw = await runJsonCompletion(ai, system, user, 'next_turn', NEXT_TURN_JSON_SCHEMA, { conciseStructuredOutput: true });
       // Cast only to satisfy AiProvider's declared return type —
       // index.ts's caller treats this as `unknown` regardless (see
       // validate.ts's validateNextTurnResult, the real gate).

@@ -252,4 +252,11 @@ export class AiProviderError extends Error {
     super(message);
   }
 }
-export class AiInvalidResponseError extends Error {}
+export class AiInvalidResponseError extends Error {
+  constructor(
+    message: string,
+    public readonly diagnostic: 'output_empty' | 'output_json' | 'output_truncated' | 'invalid_output' = 'invalid_output',
+  ) {
+    super(message);
+  }
+}

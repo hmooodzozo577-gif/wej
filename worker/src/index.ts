@@ -288,12 +288,16 @@ export async function handleNextTurn(provider: AiProvider | null, body: unknown)
   const req = body as NextTurnRequest;
   try {
     const raw: unknown = await provider.nextTurn(req);
-    const result = validateNextTurnResult(raw, req);
+    let diagnostic = 'decision_shape';
+    const result = validateNextTurnResult(raw, req, (reason) => { diagnostic = reason; });
     if (result.status === 'invalid') {
-      return [{ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.' }, 502];
+      return [{ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.', diagnostic }, 502];
     }
     return [result, 200];
   } catch (err) {
+    if (err instanceof AiInvalidResponseError) {
+      return [{ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.', diagnostic: err.diagnostic }, 502];
+    }
     return mapAiErrorToResponseArgs(err);
   }
 }

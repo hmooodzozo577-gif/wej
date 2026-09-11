@@ -9,6 +9,7 @@ import type { Ai } from '@cloudflare/workers-types';
 import { createCloudflareWorkersAiProvider, WORKERS_AI_MODEL } from './cloudflareWorkersAiProvider';
 import { AiInvalidResponseError, AiProviderError, AiTimeoutError } from './types';
 import type { ExplainRecommendationRequest, InterpretPreferencesRequest } from './types';
+import type { NextTurnRequest } from './types';
 
 function fakeAi(run: (...args: unknown[]) => unknown): Ai {
   return { run: vi.fn(run) } as unknown as Ai;
@@ -29,6 +30,23 @@ const explainReq: ExplainRecommendationRequest = {
   purposeName: 'Tourism',
   profileSummary: 'Prefers cold, quiet destinations.',
   topResults: [{ destId: 'japan', name: 'Japan', score: 82, reasons: ['Climate match'], facts: 'Climate: Mild.' }],
+};
+
+const nextTurnReq: NextTurnRequest = {
+  lang: 'ar',
+  purposeName: 'Tourism',
+  confirmedProfile: {},
+  turnNumber: 1,
+  catalog: [
+    {
+      id: 'budget',
+      kind: 'target',
+      rankingSupported: true,
+      resolved: false,
+      alreadyAsked: false,
+      options: [{ value: 1, label: 'Low' }, { value: 2, label: 'Medium' }],
+    },
+  ],
 };
 
 describe('createCloudflareWorkersAiProvider — request shape', () => {
@@ -64,6 +82,37 @@ describe('createCloudflareWorkersAiProvider — request shape', () => {
     await createCloudflareWorkersAiProvider(ai).interpretPreferences({ ...interpretReq, lang: 'en' });
     const [, input] = run.mock.calls[0] as [string, { messages: Array<{ content: string }> }];
     expect(input.messages[0]?.content).toMatch(/English/i);
+  });
+
+  it('Capability C sends the native Workers AI bare JSON Schema and disables unnecessary model thinking', async () => {
+    const run = vi.fn().mockResolvedValue(
+      chatResult({ status: 'complete', questionType: 'none', targetDimensions: [], prompt: '', options: [] }),
+    );
+    await createCloudflareWorkersAiProvider(fakeAi(run)).nextTurn(nextTurnReq);
+
+    const [, input] = run.mock.calls[0] as [
+      string,
+      {
+        chat_template_kwargs?: { enable_thinking?: boolean };
+        max_completion_tokens?: number;
+        temperature?: number;
+        response_format: { json_schema: { title?: string; required?: string[]; name?: string; schema?: unknown; strict?: boolean } };
+      },
+    ];
+    expect(input.chat_template_kwargs).toEqual({ enable_thinking: false });
+    expect(input.max_completion_tokens).toBe(512);
+    expect(input.temperature).toBe(0);
+    expect(input.response_format.json_schema.title).toBe('next_turn');
+    expect(input.response_format.json_schema.required).toEqual([
+      'status',
+      'questionType',
+      'targetDimensions',
+      'prompt',
+      'options',
+    ]);
+    expect(input.response_format.json_schema).not.toHaveProperty('name');
+    expect(input.response_format.json_schema).not.toHaveProperty('schema');
+    expect(input.response_format.json_schema).not.toHaveProperty('strict');
   });
 });
 
