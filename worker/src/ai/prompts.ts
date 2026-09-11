@@ -139,7 +139,7 @@ export function buildNextTurnPrompt(req: NextTurnRequest, retryDiagnostic?: Next
 
   const retryInstruction = retryDiagnostic
     ? retryDiagnostic === 'choice_options'
-      ? 'REPAIR REQUIRED: the previous choice options were invalid. Return 2 to 4 distinct, contextual option labels that are not copied from the catalog, and make every option update every declared target dimension.'
+      ? 'REPAIR REQUIRED: the previous choice options were invalid. Return 2 to 4 distinct, contextual option labels that are not copied from the catalog. Every option must update every declared target dimension, and every target dimension must vary across at least two options.'
       : retryDiagnostic === 'free_text_alternatives'
         ? 'REPAIR REQUIRED: the previous free-text prompt embedded known alternatives. Return a choice question and move those alternatives into 2 to 4 contextual options with valid canonical updates.'
       : retryDiagnostic === 'question_prompt'
@@ -170,7 +170,7 @@ export function buildNextTurnPrompt(req: NextTurnRequest, retryDiagnostic?: Next
     '2. Free-text clarification: { "status": "ask", "questionType": "free_text", "targetDimensions": [string, ...], "prompt": string, "options": [] }',
     '3. Interview complete: { "status": "complete", "questionType": "none", "targetDimensions": [], "prompt": "", "options": [] }',
     '',
-    'Rules for "choice": use it when the target dimension(s) have a small number of clear alternatives with known canonical values. Each option\'s "updates" must use ONLY dimension ids from the catalog above and ONLY that dimension\'s own listed allowed values (exactly as given, not the label) — never invent a value, a score, or a new dimension. Every option must resolve EVERY declared target dimension. When compatible dimensions can be expressed as honest trip scenarios, target them together so one answer carries more useful information. Offer 2 to 4 options.',
+    'Rules for "choice": use it when the target dimension(s) have a small number of clear alternatives with known canonical values. Each option\'s "updates" must use ONLY dimension ids from the catalog above and ONLY that dimension\'s own listed allowed values (exactly as given, not the label) — never invent a value, a score, or a new dimension. Every option must resolve EVERY declared target dimension, and EVERY target dimension must have at least two different values across the options so the answer truly determines it. When compatible dimensions can be expressed as honest trip scenarios, target them together so one answer carries more useful information. Offer 2 to 4 options.',
     'Except for budget (whose labels the frontend replaces with canonical numeric ranges), option labels must be freshly written, concrete descriptions suited to this traveler. NEVER copy or lightly rephrase catalog option labels, and avoid generic adjective scales such as low/medium/high or important/not important.',
     'When asking about the "budget" dimension, target budget alone. The application will render its canonical numeric SAR ranges; do not combine budget with another dimension or invent price ranges.',
     'When clarifying an unresolved phrase, default to a choice whenever 2 to 4 honest scenarios can map it to allowed catalog values. This gives the traveler clear, contextual options they can select immediately.',

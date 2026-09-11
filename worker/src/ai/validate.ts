@@ -441,5 +441,11 @@ export function validateNextTurnResult(
     }
   }
   if (rejectedCopiedOrDuplicateOption || options.length < 2) return invalid('choice_options');
+  // Declaring a target means the traveler is actually choosing its value.
+  // A dimension assigned the same value by every option is an unasked,
+  // silent inference and must not enter the confirmed profile.
+  if (targetDimensions.some((id) => new Set(options.map((option) => option.updates[id])).size < 2)) {
+    return invalid('choice_options');
+  }
   return { status: 'ask', questionType: 'choice', targetDimensions, prompt, options };
 }

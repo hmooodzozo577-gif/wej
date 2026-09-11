@@ -446,6 +446,23 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     expect(result).toEqual({ status: 'invalid' });
   });
 
+  it('MULTI-DIMENSION: rejects a target silently assigned the same value by every option', () => {
+    const result = validateNextTurnResult(
+      {
+        status: 'ask',
+        questionType: 'choice',
+        targetDimensions: ['naturecity', 'adventure'],
+        prompt: 'Describe your ideal day',
+        options: [
+          { id: 'a', label: 'Quiet nature walks at an easy pace', updates: { naturecity: 15, adventure: 10 } },
+          { id: 'b', label: 'Fast outdoor challenges', updates: { naturecity: 15, adventure: 90 } },
+        ],
+      },
+      request,
+    );
+    expect(result).toEqual({ status: 'invalid' });
+  });
+
   it('requires budget to be a standalone target so the frontend can render canonical numeric ranges', () => {
     const withBudget = {
       ...request,
@@ -472,7 +489,7 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     const manyOptions = Array.from({ length: MAX_NEXT_TURN_OPTIONS + 3 }, (_, i) => ({
       id: `o${i}`,
       label: `opt${i}`,
-      updates: { naturecity: 15 },
+      updates: { naturecity: i % 2 === 0 ? 15 : 90 },
     }));
     const result = validateNextTurnResult({ status: 'ask', questionType: 'choice', targetDimensions: ['naturecity'], prompt: 'x', options: manyOptions }, request);
     expect(result.status).toBe('ask');

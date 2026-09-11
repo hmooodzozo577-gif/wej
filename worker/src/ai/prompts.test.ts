@@ -181,6 +181,7 @@ describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability 
     expect(system).toContain('هادئة');
     expect(system).toMatch(/Use these phrases first/i);
     expect(system).toMatch(/Every option must resolve EVERY declared target dimension/i);
+    expect(system).toMatch(/EVERY target dimension must have at least two different values/i);
     expect(system).toMatch(/NEVER copy or lightly rephrase catalog option labels/i);
     expect(system).toMatch(/default to a choice whenever 2 to 4 honest scenarios/i);
     expect(system).toMatch(/Never embed answer alternatives.+inside a free-text prompt/i);
