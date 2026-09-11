@@ -140,6 +140,8 @@ export function buildNextTurnPrompt(req: NextTurnRequest, retryDiagnostic?: Next
   const retryInstruction = retryDiagnostic
     ? retryDiagnostic === 'choice_options'
       ? 'REPAIR REQUIRED: the previous choice options were invalid. Return 2 to 4 distinct, contextual option labels that are not copied from the catalog, and make every option update every declared target dimension.'
+      : retryDiagnostic === 'free_text_alternatives'
+        ? 'REPAIR REQUIRED: the previous free-text prompt embedded known alternatives. Return a choice question and move those alternatives into 2 to 4 contextual options with valid canonical updates.'
       : retryDiagnostic === 'question_prompt'
         ? 'REPAIR REQUIRED: the previous question copied or closely paraphrased the bank wording. Write a substantially different, traveler-specific question.'
         : retryDiagnostic === 'target_dimensions'

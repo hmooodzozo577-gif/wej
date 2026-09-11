@@ -354,6 +354,21 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     expect(result).toEqual({ status: 'ask', questionType: 'free_text', targetDimensions: ['naturecity'], prompt: 'Tell me more' });
   });
 
+  it('rejects answer alternatives embedded inside a free-text prompt', () => {
+    expect(
+      validateNextTurnResult(
+        { status: 'ask', questionType: 'free_text', targetDimensions: ['adventure'], prompt: 'هل تفضل العزلة أم الأنشطة الهادئة؟' },
+        request,
+      ),
+    ).toEqual({ status: 'invalid' });
+    expect(
+      validateNextTurnResult(
+        { status: 'ask', questionType: 'free_text', targetDimensions: ['adventure'], prompt: 'Do you prefer solitude or gentle activities?' },
+        { ...request, lang: 'en' },
+      ),
+    ).toEqual({ status: 'invalid' });
+  });
+
   it('accepts complete', () => {
     expect(validateNextTurnResult({ status: 'complete' }, request)).toEqual({ status: 'complete' });
   });

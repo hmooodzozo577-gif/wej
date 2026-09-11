@@ -205,6 +205,7 @@ export type NextTurnResult =
 export type NextTurnRetryDiagnostic =
   | 'decision_shape'
   | 'question_type'
+  | 'free_text_alternatives'
   | 'target_dimensions'
   | 'question_prompt'
   | 'choice_options'

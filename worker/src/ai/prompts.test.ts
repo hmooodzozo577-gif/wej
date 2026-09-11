@@ -192,6 +192,12 @@ describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability 
     expect(system).toMatch(/2 to 4 distinct, contextual option labels/i);
   });
 
+  it('repairs a free-text prompt that embedded known alternatives by requiring choice options', () => {
+    const { system } = buildNextTurnPrompt(req, 'free_text_alternatives');
+    expect(system).toMatch(/previous free-text prompt embedded known alternatives/i);
+    expect(system).toMatch(/Return a choice question/i);
+  });
+
   it('never requests chain-of-thought', () => {
     const { system } = buildNextTurnPrompt(req);
     expect(system).toMatch(/do not request or include chain-of-thought/i);

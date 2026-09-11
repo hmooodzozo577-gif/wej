@@ -294,7 +294,13 @@ export function validateExplainRecommendationResult(raw: unknown, request: Expla
 // 'invalid'}` — NEVER silently coerced to 'complete' (which would falsely
 // claim sufficient information exists) and never passed through
 // unvalidated.
-export type NextTurnValidationDiagnostic = 'decision_shape' | 'question_type' | 'target_dimensions' | 'question_prompt' | 'choice_options';
+export type NextTurnValidationDiagnostic =
+  | 'decision_shape'
+  | 'question_type'
+  | 'free_text_alternatives'
+  | 'target_dimensions'
+  | 'question_prompt'
+  | 'choice_options';
 
 function normalizeQuestion(value: string): string {
   return value
@@ -330,6 +336,10 @@ function copiesBankQuestion(prompt: string, bankQuestion: string): boolean {
   if (candidate === source) return true;
   const longest = Math.max(candidate.length, source.length);
   return longest > 0 && 1 - editDistance(candidate, source) / longest >= 0.82;
+}
+
+function embedsChoiceAlternatives(prompt: string, lang: NextTurnRequest['lang']): boolean {
+  return lang === 'ar' ? /(?:^|\s)(?:أم|أو|او)(?=\s|[؟?،,.]|$)/u.test(prompt) : /\bor\b/iu.test(prompt);
 }
 
 export function validateNextTurnResult(
@@ -368,6 +378,11 @@ export function validateNextTurnResult(
   if (targetDimensions.includes('budget') && targetDimensions.length !== 1) return invalid('target_dimensions');
 
   if (questionType === 'free_text') {
+    // If the model already knows distinct alternatives, the traveler
+    // should receive them as selectable options. Embedding “A or B” in
+    // a textarea prompt recreates a choice question with worse UX and
+    // prevents immediate progression after selection.
+    if (embedsChoiceAlternatives(prompt, request.lang)) return invalid('free_text_alternatives');
     return { status: 'ask', questionType: 'free_text', targetDimensions, prompt };
   }
 
