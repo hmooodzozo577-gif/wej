@@ -23,11 +23,16 @@
 // full page load, never written to storage). The ONLY thing persisted
 // here is a single boolean "don't show the intro again" flag in
 // localStorage (`wejhaty.locationIntroDismissed`) — never coordinates,
-// never derived location data. This deliberately does NOT use the
-// Permissions API to pre-detect an already-granted/denied browser
-// state (a real, possible enhancement, skipped this pass to keep the
-// permission-state model simple and fully test-covered without
-// mocking navigator.permissions).
+// never derived location data.
+//
+// Phase 16.5 completion pass — Permissions API pre-detection
+// (geo/permissionsApi.ts / geo/useGeolocationPermission.ts) is now used
+// here: read-only, never fires the OS prompt itself, and never changes
+// WHEN a real geolocation request may fire (still only on an explicit
+// click) — it only lets the copy stop being misleading when the browser
+// already reports 'granted' (skips the "why we're asking" pitch) or
+// 'denied' (skips a doomed "Allow" click, shows guidance instead).
+// 'prompt' and 'unsupported' render the ORIGINAL, unchanged ask.
 //
 // KNOWN LIMITATION (accepted, documented rather than silently
 // omitted): if a user grants location via Explore's OWN control
@@ -44,6 +49,7 @@
 import { useState } from 'react';
 import { useAppState, useI18n } from '../state/hooks';
 import { useLocationRequest } from '../state/useLocationRequest';
+import { useGeolocationPermission } from '../geo/useGeolocationPermission';
 
 const DISMISSED_KEY = 'wejhaty.locationIntroDismissed';
 
@@ -74,6 +80,12 @@ export function LocationIntro() {
   const li = t.locationIntro;
   const { request } = useLocationRequest();
   const [dismissed, setDismissed] = useState<boolean>(() => readDismissed());
+  // Phase 16.5 completion pass — Permissions API pre-detection
+  // (geo/permissionsApi.ts). Read-only: never triggers the OS prompt on
+  // its own, so this can safely run every time this card would render.
+  // 'prompt' and 'unsupported' fall through to the EXACT existing
+  // ask/copy below, unchanged.
+  const permission = useGeolocationPermission();
 
   // Once location is granted through ANY path (this intro's own "Allow",
   // or Explore's separate control), persist that so a later page load
@@ -95,14 +107,39 @@ export function LocationIntro() {
     setDismissed(true);
   };
 
+  // DENIED: a doomed "Allow" click is never offered — non-technical
+  // guidance instead, still dismissible, never blocking the rest of the
+  // app (Section 66/67).
+  if (permission === 'denied') {
+    return (
+      <div className="location-intro-wrap">
+        <div className="location-intro detail-card" role="region" aria-label={li.title}>
+          <p>{li.deniedNote}</p>
+          <div style={{ marginTop: 10 }}>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={handleNotNow}>
+              {li.notNow}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // GRANTED: the browser already allows this site to use location — the
+  // "why we're asking" pitch would be misleading here. Still requires an
+  // explicit click before any real geolocation call (Section 66:
+  // "never call geolocation automatically merely because state is
+  // granted") — only the copy changes, not the interaction model.
+  const isAlreadyGranted = permission === 'granted';
+
   return (
     <div className="location-intro-wrap">
       <div className="location-intro detail-card" role="region" aria-label={li.title}>
         <strong>{li.title}</strong>
-        <p style={{ marginTop: 6 }}>{li.body}</p>
+        <p style={{ marginTop: 6 }}>{isAlreadyGranted ? li.alreadyGrantedBody : li.body}</p>
         <div style={{ marginTop: 10, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button type="button" className="btn btn-gold btn-sm" onClick={handleAllow}>
-            {li.allow}
+            {isAlreadyGranted ? li.alreadyGrantedCta : li.allow}
           </button>
           <button type="button" className="btn btn-ghost btn-sm" onClick={handleNotNow}>
             {li.notNow}

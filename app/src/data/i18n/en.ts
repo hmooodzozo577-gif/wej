@@ -58,6 +58,9 @@ export const EN: I18nDict = {
     body: 'We use your approximate location to improve distance accuracy, show nearby destinations, and personalize some suggestions.',
     allow: 'Allow location',
     notNow: 'Not now',
+    alreadyGrantedBody: 'Your browser already allows this site to use your approximate location — turn it on now to improve your suggestions.',
+    alreadyGrantedCta: 'Use my location now',
+    deniedNote: 'Location for this site is turned off in your browser settings. You can keep using Wejhaty normally without it.',
   },
   // Phase 13.6 — Full Travel Integration. Like location above, not part
   // of the original wejhaty.html copy.
@@ -157,6 +160,7 @@ export const EN: I18nDict = {
     followup: {
       freeTextToggle: "None of these? Describe it in your own words",
       freeTextPlaceholder: 'e.g. somewhere without big crowds…',
+      aiPromptPlaceholder: 'Type your answer in your own words…',
       freeTextSubmit: 'Send',
       skip: 'Skip',
       freeTextLoading: 'Understanding…',

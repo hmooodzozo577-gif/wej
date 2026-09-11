@@ -90,10 +90,18 @@ export function FollowupCard({ purposeId, followup }: { purposeId: PurposeId; fo
             className="ai-interpret-textarea"
             value={freeText}
             onChange={(e) => setFreeText(e.target.value)}
-            placeholder={fu.freeTextPlaceholder}
+            // impeccable critique finding: the OLD placeholder/aria-label
+            // pair was authored for the quietness template's escape
+            // hatch specifically ("places without a lot of people…" /
+            // "None of these? describe it..."). Reused verbatim for an
+            // AI-generated free_text turn about an unrelated topic (e.g.
+            // cultural novelty), both read as mismatched — a generic
+            // placeholder and the turn's own prompt as the accessible
+            // name fit any topic instead.
+            placeholder={isFreeTextPrimary ? fu.aiPromptPlaceholder : fu.freeTextPlaceholder}
             maxLength={FREE_TEXT_MAX_LENGTH}
             rows={2}
-            aria-label={fu.freeTextToggle}
+            aria-label={isFreeTextPrimary ? followup.prompt[lang] : fu.freeTextToggle}
           />
           {freeTextStatus === 'error' && (
             <p className="ai-interpret-note" aria-live="polite">

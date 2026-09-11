@@ -170,7 +170,7 @@ describe('§36/41 SCENARIO B — "بسافر مع عائلتي وأبغى مكا
 
     await waitFor(() => expect(screen.getByText('كيف تحب أن يكون الاختلاف الثقافي في رحلتك؟')).toBeInTheDocument());
     // PRIMARY, not behind the "none of these" toggle.
-    const textarea = screen.getByPlaceholderText(/أماكن ما فيها ناس/) as HTMLTextAreaElement;
+    const textarea = screen.getByPlaceholderText(/اكتب إجابتك بكلماتك/) as HTMLTextAreaElement;
     expect(textarea).toBeInTheDocument();
     expect(screen.queryByText(/ولا شيء من هذا/)).toBeNull();
 

@@ -136,3 +136,52 @@ describe('Phase 12/Workstream C — LocationIntro', () => {
     await waitFor(() => expect(spy).toHaveBeenCalledTimes(1));
   });
 });
+
+describe('Phase 16.5 completion pass — Permissions API pre-detection', () => {
+  beforeEach(() => {
+    localStorage.removeItem(DISMISSED_KEY);
+    vi.restoreAllMocks();
+  });
+  afterEach(() => {
+    localStorage.removeItem(DISMISSED_KEY);
+    // @ts-expect-error test cleanup only
+    delete navigator.permissions;
+  });
+
+  function stubPermission(state: 'granted' | 'denied' | 'prompt') {
+    // @ts-expect-error test-only stub
+    navigator.permissions = { query: vi.fn().mockResolvedValue({ state, addEventListener: vi.fn(), removeEventListener: vi.fn() }) };
+  }
+
+  it('GRANTED: shows the lighter "already granted" copy, never the "why we\'re asking" pitch — still requires an explicit click', async () => {
+    stubPermission('granted');
+    const spy = vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue(GRANTED_RESULT);
+    renderWith('en');
+    await waitFor(() => expect(screen.getByText(/already allows this site/)).toBeInTheDocument());
+    expect(screen.queryByText('We use your approximate location to improve distance accuracy, show nearby destinations, and personalize some suggestions.')).toBeNull();
+    expect(spy).not.toHaveBeenCalled(); // pre-detection itself never calls geolocation
+    fireEvent.click(screen.getByText('Use my location now'));
+    await waitFor(() => expect(spy).toHaveBeenCalledTimes(1)); // only after the explicit click
+  });
+
+  it('DENIED: shows non-technical guidance instead of a doomed "Allow" button', async () => {
+    stubPermission('denied');
+    renderWith('en');
+    await waitFor(() => expect(screen.getByText(/turned off in your browser settings/)).toBeInTheDocument());
+    expect(screen.queryByText('Allow location')).toBeNull();
+    expect(screen.getByText('Not now')).toBeInTheDocument(); // still dismissible
+  });
+
+  it('PROMPT: renders the exact original ask, unchanged', async () => {
+    stubPermission('prompt');
+    renderWith('en');
+    await waitFor(() => expect(screen.getByText('Allow location')).toBeInTheDocument());
+    expect(screen.getByText('Improve your destination suggestions')).toBeInTheDocument();
+  });
+
+  it('UNSUPPORTED (no navigator.permissions — this repo\'s real jsdom test default): renders the exact original ask, unchanged', () => {
+    renderWith('en');
+    expect(screen.getByText('Allow location')).toBeInTheDocument();
+    expect(screen.getByText('Improve your destination suggestions')).toBeInTheDocument();
+  });
+});

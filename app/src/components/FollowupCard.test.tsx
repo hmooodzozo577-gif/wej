@@ -146,7 +146,7 @@ describe('FollowupCard — Phase 16.5 TRUE adaptive-interview pass — questionT
 
   it('the free-text input is immediately visible — no toggle needed, and no toggle button rendered at all', () => {
     renderFreeText();
-    expect(screen.getByPlaceholderText(/أماكن ما فيها ناس/)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/اكتب إجابتك بكلماتك/)).toBeInTheDocument();
     expect(screen.queryByText(/ولا شيء من هذا/)).toBeNull();
   });
 
@@ -159,7 +159,7 @@ describe('FollowupCard — Phase 16.5 TRUE adaptive-interview pass — questionT
     mockInterpret.mockResolvedValue({ status: 'ok', interpreted: [{ questionId: 'culture', value: 50, confidence: 'high' }], unmapped: [] });
     const dispatchSpy = vi.fn();
     renderFreeText(dispatchSpy);
-    fireEvent.change(screen.getByPlaceholderText(/أماكن ما فيها ناس/), { target: { value: 'أبغى بعض الاختلاف' } });
+    fireEvent.change(screen.getByPlaceholderText(/اكتب إجابتك بكلماتك/), { target: { value: 'أبغى بعض الاختلاف' } });
     fireEvent.click(screen.getByText('إرسال'));
     await waitFor(() =>
       expect(dispatchSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'SET_ANSWER', questionId: 'culture', value: 50, provenance: 'ai_followup' })),

@@ -421,6 +421,17 @@ export interface LocationIntroStrings {
   body: string;
   allow: string;
   notNow: string;
+  /** Phase 16.5 completion pass — Location Permissions API pre-detection
+   *  (geo/permissionsApi.ts). Shown INSTEAD of body/allow when the
+   *  browser already reports the geolocation permission as 'granted' —
+   *  never re-pitches "why we're asking" for something already granted. */
+  alreadyGrantedBody: string;
+  alreadyGrantedCta: string;
+  /** Shown INSTEAD of the whole ask when the browser already reports
+   *  'denied' — a doomed "Allow" click is never offered; this is
+   *  dismissible non-technical guidance instead (reuses the same
+   *  friendly wording as location.denied). */
+  deniedNote: string;
 }
 
 /** Phase 13.6 — Full Travel Integration strings. Like LocationStrings,
@@ -700,6 +711,15 @@ export interface AiStrings {
   followup: {
     freeTextToggle: string;
     freeTextPlaceholder: string;
+    /** Phase 16.5 TRUE adaptive-interview pass — impeccable critique
+     *  finding: `freeTextPlaceholder` above is a specific, quietness-
+     *  flavored example ("somewhere without big crowds…") left over from
+     *  the template era; reusing it verbatim for an AI-generated
+     *  free_text turn about an unrelated topic (e.g. cultural novelty)
+     *  reads as mismatched/confusing. Used ONLY when
+     *  `questionType === 'free_text'` (see FollowupCard.tsx) — the
+     *  legacy choice-type escape hatch keeps the original placeholder. */
+    aiPromptPlaceholder: string;
     freeTextSubmit: string;
     skip: string;
     freeTextLoading: string;

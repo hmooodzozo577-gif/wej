@@ -6,7 +6,7 @@
 // the real browser API shape in geo/geolocation.test.ts) — no real device
 // location involved anywhere in this file.
 import { useReducer, type ReactNode } from 'react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AppStateContext } from '../state/context';
@@ -269,5 +269,27 @@ describe('Phase 12 — LocationPersonalize', () => {
       expect(screen.getByText(/Distance to Yemen centroid:/)).toBeInTheDocument();
       expect(screen.getByText(/Distance to Djibouti centroid:/)).toBeInTheDocument();
     });
+  });
+});
+
+describe('Phase 16.5 completion pass — Permissions API pre-detection', () => {
+  afterEach(() => {
+    // @ts-expect-error test cleanup only
+    delete navigator.permissions;
+  });
+
+  it('DENIED pre-detected: shows the same non-technical guidance BEFORE any click is made, while still idle', async () => {
+    // @ts-expect-error test-only stub
+    navigator.permissions = { query: vi.fn().mockResolvedValue({ state: 'denied', addEventListener: vi.fn(), removeEventListener: vi.fn() }) };
+    renderWith('en');
+    await waitFor(() => expect(screen.getByText(/Location permission was denied/)).toBeInTheDocument());
+    // The CTA is still offered (retry remains possible after a browser
+    // setting change) — pre-detection informs, never blocks.
+    expect(screen.getByRole('button', { name: /use my location/i })).toBeInTheDocument();
+  });
+
+  it('UNSUPPORTED/no navigator.permissions (this repo\'s real jsdom test default): shows the original idle CTA with no message, unchanged', () => {
+    renderWith('en');
+    expect(screen.getByRole('button', { name: /use my location/i })).toBeInTheDocument();
   });
 });

@@ -41,6 +41,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { useLocationRequest } from '../state/useLocationRequest';
+import { useGeolocationPermission } from '../geo/useGeolocationPermission';
 import { haversineKm, nearbyCountries, resolveCurrentCountry, type CountryResolution } from '../data/geo';
 import { resolveNearestCity, type CityResolution } from '../data/cities';
 import { WORLD_CATALOG, countryInfoOf } from '../data/worldCatalog';
@@ -154,16 +155,27 @@ export function LocationPersonalize() {
   }, [debugInfo]);
 
   const canRequest = status === 'idle' || status === 'denied' || status === 'unavailable' || status === 'timeout';
+  // Phase 16.5 completion pass — Permissions API pre-detection: while
+  // still 'idle' (no real request attempted yet this session), a
+  // browser-level 'denied' permission is shown proactively rather than
+  // waiting for a doomed click to surface the same guidance a beat
+  // later. Read-only — never fires the OS prompt itself, never skips
+  // the CTA (the user may still click to retry after changing their
+  // browser setting; requestBrowserLocation() decides the real outcome).
+  const permission = useGeolocationPermission();
   // One message per terminal non-'granted' status; undefined while idle/requesting/granted.
-  const statusMessage: string | undefined = {
-    idle: undefined,
-    requesting: loc.requesting,
-    granted: undefined,
-    denied: loc.denied,
-    unavailable: loc.unavailable,
-    timeout: loc.timeout,
-    unsupported: loc.unsupported,
-  }[status];
+  const statusMessage: string | undefined =
+    status === 'idle' && permission === 'denied'
+      ? loc.denied
+      : {
+          idle: undefined,
+          requesting: loc.requesting,
+          granted: undefined,
+          denied: loc.denied,
+          unavailable: loc.unavailable,
+          timeout: loc.timeout,
+          unsupported: loc.unsupported,
+        }[status];
 
   return (
     <div className="detail-card">
