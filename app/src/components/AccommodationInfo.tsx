@@ -1,10 +1,22 @@
 // Phase 13.5a — Accommodation Discovery & Architecture. Deliberately
-// NOT a hotel search/booking feature (that is Phase 13.5b, deferred):
-// this renders a small, honest "what to generally expect" card, reusing
-// Destination.costLevel (the SAME general cost tier already shown
-// elsewhere on this page — see Destination.tsx's info-grid) rather than
-// inventing any new accommodation-specific number. No network call, no
-// external API, no npm dependency, no Worker involvement.
+// NOT a hotel search/booking feature (that is Phase 13.5b — brought IN
+// SCOPE by the Phase 16.5 completion pass; see HOTEL_INTEGRATION.md for
+// the resulting provider-neutral architecture note and its
+// READY — HOTEL PROVIDER/CREDENTIAL PROVISIONING REQUIRED status. This
+// card is unaffected either way and must be preserved regardless of
+// whether live hotel data ever ships): this renders a small, honest
+// "what to generally expect" card, reusing Destination.costLevel (the
+// SAME general cost tier already shown elsewhere on this page — see
+// Destination.tsx's info-grid) rather than inventing any new
+// accommodation-specific number. No network call, no external API, no
+// npm dependency, no Worker involvement.
+//
+// Roadmap cleanup: a NUMERIC accommodation cost derived without a
+// legitimate live provider (e.g. back-computed from costLevel/PLI) is
+// explicitly CANCELLED / OUT OF SCOPE by the user — never build that.
+// This card's own qualitative cost LEVEL/tier (unchanged since Phase
+// 13.5a) is a different, preserved feature, not part of that
+// cancellation.
 //
 // Only rendered for `recommendationReady: true` destinations (the 30
 // full destinations) — the other 165 BasicCountry catalog entries have

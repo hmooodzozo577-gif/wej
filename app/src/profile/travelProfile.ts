@@ -55,12 +55,22 @@ export interface TravelProfile {
  *  side data to rank on — kept as an explicit registry (never silently
  *  dropped) rather than a per-question classification, since none of
  *  these are questions in any bank today. Mirrors this project's own
- *  "BLOCKED — SUITABLE DESTINATION DATA" convention. */
+ *  "BLOCKED — SUITABLE DESTINATION DATA" convention.
+ *
+ *  Roadmap cleanup: Cultural Compatibility Ranking is explicitly
+ *  CANCELLED by the user (not merely blocked pending data) — never
+ *  build a compatibility percentage, a culture score, or a Phase 14
+ *  culture weight. It is kept in this registry (status updated, not
+ *  removed) so a future pass can see the decision was made, not
+ *  forgotten. Cultural preference may still exist as plain interview
+ *  CONTEXT (e.g. Section 16's cultural-novelty clarification) — that is
+ *  a different, preserved thing from a ranking SCORE. */
 export const BLOCKED_RANKING_CONCEPTS = [
   {
     concept: 'culturalCompatibility',
-    reason: 'Traveler cultural-comfort preference can be learned by asking, but no destination-side cultural-compatibility data exists to rank against it.',
-    status: 'BLOCKED — SUITABLE DESTINATION DATA',
+    reason:
+      'Traveler cultural-comfort preference can be learned by asking (and is, as interview context — see the AI next-turn cultural-novelty handling), but a Cultural Compatibility RANKING (a percentage/score feeding Phase 14) is explicitly cancelled by the user, not merely blocked on missing destination-side data.',
+    status: 'CANCELLED / OUT OF SCOPE',
   },
   {
     concept: 'quietnessPace',

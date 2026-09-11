@@ -90,10 +90,11 @@ describe('buildTravelProfile', () => {
 });
 
 describe('BLOCKED_RANKING_CONCEPTS registry — never silently dropped', () => {
-  it('cultural compatibility is explicitly registered as blocked, matching the project-wide BLOCKED convention', () => {
+  it('ROADMAP CLEANUP: cultural compatibility is explicitly CANCELLED (a user decision, not a data-availability blocker)', () => {
     const entry = BLOCKED_RANKING_CONCEPTS.find((c) => c.concept === 'culturalCompatibility')!;
     expect(entry).toBeDefined();
-    expect(entry.status).toMatch(/BLOCKED/);
+    expect(entry.status).toBe('CANCELLED / OUT OF SCOPE');
+    expect(entry.status).not.toMatch(/BLOCKED/);
   });
 
   it('quietness/pace is registered as context-only, not silently forced into a fabricated ranking dimension', () => {

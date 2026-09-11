@@ -194,7 +194,17 @@ unilaterally. Until a repo admin enables that setting, each scheduled
 run leaves its per-run branch (with the real, validated update)
 pushed and waiting for a human to open the PR manually.
 
-## Numeric travel-budget estimates (SAR/day) — investigated, not implemented
+## Numeric travel-budget estimates (SAR/day) — CANCELLED / OUT OF SCOPE
+
+**Roadmap cleanup update:** the user has explicitly CANCELLED this item
+— it is no longer an active blocker or a future candidate for this
+project, and must not be reported under "remaining work." The
+investigation below is kept as-is (real, useful evidence of why no
+legitimate source was found), but its outcome is now a closed decision,
+not an open one. `PA.NUS.GDP.PLI` (the Travel Cost Index / relative
+price-level information) is unaffected and remains a valid, preserved
+feature — it was never a numeric per-day budget and is not part of this
+cancellation.
 
 A follow-up ask was real SAR/day traveler budgets (accommodation,
 meals, local transport), separate from this general price-level index.
@@ -242,10 +252,13 @@ reference an API that could not be confirmed still live; third-party
 repackagers (e.g. allowancesapi.com) exist but are not the authoritative
 source and introduce their own reliability/authorization questions.
 
-**Decision:** `BLOCKED — SUITABLE DATA SOURCE`. Not a licensing
-problem (the underlying data is public domain) — the blocker is (1) no
-confirmed live authoritative bulk endpoint, and (2) the semantic gap
-between a reimbursement ceiling and tourist spending needs a dedicated,
-carefully-labeled implementation effort this pass's scope (Phase 13.5d)
-should not be diluted by. No numeric SAR/day figure was implemented or
-derived from this or any other source.
+**Decision:** `CANCELLED / OUT OF SCOPE` (previously `BLOCKED — SUITABLE
+DATA SOURCE`; the user has since explicitly cancelled the whole numeric
+traveler-budget feature — see this section's own header). Not a
+licensing problem (the underlying data is public domain) — the original
+blocker was (1) no confirmed live authoritative bulk endpoint, and (2)
+the semantic gap between a reimbursement ceiling and tourist spending
+needing a dedicated, carefully-labeled implementation effort this
+pass's scope (Phase 13.5d) should not be diluted by. No numeric SAR/day
+figure was implemented or derived from this or any other source, and
+none is planned.
