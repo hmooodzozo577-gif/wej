@@ -13,10 +13,10 @@ vendor-neutral pair every agent should read first.
 
 ## State Metadata
 
-- State document version: 2
+- State document version: 3
 - Last verified date: 2026-09-11
 - Last verified branch: `claude/marhaba-kxry8l`
-- Last verified HEAD: `c468ed3e7bac0c474826b42fcbd47d4bf9d8597d`
+- Last verified code HEAD: `6a93efab05d815e53e2862b98babfca8d4132ea6`
 
 **Branch and HEAD above are recovery references, not permanent
 requirements.** Always verify current Git state before starting work
@@ -63,40 +63,28 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
   production verification happened in an earlier session; not
   independently re-checked from every later session (no guaranteed
   network path to the deployed Worker URL from every environment).
-- **Phase 16.5 — PRODUCTION E2E FAILED — NOT COMPLETE.** The user's
-  latest production test succeeded at initial cold/nature interpretation,
-  then showed the old Phase 15 questions after loading instead of a
-  Capability C AI-generated adaptive question.
-  - **VERIFIED on 2026-09-11:** a fresh browser run sent Capability C
-    immediately on Quiz entry with an EMPTY confirmed profile. It returned
-    HTTP 502 / ai_provider_error / unexpected response after about 20s.
-    Initial interpretation separately returned HTTP 200 with climate=cold
-    and naturecity=15; proposals in this run were low-confidence, so the
-    automation did not complete preference confirmation. This is failure
-    evidence, not a successful post-confirmation E2E.
-  - **VERIFIED:** one additional production C request, based on the captured
-    real catalog with cold/nature explicitly marked confirmed, returned
-    HTTP 504 / ai_timeout after about 48s. The exact model-output or
-    validation cause of the earlier 502 remains UNKNOWN; do not assume
-    the timeout and 502 have the same cause.
-  - **FIRST CORRECTIVE DEPLOYMENT FAILED LIVE VERIFICATION:** the confirmed
-    frontend request-context race is fixed and regression-tested; obsolete
-    success/error/complete responses cannot mutate the current interview. The
-    first Worker correction used a bare JSON Schema and production rejected it
-    immediately (502 in 0.7 seconds): Gemma 4's current Cloudflare binding is a
-    Chat Completions model and requires `{name, schema}`. The follow-up adapter
-    correction restores that model-specific envelope while retaining the new
-    complete response shape, disabled thinking, bounded output, and safe fixed
-    diagnostics. A fresh deployment and live verification are still required.
-    That envelope reached inference and produced a structured response in 3.96
-    seconds, but the Worker correctly rejected its non-canonical option updates
-    with diagnostic `choice_options`. The next local correction derives the
-    output schema's eligible ids and exact allowed values from the request
-    catalog; it is not production-verified yet.
-  - GitHub authentication is now available and commit `08e6728` was pushed;
-    both Worker deployment #14 and Pages deployment #65 succeeded. Local
-    Wrangler authentication is still unavailable, but CI deployment access is
-    sufficient for this branch.
+- **Phase 16.5 — IMPLEMENTED — TESTED — DEPLOYED — LIVE VERIFIED — PENDING
+  FINAL USER ACCEPTANCE; NOT COMPLETE.** The production Capability C incident
+  is technically resolved. Full incident evidence remains in
+  `PHASE_16_5_DEBUG.md`.
+  - **VERIFIED on 2026-09-11:** the frontend request-context race is fixed;
+    obsolete success/error/complete responses cannot mutate a changed profile
+    or session. Pages deployment #65 published commit `08e6728` successfully.
+  - **VERIFIED:** Gemma 4 uses its current Cloudflare Chat Completions schema
+    envelope. Capability C derives eligible dimension ids and exact canonical
+    values from the request catalog before generation, then applies the existing
+    authoritative server validation. Worker deployment run `34602609544`
+    published commit `6a93efa` successfully.
+  - **VERIFIED LIVE:** a direct Arabic request with `climate=cold` and
+    `naturecity=15` confirmed returned HTTP 200 in 4.77 seconds and generated a
+    budget question without re-targeting either resolved dimension.
+  - **VERIFIED PRODUCTION BROWSER E2E:** the exact Arabic scenario
+    `أبغى دولة باردة وهادئة وفيها طبيعة` mapped to `climate=cold` and
+    `naturecity=15`; after explicit confirmation, the UI displayed an
+    AI-generated budget question, `/api/ai/next-turn` returned 200, and the UI
+    did not fall back to the Phase 15 question bank.
+  - Safe fixed diagnostics distinguish provider output parsing/validation
+    failures without returning raw model/user content.
   - Turn-by-turn Back/Undo is NOT implemented for the AI-active
     interview. The edit mechanism today is: remove a confirmed
     preference (the "already accounted for" chip's × control), which

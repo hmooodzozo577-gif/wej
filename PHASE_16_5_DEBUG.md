@@ -1,6 +1,7 @@
 # Phase 16.5 Production Debug Record
 
-Current status: **PRODUCTION E2E FAILED — NOT COMPLETE**.
+Current status: **TECHNICALLY FIXED AND LIVE VERIFIED — PENDING FINAL USER
+ACCEPTANCE AND BACK/UNDO DECISION — NOT COMPLETE**.
 
 This file records bounded evidence for the current Capability C incident.
 It does not contain credentials, precise coordinates, raw model output, or
@@ -35,9 +36,9 @@ Verified observations:
   `ai_provider_error` after about 7.4 seconds. Catalog size alone therefore does
   not explain the invalid response.
 
-The deployed Worker intentionally collapses provider parse failures and
-semantic validation failures into the same safe 502 response. The exact 502
-category remains unknown until the local bounded diagnostics are deployed.
+The original deployed Worker collapsed provider parse failures and semantic
+validation failures into the same safe 502 response. The corrective deployment
+added bounded fixed-category diagnostics without exposing raw content.
 
 ## Corrective work and deployment evidence
 
@@ -66,10 +67,12 @@ category remains unknown until the local bounded diagnostics are deployed.
   `target_dimensions`, or `choice_options`. Raw provider/model content never
   leaves the Worker.
 
-The model-specific request contract is verified against Cloudflare's generated
-Gemma 4 type and real production responses. Whether the catalog-derived output
-constraints resolve the final `choice_options` rejection remains unverified
-until the follow-up deployment and a fresh successful real request.
+The final catalog-derived schema was deployed in commit `6a93efa`. A direct
+Arabic Capability C request with cold/nature already resolved returned HTTP 200
+in 4.77 seconds and generated a budget question with canonical values. A fresh
+production-browser run of the original Arabic scenario then confirmed
+`climate=cold` and `naturecity=15`, rendered the generated budget question, and
+did not enter the Phase 15 fallback.
 
 ## Verification completed locally
 
@@ -79,12 +82,7 @@ until the follow-up deployment and a fresh successful real request.
 
 ## Required next step
 
-1. Run the complete Worker verification commands.
-2. Publish both Worker and frontend from the current branch when authenticated
-   deployment access is available.
-3. Make one bounded production Capability C request. If it fails with 502, use
-   only the fixed `diagnostic` category to choose the next investigation.
-4. Re-run the Arabic browser scenario and verify that the first question after
-   confirmation is AI-generated and does not target climate or nature/cities.
-5. Keep Phase 16.5 open until the user accepts the production result and the
-   Back/Undo product decision is made.
+1. Obtain the user's final production acceptance.
+2. Decide whether preference removal/re-resolution is sufficient or true
+   turn-by-turn Back/Undo must be implemented before Phase 16.5 closes.
+3. Keep Phase 17 unopened until both decisions are resolved.
