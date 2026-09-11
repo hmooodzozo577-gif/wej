@@ -65,11 +65,16 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
   network path to the deployed Worker URL from every environment).
 - **Phase 16.5 — IMPLEMENTED — TESTED — DEPLOYED — FULL AUTOMATED PRODUCTION
   PATH VERIFIED — USER ACCEPTANCE PENDING — NOT COMPLETE.** The latest user
-  test had reported a loading replacement after every answer and an eventual
-  Phase 15 question. Corrective passes now keep the answered card visible while
-  the next AI turn loads, retry one malformed/semantically invalid Capability C
-  response, and invalidate any generic turn created before the traveler confirms
-  natural-language preferences. Full incident evidence remains in
+  test had reported that question wording changed while the underlying bank
+  question/options remained the same, plus an eventual Phase 15 question.
+  Corrective passes now carry unresolved traveler wording into the first turn,
+  treat the catalog as constraints rather than a checklist, stop once weighted
+  profile evidence is sufficient, keep the answered card visible while the next
+  turn loads, and use up to two diagnostic-guided repair attempts for malformed
+  or semantically invalid Capability C responses. Confirming natural-language
+  preferences explicitly restarts the adaptive interview from the newer profile,
+  invalidating any question or fallback created by a stale pre-profile request.
+  Full incident evidence remains in
   `PHASE_16_5_DEBUG.md`.
   - **VERIFIED on 2026-09-11:** the frontend request-context race is fixed;
     obsolete success/error/complete responses cannot mutate a changed profile
@@ -82,14 +87,19 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
   - **VERIFIED LIVE:** a direct Arabic request with `climate=cold` and
     `naturecity=15` confirmed returned HTTP 200 in 4.77 seconds and generated a
     budget question without re-targeting either resolved dimension.
-  - **VERIFIED FULL PRODUCTION BROWSER PATH on 2026-09-12 at code commit
-    `9533cb0`:** the exact Arabic scenario
-    `أبغى دولة باردة وهادئة وفيها طبيعة` produced five post-confirmation
-    questions that explicitly referenced the confirmed cold/nature context,
-    then reached the AI interview completion card with 8/8 confirmed. Every
-    interpretation/next-turn response was HTTP 200 and no Phase 15 fallback
-    question appeared. GitHub Pages run `34653930099` and Worker run
-    `34653930145` both completed successfully.
+  - **VERIFIED FULL PRODUCTION BROWSER PATH on 2026-09-12:** GitHub Pages run
+    `34657545554` deployed frontend code `f360fc9`; Worker run `34657003617`
+    deployed Worker code `5050f3b`. The exact Arabic scenario
+    `أبغى دولة باردة وهادئة وفيها طبيعة` returned HTTP 200 for interpretation
+    and the post-confirmation Capability C turn. The first generated question
+    was `بما أنك تفضل الطبيعة والأجواء الباردة، كيف تتخيل نمط يومك هناك؟`
+    with three contextual activity/quiet/balanced options; neither the question
+    nor any option copied the bank. Selecting the first option displayed the
+    inline loading indicator immediately, triggered turn 2 without a Next
+    button, and returned HTTP 200 with no Phase 15 fallback. A forced stale
+    pre-profile request failure in this same browser run also proved that
+    confirming the newer profile reactivates Capability C instead of preserving
+    the obsolete fallback.
   - **VERIFIED UI:** generated choice turns reuse the accepted `q-card` and
     radio-option styling. Selecting an option advances immediately without a
     Next button. While a next-turn request is in flight, the answered card and
@@ -100,11 +110,21 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
   - **VERIFIED BUDGET UI:** AI still chooses and phrases the contextual budget
     question, but the frontend renders the purpose bank's canonical approximate
     numeric SAR ranges instead of model-authored qualitative budget labels.
-  - **VERIFIED QUESTION ORIGINALITY GUARD:** the current bank wording is sent as
-    reference metadata; the Worker prompt forbids copying it and server
-    validation rejects copied or lightly reworded bank questions before the
-    existing bounded retry. Budget is required to be a standalone target so its
-    canonical numeric ranges are always used.
+  - **VERIFIED QUESTION/OPTION ORIGINALITY GUARD:** the current bank wording and
+    option labels are sent as reference metadata; Worker validation rejects
+    copied/lightly reworded bank questions and non-budget option labels. Choice
+    turns require 2–4 distinct options, every option must update every declared
+    target, and every target must vary across options so no constant hidden
+    preference is silently inferred. A free-text question containing explicit
+    `A or B` alternatives is rejected and repaired as selectable choices. Budget
+    remains a standalone target so its canonical numeric ranges are always used.
+  - **VERIFIED CONTEXT/COMPLETION BEHAVIOR:** Capability A's bounded unmapped
+    fragments (for example `هادئة`) are retained in memory and sent only on the
+    first post-confirmation turn. Existing Phase 14 weights are exposed read-only
+    as `rankingWeight` for question priority; Phase 14 scoring itself is unchanged.
+    The frontend ends the interview after at least 60% of ranking-supported
+    dimensions and deterministic weight are resolved, preventing the catalog
+    from becoming a fixed completion checklist.
   - **VERIFIED LIVE AFTER PROMPT HARDENING:** Worker run `34654506703` deployed
     commit `54d81ce`. One minimal Arabic Capability C request with only cold and
     nature confirmed returned HTTP 200 and asked a contextual adventure question
@@ -387,20 +407,20 @@ actually checking.
 
 - Branch: `claude/marhaba-kxry8l` (last verified — re-check, don't
   assume permanent).
-- Last verified source HEAD: `54d81cedb9bb44c9b25c2104e72a2617b4a7682f`.
+- Last verified code HEAD: `f360fc96e95504e7996ca0da1a84e0d68c2581a2`
+  (re-check Git for later documentation-only commits).
 - Pages deploys automatically on push touching `app/**`
   (`.github/workflows/deploy-pages.yml`).
 - Worker deploys automatically on push touching `worker/**`
   (`.github/workflows/deploy-worker.yml`).
 - Do not treat any specific workflow-run ID as a standing guarantee —
   always re-check current Actions runs for the CURRENT state.
-- 2026-09-12: Pages run `34653930099` and Worker run `34653930145`
-  successfully deployed code commit `9533cb0`. A fresh full production browser
-  run then verified the contextual adaptive path through completion with no
-  fallback. Worker run `34654506703` then deployed the prompt hardening at
-  `54d81ce`, followed by a successful minimal live Capability C request. The
-  only remaining Phase 16.5 gates are user acceptance and the Back/Undo product
-  decision.
+- 2026-09-12: Pages run `34657545554` deployed `f360fc9`; Worker run
+  `34657003617` deployed `5050f3b`. A fresh production browser run verified the
+  exact Arabic interpretation, a genuinely contextual question with new options,
+  immediate option advance/loading, turn-2 HTTP 200, and no Phase 15 fallback.
+  The only remaining Phase 16.5 gates are user acceptance and the Back/Undo
+  product decision.
 
 ## Source-of-Truth Priority
 
