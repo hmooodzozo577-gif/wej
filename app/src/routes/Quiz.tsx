@@ -143,7 +143,7 @@ export function Quiz() {
         <ProgressBar percent={progressPct} />
 
         {state.interviewComplete ? (
-          <div className="ai-turn-card ai-turn-complete">
+          <div key="complete" className="ai-turn-card ai-turn-complete">
             <h2 className="q-text">{t.ai.turn.completeTitle}</h2>
             <p className="ai-interpret-subtitle">{t.ai.turn.completeBody}</p>
             {confirmedEntries.length > 0 && (
@@ -171,11 +171,17 @@ export function Quiz() {
             </div>
           </div>
         ) : state.followup ? (
-          <div className="ai-turn-card">
+          // Keyed per turn (templateId is unique per AI turn — see
+          // toPendingFollowup) so React actually remounts this element
+          // when one generated question replaces another, retriggering
+          // the CSS entrance animation instead of silently no-opping on
+          // an unchanged DOM node (see wejhaty.css's own .ai-turn-card
+          // comment for the emil-design-eng rationale).
+          <div key={state.followup.templateId} className="ai-turn-card">
             <FollowupCard purposeId={purposeParam} followup={state.followup} />
           </div>
         ) : (
-          <div className="ai-turn-card ai-turn-loading" aria-live="polite">
+          <div key="loading" className="ai-turn-card ai-turn-loading" aria-live="polite">
             {t.ai.turn.loading}
           </div>
         )}
