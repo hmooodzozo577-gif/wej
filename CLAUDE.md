@@ -20,3 +20,18 @@ In substantial final reports, state which skills were actually used and their pu
 - `apple-design` — motion/interaction principles reference ONLY (springs, velocity handoff, momentum, rubber-banding, spatial consistency, reduced motion). **Never a mandate to make Wejhaty look or feel like an Apple product.** Do not use it to justify blanket glassmorphism, "Liquid Glass," iOS-chrome cloning, or rounded-everything styling. Invoke it only when a specific motion, gesture, or state-transition question would materially benefit from it — Wejhaty's own travel-product visual identity always wins.
 
 Neither replaces `impeccable`; do not invoke every design skill on every UI task — pick only what the specific work needs.
+
+## Project State Recovery
+
+At the start of any substantial task — and especially after context
+compaction/reset, or when continuing an old/handed-off conversation:
+
+1. Read `.claude/PROJECT_STATE.md`.
+2. Verify the actual Git branch/HEAD against what it claims.
+3. Inspect relevant current code before implementing anything.
+4. If `PROJECT_STATE.md` conflicts with current code/Git, current
+   repository state wins.
+5. Update `PROJECT_STATE.md` whenever a task materially changes
+   roadmap status, architecture status, external-configuration
+   readiness, or the current phase (see that file's own Update Policy
+   for what counts as material).
