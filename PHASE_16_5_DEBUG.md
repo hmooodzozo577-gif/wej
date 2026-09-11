@@ -56,14 +56,20 @@ category remains unknown until the local bounded diagnostics are deployed.
   and uses deterministic sampling. This targets the rapid invalid-response
   evidence and the observed timeout without changing Phase 14 or the Phase 15
   fallback policy.
+- The corrected model-specific envelope reached inference in production and
+  returned a structured choice in 3.96 seconds, but server validation rejected
+  its option updates as `choice_options`. The schema is therefore now generated
+  from the current request catalog: target dimension ids and each dimension's
+  exact canonical values are constrained before model output, while the same
+  server validator remains the final authority.
 - Safe 502 diagnostics expose only a fixed category such as `output_json`,
   `target_dimensions`, or `choice_options`. Raw provider/model content never
   leaves the Worker.
 
 The model-specific request contract is verified against Cloudflare's generated
-Gemma 4 type and the first corrective deployment's real response. Whether the
-unified response envelope fully fixes the original Capability C failure remains
-unverified until the follow-up deployment and a fresh successful real request.
+Gemma 4 type and real production responses. Whether the catalog-derived output
+constraints resolve the final `choice_options` rejection remains unverified
+until the follow-up deployment and a fresh successful real request.
 
 ## Verification completed locally
 

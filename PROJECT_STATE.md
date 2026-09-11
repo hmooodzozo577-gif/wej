@@ -88,6 +88,11 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
     correction restores that model-specific envelope while retaining the new
     complete response shape, disabled thinking, bounded output, and safe fixed
     diagnostics. A fresh deployment and live verification are still required.
+    That envelope reached inference and produced a structured response in 3.96
+    seconds, but the Worker correctly rejected its non-canonical option updates
+    with diagnostic `choice_options`. The next local correction derives the
+    output schema's eligible ids and exact allowed values from the request
+    catalog; it is not production-verified yet.
   - GitHub authentication is now available and commit `08e6728` was pushed;
     both Worker deployment #14 and Pages deployment #65 succeeded. Local
     Wrangler authentication is still unavailable, but CI deployment access is

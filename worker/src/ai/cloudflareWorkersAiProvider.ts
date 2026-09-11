@@ -96,33 +96,46 @@ const INTERPRET_JSON_SCHEMA = {
 // permissive here (a soft hint only, same as the two schemas above) —
 // ai/validate.ts's validateNextTurnResult is the real, authoritative gate
 // (dimension eligibility, allowed-value re-checking, bounded counts).
-const NEXT_TURN_JSON_SCHEMA = {
-  type: 'object',
-  additionalProperties: false,
-  properties: {
-    status: { type: 'string', enum: ['ask', 'complete'] },
-    questionType: { type: 'string', enum: ['choice', 'free_text', 'none'] },
-    targetDimensions: { type: 'array', items: { type: 'string' } },
-    prompt: { type: 'string' },
-    options: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        properties: {
-          id: { type: 'string' },
-          label: { type: 'string' },
-          updates: {
-            type: 'object',
-            additionalProperties: { type: ['string', 'number'] },
+function buildNextTurnJsonSchema(req: NextTurnRequest): Record<string, unknown> {
+  const eligible = req.catalog.filter((dimension) => !dimension.resolved && !dimension.alreadyAsked);
+  const eligibleIds = eligible.map((dimension) => dimension.id);
+  const updateProperties = Object.fromEntries(
+    eligible.map((dimension) => [dimension.id, { enum: dimension.options.map((option) => option.value) }]),
+  );
+
+  return {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      status: { type: 'string', enum: ['ask', 'complete'] },
+      questionType: { type: 'string', enum: ['choice', 'free_text', 'none'] },
+      targetDimensions: { type: 'array', items: { type: 'string', enum: eligibleIds } },
+      prompt: { type: 'string' },
+      options: {
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            id: { type: 'string' },
+            label: { type: 'string' },
+            // The model sees only the current request's eligible ids and
+            // each id's exact canonical values. The server validator below
+            // still re-checks everything; this schema prevents the provider
+            // from generating label text or stringified numbers as values.
+            updates: {
+              type: 'object',
+              properties: updateProperties,
+              additionalProperties: false,
+            },
           },
+          required: ['id', 'label', 'updates'],
         },
-        required: ['id', 'label', 'updates'],
       },
     },
-  },
-  required: ['status', 'questionType', 'targetDimensions', 'prompt', 'options'],
-} as const;
+    required: ['status', 'questionType', 'targetDimensions', 'prompt', 'options'],
+  };
+}
 
 const EXPLAIN_JSON_SCHEMA = {
   type: 'object',
@@ -245,7 +258,7 @@ export function createCloudflareWorkersAiProvider(ai: Ai): AiProvider {
     },
     async nextTurn(req: NextTurnRequest): Promise<NextTurnResult> {
       const { system, user } = buildNextTurnPrompt(req);
-      const raw = await runJsonCompletion(ai, system, user, 'next_turn', NEXT_TURN_JSON_SCHEMA, { conciseStructuredOutput: true });
+      const raw = await runJsonCompletion(ai, system, user, 'next_turn', buildNextTurnJsonSchema(req), { conciseStructuredOutput: true });
       // Cast only to satisfy AiProvider's declared return type —
       // index.ts's caller treats this as `unknown` regardless (see
       // validate.ts's validateNextTurnResult, the real gate).

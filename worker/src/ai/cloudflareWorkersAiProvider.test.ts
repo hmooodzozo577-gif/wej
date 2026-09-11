@@ -96,7 +96,19 @@ describe('createCloudflareWorkersAiProvider — request shape', () => {
         chat_template_kwargs?: { enable_thinking?: boolean };
         max_completion_tokens?: number;
         temperature?: number;
-        response_format: { json_schema: { name?: string; schema?: { required?: string[] }; strict?: boolean } };
+        response_format: {
+          json_schema: {
+            name?: string;
+            schema?: {
+              required?: string[];
+              properties?: {
+                targetDimensions?: { items?: { enum?: string[] } };
+                options?: { items?: { properties?: { updates?: { properties?: Record<string, { enum?: Array<string | number> }> } } } };
+              };
+            };
+            strict?: boolean;
+          };
+        };
       },
     ];
     expect(input.chat_template_kwargs).toEqual({ enable_thinking: false });
@@ -110,6 +122,10 @@ describe('createCloudflareWorkersAiProvider — request shape', () => {
       'prompt',
       'options',
     ]);
+    expect(input.response_format.json_schema.schema?.properties?.targetDimensions?.items?.enum).toEqual(['budget']);
+    expect(input.response_format.json_schema.schema?.properties?.options?.items?.properties?.updates?.properties).toEqual({
+      budget: { enum: [1, 2] },
+    });
     expect(input.response_format.json_schema).not.toHaveProperty('strict');
   });
 });
