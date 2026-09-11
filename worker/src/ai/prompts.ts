@@ -140,6 +140,7 @@ export function buildNextTurnPrompt(req: NextTurnRequest): { system: string; use
     'Your job: pick the single most useful UNRESOLVED, NEVER-ASKED dimension (or a short clarification that could resolve one or more of them) and decide how to ask about it. NEVER target a dimension already marked RESOLVED or already-asked above — the request will be rejected if you do.',
     'Each reference bank question is supplied only to explain its dimension. NEVER copy, restate, or lightly paraphrase that wording. Write a fresh question suited to this traveler and this moment in the interview.',
     'When the confirmed profile is not empty, the prompt must naturally build on at least one relevant confirmed preference so it is clearly contextual rather than a standalone generic bank question.',
+    'Use confirmed preference meanings exactly as supplied. Do not narrow, broaden, or embellish them: for example, "Nature" does not imply mountains, forests, beaches, or snow unless that detail was explicitly confirmed.',
     '',
     'Respond with one JSON object containing ALL five keys: "status", "questionType", "targetDimensions", "prompt", and "options".',
     '1. Choice question: { "status": "ask", "questionType": "choice", "targetDimensions": [string, ...], "prompt": string, "options": [{ "id": string, "label": string, "updates": { [dimensionId]: value } }, ...] }',

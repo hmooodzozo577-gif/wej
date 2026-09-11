@@ -187,6 +187,7 @@ describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability 
     expect(system).toContain('reference bank question="Nature or cities?"');
     expect(system).toMatch(/NEVER copy, restate, or lightly paraphrase/i);
     expect(system).toMatch(/naturally build on at least one relevant confirmed preference/i);
+    expect(system).toMatch(/Nature.+does not imply mountains, forests, beaches, or snow/i);
   });
 
   it('LOCATION: originCountry included with non-inference instruction when present, absent otherwise', () => {
