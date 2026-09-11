@@ -2145,6 +2145,21 @@
     "height": 960
   },
   {
+    "iso2": "TL",
+    "iso3": "TLS",
+    "countryName": "Timor-Leste",
+    "landmarkName": "Sunset view in Timor Plaza",
+    "localPath": "/destinations/tl.webp",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Sunset_view_in_Timor_Plaza.jpg",
+    "author": "Rino Soares",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Sunset_view_in_Timor_Plaza.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-11T08:38:00.923Z",
+    "width": 1440,
+    "height": 1080
+  },
+  {
     "iso2": "TM",
     "iso3": "TKM",
     "countryName": "Turkmenistan",
