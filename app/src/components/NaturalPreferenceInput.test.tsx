@@ -143,6 +143,7 @@ describe('NaturalPreferenceInput', () => {
       confidence: 'medium',
     });
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'SET_UNRESOLVED_PREFERENCES', values: ['هادئة'] });
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'RESTART_AI_INTERVIEW_FROM_PROFILE' });
   });
 
   it('CONFIDENCE RULE: a low-confidence proposal starts UNCHECKED (never silently eliminates the question)', async () => {

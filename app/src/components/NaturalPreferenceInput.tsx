@@ -124,6 +124,7 @@ export function NaturalPreferenceInput({ purposeId, questions }: { purposeId: Pu
       }
     }
     dispatch({ type: 'SET_UNRESOLVED_PREFERENCES', values: unmapped });
+    dispatch({ type: 'RESTART_AI_INTERVIEW_FROM_PROFILE' });
     reset();
   }
 

@@ -173,6 +173,21 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_UNRESOLVED_PREFERENCES':
       return { ...state, unresolvedPreferences: action.values };
 
+    // The optional natural-language interpretation can finish after an
+    // empty-profile Capability C request has already produced a question
+    // or entered fallback. Applying the confirmed profile starts a fresh
+    // adaptive decision from that newer truth and invalidates the stale
+    // pre-profile outcome without discarding any confirmed answers.
+    case 'RESTART_AI_INTERVIEW_FROM_PROFILE':
+      return {
+        ...state,
+        interviewStatus: 'active',
+        interviewComplete: false,
+        followup: null,
+        askedDimensionIds: [],
+        turnCount: 0,
+      };
+
     // Phase 16.5 — "un-apply" a confirmed AI-derived preference (the
     // remove control on the "already accounted for" list). Refuses to
     // touch anything not recorded as 'ai_interpreted' or (completion

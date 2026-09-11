@@ -286,7 +286,7 @@ describe('§39/42 FALLBACK PRESERVATION — a failed AI next-turn call flips to 
       ],
       unmapped: [],
     });
-    mockNextTurn.mockResolvedValueOnce({ status: 'error', message: 'upstream failure' });
+    mockNextTurn.mockResolvedValue({ status: 'error', message: 'upstream failure' });
 
     renderQuiz();
     submitNaturalText('أبغى دولة باردة وفيها طبيعة');
@@ -312,9 +312,11 @@ describe('§39/42 FALLBACK PRESERVATION — a failed AI next-turn call flips to 
     }
     expect(sawEliminated).toBe(false);
     expect(screen.getByText('RESULTS_PAGE')).toBeInTheDocument();
-    // The AI capability is never retried once fallback engaged (one-way
-    // switch — Section 19's "no unnecessary... requests" / no flapping).
-    expect(mockNextTurn).toHaveBeenCalledTimes(1);
+    // Applying a newer confirmed profile deliberately invalidates the
+    // pre-profile fallback and tries Capability C once from that truth.
+    // Its second real failure then remains a one-way fallback with no
+    // background flapping while the deterministic path proceeds.
+    expect(mockNextTurn).toHaveBeenCalledTimes(2);
   });
 });
 

@@ -216,6 +216,7 @@ export type AppAction =
   // and can re-enter the remaining interview via selectNextQuestion.
   | { type: 'REMOVE_AI_ANSWER'; questionId: string }
   | { type: 'SET_UNRESOLVED_PREFERENCES'; values: string[] }
+  | { type: 'RESTART_AI_INTERVIEW_FROM_PROFILE' }
   // Completion pass — bounded multi-turn orchestration. SET_PENDING_FOLLOWUP
   // offers exactly one contextual clarification (refuses if one is already
   // pending — see reducer.ts). RESOLVE_FOLLOWUP_CHOICE applies every

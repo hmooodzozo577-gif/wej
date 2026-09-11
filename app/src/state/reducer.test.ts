@@ -19,6 +19,35 @@ describe('appReducer', () => {
     expect(appReducer(state, { type: 'RESTART_ALL' }).unresolvedPreferences).toEqual([]);
   });
 
+  it('restarts Capability C from a newly confirmed natural-language profile after a stale pre-profile fallback', () => {
+    const staleFollowup = {
+      templateId: 'stale',
+      prompt: { ar: 'قديم', en: 'stale' },
+      options: [],
+      allowFreeText: true,
+      candidateDimensionIds: ['budget'],
+      questionType: 'free_text' as const,
+    };
+    const state = {
+      ...initialAppState,
+      answers: { climate: 'cold' },
+      interviewStatus: 'fallback' as const,
+      interviewComplete: true,
+      followup: staleFollowup,
+      askedDimensionIds: ['budget'],
+      turnCount: 1,
+    };
+    const next = appReducer(state, { type: 'RESTART_AI_INTERVIEW_FROM_PROFILE' });
+    expect(next).toMatchObject({
+      answers: { climate: 'cold' },
+      interviewStatus: 'active',
+      interviewComplete: false,
+      followup: null,
+      askedDimensionIds: [],
+      turnCount: 0,
+    });
+  });
+
   it('Phase 15: START_QUIZ seeds an adaptively-computed single-question path (deterministic, same purpose -> same first question every time)', () => {
     const a = appReducer(initialAppState, { type: 'START_QUIZ', purpose: 'tourism' });
     const b = appReducer({ ...initialAppState, path: ['stale'] }, { type: 'START_QUIZ', purpose: 'tourism' });
