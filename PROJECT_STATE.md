@@ -13,10 +13,10 @@ vendor-neutral pair every agent should read first.
 
 ## State Metadata
 
-- State document version: 4
+- State document version: 5
 - Last verified date: 2026-09-12
 - Last verified branch: `claude/marhaba-kxry8l`
-- Last verified code HEAD: `aef8e8743d67537c04ae733499173ee23078e013`
+- Last verified code HEAD: `9533cb02d5c8f022c313751a432b733e8027d694`
 
 **Branch and HEAD above are recovery references, not permanent
 requirements.** Always verify current Git state before starting work
@@ -66,10 +66,11 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
 - **Phase 16.5 — IMPLEMENTED — TESTED — DEPLOYED — FULL AUTOMATED PRODUCTION
   PATH VERIFIED — USER ACCEPTANCE PENDING — NOT COMPLETE.** The latest user
   test had reported a loading replacement after every answer and an eventual
-  Phase 15 question. The subsequent corrective pass restored the accepted
-  question UI, kept the answered card visible while the next AI turn loads,
-  and added one bounded retry for malformed/semantically invalid Capability C
-  output. Full incident evidence remains in `PHASE_16_5_DEBUG.md`.
+  Phase 15 question. Corrective passes now keep the answered card visible while
+  the next AI turn loads, retry one malformed/semantically invalid Capability C
+  response, and invalidate any generic turn created before the traveler confirms
+  natural-language preferences. Full incident evidence remains in
+  `PHASE_16_5_DEBUG.md`.
   - **VERIFIED on 2026-09-11:** the frontend request-context race is fixed;
     obsolete success/error/complete responses cannot mutate a changed profile
     or session. Pages deployment #65 published commit `08e6728` successfully.
@@ -81,17 +82,29 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
   - **VERIFIED LIVE:** a direct Arabic request with `climate=cold` and
     `naturecity=15` confirmed returned HTTP 200 in 4.77 seconds and generated a
     budget question without re-targeting either resolved dimension.
-  - **VERIFIED FULL PRODUCTION BROWSER PATH on 2026-09-12:** the exact Arabic
-    scenario `أبغى دولة باردة وهادئة وفيها طبيعة` mapped to
-    `climate=cold` and `naturecity=15`, completed four generated adaptive
-    choice turns, and reached the AI interview completion card. The
-    interpretation request and all four `/api/ai/next-turn` requests returned
-    HTTP 200; no Phase 15 question appeared.
-  - **VERIFIED UI:** generated choice turns reuse the accepted `q-card` /
-    radio-option / select-then-Next interaction. While a next-turn request is
-    in flight, the answered card and selected option stay visible and disabled;
-    the UI does not replace them with a loading card. AR/RTL, EN/LTR, desktop,
-    and 390px mobile layouts were checked without horizontal overflow.
+  - **VERIFIED FULL PRODUCTION BROWSER PATH on 2026-09-12 at code commit
+    `9533cb0`:** the exact Arabic scenario
+    `أبغى دولة باردة وهادئة وفيها طبيعة` produced five post-confirmation
+    questions that explicitly referenced the confirmed cold/nature context,
+    then reached the AI interview completion card with 8/8 confirmed. Every
+    interpretation/next-turn response was HTTP 200 and no Phase 15 fallback
+    question appeared. GitHub Pages run `34653930099` and Worker run
+    `34653930145` both completed successfully.
+  - **VERIFIED UI:** generated choice turns reuse the accepted `q-card` and
+    radio-option styling. Selecting an option advances immediately without a
+    Next button. While a next-turn request is in flight, the answered card and
+    selected option stay visible and disabled, with a visible inline spinner and
+    loading text. The optional natural-description card is marked `اختياري` /
+    `Optional` in the existing danger color. AR/RTL, EN/LTR, desktop, and 390px
+    mobile layouts were checked without horizontal overflow.
+  - **VERIFIED BUDGET UI:** AI still chooses and phrases the contextual budget
+    question, but the frontend renders the purpose bank's canonical approximate
+    numeric SAR ranges instead of model-authored qualitative budget labels.
+  - **VERIFIED QUESTION ORIGINALITY GUARD:** the current bank wording is sent as
+    reference metadata; the Worker prompt forbids copying it and server
+    validation rejects copied or lightly reworded bank questions before the
+    existing bounded retry. Budget is required to be a standalone target so its
+    canonical numeric ranges are always used.
   - **USER'S PRIOR FAILURE DIAGNOSTIC:** the exact HTTP status/validation
     category from the user's earlier failed session remains UNKNOWN because
     that historical browser request was not captured. Do not claim a more
@@ -161,9 +174,8 @@ Traveler
   `worker/src/ai/cloudflareWorkersAiProvider.ts`):
   `@cf/google/gemma-4-26b-a4b-it`.
 - Phase 16 Capabilities A/B: REPORTED live-verified in an earlier session;
-  Capability A additionally returned HTTP 200 in the 2026-09-11 browser
-  investigation. Capability C returned real 502/504 failures during that
-  investigation; its production path remains open (roadmap caveat above).
+  Capability A and the complete Capability C browser path returned HTTP 200 in
+  the latest production verification described above.
 - Phase 15 (`app/src/adaptive/selectNextQuestion.ts`) is the AI-failure
   fallback ONLY — `state.interviewStatus` is a one-way switch to
   `'fallback'` on any Capability-C failure (timeout/error/invalid/
@@ -316,20 +328,15 @@ Preserved, NOT cancelled — do not delete or reinterpret as blocked:
 
 ## Current Backlog / External Actions
 
-1. Publish the tested request-context guard and safe C diagnostics once
-   deployment access is available; isolate and fix the real C 502/504
-   failures using fresh evidence. Preserve NO HYBRID and current-error
-   fallback; never accept mocks as proof of production success.
-2. Fresh successful production C request and browser E2E, followed by
-   final user acceptance.
-3. Decide whether true turn-by-turn AI-interview Back/Undo is required
+1. Final user production acceptance for the current Phase 16.5 behavior.
+2. Decide whether true turn-by-turn AI-interview Back/Undo is required
    before Phase 16.5 is considered fully closed.
-4. Provision `AMADEUS_API_KEY` (Cloudflare Worker secret).
-5. Provision `AMADEUS_API_SECRET` (Cloudflare Worker secret).
-6. Implement live hotel Worker/frontend integration if desired
+3. Provision `AMADEUS_API_KEY` (Cloudflare Worker secret).
+4. Provision `AMADEUS_API_SECRET` (Cloudflare Worker secret).
+5. Implement live hotel Worker/frontend integration if desired
    (architecture ready, code is not).
-7. Enable the GitHub Actions repo setting for PR creation.
-8. 31 destination images remain review/fallback (see Destination
+6. Enable the GitHub Actions repo setting for PR creation.
+7. 31 destination images remain review/fallback (see Destination
    Images above for exact codes/reasons).
 
 Do not list the 3 cancelled items as blockers. Reconcile this list with
@@ -375,22 +382,19 @@ actually checking.
 
 - Branch: `claude/marhaba-kxry8l` (last verified — re-check, don't
   assume permanent).
-- Last verified HEAD: `c468ed3e7bac0c474826b42fcbd47d4bf9d8597d`.
+- Last verified deployed code HEAD:
+  `9533cb02d5c8f022c313751a432b733e8027d694`.
 - Pages deploys automatically on push touching `app/**`
   (`.github/workflows/deploy-pages.yml`).
 - Worker deploys automatically on push touching `worker/**`
   (`.github/workflows/deploy-worker.yml`).
 - Do not treat any specific workflow-run ID as a standing guarantee —
   always re-check current Actions runs for the CURRENT state.
-- 2026-09-11 recovery: branch/HEAD fetched and verified. Latest successful
-  Worker deploy ef0d253 and Pages deploy eee8f23 contain the same relevant
-  source/config as recovery HEAD c468ed3. The published Pages bundle
-  index-I626fm-B.js contains the expected Worker URL and /api/ai/next-turn;
-  live GET on that route returns 405 with the correct CORS origin. No
-  deployment mismatch was demonstrated by those checks.
-- Current request-context/diagnostic changes are local and uncommitted;
-  neither workflow has deployed them. See PHASE_16_5_DEBUG.md for bounded
-  reproduction evidence, verification results, and the next diagnostic step.
+- 2026-09-12: Pages run `34653930099` and Worker run `34653930145`
+  successfully deployed code commit `9533cb0`. A fresh full production browser
+  run then verified the contextual adaptive path through completion with no
+  fallback. The only remaining Phase 16.5 gates are user acceptance and the
+  Back/Undo product decision.
 
 ## Source-of-Truth Priority
 
