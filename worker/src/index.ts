@@ -274,7 +274,8 @@ export async function handleExplainRecommendation(provider: AiProvider | null, b
 
 // Phase 16.5 TRUE adaptive-interview pass — Capability C. `{status:
 // 'invalid'}` from validateNextTurnResult (a syntactically valid but
-// semantically rejected AI response) gets one bounded retry before it is
+// semantically rejected AI response) gets up to two bounded repair retries
+// before it is
 // mapped to the SAME 502 ai_provider_error contract a malformed-JSON
 // AiInvalidResponseError gets. Provider outages and timeouts are not
 // retried here; the frontend falls back to Phase 15 for those immediately.
@@ -288,7 +289,7 @@ export async function handleNextTurn(provider: AiProvider | null, body: unknown)
   }
   const req = body as NextTurnRequest;
   let invalidDiagnostic: NextTurnRetryDiagnostic = 'decision_shape';
-  for (let attempt = 0; attempt < 2; attempt += 1) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       const raw: unknown = await provider.nextTurn(req, attempt === 0 ? undefined : invalidDiagnostic);
       let diagnostic: NextTurnRetryDiagnostic = 'decision_shape';

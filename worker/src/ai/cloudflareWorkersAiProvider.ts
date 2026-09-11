@@ -113,6 +113,8 @@ function buildNextTurnJsonSchema(req: NextTurnRequest): Record<string, unknown> 
       prompt: { type: 'string' },
       options: {
         type: 'array',
+        minItems: 2,
+        maxItems: 4,
         items: {
           type: 'object',
           additionalProperties: false,

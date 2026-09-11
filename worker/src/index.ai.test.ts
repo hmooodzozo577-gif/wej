@@ -327,7 +327,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
     expect(body).toMatchObject({ status: 'ask', targetDimensions: ['climate'] });
   });
 
-  it('falls back with a safe diagnostic after two invalid AI decisions', async () => {
+  it('falls back with a safe diagnostic after three invalid AI decisions', async () => {
     let calls = 0;
     const invalidProvider: AiProvider = {
       interpretPreferences: mock.interpretPreferences,
@@ -340,8 +340,54 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
 
     const [body, status] = await handleNextTurn(invalidProvider, validNextTurnBody);
     expect(status).toBe(502);
-    expect(calls).toBe(2);
+    expect(calls).toBe(3);
     expect(body).toMatchObject({ error: 'ai_provider_error', diagnostic: 'choice_options' });
+  });
+
+  it('uses the latest safe diagnostic to repair a two-stage failure on the third attempt', async () => {
+    let calls = 0;
+    const retryDiagnostics: Array<string | undefined> = [];
+    const stagedProvider: AiProvider = {
+      interpretPreferences: mock.interpretPreferences,
+      explainRecommendation: mock.explainRecommendation,
+      nextTurn: async (_request, retryDiagnostic) => {
+        calls += 1;
+        retryDiagnostics.push(retryDiagnostic);
+        if (calls === 1) {
+          return {
+            status: 'ask',
+            questionType: 'free_text',
+            targetDimensions: ['climate'],
+            prompt: 'Do you prefer crisp winter days or gentle mild weather?',
+          };
+        }
+        if (calls === 2) {
+          return {
+            status: 'ask',
+            questionType: 'choice',
+            targetDimensions: ['climate'],
+            prompt: 'Which atmosphere would make this trip comfortable for you?',
+            options: [{ id: 'cold', label: 'Cold', updates: { climate: 'cold' } }],
+          };
+        }
+        return {
+          status: 'ask',
+          questionType: 'choice',
+          targetDimensions: ['climate'],
+          prompt: 'Which atmosphere would make this trip comfortable for you?',
+          options: [
+            { id: 'cold', label: 'Crisp days with cool evenings', updates: { climate: 'cold' } },
+            { id: 'mild', label: 'Gentle days with balanced temperatures', updates: { climate: 'mild' } },
+          ],
+        };
+      },
+    };
+
+    const [body, status] = await handleNextTurn(stagedProvider, validNextTurnBody);
+    expect(status).toBe(200);
+    expect(calls).toBe(3);
+    expect(retryDiagnostics).toEqual([undefined, 'free_text_alternatives', 'choice_options']);
+    expect(body).toMatchObject({ status: 'ask', questionType: 'choice', targetDimensions: ['climate'] });
   });
 
   it('provider timeout maps to 504 ai_timeout, no raw error/stack ever reaches the response', async () => {

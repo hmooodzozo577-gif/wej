@@ -104,7 +104,11 @@ describe('createCloudflareWorkersAiProvider — request shape', () => {
               required?: string[];
               properties?: {
                 targetDimensions?: { items?: { enum?: string[] } };
-                options?: { items?: { properties?: { updates?: { properties?: Record<string, { enum?: Array<string | number> }> } } } };
+                options?: {
+                  minItems?: number;
+                  maxItems?: number;
+                  items?: { properties?: { updates?: { properties?: Record<string, { enum?: Array<string | number> }> } } };
+                };
               };
             };
             strict?: boolean;
@@ -127,6 +131,8 @@ describe('createCloudflareWorkersAiProvider — request shape', () => {
     expect(input.response_format.json_schema.schema?.properties?.options?.items?.properties?.updates?.properties).toEqual({
       budget: { enum: [1, 2] },
     });
+    expect(input.response_format.json_schema.schema?.properties?.options?.minItems).toBe(2);
+    expect(input.response_format.json_schema.schema?.properties?.options?.maxItems).toBe(4);
     expect(input.response_format.json_schema).not.toHaveProperty('strict');
   });
 });
