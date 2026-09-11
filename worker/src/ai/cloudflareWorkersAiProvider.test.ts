@@ -84,7 +84,7 @@ describe('createCloudflareWorkersAiProvider — request shape', () => {
     expect(input.messages[0]?.content).toMatch(/English/i);
   });
 
-  it('Capability C sends the native Workers AI bare JSON Schema and disables unnecessary model thinking', async () => {
+  it('Capability C sends Gemma 4\'s ChatCompletions JSON Schema envelope and disables unnecessary model thinking', async () => {
     const run = vi.fn().mockResolvedValue(
       chatResult({ status: 'complete', questionType: 'none', targetDimensions: [], prompt: '', options: [] }),
     );
@@ -96,22 +96,20 @@ describe('createCloudflareWorkersAiProvider — request shape', () => {
         chat_template_kwargs?: { enable_thinking?: boolean };
         max_completion_tokens?: number;
         temperature?: number;
-        response_format: { json_schema: { title?: string; required?: string[]; name?: string; schema?: unknown; strict?: boolean } };
+        response_format: { json_schema: { name?: string; schema?: { required?: string[] }; strict?: boolean } };
       },
     ];
     expect(input.chat_template_kwargs).toEqual({ enable_thinking: false });
     expect(input.max_completion_tokens).toBe(512);
     expect(input.temperature).toBe(0);
-    expect(input.response_format.json_schema.title).toBe('next_turn');
-    expect(input.response_format.json_schema.required).toEqual([
+    expect(input.response_format.json_schema.name).toBe('next_turn');
+    expect(input.response_format.json_schema.schema?.required).toEqual([
       'status',
       'questionType',
       'targetDimensions',
       'prompt',
       'options',
     ]);
-    expect(input.response_format.json_schema).not.toHaveProperty('name');
-    expect(input.response_format.json_schema).not.toHaveProperty('schema');
     expect(input.response_format.json_schema).not.toHaveProperty('strict');
   });
 });

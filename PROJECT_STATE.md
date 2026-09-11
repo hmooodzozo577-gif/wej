@@ -79,18 +79,19 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
     HTTP 504 / ai_timeout after about 48s. The exact model-output or
     validation cause of the earlier 502 remains UNKNOWN; do not assume
     the timeout and 502 have the same cause.
-  - **LOCAL CHANGES, NOT DEPLOYED:** a confirmed frontend request-context
-    race is fixed and regression-tested; obsolete success/error/complete
-    responses cannot mutate the current interview. A verified adapter defect
-    is corrected locally: native Workers AI expects a bare JSON Schema, while
-    the deployed code sends the OpenAI partner-model `{name, schema}` envelope.
-    Capability C now asks for one complete response envelope with thinking
-    disabled and bounded output. Safe diagnostics distinguish output parsing
-    from semantic rejection without returning raw model/user content. These
-    changes are NOT a verified production fix until deployed and retested.
-  - GitHub push authentication and local Wrangler authentication are not
-    available in this environment. Do not confuse this deployment-access
-    limitation with the production env.AI binding being absent.
+  - **FIRST CORRECTIVE DEPLOYMENT FAILED LIVE VERIFICATION:** the confirmed
+    frontend request-context race is fixed and regression-tested; obsolete
+    success/error/complete responses cannot mutate the current interview. The
+    first Worker correction used a bare JSON Schema and production rejected it
+    immediately (502 in 0.7 seconds): Gemma 4's current Cloudflare binding is a
+    Chat Completions model and requires `{name, schema}`. The follow-up adapter
+    correction restores that model-specific envelope while retaining the new
+    complete response shape, disabled thinking, bounded output, and safe fixed
+    diagnostics. A fresh deployment and live verification are still required.
+  - GitHub authentication is now available and commit `08e6728` was pushed;
+    both Worker deployment #14 and Pages deployment #65 succeeded. Local
+    Wrangler authentication is still unavailable, but CI deployment access is
+    sufficient for this branch.
   - Turn-by-turn Back/Undo is NOT implemented for the AI-active
     interview. The edit mechanism today is: remove a confirmed
     preference (the "already accounted for" chip's × control), which

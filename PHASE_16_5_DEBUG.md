@@ -39,19 +39,18 @@ The deployed Worker intentionally collapses provider parse failures and
 semantic validation failures into the same safe 502 response. The exact 502
 category remains unknown until the local bounded diagnostics are deployed.
 
-## Local corrective work — not deployed
+## Corrective work and deployment evidence
 
 - The frontend now treats an in-flight request as belonging to one exact
   interview context. Preference confirmation, answer edits, language/purpose
   changes, or a fresh session start a current request and detach the obsolete
   subscriber. An obsolete success, failure, or completion cannot mutate the
   current interview. StrictMode reuses the identical-context promise.
-- A verified request-contract defect is corrected: native `@cf/...` Workers AI
-  bindings require `response_format.json_schema` to contain the bare JSON
-  Schema. The deployed adapter instead sends the OpenAI partner-model
-  `{ name, schema }` envelope. The initial interpretation can still happen to
-  return JSON from prompt instructions, but the schema is not being supplied in
-  the native format.
+- Gemma 4's current Cloudflare binding is generated as a Chat Completions
+  model and requires the `{ name, schema }` JSON Schema envelope. A first
+  corrective deployment used the bare-schema contract of Cloudflare's older
+  native text-generation models and production rejected it immediately (502 in
+  0.7 seconds). The adapter now follows the model-specific generated contract.
 - Capability C now requests one complete five-field JSON envelope, disables the
   model's default thinking for this short decision, limits completion output,
   and uses deterministic sampling. This targets the rapid invalid-response
@@ -61,10 +60,10 @@ category remains unknown until the local bounded diagnostics are deployed.
   `target_dimensions`, or `choice_options`. Raw provider/model content never
   leaves the Worker.
 
-The native-schema correction is verified against Cloudflare's current contract;
-whether it fully explains the observed production 502 remains unverified until
-deployment. None of these changes is a production fix until a fresh successful
-real request.
+The model-specific request contract is verified against Cloudflare's generated
+Gemma 4 type and the first corrective deployment's real response. Whether the
+unified response envelope fully fixes the original Capability C failure remains
+unverified until the follow-up deployment and a fresh successful real request.
 
 ## Verification completed locally
 

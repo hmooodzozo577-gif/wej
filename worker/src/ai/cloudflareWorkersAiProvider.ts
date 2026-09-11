@@ -60,10 +60,12 @@ export const WORKERS_AI_MODEL = '@cf/google/gemma-4-26b-a4b-it';
 // must be raised to at least match it, with margin for network time.
 const RUN_TIMEOUT_MS = 45_000;
 
-// JSON Schema (Cloudflare Workers AI native JSON Mode: response_format:
-// {type:"json_schema", json_schema:<bare JSON Schema>}) constrains what
-// shape the model MUST reply in. The OpenAI-compatible `{name, schema}`
-// envelope is for partner-model routes, not native `@cf/...` bindings.
+// JSON Schema (this model's current Cloudflare ChatCompletions contract:
+// response_format: {type:"json_schema", json_schema:{name, schema}})
+// constrains what shape the model MUST reply in. Cloudflare also exposes
+// older native text-generation models whose binding accepts a bare schema;
+// Gemma 4 is generated as ChatCompletionsInput and production rejects that
+// older shape immediately, so keep the model-specific envelope here.
 // This is a real safety layer, not
 // decoration — but per Cloudflare's own docs, it is NOT a guarantee (a
 // model can still fail to satisfy it), so validate.ts's structured-
@@ -176,24 +178,18 @@ async function runJsonCompletion(
 ): Promise<unknown> {
   let result: { choices?: Array<{ message?: { content?: string | null }; finish_reason?: string }> };
   try {
-    // The generated @cloudflare/workers-types currently models this
-    // native binding field as the OpenAI partner-model envelope. The
-    // native Workers AI runtime and Cloudflare's own adapter require a
-    // bare JSON Schema instead, so keep the type escape at this exact
-    // vendor boundary rather than weakening types throughout the Worker.
-    const runNative = ai.run as unknown as (model: string, input: Record<string, unknown>) => Promise<unknown>;
     result = (await withTimeout(
-      runNative(WORKERS_AI_MODEL, {
+      ai.run(WORKERS_AI_MODEL, {
         messages: [
           { role: 'system', content: system },
           { role: 'user', content: user },
         ],
         response_format: {
           type: 'json_schema',
-          // Native Workers AI requires the bare schema here. `title`
-          // preserves the human-readable schema name without wrapping it
-          // in the incompatible OpenAI partner-model envelope.
-          json_schema: { title: schemaName, ...schema },
+          // Semantic validation remains authoritative below, so do not
+          // request provider-level strict mode for the dynamic `updates`
+          // map (its keys are catalog dimension ids known only at runtime).
+          json_schema: { name: schemaName, schema },
         },
         ...(options?.conciseStructuredOutput
           ? {
