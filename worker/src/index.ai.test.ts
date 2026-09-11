@@ -288,6 +288,55 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
     expect((body as { error: string }).error).toBe('ai_provider_error');
   });
 
+  it('retries one semantically invalid AI decision and accepts a valid second decision before fallback', async () => {
+    let calls = 0;
+    const recoveringProvider: AiProvider = {
+      interpretPreferences: mock.interpretPreferences,
+      explainRecommendation: mock.explainRecommendation,
+      nextTurn: async () => {
+        calls += 1;
+        if (calls === 1) {
+          return {
+            status: 'ask',
+            questionType: 'choice',
+            targetDimensions: ['climate'],
+            prompt: 'Choose a climate',
+            options: [{ id: 'bad', label: 'Invented', updates: { climate: 'invented' } }],
+          };
+        }
+        return {
+          status: 'ask',
+          questionType: 'choice',
+          targetDimensions: ['climate'],
+          prompt: 'Choose a climate',
+          options: [{ id: 'cold', label: 'Cold', updates: { climate: 'cold' } }],
+        };
+      },
+    };
+
+    const [body, status] = await handleNextTurn(recoveringProvider, validNextTurnBody);
+    expect(status).toBe(200);
+    expect(calls).toBe(2);
+    expect(body).toMatchObject({ status: 'ask', targetDimensions: ['climate'] });
+  });
+
+  it('falls back with a safe diagnostic after two invalid AI decisions', async () => {
+    let calls = 0;
+    const invalidProvider: AiProvider = {
+      interpretPreferences: mock.interpretPreferences,
+      explainRecommendation: mock.explainRecommendation,
+      nextTurn: async () => {
+        calls += 1;
+        return { status: 'ask', questionType: 'choice', targetDimensions: ['climate'], prompt: 'Choose', options: [] };
+      },
+    };
+
+    const [body, status] = await handleNextTurn(invalidProvider, validNextTurnBody);
+    expect(status).toBe(502);
+    expect(calls).toBe(2);
+    expect(body).toMatchObject({ error: 'ai_provider_error', diagnostic: 'choice_options' });
+  });
+
   it('provider timeout maps to 504 ai_timeout, no raw error/stack ever reaches the response', async () => {
     const timingOutProvider: AiProvider = {
       interpretPreferences: mock.interpretPreferences,

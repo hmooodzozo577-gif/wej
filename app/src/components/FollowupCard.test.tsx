@@ -48,11 +48,31 @@ describe('FollowupCard', () => {
     expect(screen.getByText('طبيعة هادئة')).toBeInTheDocument();
   });
 
-  it('CHOICE: clicking an option dispatches RESOLVE_FOLLOWUP_CHOICE with that option id', () => {
+  it('CHOICE: reuses the accepted radio-option interaction and resolves only after Next', () => {
     const dispatchSpy = vi.fn();
     renderWith(dispatchSpy);
-    fireEvent.click(screen.getByText('طبيعة هادئة'));
+    const option = screen.getByRole('radio', { name: 'طبيعة هادئة' });
+    fireEvent.click(option);
+    expect(option).toHaveAttribute('aria-checked', 'true');
+    expect(dispatchSpy).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'RESOLVE_FOLLOWUP_CHOICE' }));
+    fireEvent.click(screen.getByRole('button', { name: 'التالي' }));
     expect(dispatchSpy).toHaveBeenCalledWith({ type: 'RESOLVE_FOLLOWUP_CHOICE', optionId: 'nature_quiet' });
+  });
+
+  it('CHOICE: preserves the current question while the next AI turn is advancing', () => {
+    function Providers({ children }: { children: ReactNode }) {
+      return <AppStateContext.Provider value={{ state: { ...initialAppState, followup }, dispatch: vi.fn() }}>{children}</AppStateContext.Provider>;
+    }
+    render(
+      <Providers>
+        <FollowupCard purposeId="tourism" followup={followup} advancing />
+      </Providers>,
+    );
+    expect(screen.getByText('أي تجربة أقرب لك؟')).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup')).toHaveAttribute('aria-busy', 'true');
+    expect(screen.getAllByRole('radio').every((option) => (option as HTMLButtonElement).disabled)).toBe(true);
+    expect(screen.getByRole('button', { name: 'التالي' })).toBeDisabled();
+    expect(document.querySelector('.ai-turn-loading')).toBeNull();
   });
 
   it('SKIP dispatches DISMISS_FOLLOWUP', () => {

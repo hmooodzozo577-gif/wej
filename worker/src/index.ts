@@ -273,10 +273,10 @@ export async function handleExplainRecommendation(provider: AiProvider | null, b
 
 // Phase 16.5 TRUE adaptive-interview pass — Capability C. `{status:
 // 'invalid'}` from validateNextTurnResult (a syntactically valid but
-// semantically rejected AI response) is mapped to the SAME 502
-// ai_provider_error contract a malformed-JSON AiInvalidResponseError
-// gets — the frontend already knows how to treat that as "unavailable,
-// fall back to Phase 15", so no new error shape reaches it.
+// semantically rejected AI response) gets one bounded retry before it is
+// mapped to the SAME 502 ai_provider_error contract a malformed-JSON
+// AiInvalidResponseError gets. Provider outages and timeouts are not
+// retried here; the frontend falls back to Phase 15 for those immediately.
 export async function handleNextTurn(provider: AiProvider | null, body: unknown): Promise<[body: unknown, status: number]> {
   const fieldErrors = validateNextTurnRequest(body);
   if (fieldErrors.length > 0) {
@@ -286,20 +286,23 @@ export async function handleNextTurn(provider: AiProvider | null, body: unknown)
     return [{ error: 'ai_not_configured', message: 'The adaptive interview is not available yet.' }, 503];
   }
   const req = body as NextTurnRequest;
-  try {
-    const raw: unknown = await provider.nextTurn(req);
-    let diagnostic = 'decision_shape';
-    const result = validateNextTurnResult(raw, req, (reason) => { diagnostic = reason; });
-    if (result.status === 'invalid') {
-      return [{ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.', diagnostic }, 502];
+  let invalidDiagnostic = 'decision_shape';
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const raw: unknown = await provider.nextTurn(req);
+      let diagnostic = 'decision_shape';
+      const result = validateNextTurnResult(raw, req, (reason) => { diagnostic = reason; });
+      if (result.status !== 'invalid') return [result, 200];
+      invalidDiagnostic = diagnostic;
+    } catch (err) {
+      if (err instanceof AiInvalidResponseError) {
+        invalidDiagnostic = err.diagnostic;
+      } else {
+        return mapAiErrorToResponseArgs(err);
+      }
     }
-    return [result, 200];
-  } catch (err) {
-    if (err instanceof AiInvalidResponseError) {
-      return [{ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.', diagnostic: err.diagnostic }, 502];
-    }
-    return mapAiErrorToResponseArgs(err);
   }
+  return [{ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.', diagnostic: invalidDiagnostic }, 502];
 }
 
 async function handleNextTurnRoute(request: Request, env: Env, origin: string | null): Promise<Response> {

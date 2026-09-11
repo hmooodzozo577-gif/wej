@@ -33,6 +33,7 @@ import { isAiConfigured } from '../ai/aiService';
 import { buildLocationContext } from '../ai/buildLocationContext';
 import { buildTravelProfile } from '../profile/travelProfile';
 import { summarizeAnswer } from '../data/summaryMeta';
+import type { PendingFollowup } from '../state/types';
 
 function isPurposeId(value: string | undefined): value is PurposeId {
   return !!value && Object.prototype.hasOwnProperty.call(QUESTION_BANKS, value);
@@ -44,6 +45,11 @@ export function Quiz() {
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
   const [validation, setValidation] = useState('');
+  const [advancingFollowup, setAdvancingFollowup] = useState<{
+    purposeId: PurposeId;
+    turnCount: number;
+    followup: PendingFollowup;
+  } | null>(null);
 
   const validPurpose = isPurposeId(purposeParam);
   // True once SYNC_QUIZ_PURPOSE's effect (below) has landed — before that,
@@ -128,6 +134,13 @@ export function Quiz() {
       // Section 32 — persistent summaries always come from the canonical
       // summaryMeta, never the AI turn's own transient prompt/option text.
       .map((f) => ({ id: f.questionId, label: summarizeAnswer(purposeParam, f.questionId, f.value!, lang) }));
+    const followupWhileAdvancing =
+      !state.followup &&
+      advancingFollowup?.purposeId === purposeParam &&
+      advancingFollowup.turnCount === state.turnCount
+        ? advancingFollowup.followup
+        : null;
+    const visibleFollowup = state.followup ?? followupWhileAdvancing;
 
     return (
       <div className="quiz-wrap">
@@ -170,18 +183,16 @@ export function Quiz() {
               </button>
             </div>
           </div>
-        ) : state.followup ? (
-          // Keyed per turn (templateId is unique per AI turn — see
-          // toPendingFollowup) so React actually remounts this element
-          // when one generated question replaces another, retriggering
-          // the CSS entrance animation instead of silently no-opping on
-          // an unchanged DOM node (see wejhaty.css's own .ai-turn-card
-          // comment for the emil-design-eng rationale).
-          <div key={state.followup.templateId} className="ai-turn-card">
-            <FollowupCard purposeId={purposeParam} followup={state.followup} />
-          </div>
+        ) : visibleFollowup ? (
+          <FollowupCard
+            key={visibleFollowup.templateId}
+            purposeId={purposeParam}
+            followup={visibleFollowup}
+            advancing={!state.followup}
+            onAdvanceStart={(followup) => setAdvancingFollowup({ purposeId: purposeParam, turnCount: state.turnCount, followup })}
+          />
         ) : (
-          <div key="loading" className="ai-turn-card ai-turn-loading" aria-live="polite">
+          <div className="q-card ai-turn-loading" aria-live="polite">
             {t.ai.turn.loading}
           </div>
         )}

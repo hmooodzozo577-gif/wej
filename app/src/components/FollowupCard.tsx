@@ -1,13 +1,13 @@
 // Phase 16.5 completion pass — renders the one currently pending
 // contextual follow-up (see adaptive/followupTemplates.ts and
 // state/types.ts's PendingFollowup doc comment for the full
-// architecture). Hybrid interaction: a bounded CHOICE (the template's
-// own pre-authored, canonical-value-mapped options) plus an optional
-// SHORT FREE-TEXT escape hatch, scoped to only this follow-up's
-// candidate dimensions and gated by the same AI call budget the main
-// NaturalPreferenceInput card uses.
+// architecture). The normal path renders the AI-generated question in
+// the same accepted card/option controls as the deterministic interview.
+// Any free-text interpretation remains scoped to this turn's candidate
+// dimensions and to the same AI call budget as NaturalPreferenceInput.
 import { useState } from 'react';
 import { useAppState, useI18n } from '../state/hooks';
+import { Icon } from './Icon';
 import { interpretPreferences, MAX_AI_CALLS_PER_INTERVIEW } from '../ai/aiService';
 import { mapQuestionsForAi } from '../ai/mapQuestionsForAi';
 import { QUESTION_BANKS } from '../data/questionBanks';
@@ -16,7 +16,17 @@ import type { PendingFollowup } from '../state/types';
 
 const FREE_TEXT_MAX_LENGTH = 120;
 
-export function FollowupCard({ purposeId, followup }: { purposeId: PurposeId; followup: PendingFollowup }) {
+export function FollowupCard({
+  purposeId,
+  followup,
+  advancing = false,
+  onAdvanceStart,
+}: {
+  purposeId: PurposeId;
+  followup: PendingFollowup;
+  advancing?: boolean;
+  onAdvanceStart?: (followup: PendingFollowup) => void;
+}) {
   const { lang, t } = useI18n();
   const { state, dispatch } = useAppState();
   const fu = t.ai.followup;
@@ -24,20 +34,36 @@ export function FollowupCard({ purposeId, followup }: { purposeId: PurposeId; fo
   const [showFreeText, setShowFreeText] = useState(false);
   const [freeText, setFreeText] = useState('');
   const [freeTextStatus, setFreeTextStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
+  const [validation, setValidation] = useState('');
 
   const aiCallsExhausted = state.aiCallsUsed >= MAX_AI_CALLS_PER_INTERVIEW;
 
   function choose(optionId: string) {
-    dispatch({ type: 'RESOLVE_FOLLOWUP_CHOICE', optionId });
+    if (advancing) return;
+    setSelectedOptionId(optionId);
+    setValidation('');
+  }
+
+  function confirmChoice() {
+    if (advancing) return;
+    if (!selectedOptionId) {
+      setValidation(t.quiz.validation);
+      return;
+    }
+    onAdvanceStart?.(followup);
+    dispatch({ type: 'RESOLVE_FOLLOWUP_CHOICE', optionId: selectedOptionId });
   }
 
   function skip() {
+    if (advancing) return;
+    onAdvanceStart?.(followup);
     dispatch({ type: 'DISMISS_FOLLOWUP' });
   }
 
   async function submitFreeText() {
     const trimmed = freeText.trim();
-    if (trimmed.length === 0 || freeTextStatus === 'loading' || aiCallsExhausted) return;
+    if (trimmed.length === 0 || freeTextStatus === 'loading' || aiCallsExhausted || advancing) return;
     setFreeTextStatus('loading');
     dispatch({ type: 'INCREMENT_AI_CALLS' });
     // Bounded: only the candidate questions THIS follow-up named — never
@@ -46,6 +72,7 @@ export function FollowupCard({ purposeId, followup }: { purposeId: PurposeId; fo
     const candidateQuestions = QUESTION_BANKS[purposeId].filter((q) => followup.candidateDimensionIds.includes(q.id));
     const result = await interpretPreferences(lang, trimmed, mapQuestionsForAi(candidateQuestions, lang));
     if (result.status === 'ok' && result.interpreted.length > 0) {
+      onAdvanceStart?.(followup);
       for (const item of result.interpreted) {
         if (item.confidence === 'low') continue; // same confidence rule as the main card
         dispatch({ type: 'SET_ANSWER', questionId: item.questionId, value: item.value, provenance: 'ai_followup', confidence: item.confidence });
@@ -65,31 +92,56 @@ export function FollowupCard({ purposeId, followup }: { purposeId: PurposeId; fo
   // adaptive/useAdaptiveInterview.ts's toPendingFollowup).
   const isFreeTextPrimary = followup.questionType === 'free_text';
 
+  let optsClass = 'q-options';
+  if (followup.options.length <= 2) optsClass += ' single-col';
+  else if (followup.options.length === 3) optsClass += ' cols-3';
+
   return (
-    <div className="ai-followup-card">
-      <p className="ai-followup-prompt">{followup.prompt[lang]}</p>
-      {followup.options.length > 0 && (
-        <div className="ai-followup-options">
-          {followup.options.map((opt) => (
-            <button key={opt.id} type="button" className="btn btn-ghost btn-sm ai-followup-option" onClick={() => choose(opt.id)}>
-              {opt.label[lang]}
-            </button>
-          ))}
-        </div>
-      )}
+    <>
+      <div
+        className="q-card"
+        role={followup.options.length > 0 ? 'radiogroup' : undefined}
+        aria-label={followup.prompt[lang]}
+        aria-busy={advancing || freeTextStatus === 'loading'}
+      >
+        <div className="q-eyebrow">{t.purposes[purposeId].n}</div>
+        <h2 className="q-text">{followup.prompt[lang]}</h2>
+        {followup.options.length > 0 && (
+          <div className={optsClass}>
+            {followup.options.map((opt) => {
+              const selected = opt.id === selectedOptionId;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  className={`q-option${selected ? ' selected' : ''}`}
+                  role="radio"
+                  aria-checked={selected}
+                  disabled={advancing}
+                  onClick={() => choose(opt.id)}
+                >
+                  <span className="radio" />
+                  <span className="opt-text">
+                    <span className="opt-label">{opt.label[lang]}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
-      {followup.allowFreeText && !isFreeTextPrimary && !showFreeText && (
-        <button type="button" className="btn btn-ghost btn-sm" onClick={() => setShowFreeText(true)}>
-          {fu.freeTextToggle}
-        </button>
-      )}
+        {followup.allowFreeText && !isFreeTextPrimary && !showFreeText && (
+          <button type="button" className="btn btn-ghost btn-sm ai-followup-toggle" onClick={() => setShowFreeText(true)} disabled={advancing}>
+            {fu.freeTextToggle}
+          </button>
+        )}
 
-      {(isFreeTextPrimary || showFreeText) && (
-        <div className="ai-followup-freetext">
-          <textarea
-            className="ai-interpret-textarea"
-            value={freeText}
-            onChange={(e) => setFreeText(e.target.value)}
+        {(isFreeTextPrimary || showFreeText) && (
+          <div className="ai-followup-freetext">
+            <textarea
+              className="ai-interpret-textarea"
+              value={freeText}
+              onChange={(e) => setFreeText(e.target.value)}
             // impeccable critique finding: the OLD placeholder/aria-label
             // pair was authored for the quietness template's escape
             // hatch specifically ("places without a lot of people…" /
@@ -98,34 +150,46 @@ export function FollowupCard({ purposeId, followup }: { purposeId: PurposeId; fo
             // cultural novelty), both read as mismatched — a generic
             // placeholder and the turn's own prompt as the accessible
             // name fit any topic instead.
-            placeholder={isFreeTextPrimary ? fu.aiPromptPlaceholder : fu.freeTextPlaceholder}
-            maxLength={FREE_TEXT_MAX_LENGTH}
-            rows={2}
-            aria-label={isFreeTextPrimary ? followup.prompt[lang] : fu.freeTextToggle}
-          />
-          {freeTextStatus === 'error' && (
-            <p className="ai-interpret-note" aria-live="polite">
-              {fu.freeTextError}
-            </p>
-          )}
-          <div className="ai-interpret-actions">
-            <button
-              type="button"
-              className="btn btn-primary btn-sm"
-              onClick={submitFreeText}
-              disabled={freeText.trim().length === 0 || freeTextStatus === 'loading' || aiCallsExhausted}
-            >
-              {freeTextStatus === 'loading' ? fu.freeTextLoading : fu.freeTextSubmit}
-            </button>
+              placeholder={isFreeTextPrimary ? fu.aiPromptPlaceholder : fu.freeTextPlaceholder}
+              maxLength={FREE_TEXT_MAX_LENGTH}
+              rows={2}
+              aria-label={isFreeTextPrimary ? followup.prompt[lang] : fu.freeTextToggle}
+              disabled={advancing}
+            />
+            {freeTextStatus === 'error' && (
+              <p className="ai-interpret-note" aria-live="polite">
+                {fu.freeTextError}
+              </p>
+            )}
+            <div className="ai-interpret-actions">
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={submitFreeText}
+                disabled={freeText.trim().length === 0 || freeTextStatus === 'loading' || aiCallsExhausted || advancing}
+              >
+                {freeTextStatus === 'loading' ? fu.freeTextLoading : fu.freeTextSubmit}
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="ai-interpret-actions">
-        <button type="button" className="btn btn-ghost btn-sm" onClick={skip}>
+        <div className="quiz-validation" aria-live="polite">
+          {validation}
+        </div>
+        {advancing && <span className="visually-hidden" aria-live="polite">{t.ai.turn.loading}</span>}
+      </div>
+
+      <div className="quiz-nav">
+        <button type="button" className="btn btn-ghost" onClick={skip} disabled={advancing}>
           {fu.skip}
         </button>
+        {!isFreeTextPrimary && (
+          <button type="button" className="btn btn-primary" onClick={confirmChoice} disabled={advancing}>
+            {t.quiz.next} <Icon name="arrowEnd" size={16} />
+          </button>
+        )}
       </div>
-    </div>
+    </>
   );
 }

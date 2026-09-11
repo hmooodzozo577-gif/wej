@@ -491,59 +491,11 @@
 .ai-satisfied-remove:hover {
   color: inherit;
 }
-/* Phase 16.5 completion pass — the bounded contextual follow-up card
-   (FollowupCard.tsx). Reuses the same visual language as the proposals/
-   satisfied-list blocks above (one coherent interview). */
-.ai-followup-card {
-  margin-top: 14px;
-  border-top: 1px solid var(--line);
-  padding-top: 12px;
-}
-.ai-followup-prompt {
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin: 0 0 10px;
-}
-.ai-followup-options {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-.ai-followup-option {
-  text-align: start;
-  white-space: normal;
-}
-.ai-followup-option:active {
-  transform: scale(0.97);
-}
 .ai-followup-freetext {
-  margin-top: 8px;
+  margin-top: 12px;
 }
-/* Phase 16.5 TRUE adaptive-interview pass — emil-design-eng review: one
-   AI-generated question replacing another (or the loading state
-   appearing) is an "occasional" transition (a handful of times per
-   interview, never a keyboard-repeated action) with a real purpose —
-   preventing the content swap from reading as broken/jarring. Kept
-   short (220ms, within the 150-250ms "dropdowns/selects" band) and a
-   real custom ease-out, not the weak CSS default. Quiz.tsx keys this
-   element per turn so React actually remounts it, retriggering the
-   animation each turn — a keyframe (not a transition) is correct here
-   since this is a discrete entrance, never a rapidly-interrupted
-   gesture. Respects prefers-reduced-motion via this file's existing
-   global rule (animation-duration forced to ~0). */
-.ai-turn-card {
-  animation: aiTurnEnter 220ms cubic-bezier(0.23, 1, 0.32, 1);
-}
-@keyframes aiTurnEnter {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.ai-followup-toggle {
+  margin-top: 12px;
 }
 .ai-badge {
   display: inline-block;

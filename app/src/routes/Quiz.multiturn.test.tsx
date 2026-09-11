@@ -52,6 +52,40 @@ function submitNaturalText(text: string) {
 const complete: NextTurnServiceResult = { status: 'ok', outcome: { kind: 'complete' } };
 
 describe('§35/40 SCENARIO A — "أبغى دولة باردة وهادئة وفيها طبيعة": AI generates the follow-up, never the fixed quietness template', () => {
+  it('keeps the answered question visible and disabled while the next AI turn is pending', async () => {
+    let resolveNext!: (result: NextTurnServiceResult) => void;
+    const pendingNext = new Promise<NextTurnServiceResult>((resolve) => { resolveNext = resolve; });
+    mockNextTurn
+      .mockResolvedValueOnce({
+        status: 'ok',
+        outcome: {
+          kind: 'ask',
+          questionType: 'choice',
+          targetDimensions: ['budget'],
+          prompt: 'ما مستوى الميزانية المناسب لك؟',
+          options: [
+            { id: 'budget_low', label: 'اقتصادية', updates: { budget: 1 } },
+            { id: 'budget_high', label: 'مرنة', updates: { budget: 4 } },
+          ],
+        },
+      })
+      .mockReturnValueOnce(pendingNext);
+
+    renderQuiz();
+    await waitFor(() => expect(screen.getByText('ما مستوى الميزانية المناسب لك؟')).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('radio', { name: 'اقتصادية' }));
+    fireEvent.click(screen.getByRole('button', { name: /التالي/ }));
+
+    await waitFor(() => expect(mockNextTurn).toHaveBeenCalledTimes(2));
+    expect(screen.getByText('ما مستوى الميزانية المناسب لك؟')).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup')).toHaveAttribute('aria-busy', 'true');
+    expect(screen.getAllByRole('radio').every((option) => (option as HTMLButtonElement).disabled)).toBe(true);
+    expect(document.querySelector('.ai-turn-loading')).toBeNull();
+
+    resolveNext(complete);
+    await waitFor(() => expect(screen.getByText(/لدينا معلومات كافية/)).toBeInTheDocument());
+  });
+
   it('a GENERATED (not verbatim questionBanks.ts) choice question is asked next, resolves nightlife, then the interview completes', async () => {
     // Call #1 fires immediately on mount (empty profile — the AI-driven
     // loop runs even before the traveler ever touches the optional
@@ -84,6 +118,8 @@ describe('§35/40 SCENARIO A — "أبغى دولة باردة وهادئة وف
 
     renderQuiz();
     await waitFor(() => expect(screen.getByText('كيف تشوف أمسياتك في الوجهة المثالية لك؟')).toBeInTheDocument());
+    expect(document.querySelector('.q-card')).not.toBeNull();
+    expect(screen.getAllByRole('radio').length).toBeGreaterThan(0);
     // Never the OLD deterministic template's fixed wording.
     expect(screen.queryByText(/أي تجربة أقرب لك؟/)).toBeNull();
     // Never the bank's own verbatim nightlife question text either.
@@ -98,6 +134,7 @@ describe('§35/40 SCENARIO A — "أبغى دولة باردة وهادئة وف
     await waitFor(() => expect(screen.queryByText(/هذا ما فهمناه من رحلتك/)).toBeNull());
 
     fireEvent.click(screen.getByText('أمسيات هادئة بعيدة عن الصخب'));
+    fireEvent.click(screen.getByRole('button', { name: /التالي/ }));
     await waitFor(() => expect(screen.queryByText('كيف تشوف أمسياتك في الوجهة المثالية لك؟')).toBeNull());
 
     // DUPLICATE PREVENTION: the SECOND call's catalog already marks
@@ -144,6 +181,7 @@ describe('§37 MULTI-DIMENSION — one AI-generated choice resolves two supporte
 
     await waitFor(() => expect(screen.getByText('صف يومك المثالي في الرحلة؟')).toBeInTheDocument());
     fireEvent.click(screen.getByText('نزهة هادئة وسط الطبيعة'));
+    fireEvent.click(screen.getByRole('button', { name: /التالي/ }));
 
     await waitFor(() => expect(screen.getByText(/لدينا معلومات كافية/)).toBeInTheDocument());
     // Both dimensions resolved from the ONE click — both appear in the
