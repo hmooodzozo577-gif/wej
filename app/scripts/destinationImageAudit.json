@@ -1,9 +1,10 @@
 {
-  "reviewedAt": "2026-09-12",
+  "reviewedAt": "2026-09-13",
   "criteria": [
     "Depicts an in-country landmark, notable cityscape, nationally important site, or representative natural landscape",
     "No maps, flags, diagrams, documents, random objects, foreign homonyms, or unrelated people/events",
     "Landscape crop is usable in the destination hero",
+    "Card crop and hero crop were separately rendered and visually reviewed; focal-point overrides are recorded for exceptions",
     "Commons license and attribution metadata are present"
   ],
   "coverage": 194,

@@ -12,6 +12,11 @@ const base = arJson as I18nDict;
 
 export const AR: I18nDict = {
   ...base,
+  results: {
+    ...base.results,
+    proximityTieBreak: 'عند تساوي نسبة التوافق، قُدّمت الوجهة الأقرب إلى موقعك التقريبي.',
+    recommendationMethodNote: 'نسبة التوافق تقديرية ومحسوبة من إجاباتك ومؤشرات دولية موثقة؛ بعض القيم الناقصة تُعوّض بوسيط البيانات ولا تمثل ضمانًا لتجربة السفر.',
+  },
   quiz: {
     ...base.quiz,
     checkpointTitle: 'يمكنك رؤية نتيجتك الآن',
@@ -29,7 +34,7 @@ export const AR: I18nDict = {
     ...base.detail,
     capital: 'العاصمة',
     notRecommendationReady:
-      'لا تتوفر بعد بيانات كافية لتضمين هذه الوجهة في محرك التوصيات — ستُضاف في مرحلة قادمة.',
+      'تتوفر لهذه الوجهة معلومات الدولة الأساسية والمؤشرات المستخدمة في التوصيات.',
     countryInfo: 'معلومات الدولة',
     officialName: 'الاسم الرسمي',
     area: 'المساحة',

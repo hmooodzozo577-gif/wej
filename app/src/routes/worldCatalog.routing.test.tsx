@@ -1,6 +1,6 @@
 // Phase 10 — F. Routing: /destination/:id must keep working for the
 // original 30 destinations exactly as before, and must not crash for any
-// of the 165 new basic countries or for an unknown id.
+// country without an editorial profile or for an unknown id.
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -50,12 +50,15 @@ describe('Phase 10 — F. destination routing', () => {
   );
 
   it('a new basic-country route renders a graceful state, not a crash (e.g. Egypt)', () => {
-    renderAt('/destination/eg');
+    const { container } = renderAt('/destination/eg');
     expect(screen.getByText('مصر')).toBeInTheDocument();
+    expect(container.textContent).toContain('مصر دولة تقع في أفريقيا');
+    expect(container.textContent).not.toContain('لا تتوفر بيانات كافية');
+    expect(container.textContent).not.toContain('لا تتوفر بعد بيانات كافية');
   });
 
   it(
-    'every one of the 165 basic countries opens without crashing',
+    'every country without an editorial profile opens without crashing',
     () => {
       for (const c of BASIC_COUNTRIES) {
         const { unmount } = renderAt(`/destination/${c.id}`);

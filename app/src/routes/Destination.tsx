@@ -1,10 +1,9 @@
 // Ports renderDetail() from wejhaty.html.
 //
-// Phase 10: looks up the id in the full WORLD_CATALOG (195) instead of just
-// DESTINATIONS (30). The 30 existing destinations render through the exact
-// same code path as before (untouched). A basic country (one of the 165)
-// renders a smaller, honest detail view — flag, name, continent, capital —
-// instead of fabricating an overview/strengths/cost/etc. it doesn't have.
+// Looks up the id in the full effective WORLD_CATALOG (194 after the explicit
+// IL exclusion). The original 30 destinations retain their editorial cards;
+// every other country gets a factual overview assembled from sourced catalog
+// and country-information fields plus its worldwide recommendation profile.
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
@@ -36,6 +35,7 @@ import { TourismInsights } from '../components/TourismInsights';
 import { TravelInfo } from '../components/TravelInfo';
 import { regionGradientCss } from '../components/regionGradient';
 import { buildWhyText } from '../engine';
+import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
 
 // Same 7-purpose "best suited for" ranking as the original (excludes "other").
 const PURPOSE_SCORE_KEYS: [PurposeId, keyof DestinationType][] = [
@@ -152,6 +152,37 @@ function OptionalPlanningInfo({
   );
 }
 
+function basicOverview(
+  destination: CatalogEntry,
+  info: CountryInfo | undefined,
+  continentLabel: string,
+  lang: Lang,
+): string {
+  const name = nameOf(destination, lang);
+  const capital = destination.recommendationReady ? undefined : destination.capitalEn;
+  const area = info?.areaKm2 ? info.areaKm2.toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-US') : undefined;
+  const currencies = info?.currencies.map((currency) => currency.name).join(lang === 'ar' ? '، ' : ', ');
+  const languages = info?.languagesEn.join(lang === 'ar' ? '، ' : ', ');
+
+  if (lang === 'ar') {
+    return [
+      `${name} دولة تقع في ${continentLabel}.`,
+      capital ? `عاصمتها ${capital}.` : '',
+      area ? `تبلغ مساحتها نحو ${area} كم².` : '',
+      currencies ? `عملتها: ${currencies}.` : '',
+      languages ? `ومن لغاتها الرسمية: ${languages}.` : '',
+    ].filter(Boolean).join(' ');
+  }
+
+  return [
+    `${name} is a country in ${continentLabel}.`,
+    capital ? `Its capital is ${capital}.` : '',
+    area ? `It covers about ${area} km².` : '',
+    currencies ? `Its currency is ${currencies}.` : '',
+    languages ? `Its official languages include ${languages}.` : '',
+  ].filter(Boolean).join(' ');
+}
+
 export function Destination() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -173,14 +204,19 @@ export function Destination() {
   const continent = continentOf(d);
   const info = countryInfoOf(d.id);
   const borders = resolvedBordersOf(d.id);
+  const profile = RECOMMENDATION_PROFILE_BY_CODE.get(d.countryCode);
+  const fromResults = !!(routeState?.fromResults && state.results);
+  const resultItem = fromResults ? state.results!.find((result) => result.dest.id === d.id) : undefined;
+  const matchScore = resultItem?.score ?? null;
+  const why = resultItem && state.purpose ? buildWhyText(lang, state.purpose, resultItem.reasons, d) : null;
 
-  const goBackBasic = () => navigate('/explore');
+  const goBackBasic = () => navigate(fromResults ? '/results' : '/explore');
   const startAgain = () => {
     dispatch({ type: 'RESTART_ALL' });
     navigate('/purpose');
   };
 
-  // --- Basic country (not yet recommendation-ready): graceful, honest state ---
+  // --- Country without the original editorial profile: sourced factual state ---
   if (!d.recommendationReady) {
     return (
       <div className="detail-wrap">
@@ -200,7 +236,7 @@ export function Destination() {
             subContent={t.regionLabels[continent]}
             rightContent={
               <div className="detail-match" style={{ background: 'rgba(255,255,255,0.16)', color: '#fff' }}>
-                {dt.browse}
+                {matchScore !== null ? `${matchScore}% ${t.results.match}` : dt.browse}
               </div>
             }
           />
@@ -237,7 +273,15 @@ export function Destination() {
                 <h3>
                   <Icon name="info" size={18} /> {dt.overview}
                 </h3>
-                <p>{dt.notRecommendationReady}</p>
+                <p>{basicOverview(d, info, t.regionLabels[continent], lang)}</p>
+                {why ? <p>{why}</p> : null}
+                {profile ? (
+                  <div className="info-grid">
+                    <div className="info-item"><div className="label">{t.results.cost}</div><div className="value">{costLabel(t.costLevels, profile.costLevel)}</div></div>
+                    <div className="info-item"><div className="label">{t.results.climate}</div><div className="value">{t.climateLabels[profile.climate]}</div></div>
+                    <div className="info-item"><div className="label">{lang === 'ar' ? 'تغطية البيانات المباشرة' : 'Direct data coverage'}</div><div className="value">{profile.dataCoverage}%</div></div>
+                  </div>
+                ) : null}
               </div>
 
               <OptionalPlanningInfo destination={d} dt={dt} />
@@ -249,19 +293,6 @@ export function Destination() {
   }
 
   // --- Full destination: unchanged from before Phase 10 ---
-  const fromResultsFlag = routeState?.fromResults;
-  const fromResults = !!(fromResultsFlag && state.results);
-
-  let matchScore: number | null = null;
-  let why: string | null = null;
-  if (fromResults) {
-    const item = state.results!.find((r) => r.dest.id === d.id);
-    if (item) {
-      matchScore = item.score;
-      why = buildWhyText(lang, state.purpose!, item.reasons, d);
-    }
-  }
-
   const cities = citiesOf(d, lang).join(' · ');
   const bestFor = [...PURPOSE_SCORE_KEYS]
     .sort((a, b) => (d[b[1]] as number) - (d[a[1]] as number))

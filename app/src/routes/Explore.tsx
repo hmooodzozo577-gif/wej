@@ -11,23 +11,14 @@ import { useAppState, useI18n } from '../state/hooks';
 import { costLabel } from '../data/destinationText';
 import { PURPOSES } from '../data/purposes';
 import { WORLD_CATALOG, continentOf } from '../data/worldCatalog';
-import type { CatalogEntry, Continent, Destination } from '../data/types';
+import type { CatalogEntry, Continent } from '../data/types';
+import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
 import { DestinationCard } from '../components/DestinationCard';
 import { LocationPersonalize } from '../components/LocationPersonalize';
 import { Icon } from '../components/Icon';
 import type { ExploreFilters } from '../state/types';
 
 const CONTINENTS: Continent[] = ['Africa', 'Asia', 'Europe', 'MiddleEast', 'NAmerica', 'SouthAmerica', 'Oceania'];
-
-const PURPOSE_SCORE_KEY: Record<string, keyof Destination> = {
-  tourism: 'pTourism',
-  work: 'pWork',
-  education: 'pEdu',
-  medical: 'pMed',
-  immigration: 'pImmi',
-  investment: 'pInvest',
-  wellness: 'pWellness',
-};
 
 function searchHaystack(d: CatalogEntry): string {
   const parts = [d.nameEn, d.nameAr];
@@ -47,14 +38,12 @@ function filteredCatalog(f: ExploreFilters): CatalogEntry[] {
     // Cost and purpose filters only apply to recommendation-ready entries —
     // a basic country has neither field, so it's excluded rather than
     // silently shown as a false match.
-    if (f.cost) {
-      if (!d.recommendationReady) return false;
-      if (String(d.costLevel) !== f.cost) return false;
-    }
+    if (f.cost && String(RECOMMENDATION_PROFILE_BY_CODE.get(d.countryCode)?.costLevel) !== f.cost) return false;
     if (f.purpose) {
-      if (!d.recommendationReady) return false;
-      const key = PURPOSE_SCORE_KEY[f.purpose];
-      if (key && (d[key] as number) < 65) return false;
+      const profile = RECOMMENDATION_PROFILE_BY_CODE.get(d.countryCode);
+      if (!profile) return false;
+      const profileKey = f.purpose === 'work' ? 'opportunity' : f.purpose === 'education' ? 'education' : f.purpose === 'medical' ? 'health' : f.purpose === 'investment' ? 'investment' : 'popularity';
+      if (profile[profileKey] < 55) return false;
     }
     return true;
   });

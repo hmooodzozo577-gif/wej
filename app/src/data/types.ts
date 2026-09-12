@@ -104,19 +104,19 @@ export type NumericDestinationKey = {
   [K in keyof Destination]: Destination[K] extends number ? K : never;
 }[keyof Destination];
 
-// --- Phase 10: the 165 additional countries --------------------------------
-// Deliberately NOT given costLevel/safety/climate/etc: they have no
-// recommendation-engine data yet (a later phase's job), and inventing scores
-// here would be fabricated data. `recommendationReady: false` makes that
-// distinction explicit and lets Explorer/Detail branch safely instead of
-// crashing on missing fields.
+// --- Countries without the original editorial profile ---------------------
+// These entries deliberately remain separate from the richer Destination
+// type. Worldwide ranking data lives in RecommendationProfile below;
+// `recommendationReady: false` now means only that hand-written descriptions,
+// strengths, weaknesses, and cities have not been supplied for this entry.
 export interface BasicCountry extends CountryBase {
   recommendationReady: false;
 }
 
-/** One entry in the unified worldwide catalog — either a full, scoreable
- *  destination (the original 30) or a basic country (Phase 10's 165). Narrow
- *  with `entry.recommendationReady` before accessing recommendation fields. */
+/** One entry in the unified worldwide catalog — either a full editorial
+ *  destination or a basic country. Narrow with `entry.recommendationReady`
+ *  before accessing editorial Destination fields. Both variants are ranked
+ *  through RecommendationProfile. */
 export type CatalogEntry = Destination | BasicCountry;
 
 // --- Phase 11 Step 1: build-time Country Information -----------------------
@@ -234,9 +234,62 @@ export interface Question {
   scale?: number;
   text: LocalizedText;
   options: QuestionOption[];
+  /** Canonical worldwide recommendation attribute. New branch variants may
+   * use different wording/options while resolving the same dimension. */
+  profileKey?: RecommendationProfileKey;
+  /** Explicit next node for each option. Keys are String(option.value). */
+  nextByValue?: Record<string, string>;
+  /** Makes this node eligible only after the matching parent answer. */
+  parent?: { questionId: string; values: Array<string | number> };
 }
 
 export type QuestionBanks = Record<PurposeId, Question[]>;
+
+export type RecommendationProfileKey =
+  | 'region'
+  | 'subregion'
+  | 'climate'
+  | 'costLevel'
+  | 'coastal'
+  | 'island'
+  | 'urbanity'
+  | 'popularity'
+  | 'size'
+  | 'income'
+  | 'opportunity'
+  | 'health'
+  | 'education'
+  | 'investment'
+  | 'growth'
+  | 'safety'
+  | 'latitudeZone'
+  | 'longitudeZone';
+
+export interface RecommendationProfile {
+  countryCode: string;
+  region: Continent;
+  subregion: string;
+  climate: ClimateKind;
+  costLevel: number;
+  coastal: number;
+  island: number;
+  urbanity: number;
+  popularity: number;
+  size: number;
+  income: number;
+  opportunity: number;
+  health: number;
+  education: number;
+  investment: number;
+  growth: number;
+  safety: number;
+  latitudeZone: number;
+  longitudeZone: number;
+  /** Percentage of numeric inputs observed directly; the rest are median
+   * imputations recorded here so the UI never claims they are raw facts. */
+  dataCoverage: number;
+  imputedKeys: RecommendationProfileKey[];
+}
 
 export type ClimateCompat = Record<string, Partial<Record<ClimateKind, number>>>;
 
@@ -320,6 +373,8 @@ export interface ResultsStrings {
   exploreAll: string;
   rank1: string;
   top5: string;
+  proximityTieBreak: string;
+  recommendationMethodNote: string;
   cost: string;
   safety: string;
   climate: string;

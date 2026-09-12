@@ -1,4 +1,4 @@
-import type { Destination, PurposeId } from '../data/types';
+import type { CatalogEntry, Destination, PurposeId } from '../data/types';
 
 /** A user's answers for the current quiz: questionId -> selected option value. */
 export type Answers = Record<string, string | number>;
@@ -16,9 +16,10 @@ export interface ScoreResult {
 }
 
 export interface RankedResult {
-  dest: Destination;
+  dest: CatalogEntry;
   score: number;
   reasons: Reason[];
+  distanceKm?: number;
 }
 
 export type { Destination, PurposeId };

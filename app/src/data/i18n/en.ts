@@ -9,6 +9,11 @@ const base = enJson as I18nDict;
 
 export const EN: I18nDict = {
   ...base,
+  results: {
+    ...base.results,
+    proximityTieBreak: 'When match scores tie, the destination nearer to your approximate location is shown first.',
+    recommendationMethodNote: 'Match percentages are estimates calculated from your answers and sourced international indicators. Missing values use dataset medians and do not guarantee a travel experience.',
+  },
   quiz: {
     ...base.quiz,
     checkpointTitle: 'You can see your results now',
@@ -26,7 +31,7 @@ export const EN: I18nDict = {
     ...base.detail,
     capital: 'Capital',
     notRecommendationReady:
-      "There isn't enough data yet to include this destination in the recommendation engine — it will be added in a later phase.",
+      'Core country information and the indicators used in recommendations are available for this destination.',
     countryInfo: 'Country Information',
     officialName: 'Official Name',
     area: 'Area',

@@ -21,6 +21,7 @@
 // app/scripts/destinationImageAudit.json so unreviewed replacements cannot
 // silently ship.
 import destinationImages from './generated/destinationImages.json';
+import { DESTINATION_IMAGE_CROPS } from './destinationImageCrops';
 
 export interface DestinationVisualMeta {
   /** Local asset path (e.g. via a Vite `import`), never a remote/hotlinked URL. */
@@ -39,6 +40,8 @@ export interface DestinationVisualMeta {
   landmarkName: string;
   author: string | null;
   license: string;
+  cardPosition: string;
+  heroPosition: string;
 }
 
 interface DestinationImageManifestEntry {
@@ -102,6 +105,8 @@ export const DESTINATION_VISUALS: Record<string, DestinationVisualMeta> = Object
       landmarkName: entry.landmarkName,
       author: entry.author,
       license: entry.license,
+      cardPosition: DESTINATION_IMAGE_CROPS[entry.iso2]?.card ?? 'center',
+      heroPosition: DESTINATION_IMAGE_CROPS[entry.iso2]?.hero ?? 'center',
       ...buildAltText(entry),
       ...buildAttribution(entry),
     },

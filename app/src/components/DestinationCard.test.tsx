@@ -7,6 +7,7 @@ import { DestinationCard } from './DestinationCard';
 import { I18N } from '../data/i18n';
 import { DESTINATIONS } from '../data/destinations';
 import { BASIC_COUNTRIES } from '../data/basicCountries';
+import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
 
 const t = I18N.ar;
 
@@ -19,19 +20,18 @@ function renderCard(dest: (typeof DESTINATIONS)[number] | (typeof BASIC_COUNTRIE
 }
 
 describe('Phase 11 Step 2 — DestinationCard Country Information chips', () => {
-  it('shows both area and currency chips for a basic country that has both (Egypt, eg)', () => {
+  it('shows worldwide recommendation cost/climate plus factual area for a basic country', () => {
     const eg = BASIC_COUNTRIES.find((c) => c.id === 'eg')!;
     renderCard(eg);
     expect(screen.getByText(/1,002,450/)).toBeInTheDocument();
-    expect(screen.getByText(/EGP/)).toBeInTheDocument();
+    const profile = RECOMMENDATION_PROFILE_BY_CODE.get('EG')!;
+    expect(screen.getByText(I18N.ar.climateLabels[profile.climate])).toBeInTheDocument();
   });
 
-  it('omits the currency chip cleanly, without crashing, when a country has no reported currency (Micronesia, fm)', () => {
+  it('does not depend on currency availability for worldwide recommendation chips', () => {
     const fm = BASIC_COUNTRIES.find((c) => c.id === 'fm')!;
-    renderCard(fm);
-    // Area chip still renders...
-    expect(screen.getByText(new RegExp(t.detail.area))).toBeInTheDocument();
-    // ...but no currency chip/label appears anywhere on the card.
+    const { container } = renderCard(fm);
+    expect(container.textContent).not.toContain('undefined');
     expect(screen.queryByText(new RegExp(t.detail.currency))).not.toBeInTheDocument();
   });
 

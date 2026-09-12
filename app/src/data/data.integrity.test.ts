@@ -56,7 +56,7 @@ describe('data integrity', () => {
   it('shows approximate numeric ranges directly on generic budget options', () => {
     const genericBudgetPurposes: PurposeId[] = ['tourism', 'medical', 'immigration', 'wellness', 'other'];
     for (const purpose of genericBudgetPurposes) {
-      const budget = QUESTION_BANKS[purpose].find((question) => question.id === 'budget');
+      const budget = QUESTION_BANKS[purpose].find((question) => question.profileKey === 'costLevel');
       expect(budget, `missing budget question for ${purpose}`).toBeDefined();
       for (const option of budget!.options) {
         expect(option.label.ar).toMatch(/\d/);

@@ -44,6 +44,7 @@ export function Quiz() {
   if (!purposeSynced) return null;
 
   const questions = QUESTION_BANKS[purposeParam];
+  const reachableQuestionCount = new Set(questions.map((item) => item.profileKey ?? item.id)).size;
   const purposeName = t.purposes[purposeParam].n;
   const qIndex = Math.min(state.qIndex, Math.max(0, state.path.length - 1));
   const question = questions.find((item) => item.id === state.path[qIndex]) ?? questions[0];
@@ -56,10 +57,10 @@ export function Quiz() {
     !state.questionnaireCheckpointPassed &&
     state.answers[question.id] !== undefined &&
     hasMoreQuestions;
-  const progressPct = Math.max(2, Math.round((answeredCount / Math.max(questions.length, 1)) * 100));
+  const progressPct = Math.max(2, Math.round((answeredCount / Math.max(reachableQuestionCount, 1)) * 100));
 
   const finish = (answers = state.answers) => {
-    const results = rankDestinations(purposeParam, answers);
+    const results = rankDestinations(purposeParam, answers, state.location.coords);
     dispatch({ type: 'SET_RESULTS', results });
     navigate('/results');
   };
@@ -95,7 +96,7 @@ export function Quiz() {
     <div className="quiz-wrap">
       <div className="quiz-top">
         <span className="quiz-count">
-          {t.quiz.question} {qIndex + 1} {t.quiz.of} {questions.length} — {purposeName}
+          {t.quiz.question} {qIndex + 1} {t.quiz.of} {reachableQuestionCount} — {purposeName}
         </span>
         <button type="button" className="btn btn-ghost btn-sm" onClick={() => navigate('/purpose')}>
           {t.quiz.changePurpose}

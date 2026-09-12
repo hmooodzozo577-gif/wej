@@ -43,7 +43,10 @@ export function DestinationHero({
   return (
     <div
       className={visual ? 'detail-hero' : 'detail-hero flag-banner'}
-      style={{ backgroundImage: visual ? `url(${visual.imagePath})` : fallbackBackground }}
+      style={{
+        backgroundImage: visual ? `url(${visual.imagePath})` : fallbackBackground,
+        ...(visual ? { backgroundPosition: visual.heroPosition } : {}),
+      }}
     >
       {/* Flag stays the dominant Hero visual ONLY when no real photo
           exists — once a photo is available the flag is demoted to the

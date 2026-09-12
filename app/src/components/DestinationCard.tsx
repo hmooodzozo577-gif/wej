@@ -10,8 +10,10 @@ import { Link } from 'react-router-dom';
 import type { CatalogEntry, I18nDict, Lang, PurposeId } from '../data/types';
 import { costLabel, descOf, nameOf } from '../data/destinationText';
 import { continentOf, countryInfoOf } from '../data/worldCatalog';
-import { FlagChip, FlagThumb } from './flags/FlagIcon';
+import { FlagChip } from './flags/FlagIcon';
 import { Icon } from './Icon';
+import { DestinationImage } from './DestinationImage';
+import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
 
 export function DestinationCard({
   dest,
@@ -36,7 +38,7 @@ export function DestinationCard({
     : dest.capitalEn;
   // Phase 11 Step 2 — only used for the basic-country chip row below.
   const info = dest.recommendationReady ? undefined : countryInfoOf(dest.id);
-  const currency = info?.currencies[0];
+  const profile = RECOMMENDATION_PROFILE_BY_CODE.get(dest.countryCode);
 
   return (
     <Link
@@ -45,7 +47,7 @@ export function DestinationCard({
       className="dest-card"
       data-open={dest.id}
     >
-      <FlagThumb dest={dest} lang={lang} continent={continent} />
+      <DestinationImage destination={dest} lang={lang} />
       <div className="dest-body">
         <div className="dest-body-top">
           <span className="name-flag">
@@ -58,11 +60,13 @@ export function DestinationCard({
           {t.regionLabels[continent]}
           {subtitle ? ` · ${subtitle}` : ''}
         </div>
-        {dest.recommendationReady ? (
-          <p className="dest-why">{whyText ?? descOf(dest, lang)}</p>
-        ) : (
-          <p className="dest-why">{t.detail.notRecommendationReady}</p>
-        )}
+        <p className="dest-why">
+          {dest.recommendationReady
+            ? (whyText ?? descOf(dest, lang))
+            : (whyText ?? (lang === 'ar'
+                ? `وجهة في ${t.regionLabels[continent]}${dest.capitalEn ? `، وعاصمتها ${dest.capitalEn}` : ''}.`
+                : `A destination in ${t.regionLabels[continent]}${dest.capitalEn ? `, with ${dest.capitalEn} as its capital` : ''}.`))}
+        </p>
         {dest.recommendationReady ? (
           <div className="dest-meta">
             <span className="meta-chip">
@@ -75,22 +79,17 @@ export function DestinationCard({
               <Icon name="sun" size={13} stroke={2.4} /> {t.climateLabels[dest.climate]}
             </span>
           </div>
-        ) : info ? (
+        ) : info && profile ? (
           // Phase 11 Step 2 — compact Country Information chips (area,
           // currency) for basic countries, mirroring the chip row above.
           // Either chip is omitted cleanly when its data isn't available
           // (e.g. no reported currency) rather than showing an empty chip.
           <div className="dest-meta">
             <span className="meta-chip">
-              <Icon name="globe" size={13} stroke={2.4} /> {t.detail.area}: {info.areaKm2.toLocaleString('en-US')}{' '}
-              {t.detail.areaUnit}
+              <Icon name="tag" size={13} stroke={2.4} /> {costLabel(t.costLevels, profile.costLevel)}
             </span>
-            {currency ? (
-              <span className="meta-chip">
-                <Icon name="tag" size={13} stroke={2.4} /> {t.detail.currency}: {currency.code}
-                {currency.symbol ? ` (${currency.symbol})` : ''}
-              </span>
-            ) : null}
+            <span className="meta-chip"><Icon name="sun" size={13} stroke={2.4} /> {t.climateLabels[profile.climate]}</span>
+            <span className="meta-chip"><Icon name="globe" size={13} stroke={2.4} /> {info.areaKm2.toLocaleString('en-US')} {t.detail.areaUnit}</span>
           </div>
         ) : null}
       </div>

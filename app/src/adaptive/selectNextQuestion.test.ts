@@ -1,218 +1,44 @@
-// Phase 15 — Adaptive Questions. Pure-function tests for the actual
-// decision layer (see reducer.test.ts for the React-state-facing
-// tests, and adaptiveParity.test.ts for the Phase 14 boundary proof).
 import { describe, expect, it } from 'vitest';
 import { QUESTION_BANKS } from '../data/questionBanks';
 import { selectNextQuestion } from './selectNextQuestion';
 import type { PurposeId } from '../data/types';
-import type { Answers } from '../engine';
 
-/** Runs a full adaptive session for one purpose given a scripted
- *  answer function, returning the exact path taken. Mirrors exactly
- *  how reducer.ts drives selectNextQuestion(): one question at a
- *  time, the just-asked question answered before asking for the next. */
-function runFullSession(purposeId: PurposeId, answerFor: (questionId: string) => string | number): string[] {
-  const bank = QUESTION_BANKS[purposeId];
-  const path: string[] = [];
-  const answers: Answers = {};
-  let next = selectNextQuestion(bank, answers, path);
-  while (next) {
-    path.push(next.id);
-    answers[next.id] = answerFor(next.id);
-    next = selectNextQuestion(bank, answers, path);
-  }
-  return path;
-}
-
-describe('selectNextQuestion — determinism', () => {
-  it('the initial question (no answers, nothing asked) is deterministic for a given purpose', () => {
-    const bank = QUESTION_BANKS.tourism;
-    const a = selectNextQuestion(bank, {}, []);
-    const b = selectNextQuestion(bank, {}, []);
-    expect(a).not.toBeNull();
-    expect(a!.id).toBe(b!.id);
-  });
-
-  it('the same answers-so-far state always produces the same next question, called repeatedly', () => {
-    const bank = QUESTION_BANKS.tourism;
-    const answers: Answers = { budget: 2, naturecity: 50 };
-    const asked = ['budget', 'naturecity'];
-    const results = Array.from({ length: 5 }, () => selectNextQuestion(bank, answers, asked)!.id);
-    expect(new Set(results).size).toBe(1);
-  });
-
-  it('never depends on object key insertion order — an answers object built in a different key order yields the identical decision', () => {
-    const bank = QUESTION_BANKS.tourism;
-    const asked = ['budget', 'naturecity', 'beaches'];
-    const a: Answers = { budget: 2, naturecity: 50, beaches: 90 };
-    const b: Answers = { beaches: 90, budget: 2, naturecity: 50 };
-    expect(selectNextQuestion(bank, a, asked)!.id).toBe(selectNextQuestion(bank, b, asked)!.id);
-  });
-});
-
-describe('selectNextQuestion — flavor-first rule', () => {
-  it('a bank with a flavor question (work) asks it first, before anything else, regardless of answers', () => {
-    const bank = QUESTION_BANKS.work;
-    const first = selectNextQuestion(bank, {}, []);
-    expect(first!.id).toBe('field');
-    expect(first!.kind).toBe('flavor');
-  });
-
-  it('a bank with no flavor question (tourism) never returns one (there is none) — starts directly with the highest-weight real question', () => {
-    const bank = QUESTION_BANKS.tourism;
-    expect(bank.some((q) => q.kind === 'flavor')).toBe(false);
-    const first = selectNextQuestion(bank, {}, []);
-    expect(first!.id).toBe('budget'); // weight 12, the highest in this bank
-  });
-});
-
-describe('selectNextQuestion — real adaptivity (materially different paths for different answers)', () => {
-  it('SCENARIO A vs B: a high vs low "safety" (importance) answer reorders the remaining tourism questions differently', () => {
-    const bank = QUESTION_BANKS.tourism;
-    const askedThroughSafety = ['budget', 'naturecity', 'beaches', 'safety'];
-    const highSafety: Answers = { budget: 2, naturecity: 50, beaches: 90, safety: 85 };
-    const lowSafety: Answers = { budget: 2, naturecity: 50, beaches: 90, safety: 30 };
-
-    const afterHigh = selectNextQuestion(bank, highSafety, askedThroughSafety)!.id;
-    const afterLow = selectNextQuestion(bank, lowSafety, askedThroughSafety)!.id;
-
-    expect(afterHigh).not.toBe(afterLow);
-  });
-
-  it('SCENARIO C: a materially different purpose bank (work, with a flavor question) produces its own distinct path shape', () => {
-    const path = runFullSession('work', (id) => {
-      const q = QUESTION_BANKS.work.find((x) => x.id === id)!;
-      // Answer every importance question HIGH — pushes this bank's
-      // adaptive momentum toward prioritizing remaining importance
-      // questions once at least one has been answered.
-      if (q.kind === 'importance') return 85;
-      return q.options[0].value;
-    });
-    expect(path[0]).toBe('field'); // flavor, always first
-    expect(path).toHaveLength(QUESTION_BANKS.work.length);
-  });
-
-  it('opposite valid option profiles produce genuinely different full-session orderings', () => {
-    const bank = QUESTION_BANKS.tourism;
-    const firstOptions = runFullSession('tourism', (id) => {
-      const q = bank.find((x) => x.id === id)!;
-      return q.options[0]!.value;
-    });
-    const lastOptions = runFullSession('tourism', (id) => {
-      const q = bank.find((x) => x.id === id)!;
-      return q.options[q.options.length - 1]!.value;
-    });
-
-    expect(firstOptions).not.toEqual(lastOptions);
-    // Both still cover the exact same question SET (a reorder,
-    // never a skip) — same length, same members, just different order.
-    expect([...firstOptions].sort()).toEqual([...lastOptions].sort());
-  });
-});
-
-describe('selectNextQuestion — safety guarantees', () => {
-  const allPurposes = Object.keys(QUESTION_BANKS) as PurposeId[];
-
-  it('every purpose bank: a full adaptive session never repeats a question, always terminates, and asks every question exactly once', () => {
-    for (const purposeId of allPurposes) {
-      const bank = QUESTION_BANKS[purposeId];
-      const path = runFullSession(purposeId, (id) => bank.find((x) => x.id === id)!.options[0].value);
-      expect(path, `${purposeId} path length`).toHaveLength(bank.length);
-      expect(new Set(path).size, `${purposeId} no duplicates`).toBe(bank.length);
-      expect(new Set(path)).toEqual(new Set(bank.map((q) => q.id)));
+describe('deterministic branching question selection', () => {
+  it('starts every purpose at its region node', () => {
+    for (const purpose of Object.keys(QUESTION_BANKS) as PurposeId[]) {
+      expect(selectNextQuestion(QUESTION_BANKS[purpose], {}, [])?.id).toBe(`${purpose}-region`);
     }
   });
 
-  it('every purpose bank: completion is reachable regardless of which values are chosen (enumerated across several distinct scripted profiles)', () => {
-    const scripts: Array<(v: string | number) => string | number> = [
-      (v) => v,
-      () => 50,
-      () => 0,
-    ];
-    for (const purposeId of allPurposes) {
-      const bank = QUESTION_BANKS[purposeId];
-      for (const script of scripts) {
-        const path = runFullSession(purposeId, (id) => script(bank.find((x) => x.id === id)!.options[0].value));
-        expect(selectNextQuestion(bank, Object.fromEntries(path.map((id) => [id, 1])), path)).toBeNull();
+  it('follows every explicit option edge and never sends sibling options to the same node', () => {
+    for (const purpose of Object.keys(QUESTION_BANKS) as PurposeId[]) {
+      const bank = QUESTION_BANKS[purpose];
+      for (const question of bank.filter((item) => item.nextByValue)) {
+        const nextIds = question.options.map((option) =>
+          selectNextQuestion(bank, { [question.id]: option.value }, [question.id])?.id,
+        );
+        expect(nextIds, `${purpose}/${question.id}`).toEqual(question.options.map((option) => question.nextByValue![String(option.value)]));
+        expect(new Set(nextIds).size, `${purpose}/${question.id}`).toBe(nextIds.length);
       }
     }
   });
 
-  it('returns null immediately for an empty bank (defensive — no purpose has one today, but the function itself must not throw)', () => {
-    expect(selectNextQuestion([], {}, [])).toBeNull();
-  });
-
-  it('returns null once askedIds already covers the whole bank', () => {
-    const bank = QUESTION_BANKS.tourism;
-    expect(selectNextQuestion(bank, {}, bank.map((q) => q.id))).toBeNull();
-  });
-});
-
-describe('a question with an existing answer is skipped even if never in askedIds', () => {
-  it('a pre-existing answer (e.g. a confirmed natural-language interpretation, never walked through the path) is excluded from candidates', () => {
-    const bank = QUESTION_BANKS.tourism;
-    const climateQuestion = bank.find((q) => q.id === 'climate')!;
-    const withoutAnswer = selectNextQuestion(bank, {}, []);
-    const withAnswer = selectNextQuestion(bank, { [climateQuestion.id]: climateQuestion.options[0].value }, []);
-    // climate is never the very first pick anyway in this bank (budget
-    // is), so this only proves the exclusion once we walk far enough
-    // to reach it — run a full session and confirm climate never
-    // appears in the path when it already has an answer up front.
-    const path: string[] = [];
-    const answers = { [climateQuestion.id]: climateQuestion.options[0].value };
-    let next = selectNextQuestion(bank, answers, path);
-    while (next) {
-      path.push(next.id);
-      answers[next.id] = bank.find((q) => q.id === next!.id)!.options[0].value;
-      next = selectNextQuestion(bank, answers, path);
+  it('a complete path terminates without duplicate questions or dimensions', () => {
+    for (const purpose of Object.keys(QUESTION_BANKS) as PurposeId[]) {
+      const bank = QUESTION_BANKS[purpose];
+      const path: string[] = [];
+      const answers: Record<string, string | number> = {};
+      let next = selectNextQuestion(bank, answers, path);
+      while (next) {
+        path.push(next.id);
+        answers[next.id] = next.options[0]!.value;
+        next = selectNextQuestion(bank, answers, path);
+      }
+      expect(new Set(path).size).toBe(path.length);
+      const dimensions = path.map((id) => bank.find((question) => question.id === id)!.profileKey).filter(Boolean);
+      expect(new Set(dimensions).size).toBe(dimensions.length);
+      expect(path.length).toBeGreaterThanOrEqual(10);
+      expect(path.length).toBeLessThan(bank.length);
     }
-    expect(path).not.toContain('climate');
-    // Sanity: with no pre-existing answer, the same walk DOES include it.
-    expect(withoutAnswer).not.toBeNull();
-    expect(withAnswer).not.toBeNull();
-  });
-
-  it('a bank where every question already has an answer terminates immediately (no infinite loop, no re-ask)', () => {
-    const bank = QUESTION_BANKS.tourism;
-    const allAnswered = Object.fromEntries(bank.map((q) => [q.id, q.options[0].value]));
-    expect(selectNextQuestion(bank, allAnswered, [])).toBeNull();
-  });
-
-  it('a full session starting with two known dimensions never re-asks them and still terminates', () => {
-    const bank = QUESTION_BANKS.tourism;
-    const climateQuestion = bank.find((q) => q.id === 'climate')!;
-    const natureQuestion = bank.find((q) => q.id === 'naturecity')!;
-    const path: string[] = [];
-    const answers: Answers = {
-      [climateQuestion.id]: climateQuestion.options[0].value,
-      [natureQuestion.id]: natureQuestion.options[0].value,
-    };
-    let next = selectNextQuestion(bank, answers, path);
-    while (next) {
-      path.push(next.id);
-      answers[next.id] = bank.find((q) => q.id === next!.id)!.options[0].value;
-      next = selectNextQuestion(bank, answers, path);
-    }
-    expect(path).not.toContain('climate');
-    expect(path).not.toContain('naturecity');
-    // Every OTHER question in the bank is still asked exactly once —
-    // this is genuine reduction (fewer questions), not silent data loss.
-    const expectedRemaining = bank.filter((q) => q.id !== 'climate' && q.id !== 'naturecity').map((q) => q.id);
-    expect(new Set(path)).toEqual(new Set(expectedRemaining));
-  });
-});
-
-describe('selectNextQuestion — language independence (AR/EN parity by construction)', () => {
-  it('operates only on question ids/kind/weight/answers — never reads .text or .options[].label, so AR vs EN never changes the decision', () => {
-    const bank = QUESTION_BANKS.tourism;
-    // Every candidate field the function touches is language-free;
-    // this is a structural assertion that the function signature and
-    // implementation give it no language input to branch on at all.
-    const first = selectNextQuestion(bank, {}, []);
-    expect(first).not.toBeNull();
-    // Sanity: the SAME call, with no lang parameter anywhere in the
-    // signature, cannot possibly differ between an Arabic and an
-    // English session — there is nothing to pass.
-    expect(selectNextQuestion.length).toBe(3); // (bank, answers, askedIds) — no lang param exists to add branching on
   });
 });
