@@ -107,7 +107,7 @@ describe('contextual question library', () => {
   });
 
   it('materializes a fully validated contextual choice when generation fails after a trusted scenario selection', () => {
-    const scenario = selectContextualQuestionScenarios(coldNatureRequest)[0];
+    const scenario = selectContextualQuestionScenarios(coldNatureRequest).find((candidate) => candidate.id.startsWith('tourism-landscape-activity--'));
     expect(scenario).toBeDefined();
     const raw = { status: 'ask', scenarioId: scenario?.id, options: [] };
     const recoveredId = recoverTrustedScenarioId(raw, coldNatureRequest);
@@ -117,9 +117,12 @@ describe('contextual question library', () => {
     expect(repaired).toMatchObject({
       status: 'ask',
       scenarioId: scenario?.id,
-      targetDimensions: ['adventure', 'nightlife'],
+      targetDimensions: ['beaches', 'adventure'],
       questionType: 'choice',
     });
+    expect(repaired?.status === 'ask' ? repaired.prompt : '').toMatch(/بارد/u);
+    expect(repaired?.status === 'ask' ? repaired.prompt : '').toMatch(/الطبيعة/u);
+    expect(JSON.stringify(repaired)).not.toMatch(/كلاهما|مزيج من الاثنين/u);
     expect(validateNextTurnResult(repaired, coldNatureRequest).status).toBe('ask');
   });
 

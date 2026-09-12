@@ -88,6 +88,29 @@ const BLUEPRINTS: ScenarioBlueprint[] = [
   { id: 'other-climate-comfort', purposeId: 'other', dimensions: ['naturecity', 'climate', 'safety'], focus: 'Turn broad destination preferences into concrete place-and-comfort scenarios.' },
 ];
 
+const FALLBACK_SCENARIO_LABELS: Partial<Record<string, { ar: string[]; en: string[] }>> = {
+  'tourism-trip-rhythm': {
+    ar: ['مغامرات نهارية تنتهي بأمسية هادئة', 'نشاط متوازن مع أمسية مريحة', 'استكشاف متنوع ثم أجواء اجتماعية', 'نهار هادئ وحياة ليلية نابضة'],
+    en: ['Daytime adventures followed by a quiet evening', 'Balanced activities with a relaxed evening', 'Varied exploration followed by a social evening', 'A calm day with lively nightlife'],
+  },
+  'tourism-landscape-activity': {
+    ar: ['أنشطة ومغامرات قرب السواحل', 'تنويع اليوم بين الاستكشاف الخفيف والراحة', 'هدوء واسترخاء بين المرتفعات والطبيعة'],
+    en: ['Activities and adventure near the coast', 'A day mixing light exploration with rest', 'Quiet relaxation among highlands and nature'],
+  },
+  'tourism-culture-evenings': {
+    ar: ['أمسيات هادئة بعيدة عن الفعاليات', 'جولات ثقافية خفيفة ثم وقت مريح', 'معالم وفعاليات ثقافية مع أجواء اجتماعية', 'الثقافة محور اليوم مع حياة ليلية نابضة'],
+    en: ['Quiet evenings away from events', 'Light cultural visits followed by relaxed time', 'Cultural sights and events with a social evening', 'Culture at the heart of the day with lively nightlife'],
+  },
+  'tourism-comfort-boundary': {
+    ar: ['مغامرة مرنة مع تقبّل قدر أكبر من المفاجآت', 'أنشطة متوازنة ضمن أجواء مطمئنة', 'استكشاف منظم مع عناية كبيرة بالراحة', 'رحلة هادئة يكون الاطمئنان فيها الأولوية'],
+    en: ['Flexible adventure with room for surprises', 'Balanced activities in a reassuring setting', 'Organized exploration with strong comfort safeguards', 'A calm trip where reassurance comes first'],
+  },
+  'tourism-weather-setting': {
+    ar: ['وقت هادئ قرب الساحل', 'تنويع الرحلة بين الساحل والمرتفعات', 'طبيعة جبلية ووقت بعيد عن الشاطئ'],
+    en: ['Quiet time near the coast', 'A trip split between coast and highlands', 'Mountain nature and time away from beaches'],
+  },
+};
+
 export const CONTEXTUAL_QUESTION_LIBRARY_SIZE = BLUEPRINTS.length * LENSES.length;
 export const MAX_CONTEXTUAL_SCENARIOS_PER_TURN = 8;
 
@@ -155,7 +178,9 @@ export function recoverTrustedScenarioId(raw: unknown, request: NextTurnRequest)
 }
 
 function localizedFallbackPrompt(request: NextTurnRequest, scenario: ContextualQuestionScenario): string {
-  const anchors = scenario.contextAnchors.map((anchor) => anchor.slice(anchor.indexOf('=') + 1));
+  const anchors = request.catalog
+    .filter((dimension) => request.confirmedProfile[dimension.id] !== undefined)
+    .map((dimension) => optionMeaning(dimension, request.confirmedProfile[dimension.id] as string | number));
   const context = anchors.length > 0 ? anchors.join(request.lang === 'ar' ? ' و' : ' and ') : request.purposeName;
   const lensId = scenario.id.slice(scenario.id.lastIndexOf('--') + 2);
   if (request.lang === 'ar') {
@@ -182,6 +207,8 @@ export function materializeTrustedScenario(
   const dimensions = scenario.targetDimensions.map((id) => request.catalog.find((dimension) => dimension.id === id));
   if (dimensions.some((dimension) => !dimension || dimension.options.length < 2)) return null;
   const safeDimensions = dimensions as DimensionCatalogEntry[];
+  const blueprintId = scenario.id.slice(0, scenario.id.lastIndexOf('--'));
+  const authoredLabels = FALLBACK_SCENARIO_LABELS[blueprintId]?.[request.lang];
   const candidateCount = Math.min(4, Math.max(...safeDimensions.map((dimension) => dimension.options.length)));
   const seenUpdates = new Set<string>();
   const options = Array.from({ length: candidateCount }, (_, index) => {
@@ -192,17 +219,17 @@ export function materializeTrustedScenario(
     const updates = Object.fromEntries(selected.map(({ id, option }) => [id, option.value]));
     const valueText = selected.map(({ option }) => option.label).join(request.lang === 'ar' ? ' مع ' : ' with ');
     const lensId = scenario.id.slice(scenario.id.lastIndexOf('--') + 2);
-    const label = request.lang === 'ar'
+    const label = authoredLabels?.[index] ?? (request.lang === 'ar'
       ? lensId === 'honest-tradeoff'
-        ? `توازن يميل إلى ${valueText}`
+        ? `توازن يناسب ${valueText}`
         : lensId === 'decision-style'
-          ? `اختيار يركز على ${valueText}`
-          : `يوم يقوم على ${valueText}`
+          ? `مسار يركز على ${valueText}`
+          : `يوم يجمع ${valueText}`
       : lensId === 'honest-tradeoff'
-        ? `A balance leaning toward ${valueText}`
+        ? `A balance designed around ${valueText}`
         : lensId === 'decision-style'
-          ? `A choice centered on ${valueText}`
-          : `A day centered on ${valueText}`;
+          ? `A path centered on ${valueText}`
+          : `A day combining ${valueText}`);
     return { id: `trusted-${index + 1}`, label, updates };
   }).filter((option) => {
     const key = JSON.stringify(option.updates);
