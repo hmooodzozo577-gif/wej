@@ -76,28 +76,28 @@ describe('Phase 12/Workstream C — LocationIntro', () => {
     expect(screen.queryByText('Improve your destination suggestions')).not.toBeInTheDocument();
   });
 
-  it('never nags again after "Not now" — a fresh mount (e.g. a route change) does not show it', () => {
+  it('dismisses "Not now" for the current mount and offers location again in a fresh session', () => {
     const { unmount } = renderWith('en');
     fireEvent.click(screen.getByText('Not now'));
     unmount();
     renderWith('en');
-    expect(screen.queryByText('Improve your destination suggestions')).not.toBeInTheDocument();
+    expect(screen.getByText('Improve your destination suggestions')).toBeInTheDocument();
   });
 
-  it('never nags again after "Allow" either — a fresh mount does not re-show it', async () => {
+  it('offers location again in a fresh in-memory session after an earlier Allow', async () => {
     vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue(GRANTED_RESULT);
     const { unmount } = renderWith('en');
     fireEvent.click(screen.getByText('Allow location'));
     await waitFor(() => expect(screen.queryByText('Improve your destination suggestions')).not.toBeInTheDocument());
     unmount();
     renderWith('en');
-    expect(screen.queryByText('Improve your destination suggestions')).not.toBeInTheDocument();
+    expect(screen.getByText('Improve your destination suggestions')).toBeInTheDocument();
   });
 
-  it('does not show at all if the dismissal flag is already set (simulates a returning visitor)', () => {
+  it('ignores the retired persistent dismissal flag so returning visitors can enable proximity', () => {
     localStorage.setItem(DISMISSED_KEY, '1');
     renderWith('en');
-    expect(screen.queryByText('Improve your destination suggestions')).not.toBeInTheDocument();
+    expect(screen.getByText('Improve your destination suggestions')).toBeInTheDocument();
   });
 
   it('shares one request/state with Explore\'s LocationPersonalize (as they would side-by-side via RootLayout + /explore): "Allow" here updates the same global status Explore reads, with only ONE browser call total', async () => {

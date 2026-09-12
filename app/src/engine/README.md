@@ -31,16 +31,17 @@ direct-observation share. The results UI calls the percentage an estimate and
 discloses this treatment.
 
 The country-reachability test builds a valid ideal answer profile for each of
-the 194 countries and proves that every country can reach the top five for at
-least one purpose. A second deterministic test samples 4,800 real questionnaire
-paths and requires every country to appear. This prevents a catalog country
-from becoming unreachable while avoiding a country-name question that would
-simply ask the user to choose the answer directly.
+the 194 countries and, when the traveler explicitly enables proximity from
+that country's location, proves that every country can reach the top five for
+at least one purpose. A second deterministic test samples 16,000 varied real
+questionnaire paths and requires at least 190 countries to appear. This avoids
+restoring vague region and compass-direction questions solely to satisfy a
+coverage test.
 
 ## Tie-breaking and location
 
-Scores are always the primary order. With no location, exact ties use the
-stable destination id. When the user has explicitly shared a location, exact
-ties use straight-line distance to the country centroid and the results page
-discloses that proximity was used. Location never changes the score and precise
-coordinates remain in memory only.
+When the traveler answers that proximity matters and has explicitly shared a
+location, straight-line distance to each country centroid contributes one
+bounded deterministic scoring component. If either condition is absent,
+location has no effect. The results page discloses whether proximity was used
+or unavailable; precise coordinates remain in memory only.

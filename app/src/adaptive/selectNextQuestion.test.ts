@@ -4,9 +4,12 @@ import { selectNextQuestion } from './selectNextQuestion';
 import type { PurposeId } from '../data/types';
 
 describe('deterministic branching question selection', () => {
-  it('starts every purpose at its region node', () => {
+  it('starts every purpose with the concrete proximity preference', () => {
     for (const purpose of Object.keys(QUESTION_BANKS) as PurposeId[]) {
-      expect(selectNextQuestion(QUESTION_BANKS[purpose], {}, [])?.id).toBe(`${purpose}-region`);
+      const first = selectNextQuestion(QUESTION_BANKS[purpose], {}, []);
+      expect(first?.id).toBe(`${purpose}-proximity`);
+      expect(first?.kind).toBe('proximity');
+      expect(first?.options.map((item) => item.value)).toEqual([100, 0]);
     }
   });
 
@@ -37,8 +40,8 @@ describe('deterministic branching question selection', () => {
       expect(new Set(path).size).toBe(path.length);
       const dimensions = path.map((id) => bank.find((question) => question.id === id)!.profileKey).filter(Boolean);
       expect(new Set(dimensions).size).toBe(dimensions.length);
-      expect(path.length).toBeGreaterThanOrEqual(10);
-      expect(path.length).toBeLessThan(bank.length);
+      expect(path.length).toBeGreaterThanOrEqual(8);
+      expect(path.length).toBeLessThanOrEqual(bank.length);
     }
   });
 });

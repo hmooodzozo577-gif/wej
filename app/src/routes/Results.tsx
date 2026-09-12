@@ -9,6 +9,7 @@ import { Icon } from '../components/Icon';
 import { DestinationCard } from '../components/DestinationCard';
 import { buildWhyText } from '../engine';
 import { DestinationImage } from '../components/DestinationImage';
+import { QUESTION_BANKS } from '../data/questionBanks';
 
 /** Ports the original's setInterval-based count-up for `.matchNum`:
  *  step = max(1, round(target/30)), tick every 16ms. */
@@ -45,7 +46,9 @@ export function Results() {
 
   const r = t.results;
   const top5 = state.results.slice(0, 5);
-  const proximityTieBreakUsed = top5.some((item, index) => index > 0 && item.score === top5[index - 1]!.score && item.distanceKm !== undefined);
+  const proximityQuestion = QUESTION_BANKS[state.purpose].find((question) => question.kind === 'proximity');
+  const proximityRequested = !!(proximityQuestion && Number(state.answers[proximityQuestion.id]) > 0);
+  const proximityUsed = top5.some((item) => item.distanceKm !== undefined);
   const first = top5[0];
   const rest = top5.slice(1);
   const whyFirst = buildWhyText(lang, state.purpose, first.reasons, first.dest);
@@ -57,7 +60,8 @@ export function Results() {
           <h1 className="display">{r.title}</h1>
           <p>{r.sub}</p>
           <p className="results-method-note">{r.recommendationMethodNote}</p>
-          {proximityTieBreakUsed ? <p className="results-proximity-note"><Icon name="map" size={15} /> {r.proximityTieBreak}</p> : null}
+          {proximityUsed ? <p className="results-proximity-note"><Icon name="map" size={15} /> {r.proximityTieBreak}</p> : null}
+          {proximityRequested && !proximityUsed ? <p className="results-proximity-note"><Icon name="map" size={15} /> {r.proximityUnavailable}</p> : null}
         </div>
 
         <Link

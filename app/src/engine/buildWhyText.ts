@@ -5,6 +5,7 @@ import type { Reason } from './types';
 import { QUESTION_BANKS } from '../data/questionBanks';
 
 const PURPOSE_LABEL = { ar: 'ملاءمة الغرض', en: 'purpose fit' };
+const PROXIMITY_LABEL = { ar: 'القرب من موقعك', en: 'proximity to you' };
 const PROFILE_LABELS = {
   region: { ar: 'المنطقة', en: 'region' }, subregion: { ar: 'النطاق الجغرافي', en: 'subregion' },
   climate: { ar: 'المناخ', en: 'climate' }, costLevel: { ar: 'مستوى الأسعار', en: 'price level' },
@@ -29,6 +30,7 @@ export function buildWhyText(
     .map((reason) => {
       if (reason.id === '__purpose') return PURPOSE_LABEL[lang];
       const question = QUESTION_BANKS[purposeId as keyof typeof QUESTION_BANKS]?.find((item) => item.id === reason.id);
+      if (question?.kind === 'proximity') return PROXIMITY_LABEL[lang];
       return question?.profileKey ? PROFILE_LABELS[question.profileKey][lang] : reason.id;
     });
   const name = lang === 'ar' ? dest.nameAr : dest.nameEn;

@@ -10,8 +10,9 @@ Most source payloads live under `generated/`.
   profile”; it no longer means exclusion from recommendations).
 - `worldCatalog.ts`: the 194-country effective catalog after the absolute
   `IL`/`ISR` exclusion.
-- `questionBanks.ts`: 320+ bilingual conditional nodes. A real path visits only
-  the branch selected by the traveler and one question per canonical dimension.
+- `questionBanks.ts`: 80 bilingual nodes across eight purposes. Each journey
+  asks at most ten concrete travel-preference questions, changes the next
+  dimension according to the selected option, and avoids region/compass asks.
 - `worldRecommendation.ts`: normalized, deterministic profiles for all 194
   effective countries, built from the sourced indicator snapshots.
 - `countryInfo.ts`: factual worldwide country information.

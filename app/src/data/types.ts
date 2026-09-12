@@ -211,7 +211,7 @@ export interface PurposeMeta {
   pScoreKey: NumericDestinationKey | null;
 }
 
-export type QuestionKind = 'target' | 'importance' | 'climate' | 'category' | 'flavor';
+export type QuestionKind = 'target' | 'importance' | 'climate' | 'category' | 'flavor' | 'proximity';
 
 export interface LocalizedText {
   en: string;
@@ -374,6 +374,7 @@ export interface ResultsStrings {
   rank1: string;
   top5: string;
   proximityTieBreak: string;
+  proximityUnavailable: string;
   recommendationMethodNote: string;
   cost: string;
   safety: string;

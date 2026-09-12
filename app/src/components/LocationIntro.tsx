@@ -16,14 +16,9 @@
 // clicks "Allow". No OS permission dialog fires before this in-app
 // explanation is shown.
 //
-// PERSISTENCE (explicit engineering decision — see also
-// geo/geolocation.ts and state/types.ts's own LocationState doc
-// comment, both unchanged): coordinates and permission STATUS remain
-// in-memory-only, exactly as before (state.location, reset on every
-// full page load, never written to storage). The ONLY thing persisted
-// here is a single boolean "don't show the intro again" flag in
-// localStorage (`wejhaty.locationIntroDismissed`) — never coordinates,
-// never derived location data.
+// Coordinates and permission status remain in memory only. The intro is
+// dismissed for the current page session, then returns on a later visit so a
+// previous "Not now" choice cannot permanently prevent proximity features.
 //
 // Permissions API pre-detection
 // (geo/permissionsApi.ts / geo/useGeolocationPermission.ts) is now used
@@ -51,35 +46,12 @@ import { useAppState, useI18n } from '../state/hooks';
 import { useLocationRequest } from '../state/useLocationRequest';
 import { useGeolocationPermission } from '../geo/useGeolocationPermission';
 
-const DISMISSED_KEY = 'wejhaty.locationIntroDismissed';
-
-function readDismissed(): boolean {
-  try {
-    return localStorage.getItem(DISMISSED_KEY) === '1';
-  } catch {
-    // Storage unavailable (private browsing, disabled storage, etc.) —
-    // fail safe by treating it as "not yet dismissed" this one time
-    // rather than throwing; worst case the intro shows once per
-    // session in that browser.
-    return false;
-  }
-}
-
-function writeDismissed(): void {
-  try {
-    localStorage.setItem(DISMISSED_KEY, '1');
-  } catch {
-    // Same fail-safe: a write failure here just means this browser may
-    // see the intro again next visit — never a functional break.
-  }
-}
-
 export function LocationIntro() {
   const { state } = useAppState();
   const { t } = useI18n();
   const li = t.locationIntro;
   const { request } = useLocationRequest();
-  const [dismissed, setDismissed] = useState<boolean>(() => readDismissed());
+  const [dismissed, setDismissed] = useState(false);
   // Permissions API pre-detection
   // (geo/permissionsApi.ts). Read-only: never triggers the OS prompt on
   // its own, so this can safely run every time this card would render.
@@ -87,23 +59,14 @@ export function LocationIntro() {
   // ask/copy below, unchanged.
   const permission = useGeolocationPermission();
 
-  // Once location is granted through ANY path (this intro's own "Allow",
-  // or Explore's separate control), persist that so a later page load
-  // doesn't show the intro again — a plain, idempotent storage write,
-  // not a setState round-trip: state.location.status !== 'idle' below
-  // already controls THIS render's visibility on its own.
-  if (state.location.status === 'granted') writeDismissed();
-
   if (dismissed || state.location.status !== 'idle') return null;
 
   const handleAllow = () => {
-    writeDismissed();
     setDismissed(true);
     request();
   };
 
   const handleNotNow = () => {
-    writeDismissed();
     setDismissed(true);
   };
 

@@ -11,7 +11,8 @@ export const EN: I18nDict = {
   ...base,
   results: {
     ...base.results,
-    proximityTieBreak: 'When match scores tie, the destination nearer to your approximate location is shown first.',
+    proximityTieBreak: 'Proximity to your current location was included because you said distance matters.',
+    proximityUnavailable: 'You said proximity matters, but location was unavailable, so distance did not affect these results.',
     recommendationMethodNote: 'Match percentages are estimates calculated from your answers and sourced international indicators. Missing values use dataset medians and do not guarantee a travel experience.',
   },
   quiz: {

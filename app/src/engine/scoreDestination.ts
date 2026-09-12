@@ -4,6 +4,7 @@ import type { CatalogEntry, PurposeId, RecommendationProfile } from '../data/typ
 import type { Answers, Reason, ScoreResult } from './types';
 
 const PURPOSE_WEIGHT = 25;
+const MAX_PROXIMITY_DISTANCE_KM = 20_000;
 
 function purposeFit(profile: RecommendationProfile, purposeId: PurposeId): number {
   switch (purposeId) {
@@ -19,7 +20,7 @@ function purposeFit(profile: RecommendationProfile, purposeId: PurposeId): numbe
   }
 }
 
-export function scoreDestination(dest: CatalogEntry, purposeId: PurposeId, answers: Answers): ScoreResult {
+export function scoreDestination(dest: CatalogEntry, purposeId: PurposeId, answers: Answers, distanceKm?: number): ScoreResult {
   const profile = RECOMMENDATION_PROFILE_BY_CODE.get(dest.countryCode);
   if (!profile) return { score: 0, reasons: [] };
   let totalWeighted = 0;
@@ -29,6 +30,15 @@ export function scoreDestination(dest: CatalogEntry, purposeId: PurposeId, answe
 
   for (const question of QUESTION_BANKS[purposeId]) {
     const answer = answers[question.id];
+    if (question.kind === 'proximity') {
+      if (Number(answer) > 0 && distanceKm !== undefined) {
+        const fit = Math.max(0, 100 - (Math.min(distanceKm, MAX_PROXIMITY_DISTANCE_KM) / MAX_PROXIMITY_DISTANCE_KM) * 100);
+        totalWeighted += fit * question.weight;
+        totalWeight += question.weight;
+        reasons.push({ id: question.id, weight: question.weight, fit });
+      }
+      continue;
+    }
     const key = question.profileKey;
     if (answer === undefined || !key || scoredDimensions.has(key)) continue;
     scoredDimensions.add(key);
