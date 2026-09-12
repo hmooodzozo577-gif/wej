@@ -1,4 +1,4 @@
-import type { DimensionCatalogEntry, NextTurnRequest } from './types';
+import type { DimensionCatalogEntry, NextTurnRequest, NextTurnResult } from './types';
 
 type PurposeId = NextTurnRequest['purposeId'];
 
@@ -143,4 +143,80 @@ export function selectContextualQuestionScenarios(request: NextTurnRequest): Con
       guidance: `${candidate.blueprint.focus} ${lens.instruction}`,
     };
   });
+}
+
+/** Returns a scenario id only when it came from the trusted shortlist for this
+ * exact request. This deliberately ignores every other model-authored field. */
+export function recoverTrustedScenarioId(raw: unknown, request: NextTurnRequest): string | null {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const scenarioId = (raw as { scenarioId?: unknown }).scenarioId;
+  if (typeof scenarioId !== 'string') return null;
+  return selectContextualQuestionScenarios(request).some((scenario) => scenario.id === scenarioId) ? scenarioId : null;
+}
+
+function localizedFallbackPrompt(request: NextTurnRequest, scenario: ContextualQuestionScenario): string {
+  const anchors = scenario.contextAnchors.map((anchor) => anchor.slice(anchor.indexOf('=') + 1));
+  const context = anchors.length > 0 ? anchors.join(request.lang === 'ar' ? ' و' : ' and ') : request.purposeName;
+  const lensId = scenario.id.slice(scenario.id.lastIndexOf('--') + 2);
+  if (request.lang === 'ar') {
+    if (lensId === 'honest-tradeoff') return `مع تفضيلاتك المؤكدة (${context})، أي توازن أقرب لما تبحث عنه؟`;
+    if (lensId === 'decision-style') return `انطلاقًا من تفضيلاتك (${context})، أي اختيار يناسب رحلتك أكثر؟`;
+    return `بناءً على ما أكّدته (${context})، أي صورة ليومك تناسبك أكثر؟`;
+  }
+  if (lensId === 'honest-tradeoff') return `With your confirmed preferences (${context}), which balance fits what you want best?`;
+  if (lensId === 'decision-style') return `Starting from your preferences (${context}), which choice would suit your trip best?`;
+  return `Based on what you confirmed (${context}), which picture of your day fits you best?`;
+}
+
+/** Last-resort Capability C repair. It is used only after the model selected a
+ * trusted scenario but failed to produce valid wording/options on every bounded
+ * repair attempt. The selected scenario still controls what is asked; canonical
+ * values still come only from the request catalog. A total provider failure has
+ * no recoverable scenario and continues to Phase 15 fallback as before. */
+export function materializeTrustedScenario(
+  request: NextTurnRequest,
+  scenarioId: string,
+): NextTurnResult | null {
+  const scenario = selectContextualQuestionScenarios(request).find((candidate) => candidate.id === scenarioId);
+  if (!scenario) return null;
+  const dimensions = scenario.targetDimensions.map((id) => request.catalog.find((dimension) => dimension.id === id));
+  if (dimensions.some((dimension) => !dimension || dimension.options.length < 2)) return null;
+  const safeDimensions = dimensions as DimensionCatalogEntry[];
+  const candidateCount = Math.min(4, Math.max(...safeDimensions.map((dimension) => dimension.options.length)));
+  const seenUpdates = new Set<string>();
+  const options = Array.from({ length: candidateCount }, (_, index) => {
+    const selected = safeDimensions.map((dimension) => {
+      const optionIndex = Math.round((index * (dimension.options.length - 1)) / Math.max(candidateCount - 1, 1));
+      return { id: dimension.id, option: dimension.options[optionIndex] as DimensionCatalogEntry['options'][number] };
+    });
+    const updates = Object.fromEntries(selected.map(({ id, option }) => [id, option.value]));
+    const valueText = selected.map(({ option }) => option.label).join(request.lang === 'ar' ? ' مع ' : ' with ');
+    const lensId = scenario.id.slice(scenario.id.lastIndexOf('--') + 2);
+    const label = request.lang === 'ar'
+      ? lensId === 'honest-tradeoff'
+        ? `توازن يميل إلى ${valueText}`
+        : lensId === 'decision-style'
+          ? `اختيار يركز على ${valueText}`
+          : `يوم يقوم على ${valueText}`
+      : lensId === 'honest-tradeoff'
+        ? `A balance leaning toward ${valueText}`
+        : lensId === 'decision-style'
+          ? `A choice centered on ${valueText}`
+          : `A day centered on ${valueText}`;
+    return { id: `trusted-${index + 1}`, label, updates };
+  }).filter((option) => {
+    const key = JSON.stringify(option.updates);
+    if (seenUpdates.has(key)) return false;
+    seenUpdates.add(key);
+    return true;
+  });
+  if (options.length < 2) return null;
+  return {
+    status: 'ask',
+    scenarioId: scenario.id,
+    questionType: 'choice',
+    targetDimensions: scenario.targetDimensions,
+    prompt: localizedFallbackPrompt(request, scenario),
+    options,
+  };
 }

@@ -332,7 +332,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
     expect(body).toMatchObject({ status: 'ask', targetDimensions: ['climate'] });
   });
 
-  it('falls back with a safe diagnostic after three invalid AI decisions', async () => {
+  it('repairs from a trusted AI-selected scenario after three invalid generated choices', async () => {
     let calls = 0;
     const invalidProvider: AiProvider = {
       interpretPreferences: mock.interpretPreferences,
@@ -344,9 +344,16 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
     };
 
     const [body, status] = await handleNextTurn(invalidProvider, validNextTurnBody);
-    expect(status).toBe(502);
+    expect(status).toBe(200);
     expect(calls).toBe(3);
-    expect(body).toMatchObject({ error: 'ai_provider_error', diagnostic: 'choice_options' });
+    expect(body).toMatchObject({
+      status: 'ask',
+      scenarioId: VALID_SCENARIO_ID,
+      targetDimensions: ['climate'],
+      questionType: 'choice',
+    });
+    expect((body as { options: unknown[] }).options.length).toBeGreaterThanOrEqual(2);
+    expect((body as { options: unknown[] }).options.length).toBeLessThanOrEqual(4);
   });
 
   it('uses the latest safe diagnostic to repair a two-stage failure on the third attempt', async () => {

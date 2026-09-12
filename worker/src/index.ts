@@ -44,6 +44,7 @@ import {
   validateNextTurnRequest,
   validateNextTurnResult,
 } from './ai/validate';
+import { materializeTrustedScenario, recoverTrustedScenarioId } from './ai/contextualQuestionLibrary';
 
 export type Env = AmadeusEnv & AiEnv;
 
@@ -279,6 +280,15 @@ export async function handleExplainRecommendation(provider: AiProvider | null, b
 // mapped to the SAME 502 ai_provider_error contract a malformed-JSON
 // AiInvalidResponseError gets. Provider outages and timeouts are not
 // retried here; the frontend falls back to Phase 15 for those immediately.
+function validateNextTurnWithDiagnostic(raw: unknown, request: NextTurnRequest): {
+  result: ReturnType<typeof validateNextTurnResult>;
+  diagnostic: NextTurnRetryDiagnostic;
+} {
+  let diagnostic: NextTurnRetryDiagnostic = 'decision_shape';
+  const result = validateNextTurnResult(raw, request, (reason) => { diagnostic = reason; });
+  return { result, diagnostic };
+}
+
 export async function handleNextTurn(provider: AiProvider | null, body: unknown): Promise<[body: unknown, status: number]> {
   const fieldErrors = validateNextTurnRequest(body);
   if (fieldErrors.length > 0) {
@@ -289,19 +299,30 @@ export async function handleNextTurn(provider: AiProvider | null, body: unknown)
   }
   const req = body as NextTurnRequest;
   let invalidDiagnostic: NextTurnRetryDiagnostic = 'decision_shape';
+  let recoverableScenarioId: string | null = null;
+  let shouldMaterializeTrustedScenario = false;
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       const raw: unknown = await provider.nextTurn(req, attempt === 0 ? undefined : invalidDiagnostic);
-      let diagnostic: NextTurnRetryDiagnostic = 'decision_shape';
-      const result = validateNextTurnResult(raw, req, (reason) => { diagnostic = reason; });
+      recoverableScenarioId = recoverTrustedScenarioId(raw, req) ?? recoverableScenarioId;
+      const { result, diagnostic } = validateNextTurnWithDiagnostic(raw, req);
       if (result.status !== 'invalid') return [result, 200];
       invalidDiagnostic = diagnostic;
+      shouldMaterializeTrustedScenario = diagnostic === 'choice_options';
     } catch (err) {
       if (err instanceof AiInvalidResponseError) {
         invalidDiagnostic = err.diagnostic;
+        shouldMaterializeTrustedScenario = false;
       } else {
         return mapAiErrorToResponseArgs(err);
       }
+    }
+  }
+  if (recoverableScenarioId && shouldMaterializeTrustedScenario) {
+    const repaired = materializeTrustedScenario(req, recoverableScenarioId);
+    if (repaired) {
+      const validated = validateNextTurnResult(repaired, req);
+      if (validated.status !== 'invalid') return [validated, 200];
     }
   }
   return [{ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.', diagnostic: invalidDiagnostic }, 502];

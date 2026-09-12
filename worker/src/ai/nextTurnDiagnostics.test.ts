@@ -37,14 +37,25 @@ describe('Capability C production diagnostics through the HTTP, adapter and vali
     { name: 'unknown question type', content: JSON.stringify({ ...validTurn, questionType: privateMarker }), reason: 'question_type' },
     { name: 'already-resolved target', content: JSON.stringify({ ...validTurn, targetDimensions: ['climate'] }), reason: 'target_dimensions' },
     { name: 'oversized question', content: JSON.stringify({ ...validTurn, prompt: privateMarker.repeat(12) }), reason: 'question_prompt' },
-    { name: 'empty option updates', content: JSON.stringify({ ...validTurn, options: [{ id: 'x', label: privateMarker, updates: {} }] }), reason: 'choice_options' },
-    { name: 'invented option values', content: JSON.stringify({ ...validTurn, options: [{ id: 'x', label: privateMarker, updates: { budget: 999 } }] }), reason: 'choice_options' },
   ])('distinguishes $name without publishing model content', async ({ content, finish, reason }) => {
     const response = await callNextTurn(content, finish);
     expect(response.status).toBe(502);
     expect(response.headers.get('Access-Control-Allow-Origin')).toBe(origin);
     const body = await response.json();
     expect(body).toEqual({ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.', diagnostic: reason });
+    expect(JSON.stringify(body)).not.toContain(privateMarker);
+  });
+
+  it.each([
+    { name: 'empty option updates', options: [{ id: 'x', label: privateMarker, updates: {} }] },
+    { name: 'invented option values', options: [{ id: 'x', label: privateMarker, updates: { budget: 999 } }] },
+  ])('repairs $name from the trusted selected scenario without publishing model content', async ({ options }) => {
+    const response = await callNextTurn(JSON.stringify({ ...validTurn, options }));
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBe(origin);
+    const body = await response.json() as { status: string; scenarioId: string; options: unknown[] };
+    expect(body).toMatchObject({ status: 'ask', scenarioId: validTurn.scenarioId });
+    expect(body.options.length).toBeGreaterThanOrEqual(2);
     expect(JSON.stringify(body)).not.toContain(privateMarker);
   });
 

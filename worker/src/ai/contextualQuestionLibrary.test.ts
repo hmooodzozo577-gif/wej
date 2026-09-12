@@ -2,8 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   CONTEXTUAL_QUESTION_LIBRARY_SIZE,
   MAX_CONTEXTUAL_SCENARIOS_PER_TURN,
+  materializeTrustedScenario,
+  recoverTrustedScenarioId,
   selectContextualQuestionScenarios,
 } from './contextualQuestionLibrary';
+import { validateNextTurnResult } from './validate';
 import type { NextTurnRequest } from './types';
 
 const coldNatureRequest: NextTurnRequest = {
@@ -101,5 +104,27 @@ describe('contextual question library', () => {
     const next = selectContextualQuestionScenarios(answered);
     expect(next.every((scenario) => !scenario.targetDimensions.includes('adventure'))).toBe(true);
     expect(next.some((scenario) => scenario.contextAnchors.includes('adventure=استرخاء'))).toBe(true);
+  });
+
+  it('materializes a fully validated contextual choice when generation fails after a trusted scenario selection', () => {
+    const scenario = selectContextualQuestionScenarios(coldNatureRequest)[0];
+    expect(scenario).toBeDefined();
+    const raw = { status: 'ask', scenarioId: scenario?.id, options: [] };
+    const recoveredId = recoverTrustedScenarioId(raw, coldNatureRequest);
+    const repaired = recoveredId ? materializeTrustedScenario(coldNatureRequest, recoveredId) : null;
+
+    expect(recoveredId).toBe(scenario?.id);
+    expect(repaired).toMatchObject({
+      status: 'ask',
+      scenarioId: scenario?.id,
+      targetDimensions: ['adventure', 'nightlife'],
+      questionType: 'choice',
+    });
+    expect(validateNextTurnResult(repaired, coldNatureRequest).status).toBe('ask');
+  });
+
+  it('never recovers an untrusted model-authored scenario id', () => {
+    expect(recoverTrustedScenarioId({ scenarioId: 'invented' }, coldNatureRequest)).toBeNull();
+    expect(materializeTrustedScenario(coldNatureRequest, 'invented')).toBeNull();
   });
 });
