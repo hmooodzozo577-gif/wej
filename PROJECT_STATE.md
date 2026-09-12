@@ -8,9 +8,9 @@ configuration, and current Git state outrank this document when they differ.
 - State document version: 7
 - Last verified date: 2026-09-13
 - Working branch: `claude/marhaba-kxry8l`
-- Base HEAD for the current change set: `33ee8492f1fb4ab26649707886126beac60cdbb2`
-- The current questionnaire, optional-information, AI-removal, and image
-  changes are implemented locally and are not yet deployed.
+- Production implementation commit: `7dfa035662b8ce83852d3d7f64e6f55e03e7181d`
+- The deterministic questionnaire, optional-information, AI-removal, and image
+  changes are deployed and production-verified. User acceptance is pending.
 
 Always recover with `git branch --show-current`, `git status --short`,
 `git fetch origin`, and `git log --oneline -30`.
@@ -105,8 +105,7 @@ product-data task.
   every country. Tests fail if a regenerated manifest silently differs.
 - Manifest: `app/src/data/generated/destinationImages.json`.
 - Assets: `app/public/destinations/*.webp`.
-- Status: implemented and visually reviewed locally; deployment and production
-  verification are pending.
+- Status: implemented, visually reviewed, deployed, and production-verified.
 
 ## Architecture map
 
@@ -128,8 +127,9 @@ product-data task.
 
 ## Provider and external state
 
-- Cloudflare Worker travel architecture is implemented and was previously
-  deployed. The current travel-only change still requires deployment.
+- The travel-only Cloudflare Worker is deployed and production-verified. The
+  production flight route preserves its CORS and validation contracts; removed
+  AI routes return 404.
 - Amadeus code is ready. Live offers require external
   `AMADEUS_API_KEY`/`AMADEUS_API_SECRET` provisioning.
 - Live hotel integration is not implemented. `app/HOTEL_INTEGRATION.md` is an
@@ -152,13 +152,11 @@ Do not resurrect without an explicit user decision:
 
 Phase 17 has not started. Current order:
 
-1. Finish self-review and verification of the deterministic questionnaire,
-   optional information, AI removal, and 194 reviewed images.
-2. Deploy frontend and travel-only Worker changes, verify production, and obtain
-   user acceptance.
-3. Design and implement sourced complete recommendation/editorial profiles for
+1. Obtain user acceptance for the production questionnaire, optional
+   information, AI removal, and reviewed images.
+2. Design and implement sourced complete recommendation/editorial profiles for
    the remaining 164 countries without fabricated values.
-4. Reassess the roadmap with the user before Phase 17.
+3. Reassess the roadmap with the user before Phase 17.
 
 ## Handoff rule
 
