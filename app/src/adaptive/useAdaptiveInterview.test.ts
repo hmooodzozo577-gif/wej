@@ -208,7 +208,7 @@ describe('in-flight adaptive interview context', () => {
       result.current.dispatch({ type: 'SET_ANSWER', questionId: 'naturecity', value: 15, provenance: 'ai_interpreted' });
     });
     expect(mockNextTurn).toHaveBeenCalledTimes(2);
-    expect(mockNextTurn.mock.calls[1]?.[3]).toEqual({ climate: 'cold', naturecity: 15 });
+    expect(mockNextTurn.mock.calls[1]?.[4]).toEqual({ climate: 'cold', naturecity: 15 });
 
     await act(async () => initialTurn.resolve({
       status: 'ok',
@@ -265,7 +265,7 @@ describe('in-flight adaptive interview context', () => {
     act(() => result.current.dispatch({ type: 'SET_ANSWER', questionId: 'climate', value: 'cold', provenance: 'ai_interpreted' }));
     act(() => result.current.dispatch({ type: 'SET_ANSWER', questionId: 'climate', value: 'mild', provenance: 'ai_interpreted' }));
     expect(mockNextTurn).toHaveBeenCalledTimes(3);
-    expect(mockNextTurn.mock.calls[2]?.[3]).toEqual({ climate: 'mild' });
+    expect(mockNextTurn.mock.calls[2]?.[4]).toEqual({ climate: 'mild' });
 
     await act(async () => {
       emptyTurn.resolve({ status: 'error', message: 'Stale empty profile.' });

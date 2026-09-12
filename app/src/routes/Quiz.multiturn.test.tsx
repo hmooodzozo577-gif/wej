@@ -147,7 +147,7 @@ describe('§35/40 SCENARIO A — "أبغى دولة باردة وهادئة وف
     // climate/naturecity/nightlife resolved+asked — a real AI is told
     // not to re-target any of them.
     await waitFor(() => expect(mockNextTurn).toHaveBeenCalledTimes(3));
-    const thirdCallCatalog = mockNextTurn.mock.calls[2]?.[2];
+    const thirdCallCatalog = mockNextTurn.mock.calls[2]?.[3];
     for (const id of ['climate', 'naturecity', 'nightlife']) {
       expect(thirdCallCatalog?.find((d) => d.id === id)).toMatchObject({ resolved: true, alreadyAsked: true });
     }
@@ -193,7 +193,7 @@ describe('§37 MULTI-DIMENSION — one AI-generated choice resolves two supporte
     // canonical confirmed-summary list.
     const naturecityQ = QUESTION_BANKS.tourism.find((q) => q.id === 'naturecity')!;
     void naturecityQ;
-    expect(mockNextTurn.mock.calls[1]?.[3]).toMatchObject({ naturecity: 15, adventure: 10 });
+    expect(mockNextTurn.mock.calls[1]?.[4]).toMatchObject({ naturecity: 15, adventure: 10 });
   });
 
   it('discards a generic turn created before natural preferences and requests a contextual replacement', async () => {
@@ -234,7 +234,7 @@ describe('§37 MULTI-DIMENSION — one AI-generated choice resolves two supporte
     fireEvent.click(screen.getByRole('button', { name: /استخدام هذه التفضيلات/ }));
 
     await waitFor(() => expect(mockNextTurn).toHaveBeenCalledTimes(2));
-    expect(mockNextTurn.mock.calls[1]?.[3]).toEqual({ climate: 'cold', naturecity: 15 });
+    expect(mockNextTurn.mock.calls[1]?.[4]).toEqual({ climate: 'cold', naturecity: 15 });
     expect(screen.queryByText('ما هي ميزانيتك التقريبية؟')).toBeNull();
     expect(await screen.findByText(/بما أنك تفضّل البرد والطبيعة/)).toBeInTheDocument();
   });
@@ -272,7 +272,7 @@ describe('§36/41 SCENARIO B — "بسافر مع عائلتي وأبغى مكا
     // CULTURAL NON-INFERENCE: no location was ever granted in this test,
     // yet the interview completed normally — proves nothing about
     // religion/ethnicity/culture is silently inferred from origin.
-    expect(mockNextTurn.mock.calls.every((call) => call[5] === undefined)).toBe(true);
+    expect(mockNextTurn.mock.calls.every((call) => call[6] === undefined)).toBe(true);
   });
 });
 

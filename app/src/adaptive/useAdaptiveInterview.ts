@@ -165,6 +165,7 @@ export function useAdaptiveInterview(
         context,
         promise: nextTurn(
           lang,
+          purposeId,
           purposeName,
           decision.catalog,
           decision.confirmedProfile,

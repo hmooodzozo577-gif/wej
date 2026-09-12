@@ -86,7 +86,7 @@ describe('Phase 16 — aiService (unconfigured Worker: this repo\'s real current
     const fetchSpy = vi.fn();
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    const result = await nextTurn('en', 'Tourism', catalog, { climate: 'cold' }, 1);
+    const result = await nextTurn('en', 'tourism', 'Tourism', catalog, { climate: 'cold' }, 1);
     expect(result.status).toBe('unavailable');
     expect(fetchSpy).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
@@ -96,7 +96,7 @@ describe('Phase 16 — aiService (unconfigured Worker: this repo\'s real current
     const fetchSpy = vi.fn();
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    const result = await nextTurn('en', 'Tourism', [], {}, 1);
+    const result = await nextTurn('en', 'tourism', 'Tourism', [], {}, 1);
     expect(result.status).toBe('invalid_request');
     expect(fetchSpy).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
@@ -106,7 +106,7 @@ describe('Phase 16 — aiService (unconfigured Worker: this repo\'s real current
     const fetchSpy = vi.fn();
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    const result = await nextTurn('en', 'Tourism', catalog, {}, 0);
+    const result = await nextTurn('en', 'tourism', 'Tourism', catalog, {}, 0);
     expect(result.status).toBe('invalid_request');
     expect(fetchSpy).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
@@ -280,7 +280,7 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     });
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    const result = await nextTurn('en', 'Tourism', catalog, { climate: 'cold' }, 1);
+    const result = await nextTurn('en', 'tourism', 'Tourism', catalog, { climate: 'cold' }, 1);
     expect(result.status).toBe('ok');
     if (result.status === 'ok' && result.outcome.kind === 'ask' && result.outcome.questionType === 'choice') {
       expect(result.outcome.options).toEqual([{ id: 'a', label: 'Nature', updates: { naturecity: 15 } }]);
@@ -293,7 +293,7 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ status: 'complete' }) });
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    const result = await nextTurn('en', 'Tourism', catalog, { climate: 'cold' }, 1);
+    const result = await nextTurn('en', 'tourism', 'Tourism', catalog, { climate: 'cold' }, 1);
     expect(result).toEqual({ status: 'ok', outcome: { kind: 'complete' } });
   });
 
@@ -305,7 +305,7 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     });
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    const result = await nextTurn('en', 'Tourism', catalog, { climate: 'cold' }, 1);
+    const result = await nextTurn('en', 'tourism', 'Tourism', catalog, { climate: 'cold' }, 1);
     expect(result).toEqual({ status: 'ok', outcome: { kind: 'ask', questionType: 'free_text', targetDimensions: ['naturecity'], prompt: 'Tell us more?' } });
   });
 
@@ -313,7 +313,7 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ nonsense: true }) });
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    const result = await nextTurn('en', 'Tourism', catalog, {}, 1);
+    const result = await nextTurn('en', 'tourism', 'Tourism', catalog, {}, 1);
     expect(result.status).toBe('error');
   });
 
@@ -321,7 +321,7 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     const fetchSpy = vi.fn().mockResolvedValue({ ok: false, status: 502, json: async () => ({ error: 'ai_provider_error', message: 'The AI service returned an unexpected response.' }) });
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    const result = await nextTurn('en', 'Tourism', catalog, {}, 1);
+    const result = await nextTurn('en', 'tourism', 'Tourism', catalog, {}, 1);
     expect(result).toEqual({ status: 'error', message: 'The AI service returned an unexpected response.' });
   });
 
@@ -329,10 +329,10 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ status: 'complete' }) });
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    await nextTurn('en', 'Tourism', catalog, {}, 1, 'Saudi Arabia');
+    await nextTurn('en', 'tourism', 'Tourism', catalog, {}, 1, 'Saudi Arabia');
     const withLocation = JSON.parse((fetchSpy.mock.calls[0] as [string, RequestInit])[1].body as string);
     expect(withLocation.originCountry).toBe('Saudi Arabia');
-    await nextTurn('en', 'Tourism', catalog, {}, 1);
+    await nextTurn('en', 'tourism', 'Tourism', catalog, {}, 1);
     const without = JSON.parse((fetchSpy.mock.calls[1] as [string, RequestInit])[1].body as string);
     expect('originCountry' in without).toBe(false);
   });
@@ -341,7 +341,7 @@ describe('Phase 16 — aiService (Worker configured, fetch mocked — never a re
     const fetchSpy = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ status: 'complete' }) });
     vi.stubGlobal('fetch', fetchSpy);
     const { nextTurn } = await import('./aiService');
-    await nextTurn('ar', 'Tourism', catalog, { climate: 'cold' }, 1, undefined, ['هادئة', '24.7136, 46.6753']);
+    await nextTurn('ar', 'tourism', 'Tourism', catalog, { climate: 'cold' }, 1, undefined, ['هادئة', '24.7136, 46.6753']);
     const body = JSON.parse((fetchSpy.mock.calls[0] as [string, RequestInit])[1].body as string);
     expect(body.unresolvedPreferences).toEqual(['هادئة']);
   });

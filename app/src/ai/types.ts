@@ -73,6 +73,7 @@ export interface DimensionCatalogEntry {
 
 export interface NextTurnCatalogRequest {
   lang: 'ar' | 'en';
+  purposeId: 'tourism' | 'work' | 'education' | 'medical' | 'immigration' | 'investment' | 'wellness' | 'other';
   purposeName: string;
   catalog: DimensionCatalogEntry[];
   confirmedProfile: Record<string, string | number>;

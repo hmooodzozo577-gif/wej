@@ -290,6 +290,7 @@ function isNextTurnResponseShaped(body: unknown): body is
  *  requests. */
 export async function nextTurn(
   lang: 'ar' | 'en',
+  purposeId: 'tourism' | 'work' | 'education' | 'medical' | 'immigration' | 'investment' | 'wellness' | 'other',
   purposeName: string,
   catalog: DimensionCatalogEntry[],
   confirmedProfile: Record<string, string | number>,
@@ -312,7 +313,7 @@ export async function nextTurn(
   }
 
   const trimmedOrigin = originCountry?.trim().slice(0, MAX_ORIGIN_COUNTRY_LENGTH);
-  const body: Record<string, unknown> = { lang, purposeName, catalog, confirmedProfile, turnNumber };
+  const body: Record<string, unknown> = { lang, purposeId, purposeName, catalog, confirmedProfile, turnNumber };
   if (trimmedOrigin) body.originCountry = trimmedOrigin;
   const safeUnresolved = (unresolvedPreferences ?? [])
     .map((value) => value.trim().slice(0, 200))

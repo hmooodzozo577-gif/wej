@@ -37,7 +37,9 @@ export function loadOriginalEngine(): OriginalEngine {
 
   const scriptStart = html.indexOf('<script>') + '<script>'.length;
   const scriptEnd = html.indexOf('</script>', scriptStart);
-  const fullScript = html.slice(scriptStart, scriptEnd);
+  // Git may materialize the historical HTML with CRLF on Windows. Normalize
+  // only the test fixture text so the source marker remains platform-neutral.
+  const fullScript = html.slice(scriptStart, scriptEnd).replace(/\r\n/g, '\n');
 
   const cutMarker =
     '/* =========================================================================\n   STATE + ROUTER';
