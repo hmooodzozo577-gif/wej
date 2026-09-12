@@ -21,6 +21,7 @@ import type {
   NextTurnRequest,
   NextTurnResult,
 } from './types';
+import { selectContextualQuestionScenarios } from './contextualQuestionLibrary';
 
 export function createMockAiProvider(): AiProvider {
   return {
@@ -47,21 +48,29 @@ export function createMockAiProvider(): AiProvider {
     // enough behavior to exercise the real request/validation/response
     // pipeline end-to-end without a live model call.
     async nextTurn(req: NextTurnRequest): Promise<NextTurnResult> {
-      const eligible = req.catalog.find((d) => !d.resolved && !d.alreadyAsked);
-      if (!eligible) return { status: 'complete' };
-      const opts = eligible.options.slice(0, 2);
+      const scenario = selectContextualQuestionScenarios(req)[0];
+      if (!scenario) return { status: 'complete' };
+      const targetDimensions = scenario.targetDimensions;
+      const firstTarget = req.catalog.find((dimension) => dimension.id === targetDimensions[0]);
+      if (!firstTarget) return { status: 'complete' };
+      const opts = firstTarget.options.slice(0, 2);
       return {
         status: 'ask',
+        scenarioId: scenario.id,
         questionType: 'choice',
-        targetDimensions: [eligible.id],
-        prompt: `Mock question about ${eligible.id}`,
+        targetDimensions,
+        prompt: `Mock question for ${scenario.id}`,
         options: opts.map((o, i) => ({
           id: `opt${i}`,
           // The production validator deliberately rejects labels copied
           // from the deterministic bank. Keep this test double inside
           // the same contract instead of weakening validation for tests.
           label: `Mock contextual choice ${i + 1}`,
-          updates: { [eligible.id]: o.value },
+          updates: Object.fromEntries(targetDimensions.map((id) => {
+            const dimension = req.catalog.find((candidate) => candidate.id === id);
+            const option = dimension?.options[Math.min(i, Math.max((dimension?.options.length ?? 1) - 1, 0))];
+            return [id, option?.value ?? o.value];
+          })),
         })),
       };
     },

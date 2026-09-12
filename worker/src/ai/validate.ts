@@ -13,6 +13,7 @@ import type {
   NextTurnResult,
   RankedDestinationContext,
 } from './types';
+import { selectContextualQuestionScenarios } from './contextualQuestionLibrary';
 
 // ---- Request-size / shape limits -------------------------------------------
 // Deliberately small and fixed — this endpoint has no legitimate reason
@@ -38,6 +39,7 @@ export const MAX_UNRESOLVED_PREFERENCES = 10;
 export const MAX_UNRESOLVED_PREFERENCE_LENGTH = 200;
 
 const LANGS = new Set(['ar', 'en']);
+const PURPOSE_IDS = new Set(['tourism', 'work', 'education', 'medical', 'immigration', 'investment', 'wellness', 'other']);
 
 export function validateInterpretPreferencesRequest(body: unknown): string[] {
   const errors: string[] = [];
@@ -116,6 +118,9 @@ export function validateNextTurnRequest(body: unknown): string[] {
 
   if (typeof b.lang !== 'string' || !LANGS.has(b.lang)) {
     errors.push('lang must be "ar" or "en".');
+  }
+  if (typeof b.purposeId !== 'string' || !PURPOSE_IDS.has(b.purposeId)) {
+    errors.push('purposeId must be a supported purpose id.');
   }
   if (typeof b.purposeName !== 'string' || b.purposeName.trim().length === 0) {
     errors.push('purposeName must be a non-empty string.');
@@ -296,6 +301,7 @@ export function validateExplainRecommendationResult(raw: unknown, request: Expla
 // unvalidated.
 export type NextTurnValidationDiagnostic =
   | 'decision_shape'
+  | 'scenario_selection'
   | 'question_type'
   | 'free_text_alternatives'
   | 'target_dimensions'
@@ -354,14 +360,17 @@ export function validateNextTurnResult(
     return { status: 'invalid' };
   };
   const eligible = new Map(request.catalog.filter((d) => !d.resolved && !d.alreadyAsked).map((d) => [d.id, d]));
+  const scenarios = new Map(selectContextualQuestionScenarios(request).map((scenario) => [scenario.id, scenario]));
   const r = raw as
-    | { status?: unknown; questionType?: unknown; targetDimensions?: unknown; prompt?: unknown; options?: unknown }
+    | { status?: unknown; scenarioId?: unknown; questionType?: unknown; targetDimensions?: unknown; prompt?: unknown; options?: unknown }
     | null;
 
   if (!r || typeof r !== 'object') return invalid('decision_shape');
   if (r.status === 'complete') return { status: 'complete' };
   if (r.status !== 'ask') return invalid('decision_shape');
 
+  const scenario = typeof r.scenarioId === 'string' ? scenarios.get(r.scenarioId) : undefined;
+  if (!scenario) return invalid('scenario_selection');
   const questionType = r.questionType === 'choice' || r.questionType === 'free_text' ? r.questionType : null;
   const targetDimensions = Array.isArray(r.targetDimensions)
     ? r.targetDimensions.filter((id): id is string => typeof id === 'string' && eligible.has(id))
@@ -371,6 +380,10 @@ export function validateNextTurnResult(
 
   if (!questionType) return invalid('question_type');
   if (targetDimensions.length === 0) return invalid('target_dimensions');
+  if (
+    targetDimensions.length !== scenario.targetDimensions.length ||
+    targetDimensions.some((id) => !scenario.targetDimensions.includes(id))
+  ) return invalid('scenario_selection');
   if (!prompt) return invalid('question_prompt');
   if (request.catalog.some((dimension) => copiesBankQuestion(prompt, dimension.question ?? ''))) {
     return invalid('question_prompt');
@@ -383,7 +396,7 @@ export function validateNextTurnResult(
     // a textarea prompt recreates a choice question with worse UX and
     // prevents immediate progression after selection.
     if (embedsChoiceAlternatives(prompt, request.lang)) return invalid('free_text_alternatives');
-    return { status: 'ask', questionType: 'free_text', targetDimensions, prompt };
+    return { status: 'ask', scenarioId: scenario.id, questionType: 'free_text', targetDimensions, prompt };
   }
 
   // questionType === 'choice'
@@ -447,5 +460,5 @@ export function validateNextTurnResult(
   if (targetDimensions.some((id) => new Set(options.map((option) => option.updates[id])).size < 2)) {
     return invalid('choice_options');
   }
-  return { status: 'ask', questionType: 'choice', targetDimensions, prompt, options };
+  return { status: 'ask', scenarioId: scenario.id, questionType: 'choice', targetDimensions, prompt, options };
 }

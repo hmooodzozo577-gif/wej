@@ -3,7 +3,7 @@ import { handleRequest, type Env } from '../index';
 
 const origin = 'https://hmooodzozo577-gif.github.io';
 const requestBody = {
-  lang: 'ar', purposeName: 'Tourism', turnNumber: 1,
+  lang: 'ar', purposeId: 'tourism', purposeName: 'Tourism', turnNumber: 1,
   confirmedProfile: { climate: 'cold' },
   catalog: [
     { id: 'climate', kind: 'climate', question: 'What climate do you prefer?', rankingSupported: true, resolved: true, alreadyAsked: true, options: [{ value: 'cold', label: 'Cold' }] },
@@ -11,7 +11,7 @@ const requestBody = {
   ],
 };
 const validTurn = {
-  status: 'ask', questionType: 'choice', targetDimensions: ['budget'], prompt: 'Which cost level suits you?',
+  status: 'ask', scenarioId: 'tourism-budget-band--honest-tradeoff', questionType: 'choice', targetDimensions: ['budget'], prompt: 'Which cost level suits you?',
   options: [
     { id: 'low', label: 'Low', updates: { budget: 1 } },
     { id: 'medium', label: 'Medium', updates: { budget: 2 } },

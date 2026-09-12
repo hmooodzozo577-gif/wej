@@ -46,6 +46,7 @@ describe('createMockAiProvider — test/dev-only, never live AI', () => {
   it('nextTurn asks about the first eligible (unresolved, never-asked) catalog entry', async () => {
     const result = await provider.nextTurn({
       lang: 'en',
+      purposeId: 'tourism',
       purposeName: 'Tourism',
       turnNumber: 1,
       confirmedProfile: {},
@@ -69,6 +70,7 @@ describe('createMockAiProvider — test/dev-only, never live AI', () => {
   it('nextTurn returns complete when every catalog entry is resolved or already asked', async () => {
     const result = await provider.nextTurn({
       lang: 'en',
+      purposeId: 'tourism',
       purposeName: 'Tourism',
       turnNumber: 1,
       confirmedProfile: { climate: 'cold' },

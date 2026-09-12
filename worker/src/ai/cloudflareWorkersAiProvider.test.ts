@@ -34,6 +34,7 @@ const explainReq: ExplainRecommendationRequest = {
 
 const nextTurnReq: NextTurnRequest = {
   lang: 'ar',
+  purposeId: 'tourism',
   purposeName: 'Tourism',
   confirmedProfile: {},
   turnNumber: 1,
@@ -87,7 +88,7 @@ describe('createCloudflareWorkersAiProvider — request shape', () => {
 
   it('Capability C sends Gemma 4\'s ChatCompletions JSON Schema envelope and disables unnecessary model thinking', async () => {
     const run = vi.fn().mockResolvedValue(
-      chatResult({ status: 'complete', questionType: 'none', targetDimensions: [], prompt: '', options: [] }),
+      chatResult({ status: 'complete', scenarioId: '', questionType: 'none', targetDimensions: [], prompt: '', options: [] }),
     );
     await createCloudflareWorkersAiProvider(fakeAi(run)).nextTurn(nextTurnReq);
 
@@ -122,6 +123,7 @@ describe('createCloudflareWorkersAiProvider — request shape', () => {
     expect(input.response_format.json_schema.name).toBe('next_turn');
     expect(input.response_format.json_schema.schema?.required).toEqual([
       'status',
+      'scenarioId',
       'questionType',
       'targetDimensions',
       'prompt',

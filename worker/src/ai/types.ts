@@ -147,6 +147,10 @@ export interface DimensionCatalogEntry {
 
 export interface NextTurnRequest {
   lang: 'ar' | 'en';
+  /** Stable purpose id used only to select trusted, Worker-owned contextual
+   *  interview scenarios. The display name remains separate and is never
+   *  used as a lookup key. */
+  purposeId: 'tourism' | 'work' | 'education' | 'medical' | 'immigration' | 'investment' | 'wellness' | 'other';
   purposeName: string;
   catalog: DimensionCatalogEntry[];
   /** Confirmed values for every `resolved` catalog entry — lets the
@@ -178,6 +182,10 @@ export interface NextTurnOption {
 export type NextTurnResult =
   | {
       status: 'ask';
+      /** Must identify one of the trusted contextual scenarios selected for
+       *  this exact request. It is validated server-side and is not shown in
+       *  the UI. */
+      scenarioId: string;
       questionType: 'choice';
       targetDimensions: string[];
       prompt: string;
@@ -185,6 +193,7 @@ export type NextTurnResult =
     }
   | {
       status: 'ask';
+      scenarioId: string;
       questionType: 'free_text';
       targetDimensions: string[];
       prompt: string;
@@ -204,6 +213,7 @@ export type NextTurnResult =
  *  contains model output or traveler text. */
 export type NextTurnRetryDiagnostic =
   | 'decision_shape'
+  | 'scenario_selection'
   | 'question_type'
   | 'free_text_alternatives'
   | 'target_dimensions'

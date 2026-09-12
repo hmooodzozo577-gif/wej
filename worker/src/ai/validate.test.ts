@@ -14,6 +14,7 @@ import {
   validateNextTurnResult,
 } from './validate';
 import type { ExplainRecommendationRequest, InterpretPreferencesRequest, NextTurnRequest } from './types';
+import { selectContextualQuestionScenarios } from './contextualQuestionLibrary';
 
 const validInterpretBody = {
   lang: 'ar',
@@ -189,6 +190,7 @@ describe('validateExplainRecommendationResult — structured-output validation',
 describe('validateNextTurnRequest — Phase 16.5 TRUE adaptive-interview Capability C', () => {
   const validNextTurnBody: NextTurnRequest = {
     lang: 'ar',
+    purposeId: 'tourism',
     purposeName: 'Tourism',
     turnNumber: 1,
     confirmedProfile: {},
@@ -249,6 +251,7 @@ describe('validateNextTurnRequest — Phase 16.5 TRUE adaptive-interview Capabil
 describe('validateNextTurnResult — the authoritative gate for Capability C (never trust the model)', () => {
   const request: NextTurnRequest = {
     lang: 'ar',
+    purposeId: 'tourism',
     purposeName: 'Tourism',
     turnNumber: 2,
     confirmedProfile: { climate: 'cold' },
@@ -267,10 +270,21 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     ],
   };
 
+  function scenarioIdFor(targetDimensions: string[], source: NextTurnRequest = request): string {
+    const scenario = selectContextualQuestionScenarios(source).find(
+      (candidate) =>
+        candidate.targetDimensions.length === targetDimensions.length &&
+        targetDimensions.every((id) => candidate.targetDimensions.includes(id)),
+    );
+    if (!scenario) throw new Error(`No scenario fixture for ${targetDimensions.join(',')}`);
+    return scenario.id;
+  }
+
   it('accepts a valid choice turn', () => {
     const result = validateNextTurnResult(
       {
         status: 'ask',
+        scenarioId: scenarioIdFor(['naturecity']),
         questionType: 'choice',
         targetDimensions: ['naturecity'],
         prompt: 'Since you prefer cold weather, which setting would make the trip feel right?',
@@ -283,6 +297,7 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     );
     expect(result).toEqual({
       status: 'ask',
+      scenarioId: scenarioIdFor(['naturecity']),
       questionType: 'choice',
       targetDimensions: ['naturecity'],
       prompt: 'Since you prefer cold weather, which setting would make the trip feel right?',
@@ -297,6 +312,7 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     const copied = validateNextTurnResult(
       {
         status: 'ask',
+        scenarioId: scenarioIdFor(['naturecity']),
         questionType: 'choice',
         targetDimensions: ['naturecity'],
         prompt: 'Nature or cities?',
@@ -307,6 +323,7 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     const lightlyReworded = validateNextTurnResult(
       {
         status: 'ask',
+        scenarioId: scenarioIdFor(['naturecity']),
         questionType: 'choice',
         targetDimensions: ['naturecity'],
         prompt: 'Nature or the cities?',
@@ -350,8 +367,9 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
   });
 
   it('accepts a valid free_text turn', () => {
-    const result = validateNextTurnResult({ status: 'ask', questionType: 'free_text', targetDimensions: ['naturecity'], prompt: 'Tell me more' }, request);
-    expect(result).toEqual({ status: 'ask', questionType: 'free_text', targetDimensions: ['naturecity'], prompt: 'Tell me more' });
+    const scenarioId = scenarioIdFor(['naturecity']);
+    const result = validateNextTurnResult({ status: 'ask', scenarioId, questionType: 'free_text', targetDimensions: ['naturecity'], prompt: 'Tell me more' }, request);
+    expect(result).toEqual({ status: 'ask', scenarioId, questionType: 'free_text', targetDimensions: ['naturecity'], prompt: 'Tell me more' });
   });
 
   it('rejects answer alternatives embedded inside a free-text prompt', () => {
@@ -413,6 +431,7 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     const result = validateNextTurnResult(
       {
         status: 'ask',
+        scenarioId: scenarioIdFor(['naturecity', 'adventure']),
         questionType: 'choice',
         targetDimensions: ['naturecity', 'adventure'],
         prompt: 'Describe your ideal day',
@@ -433,6 +452,7 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
     const result = validateNextTurnResult(
       {
         status: 'ask',
+        scenarioId: scenarioIdFor(['naturecity', 'adventure']),
         questionType: 'choice',
         targetDimensions: ['naturecity', 'adventure'],
         prompt: 'Describe your ideal day',
@@ -491,7 +511,7 @@ describe('validateNextTurnResult — the authoritative gate for Capability C (ne
       label: `opt${i}`,
       updates: { naturecity: i % 2 === 0 ? 15 : 90 },
     }));
-    const result = validateNextTurnResult({ status: 'ask', questionType: 'choice', targetDimensions: ['naturecity'], prompt: 'x', options: manyOptions }, request);
+    const result = validateNextTurnResult({ status: 'ask', scenarioId: scenarioIdFor(['naturecity']), questionType: 'choice', targetDimensions: ['naturecity'], prompt: 'x', options: manyOptions }, request);
     expect(result.status).toBe('ask');
     if (result.status === 'ask' && result.questionType === 'choice') {
       expect(result.options.length).toBeLessThanOrEqual(MAX_NEXT_TURN_OPTIONS);

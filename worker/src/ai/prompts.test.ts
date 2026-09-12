@@ -130,6 +130,7 @@ describe('buildExplainRecommendationPrompt', () => {
 describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability C', () => {
   const req: NextTurnRequest = {
     lang: 'ar',
+    purposeId: 'tourism',
     purposeName: 'Tourism & Vacation',
     turnNumber: 2,
     confirmedProfile: { climate: 'cold' },
@@ -174,6 +175,13 @@ describe('buildNextTurnPrompt — Phase 16.5 TRUE adaptive-interview Capability 
     expect(system).toMatch(/NOT a checklist/i);
     expect(system).toMatch(/even when catalog dimensions remain unresolved/i);
     expect(system).toContain('rankingWeight=10');
+  });
+
+  it('supplies a profile-aware scenario shortlist and requires one exact scenario selection', () => {
+    const { system } = buildNextTurnPrompt(req);
+    expect(system).toMatch(/Trusted contextual scenario shortlist/);
+    expect(system).toMatch(/scenarioId="tourism-/);
+    expect(system).toMatch(/Copy its scenarioId and targetDimensions exactly/);
   });
 
   it('prioritizes unresolved traveler wording and requires fresh contextual options', () => {

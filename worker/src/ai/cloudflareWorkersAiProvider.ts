@@ -25,6 +25,7 @@ import type {
   NextTurnRequest,
   NextTurnResult,
 } from './types';
+import { selectContextualQuestionScenarios } from './contextualQuestionLibrary';
 
 /** The ONE place this model id is written — change it here only (task's
  *  own "document the model id in one maintainable location" instruction).
@@ -102,12 +103,14 @@ function buildNextTurnJsonSchema(req: NextTurnRequest): Record<string, unknown> 
   const updateProperties = Object.fromEntries(
     eligible.map((dimension) => [dimension.id, { enum: dimension.options.map((option) => option.value) }]),
   );
+  const scenarioIds = selectContextualQuestionScenarios(req).map((scenario) => scenario.id);
 
   return {
     type: 'object',
     additionalProperties: false,
     properties: {
       status: { type: 'string', enum: ['ask', 'complete'] },
+      scenarioId: { type: 'string', enum: ['', ...scenarioIds] },
       questionType: { type: 'string', enum: ['choice', 'free_text', 'none'] },
       targetDimensions: { type: 'array', items: { type: 'string', enum: eligibleIds } },
       prompt: { type: 'string' },
@@ -135,7 +138,7 @@ function buildNextTurnJsonSchema(req: NextTurnRequest): Record<string, unknown> 
         },
       },
     },
-    required: ['status', 'questionType', 'targetDimensions', 'prompt', 'options'],
+    required: ['status', 'scenarioId', 'questionType', 'targetDimensions', 'prompt', 'options'],
   };
 }
 

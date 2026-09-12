@@ -42,6 +42,7 @@ const validExplainBody = {
 
 const validNextTurnBody = {
   lang: 'en',
+  purposeId: 'tourism',
   purposeName: 'Tourism',
   turnNumber: 1,
   confirmedProfile: {},
@@ -57,6 +58,7 @@ const validNextTurnBody = {
     },
   ],
 };
+const VALID_SCENARIO_ID = 'tourism-trip-rhythm--honest-tradeoff';
 
 describe('handleRequest — AI routing isolation', () => {
   it('POST /api/ai/interpret-preferences with no provider configured returns 503 ai_not_configured (this repo\'s real current state) — never a crash', async () => {
@@ -263,6 +265,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
       explainRecommendation: mock.explainRecommendation,
       nextTurn: async () => ({
         status: 'ask',
+        scenarioId: VALID_SCENARIO_ID,
         questionType: 'choice',
         targetDimensions: ['climate'],
         prompt: 'What climate do you like?',
@@ -301,6 +304,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
         if (calls === 1) {
           return {
             status: 'ask',
+            scenarioId: VALID_SCENARIO_ID,
             questionType: 'choice',
             targetDimensions: ['climate'],
             prompt: 'Choose a climate',
@@ -309,6 +313,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
         }
         return {
           status: 'ask',
+          scenarioId: VALID_SCENARIO_ID,
           questionType: 'choice',
           targetDimensions: ['climate'],
           prompt: 'Which atmosphere would make this trip comfortable for you?',
@@ -334,7 +339,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
       explainRecommendation: mock.explainRecommendation,
       nextTurn: async () => {
         calls += 1;
-        return { status: 'ask', questionType: 'choice', targetDimensions: ['climate'], prompt: 'Choose', options: [] };
+        return { status: 'ask', scenarioId: VALID_SCENARIO_ID, questionType: 'choice', targetDimensions: ['climate'], prompt: 'Choose', options: [] };
       },
     };
 
@@ -356,6 +361,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
         if (calls === 1) {
           return {
             status: 'ask',
+            scenarioId: VALID_SCENARIO_ID,
             questionType: 'free_text',
             targetDimensions: ['climate'],
             prompt: 'Do you prefer crisp winter days or gentle mild weather?',
@@ -364,6 +370,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
         if (calls === 2) {
           return {
             status: 'ask',
+            scenarioId: VALID_SCENARIO_ID,
             questionType: 'choice',
             targetDimensions: ['climate'],
             prompt: 'Which atmosphere would make this trip comfortable for you?',
@@ -372,6 +379,7 @@ describe('handleNextTurn — full pipeline via the mock provider (Phase 16.5 TRU
         }
         return {
           status: 'ask',
+          scenarioId: VALID_SCENARIO_ID,
           questionType: 'choice',
           targetDimensions: ['climate'],
           prompt: 'Which atmosphere would make this trip comfortable for you?',

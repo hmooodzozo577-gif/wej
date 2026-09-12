@@ -5,6 +5,7 @@
 // this split) — never concatenated into one string, so untrusted user
 // text can never be mistaken for, or override, a server instruction.
 import type { ExplainRecommendationRequest, InterpretPreferencesRequest, NextTurnRequest, NextTurnRetryDiagnostic } from './types';
+import { selectContextualQuestionScenarios } from './contextualQuestionLibrary';
 
 /** Shared grounding rules — verbatim project policy, not paraphrased
  *  per call site, so both capabilities enforce the identical
@@ -98,6 +99,7 @@ export function buildInterpretPreferencesPrompt(req: InterpretPreferencesRequest
 // set, and never re-targets a resolved/already-asked dimension — all
 // re-checked by ai/validate.ts, never trusted from the model's claim.
 export function buildNextTurnPrompt(req: NextTurnRequest, retryDiagnostic?: NextTurnRetryDiagnostic): { system: string; user: string } {
+  const scenarios = selectContextualQuestionScenarios(req);
   const catalogDescription = req.catalog
     .map((d) => {
       const values = d.options.map((o) => `${JSON.stringify(o.value)} = ${JSON.stringify(o.label)}`).join(', ');
@@ -138,7 +140,9 @@ export function buildNextTurnPrompt(req: NextTurnRequest, retryDiagnostic?: Next
     : 'No unresolved phrase from the optional description is available.';
 
   const retryInstruction = retryDiagnostic
-    ? retryDiagnostic === 'choice_options'
+    ? retryDiagnostic === 'scenario_selection'
+      ? 'REPAIR REQUIRED: choose exactly one scenarioId from the supplied contextual shortlist and copy that scenario\'s targetDimensions exactly.'
+      : retryDiagnostic === 'choice_options'
       ? 'REPAIR REQUIRED: the previous choice options were invalid. Return 2 to 4 distinct, contextual option labels that are not copied from the catalog. Every option must update every declared target dimension, and every target dimension must vary across at least two options.'
       : retryDiagnostic === 'free_text_alternatives'
         ? 'REPAIR REQUIRED: the previous free-text prompt embedded known alternatives. Return a choice question and move those alternatives into 2 to 4 contextual options with valid canonical updates.'
@@ -157,6 +161,14 @@ export function buildNextTurnPrompt(req: NextTurnRequest, retryDiagnostic?: Next
     '',
     `Confirmed profile so far: ${profileDescription}`,
     unresolvedContext,
+    '',
+    'Trusted contextual scenario shortlist for THIS profile and turn:',
+    scenarios.length > 0
+      ? scenarios
+          .map((scenario) => `- scenarioId=${JSON.stringify(scenario.id)} targetDimensions=${JSON.stringify(scenario.targetDimensions)} contextAnchors=${JSON.stringify(scenario.contextAnchors)} guidance=${JSON.stringify(scenario.guidance)}`)
+          .join('\n')
+      : '(no contextual scenario is available; return complete)',
+    'Choose ONE scenario from this shortlist. Copy its scenarioId and targetDimensions exactly. The scenario is a framing guide, not text to copy: generate the actual question and options for the traveler’s current profile.',
     retryInstruction,
     '',
     'The catalog is a constrained vocabulary for Phase 14, NOT a checklist. Do not walk through every unresolved dimension and do not ask merely because a dimension is still empty.',
@@ -165,12 +177,12 @@ export function buildNextTurnPrompt(req: NextTurnRequest, retryDiagnostic?: Next
     'When the confirmed profile is not empty, the prompt must naturally build on at least one relevant confirmed preference so it is clearly contextual rather than a standalone generic bank question.',
     'Use confirmed preference meanings exactly as supplied. Do not narrow, broaden, or embellish them: for example, "Nature" does not imply mountains, forests, beaches, or snow unless that detail was explicitly confirmed.',
     '',
-    'Respond with one JSON object containing ALL five keys: "status", "questionType", "targetDimensions", "prompt", and "options".',
-    '1. Choice question: { "status": "ask", "questionType": "choice", "targetDimensions": [string, ...], "prompt": string, "options": [{ "id": string, "label": string, "updates": { [dimensionId]: value } }, ...] }',
-    '2. Free-text clarification: { "status": "ask", "questionType": "free_text", "targetDimensions": [string, ...], "prompt": string, "options": [] }',
-    '3. Interview complete: { "status": "complete", "questionType": "none", "targetDimensions": [], "prompt": "", "options": [] }',
+    'Respond with one JSON object containing ALL six keys: "status", "scenarioId", "questionType", "targetDimensions", "prompt", and "options".',
+    '1. Choice question: { "status": "ask", "scenarioId": string, "questionType": "choice", "targetDimensions": [string, ...], "prompt": string, "options": [{ "id": string, "label": string, "updates": { [dimensionId]: value } }, ...] }',
+    '2. Free-text clarification: { "status": "ask", "scenarioId": string, "questionType": "free_text", "targetDimensions": [string, ...], "prompt": string, "options": [] }',
+    '3. Interview complete: { "status": "complete", "scenarioId": "", "questionType": "none", "targetDimensions": [], "prompt": "", "options": [] }',
     '',
-    'Rules for "choice": use it when the target dimension(s) have a small number of clear alternatives with known canonical values. Each option\'s "updates" must use ONLY dimension ids from the catalog above and ONLY that dimension\'s own listed allowed values (exactly as given, not the label) — never invent a value, a score, or a new dimension. Every option must resolve EVERY declared target dimension, and EVERY target dimension must have at least two different values across the options so the answer truly determines it. When compatible dimensions can be expressed as honest trip scenarios, target them together so one answer carries more useful information. Offer 2 to 4 options.',
+    'Rules for "choice": follow the selected scenario instead of recreating a catalog question. Each option\'s "updates" must use ONLY the selected scenario\'s target dimension ids and ONLY that dimension\'s own listed allowed values (exactly as given, not the label) — never invent a value, a score, or a new dimension. Every option must resolve EVERY declared target dimension, and EVERY target dimension must have at least two different values across the options so the answer truly determines it. Offer 2 to 4 options.',
     'Except for budget (whose labels the frontend replaces with canonical numeric ranges), option labels must be freshly written, concrete descriptions suited to this traveler. NEVER copy or lightly rephrase catalog option labels, and avoid generic adjective scales such as low/medium/high or important/not important.',
     'When asking about the "budget" dimension, target budget alone. The application will render its canonical numeric SAR ranges; do not combine budget with another dimension or invent price ranges.',
     'When clarifying an unresolved phrase, default to a choice whenever 2 to 4 honest scenarios can map it to allowed catalog values. This gives the traveler clear, contextual options they can select immediately.',
