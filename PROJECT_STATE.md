@@ -13,10 +13,10 @@ vendor-neutral pair every agent should read first.
 
 ## State Metadata
 
-- State document version: 5
+- State document version: 6
 - Last verified date: 2026-09-12
 - Last verified branch: `claude/marhaba-kxry8l`
-- Last verified code HEAD: `54d81cedb9bb44c9b25c2104e72a2617b4a7682f`
+- Last verified code HEAD: `3bf3c1dbc8d206250d396096ce26bad450dddba8`
 
 **Branch and HEAD above are recovery references, not permanent
 requirements.** Always verify current Git state before starting work
@@ -66,16 +66,41 @@ frontend on GitHub Pages, Cloudflare Worker backend for AI + travel APIs.
 - **Phase 16.5 — IMPLEMENTED — TESTED — DEPLOYED — FULL AUTOMATED PRODUCTION
   PATH VERIFIED — USER ACCEPTANCE PENDING — NOT COMPLETE.** The latest user
   test had reported that question wording changed while the underlying bank
-  question/options remained the same, plus an eventual Phase 15 question.
-  Corrective passes now carry unresolved traveler wording into the first turn,
-  treat the catalog as constraints rather than a checklist, stop once weighted
-  profile evidence is sufficient, keep the answered card visible while the next
-  turn loads, and use up to two diagnostic-guided repair attempts for malformed
-  or semantically invalid Capability C responses. Confirming natural-language
-  preferences explicitly restarts the adaptive interview from the newer profile,
-  invalidating any question or fallback created by a stale pre-profile request.
+  question/options remained the same, plus an intermittent Phase 15 fallback.
+  The current implementation now uses a Worker-owned contextual scenario
+  library and no longer gives the model the deterministic bank as its interview
+  plan. Confirming natural-language preferences explicitly restarts the adaptive
+  interview from the newer profile, invalidating any question or fallback
+  created by a stale pre-profile request.
   Full incident evidence remains in
   `PHASE_16_5_DEBUG.md`.
+  - **VERIFIED CONTEXTUAL LIBRARY:** 37 purpose-specific blueprints across all
+    eight purposes combine with three interviewing lenses into 111 reviewable
+    scenarios. The Worker sends at most eight profile-aware candidates per turn;
+    the AI chooses one exact trusted `scenarioId`, then generates the contextual
+    question and 2–4 options. The Worker rejects invented scenarios, mismatched
+    target dimensions, invalid canonical values, resolved-dimension repeats, and
+    copied bank wording. Phase 14 remains unchanged and authoritative.
+  - **VERIFIED BOUNDED RECOVERY:** after all normal repair attempts, a response
+    with a trusted scenario selection but invalid generated choices is repaired
+    from that selected scenario and catalog values inside Capability C. This
+    recovery cannot accept model-authored dimensions or values. Unknown question
+    types, untrusted scenarios, resolved targets, malformed output, timeouts, and
+    provider failures still activate the existing Phase 15 fallback.
+  - **DEPLOYED 2026-09-12:** Pages run `34690141505` deployed frontend commit
+    `1238895`; Worker runs `34690210004`, `34691062454`, and latest
+    `34691213302` deployed the contextual library and recovery through code commit
+    `3bf3c1d`.
+  - **VERIFIED FRESH PRODUCTION BROWSER PATH on 2026-09-12:** the exact Arabic
+    scenario `أبغى دولة باردة وهادئة وفيها طبيعة` recognized cold and nature.
+    After confirmation, Capability C returned HTTP 200 and rendered a contextual
+    question about daytime rhythm plus evening atmosphere, with three contextual
+    options resolving `adventure` + `nightlife`; no bank question or bank option
+    rendered. Selecting an option showed the inline loading state immediately,
+    advanced without a Next button, and a second HTTP 200 rendered a different
+    contextual budget question with the canonical numeric SAR ranges. The 390px
+    mobile viewport had no horizontal overflow. This is automated production
+    verification; **USER ACCEPTANCE IS STILL PENDING**.
   - **VERIFIED on 2026-09-11:** the frontend request-context race is fixed;
     obsolete success/error/complete responses cannot mutate a changed profile
     or session. Pages deployment #65 published commit `08e6728` successfully.
