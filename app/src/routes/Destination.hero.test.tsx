@@ -85,22 +85,23 @@ describe('Hero-image correction pass — full-destination branch (ksa, real SA i
   });
 });
 
-describe('Hero-image correction pass — country with no accepted imagery (bg, Bulgaria — basic-country branch)', () => {
-  it('sanity: BG genuinely has no manifest entry (guards against the fixture drifting)', () => {
-    expect(DESTINATION_VISUALS.BG).toBeUndefined();
+describe('Hero-image correction pass — worldwide imagery (bg, Bulgaria — basic-country branch)', () => {
+  it('BG now has a reviewed manifest entry', () => {
+    expect(DESTINATION_VISUALS.BG).toBeDefined();
   });
 
-  it('falls back to the existing flag/gradient Hero treatment — no broken image, no blank box', () => {
+  it('uses the reviewed country image in the Hero', () => {
     const { container } = renderAt('/destination/bg');
     const hero = container.querySelector('.detail-hero')!;
     expect(hero).not.toBeNull();
-    expect(hero.classList.contains('flag-banner')).toBe(true);
+    expect(hero.classList.contains('flag-banner')).toBe(false);
+    expect(hero.getAttribute('style') || '').toContain(DESTINATION_VISUALS.BG.imagePath);
     expect(container.querySelector('img')).toBeNull();
   });
 
-  it('no photo-attribution disclosure renders when there is no image to attribute', () => {
+  it('renders the matching attribution disclosure', () => {
     const { container } = renderAt('/destination/bg');
-    expect(container.querySelector('.hero-photo-attribution')).toBeNull();
+    expect(container.querySelector('.hero-photo-attribution')).not.toBeNull();
   });
 });
 

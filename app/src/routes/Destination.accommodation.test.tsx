@@ -7,7 +7,7 @@
 // guards against exactly the regression the phase warned about
 // (one branch getting the section, the other silently not).
 import { describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from '../state/AppStateContext';
 import { Destination } from './Destination';
@@ -15,7 +15,7 @@ import { Destination } from './Destination';
 function renderAt(path: string) {
   return render(
     <AppStateProvider>
-      <MemoryRouter initialEntries={[path]}>
+      <MemoryRouter initialEntries={[{ pathname: path, state: { purpose: 'tourism' } }]}>
         <Routes>
           <Route path="/destination/:id" element={<Destination />} />
         </Routes>
@@ -27,6 +27,7 @@ function renderAt(path: string) {
 describe('Phase 13.5a — Accommodation section reachability on the real Destination route', () => {
   it('renders for a full, recommendation-ready destination (japan), with the real reused cost tier', () => {
     renderAt('/destination/japan');
+    fireEvent.click(screen.getByRole('button', { name: 'عرض معلومات إضافية' }));
     expect(screen.getByText('الإقامة')).toBeInTheDocument();
     expect(screen.getByText('مستوى تكلفة الإقامة التقريبي')).toBeInTheDocument();
     // japan is costLevel 3 -> Arabic costLevels[2] = 'مرتفعة' — the same
@@ -38,6 +39,7 @@ describe('Phase 13.5a — Accommodation section reachability on the real Destina
 
   it('renders nothing for a basic (not recommendation-ready) country (Egypt, eg) — no fabricated cost data', () => {
     renderAt('/destination/eg');
+    fireEvent.click(screen.getByRole('button', { name: 'عرض معلومات إضافية' }));
     expect(screen.queryByText('الإقامة')).not.toBeInTheDocument();
   });
 
@@ -53,6 +55,7 @@ describe('Phase 13.5a — Accommodation section reachability on the real Destina
 
   it('never shows a fabricated price/availability/booking claim on the full-destination branch', () => {
     renderAt('/destination/japan');
+    fireEvent.click(screen.getByRole('button', { name: 'عرض معلومات إضافية' }));
     const text = document.body.textContent ?? '';
     expect(text).not.toMatch(/\$\d/);
     expect(text.toLowerCase()).not.toMatch(/book now|available tonight|rooms? left|reserve/);

@@ -87,6 +87,18 @@ const EXCLUDED_TERMS = [
   // positive: "BUR-16-Japanese occupation Burma-10 rupees (1942-44)" was
   // selected for Japan — a banknote/currency scan, not a landmark.
   'banknote', 'rupee', 'rupees', 'currency', ' coin', 'coins', 'postage stamp', 'numismatic',
+  // Destination cards must show the place itself. These terms were added
+  // after the full visual audit found technically valid files that only
+  // happened to contain a country name (embassies abroad, maps, vehicles,
+  // documents, toys, and explanatory graphics).
+  'embassy of', 'consulate', 'locator', 'passport', 'identity card',
+  'lego', 'aircraft', 'airplane', 'airline', 'satellite image', 'plaque',
+  'population pyramid', 'referendum', 'road sign', 'signpost', ' imo ',
+  'atr-72', 'atr 72', 'boeing ', 'airbus ',
+  'banner',
+  'football', 'airport', ' airfield', ' ship', 'collage', 'montage',
+  'armed convoy', 'vaccination', ' envoy', ' kids', ' children',
+  'transit area', 'plattegrond',
 ];
 const LANDMARK_HINT_TERMS = ['skyline', 'landmark', 'cityscape', 'view of', 'panorama', 'temple', 'palace', 'tower', 'bridge', 'coast', 'mountain', 'old town', 'downtown'];
 const MIN_WIDTH = 800;
@@ -98,7 +110,10 @@ export function scoreCandidate(candidate) {
   if (REJECTED_MIME.has(candidate.mime)) {
     return { score: 0, rejected: true, reason: `unsuitable file type: ${candidate.mime}` };
   }
-  const excludedHit = EXCLUDED_TERMS.find((term) => haystack.includes(term));
+  const excludedHit = EXCLUDED_TERMS.find((term) => {
+    const escaped = term.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(?:^|[^a-z0-9])${escaped}(?:[^a-z0-9]|$)`, 'i').test(haystack);
+  });
   if (excludedHit) {
     return { score: 0, rejected: true, reason: `excluded term matched: "${excludedHit}"` };
   }
@@ -118,6 +133,14 @@ export function scoreCandidate(candidate) {
   if (aspect >= 1.3 && aspect <= 2.2) score += 1; // a "strong horizontal composition" band, not ultra-panoramic or near-square
   if (width >= 1600) score += 1; // comfortably above hero-image resolution
   if (LANDMARK_HINT_TERMS.some((term) => haystack.includes(term))) score += 2;
+  // Wikivoyage orders article media by appearance. Once banners, maps and
+  // other non-destination assets are filtered out, the first travel photo is
+  // normally the article's representative image. Preserve that editorial
+  // signal instead of letting a later file win merely because its filename
+  // contains a generic word such as "skyline".
+  if (Number.isInteger(candidate.sourceRank) && candidate.sourceRank >= 0) {
+    score += 10 / (candidate.sourceRank + 1);
+  }
 
   return { score, rejected: false, reason: null };
 }
@@ -227,6 +250,7 @@ const US_STATE_NAMES = [
  *  to mention a US state at all, so a whole-text check is both simpler
  *  and safer than trying to guess a window size. */
 function looksLikeUsStateHomonym(text, entry) {
+  if (entry.iso2 !== 'US' && /\b(?:u\.?s\.? state|united states)\b/i.test(text)) return true;
   if (US_STATE_ABBREV_HOMONYM_PATTERN.test(text)) return true;
   // Skip the full-name check for the (rare) case where the country's
   // own name IS a US state name (e.g. Georgia) — the heuristic can't
@@ -249,8 +273,10 @@ function matchesCountryWithoutHomonym(text, entry, nameEscaped) {
   return { found: true, homonym: looksLikeUsStateHomonym(text, entry) };
 }
 
-export function checkCountryRelevance(candidate, entry, { fromOverride = false } = {}) {
-  if (fromOverride) return { relevant: true, reason: 'from curated override' };
+export function checkCountryRelevance(candidate, entry, { sourceArticle } = {}) {
+  if (sourceArticle && sourceArticle.trim().toLocaleLowerCase('en') === entry.nameEn.trim().toLocaleLowerCase('en')) {
+    return { relevant: true, reason: `listed in the ${entry.nameEn} travel article` };
+  }
 
   const nameEscaped = entry.nameEn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 

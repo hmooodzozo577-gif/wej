@@ -155,7 +155,7 @@ export function LocationPersonalize() {
   }, [debugInfo]);
 
   const canRequest = status === 'idle' || status === 'denied' || status === 'unavailable' || status === 'timeout';
-  // Phase 16.5 completion pass — Permissions API pre-detection: while
+  // Permissions API pre-detection: while
   // still 'idle' (no real request attempted yet this session), a
   // browser-level 'denied' permission is shown proactively rather than
   // waiting for a doomed click to surface the same guidance a beat

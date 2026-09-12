@@ -567,10 +567,10 @@ function optN(en,ar){return {en,ar};}
 
 /* Reusable option sets — shared across purposes so the same UI/data is never duplicated. */
 const BUDGET_OPTIONS = [
-  {value:1,label:optN('Low','منخفضة'),desc:optN('Up to 5,000 SAR','حتى 5,000 ريال')},
-  {value:2,label:optN('Medium','متوسطة'),desc:optN('5,000 \u2013 10,000 SAR','5,000 \u2013 10,000 ريال')},
-  {value:3,label:optN('High','مرتفعة'),desc:optN('10,000 \u2013 20,000 SAR','10,000 \u2013 20,000 ريال')},
-  {value:4,label:optN('Luxury','فاخرة'),desc:optN('More than 20,000 SAR','أكثر من 20,000 ريال')}
+  {value:1,label:optN('Up to 5,000 SAR','حتى 5,000 ريال')},
+  {value:2,label:optN('5,000 \u2013 10,000 SAR','5,000 \u2013 10,000 ريال')},
+  {value:3,label:optN('10,000 \u2013 20,000 SAR','10,000 \u2013 20,000 ريال')},
+  {value:4,label:optN('More than 20,000 SAR','أكثر من 20,000 ريال')}
 ];
 /* Climate categories are user-facing and don't map 1:1 to a destination's raw climate enum
    (tropical / mediterranean / temperate / cold / desert), so we score via a compatibility matrix

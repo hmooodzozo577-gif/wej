@@ -1,4 +1,4 @@
-// Phase 16.5 completion pass — Location Permissions API pre-detection.
+// Location Permissions API pre-detection.
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { queryGeolocationPermission } from './permissionsApi';
 

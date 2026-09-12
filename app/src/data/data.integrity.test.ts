@@ -53,6 +53,19 @@ describe('data integrity', () => {
     }
   });
 
+  it('shows approximate numeric ranges directly on generic budget options', () => {
+    const genericBudgetPurposes: PurposeId[] = ['tourism', 'medical', 'immigration', 'wellness', 'other'];
+    for (const purpose of genericBudgetPurposes) {
+      const budget = QUESTION_BANKS[purpose].find((question) => question.id === 'budget');
+      expect(budget, `missing budget question for ${purpose}`).toBeDefined();
+      for (const option of budget!.options) {
+        expect(option.label.ar).toMatch(/\d/);
+        expect(option.label.en).toMatch(/\d/);
+        expect(option.desc).toBeUndefined();
+      }
+    }
+  });
+
   it('has both Arabic and English dictionaries with matching top-level shape', () => {
     expect(Object.keys(I18N)).toEqual(['ar', 'en']);
     expect(Object.keys(I18N.ar).sort()).toEqual(Object.keys(I18N.en).sort());

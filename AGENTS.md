@@ -33,14 +33,15 @@ persistent autonomous engineering operating contract for this project.
 - Preserve accepted UI designs. Do not change the visual design, layout, or
   interaction presentation of an existing screen unless the user explicitly
   requests that design change. Behavioral fixes must reuse the accepted UI.
-- Phase 14 (`app/src/engine/`) is the sole ranking authority — AI never
-  ranks countries or sets scoring weights directly.
+- Phase 14 (`app/src/engine/`) is the sole ranking authority. The interview is
+  deterministic and must not introduce ranking fields or weights that Phase 14
+  does not support.
 - Israel (IL/ISR) exclusion is absolute across every effective path.
   Monaco (MC/MCO) is a valid destination.
 - Never fabricate a price (flight, hotel, accommodation) — real
   provider data or a clearly-labeled estimate only, never blended.
-- Never send precise coordinates to the AI — coarse country name only,
-  and only with a granted location.
+- Precise coordinates stay in memory and must not be sent to external
+  recommendation services.
 - Never put a secret or API key in the frontend (`app/`) or a
   `VITE_*` variable — Worker-side only.
 - Never infer religion, ethnicity, politics, personal values, or

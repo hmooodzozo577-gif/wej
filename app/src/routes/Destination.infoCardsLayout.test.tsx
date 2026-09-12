@@ -7,26 +7,30 @@
 // do NOT replace the mandatory browser visual QA (see the final
 // report), just guard the regression at the unit level.
 import { describe, expect, it } from 'vitest';
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from '../state/AppStateContext';
 import { Destination } from './Destination';
 
-function renderAt(path: string) {
-  return render(
+function renderAt(path: string, openPlanningInfo = false) {
+  const result = render(
     <AppStateProvider>
-      <MemoryRouter initialEntries={[path]}>
+      <MemoryRouter initialEntries={[{ pathname: path, state: { purpose: 'tourism' } }]}>
         <Routes>
           <Route path="/destination/:id" element={<Destination />} />
         </Routes>
       </MemoryRouter>
     </AppStateProvider>,
   );
+  if (openPlanningInfo) {
+    fireEvent.click(result.getByRole('button', { name: 'عرض معلومات إضافية' }));
+  }
+  return result;
 }
 
 describe('Correction pass — info-cards container/grid split (both Destination branches)', () => {
   it('full-destination branch (ksa): .info-cards-container wraps .info-cards-grid as a DIRECT child, nested inside .detail-grid\'s MAIN (second) column', () => {
-    const { container } = renderAt('/destination/ksa');
+    const { container } = renderAt('/destination/ksa', true);
     const outer = container.querySelector('.info-cards-container');
     expect(outer).not.toBeNull();
     // The container element itself must not also carry the grid class —
@@ -47,7 +51,7 @@ describe('Correction pass — info-cards container/grid split (both Destination 
   });
 
   it('basic-country branch (eg): same container/grid split, same main-column placement', () => {
-    const { container } = renderAt('/destination/eg');
+    const { container } = renderAt('/destination/eg', true);
     const outer = container.querySelector('.info-cards-container');
     expect(outer).not.toBeNull();
     expect(outer!.classList.contains('info-cards-grid')).toBe(false);
@@ -80,7 +84,7 @@ describe('Correction pass — info-cards container/grid split (both Destination 
   });
 
   it('Tourism Insights card carries the full-span marker class alongside detail-card', async () => {
-    const { container } = renderAt('/destination/ksa');
+    const { container } = renderAt('/destination/ksa', true);
     // TourismInsights loads its snapshot entry asynchronously (Phase
     // 13.5d), so it renders nothing until that resolves.
     await waitFor(() => expect(container.querySelector('.tourism-insights-card')).not.toBeNull());
@@ -89,12 +93,12 @@ describe('Correction pass — info-cards container/grid split (both Destination 
   });
 
   it('exactly one info-cards-grid per route render — no duplicate section', () => {
-    const { container } = renderAt('/destination/ksa');
+    const { container } = renderAt('/destination/ksa', true);
     expect(container.querySelectorAll('.info-cards-grid').length).toBe(1);
   });
 
   it('all four cards are present with no content loss (japan, full destination)', () => {
-    const { getByText } = renderAt('/destination/japan');
+    const { getByText } = renderAt('/destination/japan', true);
     // Section headings, Arabic (default lang) — one per card.
     expect(getByText('السفر')).toBeInTheDocument();
     expect(getByText('الإقامة')).toBeInTheDocument();
@@ -139,7 +143,7 @@ describe('Correction pass — info-cards container/grid split (both Destination 
   });
 
   it('composition-refinement pass: each compact card carries its own explicit grid-area class (not positional nth-child)', async () => {
-    const { container } = renderAt('/destination/ksa');
+    const { container } = renderAt('/destination/ksa', true);
     await waitFor(() => expect(container.querySelector('.tourism-insights-card')).not.toBeNull());
     const grid = container.querySelector('.info-cards-grid')!;
     expect(grid.querySelector(':scope > .travel-card')).not.toBeNull();
@@ -154,7 +158,7 @@ describe('Correction pass — info-cards container/grid split (both Destination 
   });
 
   it('each of the four compact cards carries its own grid-area class (overview/strengths/weaknesses/bestfor) — structural two-column placement, not positional auto-placement', () => {
-    const { container } = renderAt('/destination/ksa');
+    const { container } = renderAt('/destination/ksa', true);
     const grid = container.querySelector('.overview-cards-grid')!;
     expect(grid.querySelector(':scope > .overview-card')).not.toBeNull();
     expect(grid.querySelector(':scope > .strengths-card')).not.toBeNull();
@@ -203,7 +207,7 @@ describe('Correction pass — info-cards container/grid split (both Destination 
   });
 
   it('balanced two-column pass: DOM order stays Travel, Accommodation, Travel Cost, Tourism — the composition change (Travel Cost as a side column spanning both rows) is CSS-only, never a DOM reorder', async () => {
-    const { container } = renderAt('/destination/ksa');
+    const { container } = renderAt('/destination/ksa', true);
     await waitFor(() => expect(container.querySelector('.tourism-insights-card')).not.toBeNull());
     const grid = container.querySelector('.info-cards-grid')!;
     const travel = grid.querySelector(':scope > .travel-card')!;

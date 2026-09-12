@@ -7,7 +7,7 @@
 // cost/safety/climate — those chips and the description line are simply
 // omitted rather than showing fabricated or "undefined" values.
 import { Link } from 'react-router-dom';
-import type { CatalogEntry, I18nDict, Lang } from '../data/types';
+import type { CatalogEntry, I18nDict, Lang, PurposeId } from '../data/types';
 import { costLabel, descOf, nameOf } from '../data/destinationText';
 import { continentOf, countryInfoOf } from '../data/worldCatalog';
 import { FlagChip, FlagThumb } from './flags/FlagIcon';
@@ -19,6 +19,7 @@ export function DestinationCard({
   t,
   matchScore,
   whyText,
+  purpose,
 }: {
   dest: CatalogEntry;
   lang: Lang;
@@ -26,6 +27,7 @@ export function DestinationCard({
   /** Present in Results (ranked match); never set for a basic country. */
   matchScore?: number;
   whyText?: string;
+  purpose?: PurposeId;
 }) {
   const fromResults = matchScore !== undefined;
   const continent = continentOf(dest);
@@ -39,7 +41,7 @@ export function DestinationCard({
   return (
     <Link
       to={`/destination/${dest.id}`}
-      state={{ fromResults }}
+      state={{ fromResults, purpose }}
       className="dest-card"
       data-open={dest.id}
     >

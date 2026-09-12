@@ -25,7 +25,7 @@
 // localStorage (`wejhaty.locationIntroDismissed`) — never coordinates,
 // never derived location data.
 //
-// Phase 16.5 completion pass — Permissions API pre-detection
+// Permissions API pre-detection
 // (geo/permissionsApi.ts / geo/useGeolocationPermission.ts) is now used
 // here: read-only, never fires the OS prompt itself, and never changes
 // WHEN a real geolocation request may fire (still only on an explicit
@@ -80,7 +80,7 @@ export function LocationIntro() {
   const li = t.locationIntro;
   const { request } = useLocationRequest();
   const [dismissed, setDismissed] = useState<boolean>(() => readDismissed());
-  // Phase 16.5 completion pass — Permissions API pre-detection
+  // Permissions API pre-detection
   // (geo/permissionsApi.ts). Read-only: never triggers the OS prompt on
   // its own, so this can safely run every time this card would render.
   // 'prompt' and 'unsupported' fall through to the EXACT existing

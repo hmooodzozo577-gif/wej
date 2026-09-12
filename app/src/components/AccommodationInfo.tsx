@@ -1,8 +1,7 @@
 // Phase 13.5a — Accommodation Discovery & Architecture. Deliberately
-// NOT a hotel search/booking feature (that is Phase 13.5b — brought IN
-// SCOPE by the Phase 16.5 completion pass; see HOTEL_INTEGRATION.md for
-// the resulting provider-neutral architecture note and its
-// READY — HOTEL PROVIDER/CREDENTIAL PROVISIONING REQUIRED status. This
+// NOT a hotel search/booking feature. See HOTEL_INTEGRATION.md for the
+// provider-neutral architecture note and its NOT IMPLEMENTED —
+// PROVIDER/ACCOUNT/CREDENTIALS REQUIRED status. This
 // card is unaffected either way and must be preserved regardless of
 // whether live hotel data ever ships): this renders a small, honest
 // "what to generally expect" card, reusing Destination.costLevel (the

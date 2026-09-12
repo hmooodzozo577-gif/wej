@@ -4,6 +4,7 @@
 // scripts/lib/destinationImageIngest.test.mjs).
 import { describe, expect, it } from 'vitest';
 import destinationImages from './generated/destinationImages.json';
+import imageAudit from '../../scripts/destinationImageAudit.json';
 import { DESTINATION_VISUALS } from './destinationVisuals';
 
 describe('destinationImages.json (generated manifest) — Israel exclusion', () => {
@@ -19,14 +20,21 @@ describe('destinationImages.json (generated manifest) — Israel exclusion', () 
 });
 
 describe('DESTINATION_VISUALS — current production state', () => {
-  it('is populated (real ingestion run via GitHub Actions, not fabricated) with real, license-valid entries', () => {
+  it('covers all 194 effective countries with real, license-valid entries', () => {
     const keys = Object.keys(DESTINATION_VISUALS);
-    // Not the full 194 by design (quality/relevance/license safety takes
-    // priority over forcing every country — see the final report's
-    // coverage/audit sections for the exact count and per-country
-    // reasons) but not empty either, and never absurdly small.
-    expect(keys.length).toBeGreaterThan(100);
-    expect(keys.length).toBeLessThanOrEqual(194);
+    expect(keys).toHaveLength(194);
+  });
+
+  it('matches the complete human visual-review record, so regenerated unreviewed files cannot silently ship', () => {
+    const entries = destinationImages as Array<{ iso2: string; sourcePage: string }>;
+    expect(imageAudit.coverage).toBe(194);
+    expect(imageAudit.entries).toHaveLength(194);
+    const reviewedByIso2 = new Map(imageAudit.entries.map((entry) => [entry.iso2, entry]));
+    for (const entry of entries) {
+      const reviewed = reviewedByIso2.get(entry.iso2);
+      expect(reviewed?.status, `${entry.iso2} review status`).toBe('approved');
+      expect(reviewed?.sourcePage, `${entry.iso2} reviewed source`).toBe(entry.sourcePage);
+    }
   });
 
   it('Monaco (MC) has a real entry — confirms the exclusion mechanism only removed IL, not a nearby/similar code', () => {

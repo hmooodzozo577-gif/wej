@@ -1,11 +1,21 @@
-# data/
+# Data
 
-Phase 2. Typed TypeScript modules ported verbatim from `wejhaty.html`:
+Typed runtime data is exposed through the TypeScript modules in this directory.
+Most source payloads live under `generated/`.
 
-- `destinations.ts` — the 30 destinations (`DESTS_RAW`/`DK` → typed `Destination[]`)
-- `flags.ts` — the 30 embedded flag SVGs (`FLAG_SVG_RAW`, `ISO_CODES`), byte-identical
-- `questionBanks.ts` — `QUESTION_BANKS`, shared option sets, `CLIMATE_COMPAT`
-- `purposes.ts` — `PURPOSES` metadata
-- `i18n/` — `ar.ts`, `en.ts` (the `I18N` dictionaries)
+- `destinations.ts`: 30 complete, recommendation-ready `Destination` profiles.
+- `basicCountries.ts`: the other effective countries with factual identity
+  data and `recommendationReady: false`.
+- `worldCatalog.ts`: the 194-country effective catalog after the absolute
+  `IL`/`ISR` exclusion.
+- `questionBanks.ts`: bilingual canonical questions/options and climate
+  compatibility.
+- `countryInfo.ts`: factual worldwide country information.
+- `destinationVisuals.ts`: 194 reviewed local destination images sourced from
+  the generated manifest.
+- `tourismInsights.ts`: UN Tourism-derived tourism data.
+- `travelCostIndex.ts`: World Bank relative price-level data.
 
-No content lives here yet.
+The 164 basic countries must not be cast into `Destination` or assigned
+synthetic Phase 14 values. Worldwide recommendation coverage requires a
+separate sourced enrichment process.

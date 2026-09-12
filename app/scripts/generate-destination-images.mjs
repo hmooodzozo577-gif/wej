@@ -56,6 +56,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MANIFEST_PATH = path.join(__dirname, '../src/data/generated/destinationImages.json');
 const ASSETS_DIR = path.join(__dirname, '../public/destinations');
 const COMMONS_API = 'https://commons.wikimedia.org/w/api.php';
+const WIKIVOYAGE_API = 'https://en.wikivoyage.org/w/api.php';
 const USER_AGENT = 'Wejhaty-DestinationImages/1.0 (https://github.com/hmooodzozo577-gif/wej; build-time ingestion tool, not a runtime client)';
 const MAX_HERO_WIDTH = 1440; // within the task's own 1200-1600px target band
 const WEBP_QUALITY = 78; // hero-friendly quality/size balance, tuned for a ~100-200KB target average
@@ -113,7 +114,13 @@ async function searchCommons(query) {
   const titles = (searchJson.query?.search || []).map((r) => r.title);
   if (titles.length === 0) return [];
 
-  const infoUrl = `${COMMONS_API}?action=query&format=json&prop=imageinfo&iiprop=url|size|mime|extmetadata&titles=${encodeURIComponent(titles.join('|'))}`;
+  return getCommonsImageInfo(titles);
+}
+
+async function getCommonsImageInfo(titles) {
+  if (titles.length === 0) return [];
+  const fileTitles = titles.map((title) => title.startsWith('File:') ? title : `File:${title}`);
+  const infoUrl = `${COMMONS_API}?action=query&format=json&prop=imageinfo&iiprop=url|size|mime|extmetadata&titles=${encodeURIComponent(fileTitles.join('|'))}`;
   const infoRes = await fetchWithRetry(infoUrl, { headers: { 'User-Agent': USER_AGENT } });
   if (!infoRes.ok) throw new Error(`Commons imageinfo HTTP ${infoRes.status}`);
   const infoJson = await infoRes.json();
@@ -139,6 +146,37 @@ async function searchCommons(query) {
         },
       };
     });
+}
+
+/**
+ * Wikimedia Commons search is useful as a fallback, but the previous visual
+ * audit proved that country-name matching alone can return embassies abroad,
+ * homonymous places, documents and random objects. Wikivoyage country pages
+ * provide a human-edited travel context and preserve the order in which their
+ * images appear. We use that ordered list first, then retrieve the exact file,
+ * license and attribution data from Commons.
+ */
+async function getWikivoyageCandidates(articleTitle, countryName) {
+  const parseUrl = `${WIKIVOYAGE_API}?action=parse&format=json&redirects=1&prop=images&page=${encodeURIComponent(articleTitle)}`;
+  const parseRes = await fetchWithRetry(parseUrl, { headers: { 'User-Agent': USER_AGENT } });
+  if (!parseRes.ok) throw new Error(`Wikivoyage parse HTTP ${parseRes.status}`);
+  const parseJson = await parseRes.json();
+  if (parseJson.error) throw new Error(`Wikivoyage article unavailable: ${parseJson.error.info || parseJson.error.code}`);
+
+  const imageNames = (parseJson.parse?.images || [])
+    .filter((name) => /\.(?:jpe?g|png|webp)$/i.test(name))
+    .filter((name) => !/(banner|map|locator|flag|gpx|icon|logo|symbol|route|visa|passport|diagram|chart|graph)/i.test(name))
+    .slice(0, 24);
+
+  const info = await getCommonsImageInfo(imageNames);
+  const order = new Map(imageNames.map((name, index) => [`File:${name}`.replace(/ /g, '_').toLowerCase(), index]));
+  return info.map((candidate) => ({
+    ...candidate,
+    sourceRank: order.get(candidate.title.replace(/ /g, '_').toLowerCase()) ?? imageNames.length,
+    sourceArticle: countryName,
+    sourceArticleTitle: parseJson.parse?.title || articleTitle,
+    selectionSource: 'wikivoyage',
+  }));
 }
 
 async function downloadBuffer(url) {
@@ -174,14 +212,41 @@ async function ingestOne(entry, { dryRun, seenHashes }) {
 
   let candidates = [];
   try {
+    if (override?.preferredTitles?.length) {
+      const curated = await getCommonsImageInfo(override.preferredTitles);
+      candidates.push(...curated.map((candidate, index) => ({
+        ...candidate,
+        sourceRank: index,
+        sourceArticle: entry.nameEn,
+        sourceArticleTitle: override.wikivoyageTitle || entry.nameEn,
+        selectionSource: 'curated-title',
+      })));
+    }
+    const articleCandidates = await getWikivoyageCandidates(override?.wikivoyageTitle || entry.nameEn, entry.nameEn);
+    candidates.push(...articleCandidates.map((candidate) => ({
+      ...candidate,
+      sourceRank: candidate.sourceRank + (override?.preferredTitles?.length || 0),
+    })));
+    // Commons search remains a fallback for countries whose travel article has
+    // no usable licensed landscape photograph. Search results never inherit a
+    // relevance bypass merely because a preferred query was configured.
+    if (candidates.length === 0) {
     for (const q of queries) {
       const found = await searchCommons(q);
       candidates = candidates.concat(found);
     }
+    }
   } catch (err) {
-    report.status = 'NETWORK';
-    report.detail = err.message;
-    return report;
+    try {
+      for (const q of queries) {
+        const found = await searchCommons(q);
+        candidates = candidates.concat(found);
+      }
+    } catch (fallbackErr) {
+      report.status = 'NETWORK';
+      report.detail = `${err.message}; Commons fallback: ${fallbackErr.message}`;
+      return report;
+    }
   }
 
   // Try candidates in score order until one clears EVERY remaining gate
@@ -203,7 +268,7 @@ async function ingestOne(entry, { dryRun, seenHashes }) {
 
   const attempts = [];
   for (const candidate of selectAllViable(ranked)) {
-    const rel = checkCountryRelevance(candidate, entry, { fromOverride: !!override });
+    const rel = checkCountryRelevance(candidate, entry, { sourceArticle: candidate.sourceArticle });
     if (!rel.relevant) {
       attempts.push({ candidate, stage: 'relevance', detail: rel.reason });
       continue;

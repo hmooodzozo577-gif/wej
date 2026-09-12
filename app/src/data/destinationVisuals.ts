@@ -15,19 +15,11 @@
 // separate sidebar card — the data layer here is unchanged, only its
 // consumer moved.
 //
-// LANDMARK IMAGE — POPULATED via GitHub Actions (network-enabled CI
-// runner), not this Claude sandbox: commons.wikimedia.org/
-// upload.wikimedia.org are still EGRESS_BLOCKED from the sandbox itself
-// (confirmed live, an organization-level allowlist policy — its own
-// allowlist covers only package registries and the Anthropic API), so
-// scripts/generate-destination-images.mjs runs instead via
-// .github/workflows/generate-destination-images.yml, which has normal
-// internet access and commits the resulting assets/manifest directly to
-// this feature branch. Coverage is real but partial by design — see the
-// final report's Workstream C sections for the exact count, per-country
-// failure reasons, and the license/relevance/quality audits performed
-// over every entry below (quality and country-relevance safety take
-// priority over forcing 194/194).
+// Coverage is 194/194 effective countries. The build-time ingestion pipeline
+// starts from each country's Wikivoyage travel article, validates the exact
+// Commons license and metadata, stores an optimized local WebP, and is gated by
+// app/scripts/destinationImageAudit.json so unreviewed replacements cannot
+// silently ship.
 import destinationImages from './generated/destinationImages.json';
 
 export interface DestinationVisualMeta {

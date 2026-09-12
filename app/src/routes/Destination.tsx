@@ -5,6 +5,7 @@
 // same code path as before (untouched). A basic country (one of the 165)
 // renders a smaller, honest detail view — flag, name, continent, capital —
 // instead of fabricating an overview/strengths/cost/etc. it doesn't have.
+import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { WORLD_CATALOG, continentOf, countryInfoOf, resolvedBordersOf } from '../data/worldCatalog';
@@ -119,12 +120,45 @@ function CountryInfoCard({
   );
 }
 
+function OptionalPlanningInfo({
+  destination,
+  dt,
+}: {
+  destination: CatalogEntry;
+  dt: DetailStrings;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="optional-info">
+      <button
+        type="button"
+        className="btn btn-ghost optional-info-toggle"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+      >
+        <Icon name="map" size={16} /> {open ? dt.hideAdditionalInfo : dt.showAdditionalInfo}
+      </button>
+      {open ? (
+        <section aria-label={dt.additionalInfoTitle} className="info-cards-container">
+          <div className="info-cards-grid">
+            <TravelInfo destination={destination} />
+            <AccommodationInfo destination={destination} />
+            <TravelCostIndexInfo destination={destination} />
+            <TourismInsights destination={destination} />
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
 export function Destination() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
+  const routeState = location.state as { fromResults?: boolean; purpose?: PurposeId } | null;
 
   const d = WORLD_CATALOG.find((x) => x.id === id);
   if (!d) {
@@ -206,14 +240,7 @@ export function Destination() {
                 <p>{dt.notRecommendationReady}</p>
               </div>
 
-              <div className="info-cards-container">
-                <div className="info-cards-grid">
-                  <TravelInfo destination={d} />
-                  <AccommodationInfo destination={d} />
-                  <TravelCostIndexInfo destination={d} />
-                  <TourismInsights destination={d} />
-                </div>
-              </div>
+              <OptionalPlanningInfo destination={d} dt={dt} />
             </div>
           </div>
         </div>
@@ -222,7 +249,7 @@ export function Destination() {
   }
 
   // --- Full destination: unchanged from before Phase 10 ---
-  const fromResultsFlag = (location.state as { fromResults?: boolean } | null)?.fromResults;
+  const fromResultsFlag = routeState?.fromResults;
   const fromResults = !!(fromResultsFlag && state.results);
 
   let matchScore: number | null = null;
@@ -405,14 +432,7 @@ export function Destination() {
               </div>
             </div>
 
-            <div className="info-cards-container">
-              <div className="info-cards-grid">
-                <TravelInfo destination={d} />
-                <AccommodationInfo destination={d} />
-                <TravelCostIndexInfo destination={d} />
-                <TourismInsights destination={d} />
-              </div>
-            </div>
+            <OptionalPlanningInfo destination={d} dt={dt} />
           </div>
         </div>
       </div>

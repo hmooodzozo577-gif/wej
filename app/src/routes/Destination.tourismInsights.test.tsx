@@ -3,7 +3,7 @@
 // coverage for Japan (JP, full-destination branch); Egypt (EG, basic-
 // country branch) is also covered by the real snapshot's 187 entries.
 import { describe, expect, it } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from '../state/AppStateContext';
 import { Destination } from './Destination';
@@ -11,7 +11,7 @@ import { Destination } from './Destination';
 function renderAt(path: string) {
   return render(
     <AppStateProvider>
-      <MemoryRouter initialEntries={[path]}>
+      <MemoryRouter initialEntries={[{ pathname: path, state: { purpose: 'tourism' } }]}>
         <Routes>
           <Route path="/destination/:id" element={<Destination />} />
         </Routes>
@@ -24,12 +24,14 @@ describe('Phase 13.5d — Tourism Insights section reachability on the real Dest
   it('renders the real tourism data on the full-destination branch (japan / JP, covered)', async () => {
     renderAt('/destination/japan');
     await waitFor(() => expect(screen.getByText('معلومات الدولة')).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: 'عرض معلومات إضافية' }));
     await waitFor(() => expect(screen.getByText('مؤشرات السياحة')).toBeInTheDocument());
   });
 
   it('renders the real tourism data on the basic-country branch (Egypt, eg, covered)', async () => {
     renderAt('/destination/eg');
     await waitFor(() => expect(screen.getByText('معلومات الدولة')).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: 'عرض معلومات إضافية' }));
     await waitFor(() => expect(screen.getByText('مؤشرات السياحة')).toBeInTheDocument());
   });
 });

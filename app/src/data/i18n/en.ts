@@ -9,6 +9,14 @@ const base = enJson as I18nDict;
 
 export const EN: I18nDict = {
   ...base,
+  quiz: {
+    ...base.quiz,
+    checkpointTitle: 'You can see your results now',
+    checkpointBody: 'You have answered the core questions. See your results now, or answer a few more to improve their accuracy.',
+    showResultsNow: 'Show results now',
+    continueQuestions: 'Continue questions to improve results',
+    preparingNext: 'Preparing the next question…',
+  },
   regionLabels: {
     ...base.regionLabels,
     Africa: 'Africa',
@@ -31,6 +39,9 @@ export const EN: I18nDict = {
     photoSource: 'Source',
     photoAuthor: 'Author',
     photoLicense: 'License',
+    showAdditionalInfo: 'Show additional information',
+    hideAdditionalInfo: 'Hide additional information',
+    additionalInfoTitle: 'Trip planning information',
   },
   // Phase 12 — Location Personalization. Not part of the original
   // wejhaty.html copy (this feature didn't exist there), so it's a plain
@@ -134,54 +145,5 @@ export const EN: I18nDict = {
     unavailable: 'No tourism data is available for this destination yet.',
     disclaimer:
       'International arrivals and receipts figures from UN Tourism (via Our World in Data) — not a live measurement, and not a personal travel budget.',
-  },
-  // Phase 16 — AI API Integration. Optional, additive: the questionnaire
-  // and results work identically with none of this text ever shown.
-  ai: {
-    interpret: {
-      title: 'Tell us about your trip',
-      optional: 'Optional',
-      subtitle:
-        'Describe what you\'re looking for in your own words, and we\'ll use it to understand your preferences and skip asking about anything you\'ve already told us.',
-      placeholder: 'e.g. "I want somewhere cold and quiet, with nature, and good for families"',
-      cta: 'Understand my preferences',
-      loading: 'Understanding your preferences…',
-      unavailable: 'This feature isn\'t available yet — you can keep answering the questions directly.',
-      error: 'Couldn\'t understand that right now. You can keep answering the questions directly.',
-      proposedTitle: 'Here\'s what we understood about your trip',
-      apply: 'Use these preferences',
-      dismiss: 'Dismiss',
-      unmappedNote: 'Some of what you wrote didn\'t map to a question.',
-      noneFound: 'Nothing in your text mapped to a question yet — try adding more detail.',
-      lowConfidence: 'uncertain',
-      satisfiedTitle: 'Already taken into account',
-      satisfiedSubtitle: 'We won\'t ask about these again.',
-      remove: 'Remove',
-    },
-    followup: {
-      freeTextToggle: "None of these? Describe it in your own words",
-      freeTextPlaceholder: 'e.g. somewhere without big crowds…',
-      aiPromptPlaceholder: 'Type your answer in your own words…',
-      freeTextSubmit: 'Send',
-      skip: 'Skip',
-      freeTextLoading: 'Understanding…',
-      freeTextError: "Couldn't understand that right now — you can skip this and continue with the regular questions.",
-    },
-    explain: {
-      title: 'Personalized insight',
-      badge: 'AI-enhanced',
-      loading: 'Generating a personalized explanation…',
-      unavailable: 'A personalized AI explanation isn\'t available right now — your results above are unaffected.',
-      error: 'Couldn\'t generate a personalized explanation right now — your results above are unaffected.',
-    },
-    // Phase 16.5 (TRUE AI-driven adaptive interview completion) — fixed
-    // chrome around the AI next-turn question; the question's own text is
-    // AI-generated and never lives here.
-    turn: {
-      loading: 'Preparing your next question…',
-      progressLabel: 'Confirmed so far',
-      completeTitle: 'We have enough information about your trip',
-      completeBody: 'You can see your results now, or go back to change anything confirmed above.',
-    },
   },
 };

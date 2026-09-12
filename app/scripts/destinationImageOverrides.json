@@ -27,6 +27,51 @@
     "preferredQueries": ["Cliffs of Moher Ireland", "Dublin skyline Ireland", "Ring of Kerry Ireland landscape"]
   },
   "VA": {
+    "preferredTitles": ["File:Peters Square Sunrise Vatican Rome Sep19 R16 01827.jpg"],
     "preferredQueries": ["St Peter's Basilica Vatican City", "St Peter's Square Vatican City aerial"]
+  },
+  "GE": {
+    "wikivoyageTitle": "Georgia (country)",
+    "preferredQueries": ["Tbilisi Georgia country skyline", "Svaneti Georgia country landscape"]
+  },
+  "FM": {
+    "wikivoyageTitle": "Federated States of Micronesia",
+    "preferredQueries": ["Pohnpei Micronesia landscape", "Nan Madol Micronesia"]
+  },
+  "BE": {
+    "preferredTitles": ["File:Grand-Place, Brussels - panorama, June 2018.jpg"]
+  },
+  "SO": {
+    "preferredTitles": ["File:Mogadishu Skyline 5th picture.jpg"]
+  },
+  "TO": {
+    "preferredTitles": ["File:Haamonga-A-Maui.jpg", "File:Tonga Royal Palace Oct 08.jpg"]
+  },
+  "SG": {
+    "preferredTitles": ["File:Skylines of the Central Business District, Singapore at dusk.jpg"]
+  },
+  "AZ": {
+    "preferredTitles": ["File:Flame towers from Baku boulevard.JPG"]
+  },
+  "BW": {
+    "preferredTitles": ["File:Vista aérea del delta del Okavango, Botsuana, 2018-08-01, DD 39.jpg"]
+  },
+  "FJ": {
+    "preferredTitles": ["File:Naviti island, Yasawa, Fiji (1) - August 2016.jpg"]
+  },
+  "IQ": {
+    "preferredTitles": ["File:21. Erbil Citadel, Erbil Governorate, Iraqi Kurdistan.jpg"]
+  },
+  "JM": {
+    "preferredTitles": ["File:Jamaica Ocho Rios Dunn's River Falls 1.jpg"]
+  },
+  "MH": {
+    "preferredTitles": ["File:Kwajalein Atoll, Marshall Islands.jpg"]
+  },
+  "MZ": {
+    "preferredTitles": ["File:Maputo skyline 2006.jpg"]
+  },
+  "SL": {
+    "preferredTitles": ["File:Freetown-aerialview.jpg"]
   }
 }

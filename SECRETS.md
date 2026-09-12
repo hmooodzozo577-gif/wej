@@ -94,44 +94,7 @@ like a signed request URL containing them) back to the browser.
 
 `worker/src/amadeus.ts` declares `Env` with `AMADEUS_API_KEY: string`,
 `AMADEUS_API_SECRET: string`, and `AMADEUS_ENV?: string`, and actually
-performs the OAuth2 client-credentials flow and the Flight Offers Search
-call using them. No value for any of the three has been set anywhere —
-this repository contains no `.dev.vars`, no `wrangler secret` call was
-run, and the Worker has not been deployed (see the final report's
-Deployment section for the exact manual steps a repository owner would
-run, with their own real Amadeus credentials, to actually deploy it).
-
-## Phase 16 — AI provider: Cloudflare Workers AI (native binding, NO API key)
-
-The provider decision has been made: **Cloudflare Workers AI**, via the
-native `env.AI` binding (`worker/wrangler.toml`'s `[ai] binding = "AI"`).
-This is a fundamentally different mechanism from every credential
-documented above — there is **no `AI_API_KEY` for this provider, and
-none should ever be added for it.** Cloudflare injects `env.AI` into
-the Worker at request time based on the Worker's own Cloudflare account
-context — the same mechanism that lets the Worker run at all — not a
-bearer token this repository holds, stores, or could accidentally leak.
-`worker/src/ai/cloudflareWorkersAiProvider.ts` is the only file that
-calls `env.AI.run(...)`; it reads no secret of any kind.
-
-**Do not confuse this with deployment authorization**, a separate,
-unrelated requirement: actually *deploying* this Worker (so `env.AI`
-exists at a real URL) needs either an interactive `wrangler login` or a
-`CLOUDFLARE_API_TOKEN`. As of the Phase 16 live-deployment task, the
-repository owner has configured `CLOUDFLARE_API_TOKEN` and
-`CLOUDFLARE_ACCOUNT_ID` as GitHub Actions repository secrets (never
-inspected, echoed, or printed by any automation in this repository —
-`.github/workflows/deploy-worker.yml` references them only as
-`${{ secrets.CLOUDFLARE_API_TOKEN }}` / `${{ secrets.CLOUDFLARE_ACCOUNT_ID }}`),
-and the Worker is deployed and live at
-`https://wejhaty-travel-worker.hmooodzozo577.workers.dev` — verified
-with real Arabic and English requests, not just a dry run. See the
-repository's Phase 16 live-deployment final report for the full
-evidence and evaluation results.
-
-Legacy extension point (unused): `worker/src/ai/types.ts` still declares
-optional `AI_PROVIDER`/`AI_API_KEY` fields on `Env`, kept only in case a
-second, non-Workers-AI vendor is ever added later — no adapter is
-registered for either today (`resolveAiProvider(env)` checks `env.AI`
-first and only falls back to this pair, which resolves to `null`, when
-`env.AI` is absent), and neither is set anywhere in this repository.
+performs the OAuth2 client-credentials flow and Flight Offers Search call.
+No value is stored in this repository. The Worker has previously been deployed,
+but current Cloudflare secret values are external state and must be checked in
+the account before claiming that live Amadeus offers are configured.

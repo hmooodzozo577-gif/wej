@@ -1,123 +1,106 @@
-// Phase 15 — Adaptive Questions. Pure, deterministic question-ORDERING
-// layer, completely separate from src/engine/ (Phase 14 scoring/
-// ranking, which this module never imports from and never calls) —
-// see this directory's README.md for the full audit this was built on
-// and why reordering (not skipping) was chosen for a question that is
-// genuinely still unknown.
-//
-// Phase 16.5 — a question whose id ALREADY has an answer (regardless
-// of `askedIds`) is now excluded from the candidates too — see the
-// `answers[q.id] === undefined` filter below. This is deliberately
-// NOT the same thing Phase 15's own README warned against ("fabricate
-// irrelevance to fake adaptivity"): Phase 15 never left a question
-// with a real, already-known value; it only ever offered UNANSWERED
-// questions in a smarter order. Phase 16.5 adds exactly one new fact
-// this function can now observe — a question answered via a confirmed
-// natural-language interpretation (never walked through `askedIds`,
-// see state/types.ts's AnswerProvenance) is genuinely, legitimately
-// already known, the same way a directly-answered one is. Skipping a
-// question whose answer already exists is not fake adaptivity; asking
-// it again despite already knowing the answer would be the fake
-// (redundant) behavior.
-//
-// Contract: given a purpose's full question bank, the answers given so
-// far, and which question ids have already been shown, returns the
-// single next question to ask, or `null` once every question in the
-// bank has either been asked or already has an answer. Same inputs ->
-// same output, always: no randomness, no timestamps, no dependency on
-// object/Map iteration order (arrays and explicit index lookups
-// only), no network, no AI.
-import type { Question } from '../data/types';
-// Type-only import — zero runtime coupling to engine/ (Phase 14). This
-// module never calls scoreDestination/rankDestinations and never will;
-// `Answers` (`Record<string, string | number>`) is just the shared
-// answer-state shape, already the single source of truth reducer.ts
-// itself imports from the same place.
-import type { Answers } from '../engine';
+import { CLIMATE_COMPAT, QUESTION_BANKS } from '../data/questionBanks';
+import type { Destination, PurposeId, Question } from '../data/types';
+import { rankDestinations, type Answers } from '../engine';
 
-/** Threshold (0-100) separating a "high" from a "low" running average
- *  of the user's own 'importance' answers so far. 55 sits just above
- *  the midpoint of the 0-100 scale these answers are always given on
- *  (see data/generated/questionBanks.json — every importance option
- *  set spans roughly 10-85) — not tuned against any specific bank. */
-const IMPORTANCE_MOMENTUM_THRESHOLD = 55;
+const TOP_CANDIDATES = 12;
 
-/** Small, fixed priority bump — enough to reorder ties, never enough
- *  to override a genuinely higher base `weight` (the smallest real
- *  weight gap between two questions in any bank is 1; every bump here
- *  is well below what would invert an already-decisive weight
- *  ordering by more than one adjacent tie). */
-const ADAPTIVE_BOOST = 5;
-
-function priority(q: Question, avgImportance: number | null): number {
-  let p = q.weight;
-  if (avgImportance === null) return p;
-  if (avgImportance >= IMPORTANCE_MOMENTUM_THRESHOLD && q.kind === 'importance') {
-    p += ADAPTIVE_BOOST;
-  } else if (avgImportance < IMPORTANCE_MOMENTUM_THRESHOLD && (q.kind === 'target' || q.kind === 'climate')) {
-    p += ADAPTIVE_BOOST;
-  }
-  return p;
+function purposeForBank(bank: Question[]): PurposeId | null {
+  const entry = (Object.entries(QUESTION_BANKS) as [PurposeId, Question[]][]).find(([, questions]) => questions === bank);
+  return entry?.[0] ?? null;
 }
 
-/** Deterministic next-question selection.
- *
- * Rules, in order:
- * 1. `flavor`-kind questions (weight 0, never scored — see
- *    engine/scoreDestination.ts's own `kind !== 'flavor'` filter)
- *    always come first, in the bank's own original relative order —
- *    a stable icebreaker/context question, unchanged from before this
- *    phase for every bank that has one.
- * 2. Among the rest, highest `priority()` first — base priority is the
- *    question's own real `weight` (how much it actually influences the
- *    final score, per scoreDestination.ts), adjusted by a genuine,
- *    answer-derived signal: the running average of 'importance'-kind
- *    answers given so far. In scoreDestination.ts, an 'importance'
- *    question's EFFECTIVE weight is `weight * (answer / 100)` — so a
- *    user who answers importance questions high is, by construction,
- *    making importance-kind dimensions carry MORE real weight in their
- *    own eventual score; prioritizing more of them next is a direct,
- *    provable consequence of that fact, not an invented correlation.
- *    Symmetrically, a user trending low on importance answers is
- *    making those dimensions carry LESS weight for themselves — so
- *    'target'/'climate' questions (whose weight is fixed regardless of
- *    the answer given) are prioritized instead, to guarantee their
- *    fixed-weight signal is captured early.
- * 3. Ties broken by the question's original position in the bank
- *    array — fixed, deterministic, never insertion-order-by-accident
- *    (every candidate's index is read from the SAME `bank` array
- *    passed in, not recomputed from a Set/Map).
- *
- * Never skips a real (non-flavor) question that is still UNANSWERED —
- * every one of those is returned eventually; among the still-unknown
- * dimensions this is a REORDER, not a fabricated skip. A question
- * that already has an answer (Phase 16.5: direct or confirmed
- * ai_interpreted) is the one legitimate exception — see the module
- * doc comment above. */
+function numericDispersion(values: number[], scale: number): number {
+  if (values.length < 2) return 0;
+  const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+  const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
+  return Math.min(100, (Math.sqrt(variance) / Math.max(scale, 1)) * 200);
+}
+
+function climateDispersion(candidates: Destination[]): number {
+  const counts = new Map<string, number>();
+  for (const destination of candidates) {
+    counts.set(destination.climate, (counts.get(destination.climate) ?? 0) + 1);
+  }
+  if (counts.size <= 1) return 0;
+  const total = candidates.length;
+  const entropy = [...counts.values()].reduce((sum, count) => {
+    const probability = count / total;
+    return sum - probability * Math.log2(probability);
+  }, 0);
+  return (entropy / Math.log2(Object.keys(CLIMATE_COMPAT.hot ?? {}).length || 5)) * 100;
+}
+
+function questionDispersion(question: Question, candidates: Destination[]): number {
+  if (!question.destKey || question.kind === 'flavor') return 0;
+  if (question.kind === 'climate') return climateDispersion(candidates);
+  const values = candidates
+    .map((destination) => destination[question.destKey as keyof Destination])
+    .filter((value): value is number => typeof value === 'number');
+  return numericDispersion(values, question.scale ?? 100);
+}
+
+function rankRemainingQuestions(
+  remaining: Question[],
+  purpose: PurposeId | null,
+  answers: Answers,
+): Question[] {
+  const candidates = purpose
+    ? rankDestinations(purpose, answers).slice(0, TOP_CANDIDATES).map((result) => result.dest)
+    : [];
+  return remaining
+    .map((question, index) => ({
+      question,
+      index,
+      score: question.weight * 10 + questionDispersion(question, candidates),
+    }))
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .map(({ question }) => question);
+}
+
+/**
+ * Chooses a deterministic next question from the current candidate set.
+ * The first question keeps the bank's established highest-weight choice.
+ * Later questions are ordered by how well their supported destination field
+ * separates the leading candidates. The option chosen on the previous turn
+ * selects a distinct branch among those useful questions, so different
+ * answers produce different paths without inventing scoring dimensions.
+ */
 export function selectNextQuestion(bank: Question[], answers: Answers, askedIds: string[]): Question | null {
-  const askedSet = new Set(askedIds);
-  const remaining = bank.filter((q) => !askedSet.has(q.id) && answers[q.id] === undefined);
+  const asked = new Set(askedIds);
+  const remaining = bank.filter((question) => !asked.has(question.id) && answers[question.id] === undefined);
   if (remaining.length === 0) return null;
 
-  const flavorRemaining = remaining.filter((q) => q.kind === 'flavor');
-  if (flavorRemaining.length > 0) return flavorRemaining[0];
+  const flavor = remaining.find((question) => question.kind === 'flavor');
+  if (flavor) return flavor;
 
-  const importanceValues = bank
-    .filter((q) => q.kind === 'importance' && answers[q.id] !== undefined)
-    .map((q) => answers[q.id] as number);
-  const avgImportance = importanceValues.length > 0 ? importanceValues.reduce((a, b) => a + b, 0) / importanceValues.length : null;
-
-  let best = remaining[0];
-  let bestPriority = priority(best, avgImportance);
-  let bestIndex = bank.indexOf(best);
-  for (const q of remaining.slice(1)) {
-    const p = priority(q, avgImportance);
-    const idx = bank.indexOf(q);
-    if (p > bestPriority || (p === bestPriority && idx < bestIndex)) {
-      best = q;
-      bestPriority = p;
-      bestIndex = idx;
-    }
+  if (askedIds.length === 0) {
+    return remaining.reduce((best, question) => (question.weight > best.weight ? question : best));
   }
-  return best;
+
+  const previousId = askedIds[askedIds.length - 1];
+  const previousQuestion = bank.find((question) => question.id === previousId);
+  const previousValue = previousId ? answers[previousId] : undefined;
+  const optionIndex = previousQuestion?.options.findIndex((option) => option.value === previousValue) ?? 0;
+  const purpose = purposeForBank(bank);
+
+  if (!previousQuestion || optionIndex < 0) {
+    return rankRemainingQuestions(remaining, purpose, answers)[0] ?? null;
+  }
+
+  // Build all sibling branches together. Each option gets its strongest
+  // still-unassigned question for the candidate set that option would
+  // produce. This preserves semantic relevance while guaranteeing distinct
+  // immediate branches whenever enough unanswered questions remain.
+  const assigned = new Set<string>();
+  const branches: Question[] = [];
+  for (const option of previousQuestion.options) {
+    const hypotheticalAnswers = { ...answers, [previousQuestion.id]: option.value };
+    const ranked = rankRemainingQuestions(remaining, purpose, hypotheticalAnswers);
+    const choice = ranked.find((question) => !assigned.has(question.id)) ?? ranked[0];
+    if (!choice) break;
+    branches.push(choice);
+    assigned.add(choice.id);
+  }
+
+  return branches[optionIndex % branches.length] ?? branches[0] ?? null;
 }

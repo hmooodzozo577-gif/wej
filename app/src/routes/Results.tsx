@@ -9,19 +9,12 @@ import { Icon } from '../components/Icon';
 import { DestinationCard } from '../components/DestinationCard';
 import { buildWhyText } from '../engine';
 import { regionGradientCss } from '../components/regionGradient';
-import { RecommendationExplanation } from '../components/RecommendationExplanation';
-import { buildProfileSummary } from '../ai/buildProfileSummary';
-import { QUESTION_BANKS } from '../data/questionBanks';
 
-/** Ports the original's setInterval-based count-up for `.matchNum` exactly:
- *  step = max(1, round(target/30)), tick every 16ms. Synchronizing with the
- *  interval (an external timer) is exactly what useEffect is for — the
- *  `setValue(0)` on target-change is the animation's intentional restart,
- *  not a redundant derived value. */
+/** Ports the original's setInterval-based count-up for `.matchNum`:
+ *  step = max(1, round(target/30)), tick every 16ms. */
 function useCountUp(target: number): number {
   const [value, setValue] = useState(0);
   useEffect(() => {
-    setValue(0);
     let cur = 0;
     const step = Math.max(1, Math.round(target / 30));
     const iv = setInterval(() => {
@@ -66,7 +59,7 @@ export function Results() {
 
         <Link
           to={`/destination/${first.dest.id}`}
-          state={{ fromResults: true }}
+          state={{ fromResults: true, purpose: state.purpose }}
           className="top-pick"
           role="button"
         >
@@ -120,18 +113,10 @@ export function Results() {
               t={t}
               matchScore={item.score}
               whyText={buildWhyText(lang, state.purpose!, item.reasons, item.dest)}
+              purpose={state.purpose!}
             />
           ))}
         </div>
-
-        {/* Phase 16 — Capability B. Never replaces the ranking/reasons
-            above: a loading/unavailable/error state inside this card
-            leaves everything else on the page exactly as it is. */}
-        <RecommendationExplanation
-          purposeName={t.purposes[state.purpose].n}
-          profileSummary={buildProfileSummary(lang, QUESTION_BANKS[state.purpose], state.answers)}
-          top={top5}
-        />
 
         <div className="results-actions">
           <button type="button" className="btn btn-ghost" onClick={() => navigate('/explore')}>

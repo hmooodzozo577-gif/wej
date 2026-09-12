@@ -137,6 +137,25 @@ describe('scoreCandidate', () => {
     expect(r.rejected).toBe(true);
   });
 
+  it.each([
+    'File:Embassy of Afghanistan, Tokyo. Rooftop patio.jpg',
+    'File:Bahamas Ireland Locator (cropped).png',
+    'File:2017-03-29 01 BARBADOS II - IMO 9229221 - Barbados.jpg',
+    'File:Temporary Slovak passport issued in 1940.jpg',
+    'File:Lego Singapore Set.jpg',
+    'File:UTAir-Ukraine ATR-72.jpg',
+    'File:National Historic Landmark plaque.jpg',
+    'File:Satellite image of Latvia in March 2003.png',
+  ])('rejects audited non-destination imagery: %s', (title) => {
+    expect(scoreCandidate(makeCandidate({ title })).rejected).toBe(true);
+  });
+
+  it('strongly prioritizes the first suitable travel photo from a country travel article', () => {
+    const lead = scoreCandidate(makeCandidate({ title: 'File:Band-e Amir National Park.jpg', sourceRank: 0 }));
+    const later = scoreCandidate(makeCandidate({ title: 'File:Kabul skyline panorama.jpg', sourceRank: 12 }));
+    expect(lead.score).toBeGreaterThan(later.score);
+  });
+
   it('rejects an SVG/diagram/undersized image by file type or resolution', () => {
     expect(scoreCandidate(makeCandidate({ mime: 'image/svg+xml' })).rejected).toBe(true);
     expect(scoreCandidate(makeCandidate({ width: 200, height: 120 })).rejected).toBe(true);
@@ -282,10 +301,24 @@ describe('checkCountryRelevance', () => {
     expect(checkCountryRelevance(candidate, entry).relevant).toBe(false);
   });
 
-  it('trusts a curated override without requiring a metadata mention (a human already vouched for it)', () => {
-    const candidate = makeCandidate({ title: 'File:AlUla canyon.jpg', extmetadata: {} }); // no "Saudi Arabia" mention
+  it('accepts a photo tied to the matching country travel article without requiring a repeated metadata mention', () => {
+    const candidate = makeCandidate({ title: 'File:AlUla canyon.jpg', extmetadata: {} });
     const saEntry = { iso2: 'SA', iso3: 'SAU', nameEn: 'Saudi Arabia' };
-    expect(checkCountryRelevance(candidate, saEntry, { fromOverride: true }).relevant).toBe(true);
+    expect(checkCountryRelevance(candidate, saEntry, { sourceArticle: 'Saudi Arabia' }).relevant).toBe(true);
+  });
+
+  it('does not mistake the word photographs for a standalone graph', () => {
+    const r = scoreCandidate(makeCandidate({
+      title: 'File:Grand Place Brussels panorama.jpg',
+      extmetadata: { LicenseShortName: 'CC BY-SA 4.0', Categories: 'Belgium photographs|City panoramas' },
+    }));
+    expect(r.rejected).toBe(false);
+  });
+
+  it('does not let a search-query override bypass country relevance', () => {
+    const candidate = makeCandidate({ title: 'File:Atlanta, Georgia Skyline.jpg', extmetadata: { Categories: 'Atlanta|Georgia (U.S. state)' } });
+    const georgiaEntry = { iso2: 'GE', iso3: 'GEO', nameEn: 'Georgia' };
+    expect(checkCountryRelevance(candidate, georgiaEntry, { fromOverride: true }).relevant).toBe(false);
   });
 
   // Regression tests for the two real false positives the mandatory

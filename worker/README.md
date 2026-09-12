@@ -11,28 +11,19 @@ Pages frontend):
 - Independently deployable via `wrangler`, on its own schedule, entirely
   separate from the GitHub Pages deploy.
 
-## Status: deployed (AI live; Travel/Amadeus credentials still unconfigured)
+## Status: travel Worker deployed; Amadeus credential state must be re-checked
 
 This Worker is now deployed via `.github/workflows/deploy-worker.yml`
 (GitHub Actions, using the repository's `CLOUDFLARE_API_TOKEN`/
 `CLOUDFLARE_ACCOUNT_ID` secrets) — real public URL:
 `https://wejhaty-travel-worker.hmooodzozo577.workers.dev`. Redeploys
 automatically on a push touching `worker/**`, or on demand via
-`workflow_dispatch` (which can also opt into a small live Workers AI
-smoke test — see that workflow's `run_smoke_test` input).
+`workflow_dispatch`.
 
-- **Phase 16 AI (`/api/ai/*`)**: live. The Workers AI binding (`env.AI`,
-  `wrangler.toml`'s `[ai]` block) needs no credential at all — verified
-  with real Arabic and English requests against the deployed Worker
-  (see the repository's Phase 16 live-deployment final report for the
-  exact evaluation set and results).
-- **Travel (`/api/travel/flights`, Amadeus)**: the Worker itself is
-  deployed and reachable, but `AMADEUS_API_KEY`/`AMADEUS_API_SECRET`
-  have never been set (`wrangler secret put`) — a request to this
-  route will safely fail with a generic `provider_error`, never a
-  fabricated flight offer (see `mapAmadeusErrorToResponseArgs` in
-  `src/index.ts`). Setting those two secrets is the only remaining
-  step to make Travel live too.
+The only application endpoint is `POST /api/travel/flights`. Current external
+secret/account state can change outside Git and must be checked before claiming
+live Amadeus offers. Missing or rejected credentials fail safely with a generic
+`provider_error`; the Worker never fabricates an offer.
 
 ## What it does
 
@@ -67,9 +58,8 @@ npm run typecheck
 npm run dev       # currently just prints a note — see below
 ```
 
-Running an actual local Worker dev server (`npx wrangler dev`) needs
-`wrangler` installed, which is intentionally not added as a dependency
-yet. `npm test`/`npm run typecheck` exercise the real logic in
+Running an actual local Worker dev server uses the repository-pinned
+`wrangler` development dependency. `npm test`/`npm run typecheck` exercise the real logic in
 `src/index.ts`/`src/amadeus.ts` directly via the standard
 `Request`/`Response`/`fetch` Web APIs (available natively in Node 18+),
 with `fetch` injected as a mock in tests — no wrangler or Miniflare

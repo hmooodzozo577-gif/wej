@@ -1,4 +1,4 @@
-// Phase 16.5 completion pass — Location Permissions API pre-detection.
+// Location Permissions API pre-detection.
 //
 // `navigator.permissions.query({name:'geolocation'})` NEVER triggers the
 // browser's OS-level permission prompt by itself — querying the current

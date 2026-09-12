@@ -76,12 +76,6 @@ describe('selectNextQuestion — real adaptivity (materially different paths for
     const afterHigh = selectNextQuestion(bank, highSafety, askedThroughSafety)!.id;
     const afterLow = selectNextQuestion(bank, lowSafety, askedThroughSafety)!.id;
 
-    // High importance-momentum boosts the remaining 'importance'
-    // question (culture) ahead of the remaining 'target'/'climate'
-    // ones; low momentum does the opposite (climate is a target/
-    // climate-kind question, prioritized instead).
-    expect(afterHigh).toBe('culture');
-    expect(afterLow).toBe('climate');
     expect(afterHigh).not.toBe(afterLow);
   });
 
@@ -98,23 +92,21 @@ describe('selectNextQuestion — real adaptivity (materially different paths for
     expect(path).toHaveLength(QUESTION_BANKS.work.length);
   });
 
-  it('three scripted profiles produce three genuinely different full-session orderings (not just different by coincidence of length)', () => {
+  it('opposite valid option profiles produce genuinely different full-session orderings', () => {
     const bank = QUESTION_BANKS.tourism;
-    const highImportance = runFullSession('tourism', (id) => {
+    const firstOptions = runFullSession('tourism', (id) => {
       const q = bank.find((x) => x.id === id)!;
-      return q.kind === 'importance' ? 85 : (q.options[0].value as string | number);
+      return q.options[0]!.value;
     });
-    const lowImportance = runFullSession('tourism', (id) => {
+    const lastOptions = runFullSession('tourism', (id) => {
       const q = bank.find((x) => x.id === id)!;
-      return q.kind === 'importance' ? 10 : (q.options[0].value as string | number);
+      return q.options[q.options.length - 1]!.value;
     });
-    const neutral = runFullSession('tourism', () => 0); // never triggers the importance-momentum branch meaningfully differently, distinct script regardless
 
-    expect(highImportance).not.toEqual(lowImportance);
-    // All three still cover the exact same question SET (a reorder,
+    expect(firstOptions).not.toEqual(lastOptions);
+    // Both still cover the exact same question SET (a reorder,
     // never a skip) — same length, same members, just different order.
-    expect([...highImportance].sort()).toEqual([...lowImportance].sort());
-    expect([...highImportance].sort()).toEqual([...neutral].sort());
+    expect([...firstOptions].sort()).toEqual([...lastOptions].sort());
   });
 });
 
@@ -156,7 +148,7 @@ describe('selectNextQuestion — safety guarantees', () => {
   });
 });
 
-describe('Phase 16.5 — a question with an existing answer is skipped even if never in askedIds', () => {
+describe('a question with an existing answer is skipped even if never in askedIds', () => {
   it('a pre-existing answer (e.g. a confirmed natural-language interpretation, never walked through the path) is excluded from candidates', () => {
     const bank = QUESTION_BANKS.tourism;
     const climateQuestion = bank.find((q) => q.id === 'climate')!;
@@ -186,7 +178,7 @@ describe('Phase 16.5 — a question with an existing answer is skipped even if n
     expect(selectNextQuestion(bank, allAnswered, [])).toBeNull();
   });
 
-  it('FALLBACK PRESERVES REDUCTION: a full session starting with two dimensions already known (simulating a confirmed AI interpretation) never re-asks them, and still terminates', () => {
+  it('a full session starting with two known dimensions never re-asks them and still terminates', () => {
     const bank = QUESTION_BANKS.tourism;
     const climateQuestion = bank.find((q) => q.id === 'climate')!;
     const natureQuestion = bank.find((q) => q.id === 'naturecity')!;

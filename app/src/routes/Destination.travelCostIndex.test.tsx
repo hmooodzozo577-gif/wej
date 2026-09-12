@@ -16,7 +16,7 @@
 // the full-destination and basic-country rendering branches, without
 // ever showing a fabricated price/availability/booking claim.
 import { describe, expect, it } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from '../state/AppStateContext';
 import { Destination } from './Destination';
@@ -24,7 +24,7 @@ import { Destination } from './Destination';
 function renderAt(path: string) {
   return render(
     <AppStateProvider>
-      <MemoryRouter initialEntries={[path]}>
+      <MemoryRouter initialEntries={[{ pathname: path, state: { purpose: 'tourism' } }]}>
         <Routes>
           <Route path="/destination/:id" element={<Destination />} />
         </Routes>
@@ -37,6 +37,7 @@ describe('Phase 13.5c — Travel Cost Index section reachability on the real Des
   it('renders the real dynamic index on the full-destination branch (japan / JP, covered by the real snapshot)', async () => {
     renderAt('/destination/japan');
     await waitFor(() => expect(screen.getByText('معلومات الدولة')).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: 'عرض معلومات إضافية' }));
     const heading = await screen.findByText('مؤشر تكلفة السفر');
     // Scoped to THIS card's own DOM subtree, not the whole page: since
     // Tourism Insights (Phase 13.5d) legitimately renders its own real
@@ -51,6 +52,7 @@ describe('Phase 13.5c — Travel Cost Index section reachability on the real Des
   it('renders the real dynamic index on the basic-country branch (Egypt / EG, covered by the real snapshot)', async () => {
     renderAt('/destination/eg');
     await waitFor(() => expect(screen.getByText('معلومات الدولة')).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: 'عرض معلومات إضافية' }));
     const heading = await screen.findByText('مؤشر تكلفة السفر');
     // Scoped to THIS card's own DOM subtree, not the whole page: since
     // Tourism Insights (Phase 13.5d) legitimately renders its own real

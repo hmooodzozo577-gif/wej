@@ -1,29 +1,7 @@
 name: Deploy Cloudflare Worker
 
-# Deploys worker/ (Wejhaty's travel API + Phase 16 AI backend) to
-# Cloudflare via `wrangler deploy`. Structurally separate from
-# deploy-pages.yml (which only ever builds/publishes app/) — this Worker
-# is never bundled into, or deployed as part of, the GitHub Pages site.
-#
-# Auth: CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID, both GitHub Actions
-# repository SECRETS (never echoed, never written to a file, never put
-# in a frontend/VITE_* variable — see ../../SECRETS.md). Deployment
-# authorization is a separate concern from the Workers AI binding itself
-# (env.AI needs no API key at all — see worker/src/ai/
-# cloudflareWorkersAiProvider.ts).
-# run_smoke_test: opt-in only (default false) — a handful of REAL,
-# billable Workers AI calls against the just-deployed Worker, using a
-# small fixed Arabic+English evaluation set. Never runs on a plain push
-# (cost-safety: this task's own "do not stress-test the live model,
-# keep live inference calls minimal" instruction) — only on a manual
-# workflow_dispatch where a human explicitly asked for it.
 on:
-  workflow_dispatch:
-    inputs:
-      run_smoke_test:
-        description: 'Also run a small fixed set of REAL Workers AI smoke tests against the deployed Worker (billable, minimal).'
-        type: boolean
-        default: false
+  workflow_dispatch: {}
   push:
     branches: [claude/marhaba-kxry8l]
     paths:
@@ -40,8 +18,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    outputs:
-      worker_url: ${{ steps.deploy.outputs.worker_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -65,135 +41,9 @@ jobs:
         working-directory: worker
         run: npm test
 
-      - name: Deploy
-        id: deploy
+      - name: Deploy travel Worker
         working-directory: worker
-        run: |
-          npx wrangler deploy | tee /tmp/wrangler-deploy.log
-          url=$(grep -oE 'https://[a-zA-Z0-9.-]+\.workers\.dev' /tmp/wrangler-deploy.log | head -1)
-          echo "worker_url=$url" >> "$GITHUB_OUTPUT"
+        run: npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-  # Optional, manual-only (see run_smoke_test above). Public HTTP calls
-  # only — no secret of any kind is used or needed here (Workers AI
-  # inference needs no API key; this just POSTs plain JSON to the
-  # Worker's own public AI endpoints, the same contract the frontend
-  # uses). A small FIXED evaluation set, never a stress test, never a
-  # loop.
-  smoke-test:
-    needs: deploy
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_smoke_test == true }}
-    runs-on: ubuntu-latest
-    steps:
-      # Production-failure diagnosis (browser-equivalent, real production
-      # Origin header — no path component, per CORS spec). Reproduces
-      # exactly what a real browser on https://hmooodzozo577-gif.github.io/wej/
-      # would send: the preflight (POST + application/json is NOT a CORS
-      # "simple request"), then the real POST with the FULL tourism
-      # question bank (8 questions — the actual shape NaturalPreferenceInput
-      # sends, not the smaller 3-question smoke-test subset below) and the
-      # same real user-reported Arabic phrase, timed end to end.
-      - name: DIAGNOSIS — browser-equivalent OPTIONS preflight (production Origin)
-        run: |
-          curl -sS --max-time 60 -i -X OPTIONS "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
-            -H 'Origin: https://hmooodzozo577-gif.github.io' \
-            -H 'Access-Control-Request-Method: POST' \
-            -H 'Access-Control-Request-Headers: content-type'
-
-      - name: DIAGNOSIS — browser-equivalent POST (production Origin, full 8-question tourism bank, timed)
-        run: |
-          curl -sS --max-time 60 -i -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
-            -H 'Origin: https://hmooodzozo577-gif.github.io' \
-            -H 'Content-Type: application/json' \
-            -w '\n---\nHTTP_STATUS=%{http_code} TIME_TOTAL=%{time_total}s\n' \
-            --data-binary @- <<'EOF'
-          {"lang":"ar","text":"أبغى دولة باردة وهادية وفيها طبيعة","questions":[
-            {"id":"budget","kind":"target","options":[1,2,3,4]},
-            {"id":"climate","kind":"climate","options":["hot","mild","cold","rainy"]},
-            {"id":"naturecity","kind":"target","options":[15,50,90]},
-            {"id":"beaches","kind":"target","options":[90,50,10]},
-            {"id":"adventure","kind":"target","options":[90,50,10]},
-            {"id":"nightlife","kind":"importance","options":[10,40,70,100]},
-            {"id":"safety","kind":"importance","options":[30,60,85,100]},
-            {"id":"culture","kind":"importance","options":[20,50,80,100]}
-          ]}
-          EOF
-
-      - name: Interpret (Arabic #1 — cold/quiet/nature)
-        run: |
-          curl -sS --max-time 60 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
-            -H 'Content-Type: application/json' \
-            --data-binary @- <<'EOF' | tee ar1.json | jq .
-          {"lang":"ar","text":"أبغى دولة باردة وهادية وفيها طبيعة","questions":[
-            {"id":"climate","kind":"climate","options":["hot","mild","cold","rainy"]},
-            {"id":"naturecity","kind":"target","options":[15,50,90]},
-            {"id":"safety","kind":"importance","options":[30,60,85,100]}
-          ]}
-          EOF
-
-      - name: Interpret (Arabic #2 — adventure but safety matters)
-        run: |
-          curl -sS --max-time 60 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
-            -H 'Content-Type: application/json' \
-            --data-binary @- <<'EOF' | tee ar2.json | jq .
-          {"lang":"ar","text":"ودي بمكان فيه مغامرات بس الأمان مهم عندي","questions":[
-            {"id":"adventure","kind":"target","options":[90,50,10]},
-            {"id":"safety","kind":"importance","options":[30,60,85,100]}
-          ]}
-          EOF
-
-      - name: Interpret (English #1 — cool/peaceful/nature)
-        run: |
-          curl -sS --max-time 60 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
-            -H 'Content-Type: application/json' \
-            --data-binary @- <<'EOF' | tee en1.json | jq .
-          {"lang":"en","text":"I want somewhere cool, peaceful, and full of nature.","questions":[
-            {"id":"climate","kind":"climate","options":["hot","mild","cold","rainy"]},
-            {"id":"naturecity","kind":"target","options":[15,50,90]},
-            {"id":"safety","kind":"importance","options":[30,60,85,100]}
-          ]}
-          EOF
-
-      - name: Interpret (English #2 — adventure but safety matters)
-        run: |
-          curl -sS --max-time 60 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/interpret-preferences" \
-            -H 'Content-Type: application/json' \
-            --data-binary @- <<'EOF' | tee en2.json | jq .
-          {"lang":"en","text":"I want adventure, but safety is very important to me.","questions":[
-            {"id":"adventure","kind":"target","options":[90,50,10]},
-            {"id":"safety","kind":"importance","options":[30,60,85,100]}
-          ]}
-          EOF
-
-      - name: Explain (Arabic)
-        run: |
-          curl -sS --max-time 60 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/explain-recommendation" \
-            -H 'Content-Type: application/json' \
-            --data-binary @- <<'EOF' | tee explain-ar.json | jq .
-          {"lang":"ar","purposeName":"سياحة وترفيه","profileSummary":"يفضل مناخاً بارداً وهادئاً وطبيعة خلابة، والأمان مهم جداً.",
-           "topResults":[{"destId":"japan","name":"اليابان","score":82,"reasons":["توافق قوي مع المناخ","درجة أمان مرتفعة"],"facts":"مستوى التكلفة: متوسط. الأمان: 85/100. المناخ: معتدل. التأشيرة: سهلة."}]}
-          EOF
-
-      - name: Explain (English)
-        run: |
-          curl -sS --max-time 60 -X POST "${{ needs.deploy.outputs.worker_url }}/api/ai/explain-recommendation" \
-            -H 'Content-Type: application/json' \
-            --data-binary @- <<'EOF' | tee explain-en.json | jq .
-          {"lang":"en","purposeName":"Tourism & Vacation","profileSummary":"Prefers a cold, quiet climate and beautiful nature; safety matters a lot.",
-           "topResults":[{"destId":"japan","name":"Japan","score":82,"reasons":["Strong climate match","High safety score"],"facts":"Cost level: Medium. Safety: 85/100. Climate: Mild. Visa: Easy."}]}
-          EOF
-
-      - name: Validate responses (schema-level, minimal)
-        run: |
-          set -e
-          for f in ar1.json ar2.json en1.json en2.json; do
-            jq -e 'has("interpreted") and has("unmapped")' "$f" > /dev/null
-          done
-          for f in explain-ar.json explain-en.json; do
-            jq -e 'has("summary") and has("perDestination") and has("caveats")' "$f" > /dev/null
-            # The AI must never introduce a destId outside what was supplied.
-            jq -e '[.perDestination[].destId] | all(. == "japan")' "$f" > /dev/null
-          done
-          echo "All smoke-test responses match the expected schema and destId constraint."

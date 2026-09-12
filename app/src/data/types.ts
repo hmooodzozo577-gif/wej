@@ -303,6 +303,11 @@ export interface QuizStrings {
   validation: string;
   startQuiz: string;
   changePurpose: string;
+  checkpointTitle: string;
+  checkpointBody: string;
+  showResultsNow: string;
+  continueQuestions: string;
+  preparingNext: string;
 }
 
 export interface ResultsStrings {
@@ -358,6 +363,9 @@ export interface DetailStrings {
   photoSource: string;
   photoAuthor: string;
   photoLicense: string;
+  showAdditionalInfo: string;
+  hideAdditionalInfo: string;
+  additionalInfoTitle: string;
 }
 
 export interface ExploreStrings {
@@ -421,7 +429,7 @@ export interface LocationIntroStrings {
   body: string;
   allow: string;
   notNow: string;
-  /** Phase 16.5 completion pass — Location Permissions API pre-detection
+  /** Location Permissions API pre-detection
    *  (geo/permissionsApi.ts). Shown INSTEAD of body/allow when the
    *  browser already reports the geolocation permission as 'granted' —
    *  never re-pitches "why we're asking" for something already granted. */
@@ -672,83 +680,6 @@ export interface TourismInsightsStrings {
   disclaimer: string;
 }
 
-/** Phase 16 — AI API Integration strings. Like LocationStrings/
- *  TravelStrings, no wejhaty.html equivalent, so added directly in
- *  data/i18n/ar.ts / en.ts rather than sourced from the generated JSON.
- *  Deliberately a small surface — this is not a Results/Quiz redesign,
- *  just the two capabilities' own labels/messages (see
- *  components/NaturalPreferenceInput.tsx / RecommendationExplanation.tsx). */
-export interface AiStrings {
-  interpret: {
-    title: string;
-    optional: string;
-    /** Phase 16.5 — explains what the box does and why, addressing the
-     *  real user's "too vague" feedback on the plain title alone. */
-    subtitle: string;
-    placeholder: string;
-    cta: string;
-    loading: string;
-    unavailable: string;
-    error: string;
-    proposedTitle: string;
-    apply: string;
-    dismiss: string;
-    unmappedNote: string;
-    noneFound: string;
-    /** Tag shown next to a low-confidence proposal (unchecked by
-     *  default — see NaturalPreferenceInput.tsx's confidence rule). */
-    lowConfidence: string;
-    /** Heading for the persistent "already accounted for" list —
-     *  Phase 16.5's core visible-benefit requirement. */
-    satisfiedTitle: string;
-    satisfiedSubtitle: string;
-    /** Per-item remove/"un-apply" control on that list. */
-    remove: string;
-  };
-  /** Phase 16.5 completion pass — the bounded contextual follow-up card
-   *  (see adaptive/followupTemplates.ts). Per-template prompt/option
-   *  text lives in the templates themselves (already bilingual); these
-   *  are the surrounding, template-independent UI strings. */
-  followup: {
-    freeTextToggle: string;
-    freeTextPlaceholder: string;
-    /** Phase 16.5 TRUE adaptive-interview pass — impeccable critique
-     *  finding: `freeTextPlaceholder` above is a specific, quietness-
-     *  flavored example ("somewhere without big crowds…") left over from
-     *  the template era; reusing it verbatim for an AI-generated
-     *  free_text turn about an unrelated topic (e.g. cultural novelty)
-     *  reads as mismatched/confusing. Used ONLY when
-     *  `questionType === 'free_text'` (see FollowupCard.tsx) — the
-     *  legacy choice-type escape hatch keeps the original placeholder. */
-    aiPromptPlaceholder: string;
-    freeTextSubmit: string;
-    skip: string;
-    freeTextLoading: string;
-    freeTextError: string;
-  };
-  explain: {
-    title: string;
-    badge: string;
-    loading: string;
-    unavailable: string;
-    error: string;
-  };
-  /** Phase 16.5 TRUE adaptive-interview pass — surrounding UI strings for
-   *  the AI-driven next-turn card (see adaptive/useAdaptiveInterview.ts).
-   *  The turn's own prompt/option text is AI-generated per request, never
-   *  from here — these are only the fixed chrome around it. */
-  turn: {
-    /** Shown while waiting for the next AI turn decision. */
-    loading: string;
-    /** Truthful profile-completion progress label (Section 26) — used as
-     *  "{turnProgressLabel} 3 من 7", never a fixed "Question X of Y"
-     *  promise the AI-driven path cannot honor. */
-    progressLabel: string;
-    completeTitle: string;
-    completeBody: string;
-  };
-}
-
 export interface I18nDict {
   dir: 'rtl' | 'ltr';
   htmlLang: 'ar' | 'en';
@@ -769,7 +700,6 @@ export interface I18nDict {
   accommodation: AccommodationStrings;
   travelCost: TravelCostStrings;
   tourismInsights: TourismInsightsStrings;
-  ai: AiStrings;
   costLevels: [string, string, string, string];
   climateLabels: Record<ClimateKind, string>;
   visaLabels: Record<VisaDifficulty, string>;

@@ -1,12 +1,9 @@
 # Live hotel/accommodation integration — architecture note (Phase 13.5b)
 
-Phase 16.5 completion pass. Previously deferred; explicitly brought IN
-SCOPE by this pass's task specification. This document is the
-"everything possible in code first" deliverable required when a feature
-genuinely needs external credentials this session cannot obtain or
-verify — see `SECRETS.md`'s equivalent role for Amadeus flights.
+This document records the proposed architecture for a future live hotel
+provider integration.
 
-**Status: `READY — HOTEL PROVIDER/CREDENTIAL PROVISIONING REQUIRED`.**
+**Status: `NOT IMPLEMENTED — PROVIDER/ACCOUNT/CREDENTIALS REQUIRED`.**
 No hotel-search Worker route, provider adapter, or frontend UI has been
 built yet in THIS pass — see "Why no code this pass" below for the
 explicit, disclosed scope decision. This document is the concrete plan
@@ -108,25 +105,14 @@ existing qualitative card) when hotel data is unavailable.
 
 ## Why no code was written for this in this pass
 
-This pass's primary deliverable (Phase 16.5's TRUE AI-driven adaptive
-interview) is large on its own, and the task's own execution order
-(Section 73) places hotel integration AFTER it. Building this
-architecture note to the level of a concrete, implementable plan is
-"everything possible in code first" for a feature that fundamentally
-cannot proceed past this point without external credentials this
-session cannot obtain (no chat-pasted values, no Cloudflare dashboard
-access from this sandbox) — the actual Worker route/provider code was
-judged lower-value to write untested-against-a-real-API than the
-already-large scope this pass covered elsewhere (Phase 16.5, Location
-Permissions API, image remediation, roadmap cleanup). This is a
-disclosed scope decision, not a silent omission — reported plainly in
-the final report as such, and this document is a real, immediately
-actionable starting point for whoever implements it next (this session,
-resumed, or a future one).
+The architecture can be implemented only after selecting a legitimate provider
+and obtaining the required account and credentials. No hotel Worker route,
+adapter, or live-result UI exists today. Keep the current qualitative
+accommodation information until real provider data is available.
 
 ## Final status
 
-**`READY — HOTEL PROVIDER/CREDENTIAL PROVISIONING REQUIRED`**
+**`NOT IMPLEMENTED — PROVIDER/ACCOUNT/CREDENTIALS REQUIRED`**
 
 - Provider selected: Amadeus for Developers — Hotel Search / Hotel
   Booking API (same account/credentials as flights).

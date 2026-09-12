@@ -30,7 +30,7 @@ original failure no longer occurs. Distinguish `UNIT PASS`, `INTEGRATION PASS`,
 
 After the first implementation, review it as another senior engineer would:
 scope, state ownership, races, failures, schema boundaries, duplication,
-Arabic/English, RTL/LTR, accessibility, responsive behavior, AI trust, secrets,
+Arabic/English, RTL/LTR, accessibility, responsive behavior, external-data trust, secrets,
 Phase 14 integrity, cancelled features, test quality, and real production
 behavior. Fix every material finding that is technically resolvable before the
 final report.
@@ -49,14 +49,13 @@ acceptance, or materially different valid UX/architecture directions.
 
 - Preserve all non-negotiable rules in `PROJECT_STATE.md`.
 - Phase 14 remains the deterministic final ranking authority.
-- Phase 15 remains failure fallback for the AI-driven interview; do not restore
-  Hybrid orchestration without an explicit user decision.
+- The questionnaire remains deterministic and answer-driven. Do not restore an
+  AI interview without an explicit new user decision.
 - Preserve accepted UI. Do not redesign an existing screen without an explicit
   user request. Material UI work requires rendered AR/EN, RTL/LTR, responsive,
   loading/error, keyboard/focus, touch-target, long-text, and overflow review.
-- Application code controls AI dimensions, canonical values, schemas,
-  validation, state, ranking, limits, and fallback. Never trust arbitrary model
-  output or request/expose chain-of-thought.
+- Application code controls dimensions, canonical values, validation, state,
+  ranking, limits, and fallbacks.
 - Do not start a new roadmap phase unless explicitly directed.
 
 ## Delivery and memory
@@ -77,6 +76,5 @@ from the repository and report, continue working.
 
 ## Current phase gate
 
-Phase 17 must not start until the current `PROJECT_STATE.md` and the user's
-direction confirm Phase 16.5 closure. Phase 16.5 also retains the explicit
-Back/Undo product decision described there.
+Phase 17 must not start until the current deterministic questionnaire and
+worldwide data work are deployed, production-verified, and accepted by the user.

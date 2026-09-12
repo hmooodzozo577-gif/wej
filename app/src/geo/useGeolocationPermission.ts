@@ -1,4 +1,4 @@
-// Phase 16.5 completion pass — Location Permissions API pre-detection.
+// Location Permissions API pre-detection.
 // Thin React seam over permissionsApi.ts's pure query function: resolves
 // once on mount, and re-resolves live via PermissionStatus's own
 // 'change' event where the browser supports it (e.g. the user grants/
