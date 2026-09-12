@@ -5,12 +5,13 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 7
+- State document version: 8
 - Last verified date: 2026-09-13
 - Working branch: `claude/marhaba-kxry8l`
-- Production implementation commit: `7dfa035662b8ce83852d3d7f64e6f55e03e7181d`
-- The deterministic questionnaire, optional-information, AI-removal, and image
-  changes are deployed and production-verified. User acceptance is pending.
+- Production implementation commit: `524fae689dfe175901f12540ddc9394fac54f626`
+- The worldwide deterministic questionnaire, 194-country ranking, factual
+  overview, external-card image, and crop changes are deployed and
+  production-verified. User acceptance is pending.
 
 Always recover with `git branch --show-current`, `git status --short`,
 `git fetch origin`, and `git log --oneline -30`.
@@ -53,10 +54,16 @@ this decision.
 
 ## Questionnaire and ranking
 
-- Phase 14 scoring is unchanged and remains the only ranking authority.
-- The questionnaire is deterministic and answer-driven. It ranks unanswered
-  Phase 14-supported questions by their ability to separate the current leading
-  candidates; the previous answer selects a distinct useful branch.
+- Phase 14 remains the deterministic ranking authority and now scores all 194
+  effective countries through a separate worldwide recommendation-profile
+  layer. AI does not select questions, create fields, score, or explain.
+- The questionnaire is deterministic and answer-driven. It contains 336
+  bilingual conditional nodes across eight purposes. A real journey visits
+  only its selected branch and resolves at most one question per canonical
+  dimension (normally 12–13 questions).
+- Region choices open different subregion questions and option sets. Subregion
+  choices open their own contextual node; contextual options then branch to
+  different useful dimensions such as climate, cost, popularity, or urbanity.
 - Selecting an option advances automatically. A brief transition indicates that
   the next question is being prepared.
 - After five answered questions, the traveler may show results now or continue
@@ -64,35 +71,51 @@ this decision.
 - Back remains available. Changing an earlier answer truncates stale downstream
   answers and recomputes the branch.
 - Budget options retain the canonical approximate numeric SAR ranges.
-- Latest full frontend verification: 670/670 tests passed in one sequential
-  run. TypeScript, oxlint, and the production build also pass.
+- Ranking inputs use the committed World Bank indicator snapshot, existing
+  World Bank price-level snapshot, UN Tourism/OWID arrivals snapshot, and
+  country geography. Missing numeric observations use the worldwide median,
+  with direct coverage and imputed dimensions recorded and disclosed.
+- Every country has a tested ideal answer profile that places it in the top
+  five for at least one purpose. A fixed 4,800-path deterministic sample also
+  requires every country to appear at least once; this proves tested
+  reachability, not equal appearance frequency.
+- If the traveler explicitly shared location, distance breaks exact score ties
+  only. It does not change match scores, and the Results page displays a note
+  when the proximity tie-break is used.
+- Latest full frontend verification: 534/534 tests passed in one sequential
+  run. TypeScript, oxlint, the production build, AR/EN browser checks, and
+  mobile overflow checks pass.
 
 ### Current recommendation limitation
 
-The effective catalog contains 194 countries, but only the original 30 have the
-complete typed `Destination` profile required by Phase 14. Ranking therefore
-still considers 30 countries. The other 164 have factual pages and reviewed
-images but are not recommendation candidates. Their scores must not be guessed
-or copied from regional averages. Expanding ranking to 194 requires a sourced,
-reviewable enrichment model for every Phase 14 field and is the main remaining
-product-data task.
+All 194 countries are recommendation candidates, but the source datasets are
+not complete for every indicator. Missing observations are median-imputed and
+disclosed, so a match percentage is an estimate rather than a guarantee. The
+4,800-path test is broad deterministic coverage, not an exhaustive enumeration
+of the questionnaire's combinatorial answer space.
 
 ## Country pages and optional information
 
-- All 194 effective countries have the existing factual country-information
-  layer: identity, capital, region, population, area, currencies, languages,
-  calling code, time zones, and borders where available.
+- All 194 effective countries have a factual country-information layer:
+  identity, capital, region, area, currencies, languages, calling code, and
+  borders where available. Countries outside the original editorial 30 now
+  receive a country-specific factual overview instead of an insufficient-data
+  notice.
 - Planning sections for Travel, Accommodation, Travel Cost, and Tourism are
   conditionally mounted. They stay hidden on every entry path until the user
   chooses “Show additional information”.
 - Hidden optional sections do not initiate dynamic provider/data work.
-- The 30 complete destinations retain richer editorial descriptions, cities,
-  strengths, weaknesses, and recommendation metrics. Equivalent verified rich
-  coverage for the other 164 is not yet complete.
+- The 30 original destinations retain richer editorial descriptions, cities,
+  strengths, and weaknesses. Equivalent verified editorial coverage for the
+  other 164 is not yet complete; their recommendation eligibility and factual
+  overview must not be described as equivalent hand-written editorial content.
 
 ## Destination images
 
 - Local coverage is 194/194 effective countries; `IL`/`ISR` is absent.
+- Photos now appear on Explore and Results cards as well as destination heroes.
+  Card and hero crops are audited separately; per-country object-position
+  overrides correct the reviewed edge cases without replacing accepted layout.
 - Every current image was visually reviewed on 2026-09-12. It depicts an
   in-country landmark, notable cityscape, nationally important site, or
   representative natural landscape.
@@ -112,11 +135,12 @@ product-data task.
 | System | Path |
 |---|---|
 | Frontend | `app/` |
-| Deterministic ranking | `app/src/engine/` |
+| Deterministic ranking | `app/src/engine/`, `app/src/data/worldRecommendation.ts` |
 | Deterministic question selection | `app/src/adaptive/selectNextQuestion.ts` |
 | Questionnaire route | `app/src/routes/Quiz.tsx` |
 | Catalog | `app/src/data/worldCatalog.ts` |
-| Complete 30-country profiles | `app/src/data/generated/destinations.json` |
+| Rich 30-country editorial profiles | `app/src/data/generated/destinations.json` |
+| Worldwide recommendation inputs | `app/src/data/generated/recommendationIndicators.json` |
 | Basic worldwide facts | `app/src/data/generated/basicCountries.json`, `countryInfo.json` |
 | Image pipeline/review | `app/scripts/generate-destination-images.mjs`, `destinationImageAudit.json` |
 | Destination route | `app/src/routes/Destination.tsx` |
@@ -152,10 +176,11 @@ Do not resurrect without an explicit user decision:
 
 Phase 17 has not started. Current order:
 
-1. Obtain user acceptance for the production questionnaire, optional
-   information, AI removal, and reviewed images.
-2. Design and implement sourced complete recommendation/editorial profiles for
-   the remaining 164 countries without fabricated values.
+1. Obtain user acceptance for the production branching questionnaire,
+   worldwide results, factual overviews, and card/hero images.
+2. Decide whether the factual overview is sufficient or whether sourced rich
+   editorial descriptions, cities, strengths, and weaknesses are required for
+   the remaining 164 countries.
 3. Reassess the roadmap with the user before Phase 17.
 
 ## Handoff rule
