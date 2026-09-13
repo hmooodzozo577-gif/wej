@@ -45,6 +45,8 @@ jobs:
         run: npm test
 
       - name: Provision product-data resources
+        id: product_resources
+        continue-on-error: true
         working-directory: worker
         shell: bash
         run: |
@@ -75,6 +77,19 @@ jobs:
           fi
           npx wrangler d1 migrations apply PRODUCT_DB --remote --config wrangler.ci.toml
 
-      - name: Deploy Wejhaty Worker
+      - name: Deploy Wejhaty Worker with product data
+        if: steps.product_resources.outcome == 'success'
         working-directory: worker
         run: npx wrangler deploy --config wrangler.ci.toml --keep-vars
+
+      - name: Deploy Wejhaty Worker without unavailable product-data bindings
+        if: steps.product_resources.outcome == 'failure'
+        working-directory: worker
+        run: npx wrangler deploy --keep-vars
+
+      - name: Report product-data provisioning failure
+        if: steps.product_resources.outcome == 'failure'
+        run: |
+          echo "Worker code was deployed, but D1/R2 provisioning failed."
+          echo "Update CLOUDFLARE_API_TOKEN with D1, R2, and Workers edit permissions, then re-run this workflow."
+          exit 1
