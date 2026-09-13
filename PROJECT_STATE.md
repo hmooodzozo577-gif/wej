@@ -5,10 +5,13 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 8
+- State document version: 9
 - Last verified date: 2026-09-13
 - Working branch: `claude/marhaba-kxry8l`
 - Production implementation commit: `524fae689dfe175901f12540ddc9394fac54f626`
+- Latest verified implementation commit: `1cec93771308a4531ab32a0df6f4a04b098cc9bc`
+- The latest discovery, cities, theme, feedback, ratings, and product-data
+  implementation is locally verified and pending production deployment.
 - The worldwide deterministic questionnaire, 194-country ranking, factual
   overview, external-card image, and crop changes are deployed and
   production-verified. User acceptance is pending.
@@ -82,7 +85,7 @@ this decision.
 - If the traveler explicitly shared location, distance breaks exact score ties
   only. It does not change match scores, and the Results page displays a note
   when the proximity tie-break is used.
-- Latest full frontend verification: 534/534 tests passed in one sequential
+- Latest full frontend verification: 553/553 tests passed in one sequential
   run. TypeScript, oxlint, the production build, AR/EN browser checks, and
   mobile overflow checks pass.
 
@@ -109,6 +112,53 @@ of the questionnaire's combinatorial answer space.
   strengths, and weaknesses. Equivalent verified editorial coverage for the
   other 164 is not yet complete; their recommendation eligibility and factual
   overview must not be described as equivalent hand-written editorial content.
+- A separate optional “Prominent cities” section covers all 194 effective
+  countries with one to five entries selected from sourced capital and
+  population data. Each city discloses its capital/major-city classification,
+  approximate population when available, source link, and data caveat. This is
+  factual coverage, not unique hand-written tourism editorial for every city;
+  many Arabic city names honestly fall back to their source-language spelling.
+
+## Destination discovery, navigation, and theme
+
+- Explore sorting supports default order, localized A–Z/Z–A, largest/smallest
+  area, lower/higher relative price level, and nearest when location exists.
+  Missing/imputed price observations do not outrank direct sourced values.
+- “Surprise me” chooses equally from the current filtered catalog and avoids
+  repeating a destination during the browser session until candidates are
+  exhausted.
+- Destination pages preserve the list context from Explore or Results and show
+  previous/next controls in that exact order. Direct links use localized
+  alphabetical order; surprise entries return to the surprise experience.
+- Theme supports system, light, and dark modes. System is the default, tracks
+  live device changes, manual choice persists locally, and the pre-render boot
+  script prevents a wrong-theme flash.
+
+## Anonymous product data, ratings, and feedback
+
+- The frontend records bounded anonymous product events for page use,
+  questionnaire choices, Explore filters, surprise use, theme, permission
+  outcome, coarse device/browser class, load timing, and safe client-error
+  categories. It does not transmit search text, precise coordinates, IP
+  addresses, fingerprints, stack traces, or arbitrary model content.
+- Results include a 1–5 overall rating, optional reason tags, and optional
+  useful/not-useful votes for each top-five country. Ratings never change Phase
+  14 scores or order.
+- Global and country-specific feedback accepts a categorized message, optional
+  email, and optional bounded image attachment, then returns a reference ID.
+  Worker validation, per-session rate limiting, private R2 storage, and optional
+  Turnstile are implemented.
+- Cloudflare D1 migrations define sessions, events, ratings, feedback, and daily
+  aggregate tables. A scheduled job retains aggregates, deletes raw events and
+  ratings after 90 days, and removes feedback contact/device/screenshot links
+  after 90 days while preserving the issue record.
+- `/admin` is a separate developer dashboard shell. Its data endpoint requires
+  `ADMIN_TOKEN` and uses constant-time bearer validation. The secret is not
+  configured in Git. Cloudflare Access is recommended as an additional account
+  layer before operational use.
+- Worker verification: 57/57 tests, TypeScript, local D1 migration, and Wrangler
+  dry-run pass. Production D1/R2 provisioning and deployment are pending the
+  first workflow run and depend on current Cloudflare token permissions.
 
 ## Destination images
 
@@ -163,6 +213,10 @@ of the questionnaire's combinatorial answer space.
 - Data-refresh workflow code is ready. Automatic PR creation was last reported
   to require the external GitHub setting allowing Actions to create and approve
   pull requests; re-check before relying on that report.
+- Product-data code is ready. The Worker deployment workflow creates D1/R2 and
+  applies migrations when its Cloudflare token has D1, R2, and Workers edit
+  permissions. `ADMIN_TOKEN`, Turnstile keys, and optional Cloudflare Access are
+  external account configuration and are not yet verified.
 
 ## Cancelled/out-of-scope features
 
@@ -176,12 +230,15 @@ Do not resurrect without an explicit user decision:
 
 Phase 17 has not started. Current order:
 
-1. Obtain user acceptance for the production branching questionnaire,
-   worldwide results, factual overviews, and card/hero images.
-2. Decide whether the factual overview is sufficient or whether sourced rich
-   editorial descriptions, cities, strengths, and weaknesses are required for
-   the remaining 164 countries.
-3. Reassess the roadmap with the user before Phase 17.
+1. Deploy and production-verify implementation commit `1cec937`: sorting,
+   prominent cities, surprise experience, ratings, feedback, navigation, theme,
+   and anonymous product-data plumbing.
+2. Configure the external admin/Turnstile protections required for operational
+   feedback and dashboard use.
+3. Obtain user acceptance for the full production behavior.
+4. Decide whether sourced rich editorial descriptions, strengths, and
+   weaknesses are required for the remaining 164 countries.
+5. Reassess the roadmap with the user before Phase 17.
 
 ## Handoff rule
 
