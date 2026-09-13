@@ -87,7 +87,7 @@ this decision.
 - If the traveler explicitly shared location, distance breaks exact score ties
   only. It does not change match scores, and the Results page displays a note
   when the proximity tie-break is used.
-- Latest full frontend verification: 553/553 tests passed in one sequential
+- Latest full frontend verification: 553/553 tests passed in one complete
   run. TypeScript, oxlint, the production build, AR/EN browser checks, and
   mobile overflow checks pass.
 
