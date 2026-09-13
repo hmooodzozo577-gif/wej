@@ -62,13 +62,13 @@ this decision.
 - Phase 14 remains the deterministic ranking authority and now scores all 194
   effective countries through a separate worldwide recommendation-profile
   layer. AI does not select questions, create fields, score, or explain.
-- The questionnaire is deterministic and answer-driven. It contains 336
-  bilingual conditional nodes across eight purposes. A real journey visits
-  only its selected branch and resolves at most one question per canonical
-  dimension (normally 12–13 questions).
-- Region choices open different subregion questions and option sets. Subregion
-  choices open their own contextual node; contextual options then branch to
-  different useful dimensions such as climate, cost, popularity, or urbanity.
+- The questionnaire is deterministic and answer-driven. It contains 80
+  bilingual concrete preference questions across eight purposes. A real journey
+  asks at most ten questions and resolves each canonical dimension once.
+- It starts with the explicit proximity preference. That answer opens climate
+  or cost first, and later answers deterministically change which useful
+  unresolved dimension is asked next. Region, subregion, latitude/longitude
+  band, and compass-direction questions are absent.
 - Selecting an option advances automatically. A brief transition indicates that
   the next question is being prepared.
 - After five answered questions, the traveler may show results now or continue
