@@ -8,10 +8,12 @@ configuration, and current Git state outrank this document when they differ.
 - State document version: 9
 - Last verified date: 2026-09-13
 - Working branch: `claude/marhaba-kxry8l`
-- Production implementation commit: `524fae689dfe175901f12540ddc9394fac54f626`
+- Production frontend commit: `e70ff5d2a02fd7aa7a763055b1a76cec9aa12339`
+- Production Worker source commit: `a2ecc2f18293727bc74575529befb9e0fc6e2c15`
 - Latest verified implementation commit: `1cec93771308a4531ab32a0df6f4a04b098cc9bc`
-- The latest discovery, cities, theme, feedback, ratings, and product-data
-  implementation is locally verified and pending production deployment.
+- The latest discovery, cities, theme, ratings, and feedback UI is deployed and
+  production-verified. Worker code is deployed, but D1/R2 storage is unavailable
+  until the Cloudflare API token receives the required account permissions.
 - The worldwide deterministic questionnaire, 194-country ranking, factual
   overview, external-card image, and crop changes are deployed and
   production-verified. User acceptance is pending.
@@ -157,8 +159,10 @@ of the questionnaire's combinatorial answer space.
   configured in Git. Cloudflare Access is recommended as an additional account
   layer before operational use.
 - Worker verification: 57/57 tests, TypeScript, local D1 migration, and Wrangler
-  dry-run pass. Production D1/R2 provisioning and deployment are pending the
-  first workflow run and depend on current Cloudflare token permissions.
+  dry-run pass. The production `/admin` shell and updated Worker are live; the
+  flight validation route remains healthy. Product-data requests currently
+  return `503 product_data_unavailable` because D1/R2 provisioning was rejected
+  by Cloudflare with authentication error `10000`.
 
 ## Destination images
 
@@ -215,8 +219,9 @@ of the questionnaire's combinatorial answer space.
   pull requests; re-check before relying on that report.
 - Product-data code is ready. The Worker deployment workflow creates D1/R2 and
   applies migrations when its Cloudflare token has D1, R2, and Workers edit
-  permissions. `ADMIN_TOKEN`, Turnstile keys, and optional Cloudflare Access are
-  external account configuration and are not yet verified.
+  permissions. The current repository token is verified to lack D1 access.
+  `ADMIN_TOKEN`, Turnstile keys, and optional Cloudflare Access are external
+  account configuration and are not yet verified.
 
 ## Cancelled/out-of-scope features
 
@@ -230,12 +235,12 @@ Do not resurrect without an explicit user decision:
 
 Phase 17 has not started. Current order:
 
-1. Deploy and production-verify implementation commit `1cec937`: sorting,
-   prominent cities, surprise experience, ratings, feedback, navigation, theme,
-   and anonymous product-data plumbing.
-2. Configure the external admin/Turnstile protections required for operational
-   feedback and dashboard use.
-3. Obtain user acceptance for the full production behavior.
+1. Update the repository `CLOUDFLARE_API_TOKEN` with D1, R2, and Workers edit
+   permissions, rerun the Worker workflow, and production-verify event, rating,
+   feedback, retention, and admin-summary persistence.
+2. Configure `ADMIN_TOKEN`, Turnstile keys, and preferably Cloudflare Access for
+   operational feedback and dashboard use.
+3. Obtain user acceptance for the deployed UI behavior.
 4. Decide whether sourced rich editorial descriptions, strengths, and
    weaknesses are required for the remaining 164 countries.
 5. Reassess the roadmap with the user before Phase 17.
