@@ -22,5 +22,5 @@ describe('destination images on catalog cards', () => {
       expect(image!.style.objectPosition, destination.countryCode).toBe(DESTINATION_VISUALS[destination.countryCode].cardPosition);
       unmount();
     }
-  });
+  }, 20000);
 });

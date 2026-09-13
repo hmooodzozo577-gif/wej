@@ -8,6 +8,7 @@ import { QUESTION_BANKS } from '../data/questionBanks';
 import type { PurposeId } from '../data/types';
 import { rankDestinations } from '../engine';
 import { useAppState, useI18n } from '../state/hooks';
+import { trackEvent } from '../telemetry/productDataClient';
 
 const OPTIONAL_RESULTS_AFTER = 5;
 const ANSWER_TRANSITION_MS = 140;
@@ -61,6 +62,11 @@ export function Quiz() {
 
   const finish = (answers = state.answers) => {
     const results = rankDestinations(purposeParam, answers, state.location.coords);
+    trackEvent('quiz_results_generated', {
+      purpose: purposeParam,
+      answerCount: Object.keys(answers).length,
+      results: results.slice(0, 5).map((item) => ({ countryCode: item.dest.countryCode, score: item.score })),
+    }, { path: `/quiz/${purposeParam}`, locale: lang });
     dispatch({ type: 'SET_RESULTS', results });
     navigate('/results');
   };
@@ -74,6 +80,7 @@ export function Quiz() {
       : selectNextQuestion(questions, answers, state.path);
 
     dispatch({ type: 'SET_ANSWER', questionId: question.id, value });
+    trackEvent('quiz_answer', { purpose: purposeParam, questionId: question.id, value, questionNumber: qIndex + 1 }, { path: `/quiz/${purposeParam}`, locale: lang });
     if (answeredAfter >= OPTIONAL_RESULTS_AFTER && !state.questionnaireCheckpointPassed && nextAfterAnswer) {
       return;
     }
@@ -110,10 +117,16 @@ export function Quiz() {
           <h2 className="q-text">{t.quiz.checkpointTitle}</h2>
           <p>{t.quiz.checkpointBody}</p>
           <div className="quiz-checkpoint-actions">
-            <button type="button" className="btn btn-primary" onClick={() => finish()}>
+            <button type="button" className="btn btn-primary" onClick={() => {
+              trackEvent('quiz_checkpoint_choice', { choice: 'results', answerCount: answeredCount }, { path: `/quiz/${purposeParam}`, locale: lang });
+              finish();
+            }}>
               {t.quiz.showResultsNow} <Icon name="arrowEnd" size={16} />
             </button>
-            <button type="button" className="btn btn-ghost" onClick={() => dispatch({ type: 'CONTINUE_QUESTIONS' })}>
+            <button type="button" className="btn btn-ghost" onClick={() => {
+              trackEvent('quiz_checkpoint_choice', { choice: 'continue', answerCount: answeredCount }, { path: `/quiz/${purposeParam}`, locale: lang });
+              dispatch({ type: 'CONTINUE_QUESTIONS' });
+            }}>
               {t.quiz.continueQuestions}
             </button>
           </div>

@@ -1,5 +1,6 @@
 // Ports the <footer class="footer"> markup from wejhaty.html.
 import { useI18n } from '../../state/hooks';
+import { FeedbackDialog } from '../FeedbackDialog';
 
 export function Footer() {
   const { t } = useI18n();
@@ -17,7 +18,10 @@ export function Footer() {
             {t.brand}
           </span>
         </div>
-        <small>{t.footer}</small>
+        <div className="footer-actions">
+          <FeedbackDialog lang={t.htmlLang} strings={t.feedback} />
+          <small>{t.footer}</small>
+        </div>
       </div>
     </footer>
   );

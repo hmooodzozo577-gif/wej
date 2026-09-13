@@ -10,6 +10,7 @@ import { DestinationCard } from '../components/DestinationCard';
 import { buildWhyText } from '../engine';
 import { DestinationImage } from '../components/DestinationImage';
 import { QUESTION_BANKS } from '../data/questionBanks';
+import { ResultRating } from '../components/ResultRating';
 
 /** Ports the original's setInterval-based count-up for `.matchNum`:
  *  step = max(1, round(target/30)), tick every 16ms. */
@@ -51,6 +52,7 @@ export function Results() {
   const proximityUsed = top5.some((item) => item.distanceKm !== undefined);
   const first = top5[0];
   const rest = top5.slice(1);
+  const resultNavigationIds = top5.map((item) => item.dest.id);
   const whyFirst = buildWhyText(lang, state.purpose, first.reasons, first.dest);
 
   return (
@@ -66,7 +68,7 @@ export function Results() {
 
         <Link
           to={`/destination/${first.dest.id}`}
-          state={{ fromResults: true, purpose: state.purpose }}
+          state={{ fromResults: true, purpose: state.purpose, navigation: { source: 'results', ids: resultNavigationIds, index: 0 } }}
           className="top-pick"
           role="button"
         >
@@ -107,7 +109,7 @@ export function Results() {
         </Link>
 
         <div className="results-grid">
-          {rest.map((item) => (
+          {rest.map((item, index) => (
             <DestinationCard
               key={item.dest.id}
               dest={item.dest}
@@ -116,9 +118,12 @@ export function Results() {
               matchScore={item.score}
               whyText={buildWhyText(lang, state.purpose!, item.reasons, item.dest)}
               purpose={state.purpose!}
+              navigation={{ source: 'results', ids: resultNavigationIds, index: index + 1 }}
             />
           ))}
         </div>
+
+        <ResultRating results={top5} lang={lang} strings={r} />
 
         <div className="results-actions">
           <button type="button" className="btn btn-ghost" onClick={() => navigate('/explore')}>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { PURPOSES } from '../data/purposes';
 import { Icon } from '../components/Icon';
+import { trackEvent } from '../telemetry/productDataClient';
 
 export function PurposeSelect() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export function PurposeSelect() {
   const pu = t.purposes;
 
   const startQuiz = (id: (typeof PURPOSES)[number]['id']) => {
+    trackEvent('quiz_started', { purpose: id }, { path: '/purpose', locale: state.lang });
     dispatch({ type: 'START_QUIZ', purpose: id });
     navigate(`/quiz/${id}`);
   };

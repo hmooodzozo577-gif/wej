@@ -16,6 +16,13 @@ compatibility_date = "2026-09-01"
 # accidental production switch visible in a diff of this committed file.
 [vars]
 AMADEUS_ENV = "test"
+
+[triggers]
+crons = ["17 2 * * *"]
+
+# Product-data resources are added here after `wrangler d1 create` and
+# `wrangler r2 bucket create` return their real account-scoped identifiers.
+# Never commit invented IDs or secret values. See README.md.
 # The two real secrets (AMADEUS_API_KEY, AMADEUS_API_SECRET) are NEVER set
 # here — see ../SECRETS.md. They are configured out-of-band via:
 #   npx wrangler secret put AMADEUS_API_KEY

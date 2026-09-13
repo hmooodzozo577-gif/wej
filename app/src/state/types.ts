@@ -6,6 +6,15 @@ export interface ExploreFilters {
   region: string;
   purpose: string;
   cost: string;
+  sort: ExploreSort;
+}
+
+export type ExploreSort = 'default' | 'name-asc' | 'name-desc' | 'area-desc' | 'area-asc' | 'cost-asc' | 'cost-desc' | 'nearest';
+
+export interface DestinationNavigation {
+  source: 'explore' | 'results' | 'surprise';
+  ids: string[];
+  index: number;
 }
 
 export interface LocationCoords {

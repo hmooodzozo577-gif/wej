@@ -1,0 +1,7022 @@
+{
+  "JP": [
+    {
+      "nameEn": "Tokyo",
+      "nameAr": "طوكيو",
+      "countryCode": "JP",
+      "population": 22006300,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Osaka",
+      "nameAr": "Osaka",
+      "countryCode": "JP",
+      "population": 6943207,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Yokohama",
+      "nameAr": "Yokohama",
+      "countryCode": "JP",
+      "population": 3697894,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nagoya",
+      "nameAr": "Nagoya",
+      "countryCode": "JP",
+      "population": 2710640,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sapporo",
+      "nameAr": "Sapporo",
+      "countryCode": "JP",
+      "population": 2202893,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KR": [
+    {
+      "nameEn": "Seoul",
+      "nameAr": "سيول",
+      "countryCode": "KR",
+      "population": 9796000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Busan",
+      "nameAr": "Busan",
+      "countryCode": "KR",
+      "population": 3480000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Incheon",
+      "nameAr": "Incheon",
+      "countryCode": "KR",
+      "population": 2550000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Daegu",
+      "nameAr": "Daegu",
+      "countryCode": "KR",
+      "population": 2460000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Daejeon",
+      "nameAr": "Daejeon",
+      "countryCode": "KR",
+      "population": 1458165,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MY": [
+    {
+      "nameEn": "Kuala Lumpur",
+      "nameAr": "Kuala Lumpur",
+      "countryCode": "MY",
+      "population": 1448000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "George Town",
+      "nameAr": "George Town",
+      "countryCode": "MY",
+      "population": 1610101,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kelang",
+      "nameAr": "Kelang",
+      "countryCode": "MY",
+      "population": 917934,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Johor Bahru",
+      "nameAr": "Johor Bahru",
+      "countryCode": "MY",
+      "population": 838745,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ipoh",
+      "nameAr": "Ipoh",
+      "countryCode": "MY",
+      "population": 656227,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TH": [
+    {
+      "nameEn": "Bangkok",
+      "nameAr": "بانكوك",
+      "countryCode": "TH",
+      "population": 5904238,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Samut Prakan",
+      "nameAr": "Samut Prakan",
+      "countryCode": "TH",
+      "population": 388920,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chiang Mai",
+      "nameAr": "Chiang Mai",
+      "countryCode": "TH",
+      "population": 299082,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nakhon Ratchasima",
+      "nameAr": "Nakhon Ratchasima",
+      "countryCode": "TH",
+      "population": 271883,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nonthaburi",
+      "nameAr": "Nonthaburi",
+      "countryCode": "TH",
+      "population": 258550,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TR": [
+    {
+      "nameEn": "Ankara",
+      "nameAr": "أنقرة",
+      "countryCode": "TR",
+      "population": 3511690,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Istanbul",
+      "nameAr": "إسطنبول",
+      "countryCode": "TR",
+      "population": 10003305,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Izmir",
+      "nameAr": "Izmir",
+      "countryCode": "TR",
+      "population": 2454909,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bursa",
+      "nameAr": "Bursa",
+      "countryCode": "TR",
+      "population": 1425545,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Adana",
+      "nameAr": "Adana",
+      "countryCode": "TR",
+      "population": 1245445,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "AE": [
+    {
+      "nameEn": "Abu Dhabi",
+      "nameAr": "أبوظبي",
+      "countryCode": "AE",
+      "population": 581861,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Dubai",
+      "nameAr": "دبي",
+      "countryCode": "AE",
+      "population": 1258174,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sharjah",
+      "nameAr": "Sharjah",
+      "countryCode": "AE",
+      "population": 952016,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Al Ayn",
+      "nameAr": "Al Ayn",
+      "countryCode": "AE",
+      "population": 352501,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ras al Khaymah",
+      "nameAr": "Ras al Khaymah",
+      "countryCode": "AE",
+      "population": 138399,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SA": [
+    {
+      "nameEn": "Riyadh",
+      "nameAr": "الرياض",
+      "countryCode": "SA",
+      "population": 4335481,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Jeddah",
+      "nameAr": "جدة",
+      "countryCode": "SA",
+      "population": 2939723,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ad Damman",
+      "nameAr": "Ad Damman",
+      "countryCode": "SA",
+      "population": 1411656,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Makkah",
+      "nameAr": "مكة المكرمة",
+      "countryCode": "SA",
+      "population": 1354312,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Medina",
+      "nameAr": "المدينة المنورة",
+      "countryCode": "SA",
+      "population": 1010000,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "QA": [
+    {
+      "nameEn": "Doha",
+      "nameAr": "الدوحة",
+      "countryCode": "QA",
+      "population": 1090655,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "DE": [
+    {
+      "nameEn": "Berlin",
+      "nameAr": "برلين",
+      "countryCode": "DE",
+      "population": 3250007,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Frankfurt",
+      "nameAr": "Frankfurt",
+      "countryCode": "DE",
+      "population": 1787332,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Stuttgart",
+      "nameAr": "Stuttgart",
+      "countryCode": "DE",
+      "population": 1775644,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Hamburg",
+      "nameAr": "Hamburg",
+      "countryCode": "DE",
+      "population": 1748059,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mannheim",
+      "nameAr": "Mannheim",
+      "countryCode": "DE",
+      "population": 1337587,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "FR": [
+    {
+      "nameEn": "Paris",
+      "nameAr": "باريس",
+      "countryCode": "FR",
+      "population": 4957589,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Marseille",
+      "nameAr": "Marseille",
+      "countryCode": "FR",
+      "population": 1097406,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lyon",
+      "nameAr": "Lyon",
+      "countryCode": "FR",
+      "population": 947659,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Toulouse",
+      "nameAr": "Toulouse",
+      "countryCode": "FR",
+      "population": 640028,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lille",
+      "nameAr": "Lille",
+      "countryCode": "FR",
+      "population": 636164,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GB": [
+    {
+      "nameEn": "London",
+      "nameAr": "لندن",
+      "countryCode": "GB",
+      "population": 7994105,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Birmingham",
+      "nameAr": "Birmingham",
+      "countryCode": "GB",
+      "population": 1634667,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Manchester",
+      "nameAr": "Manchester",
+      "countryCode": "GB",
+      "population": 1312758,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Leeds",
+      "nameAr": "Leeds",
+      "countryCode": "GB",
+      "population": 992062,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sheffield",
+      "nameAr": "Sheffield",
+      "countryCode": "GB",
+      "population": 922800,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ES": [
+    {
+      "nameEn": "Madrid",
+      "nameAr": "مدريد",
+      "countryCode": "ES",
+      "population": 2808719,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Barcelona",
+      "nameAr": "Barcelona",
+      "countryCode": "ES",
+      "population": 3250798,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Seville",
+      "nameAr": "Seville",
+      "countryCode": "ES",
+      "population": 957533,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Valencia",
+      "nameAr": "Valencia",
+      "countryCode": "ES",
+      "population": 806652,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bilbao",
+      "nameAr": "Bilbao",
+      "countryCode": "ES",
+      "population": 614370,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "IT": [
+    {
+      "nameEn": "Rome",
+      "nameAr": "روما",
+      "countryCode": "IT",
+      "population": 1687226,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Milan",
+      "nameAr": "Milan",
+      "countryCode": "IT",
+      "population": 2125831,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Naples",
+      "nameAr": "Naples",
+      "countryCode": "IT",
+      "population": 1619486,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Turin",
+      "nameAr": "Turin",
+      "countryCode": "IT",
+      "population": 1258632,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Florence",
+      "nameAr": "Florence",
+      "countryCode": "IT",
+      "population": 935759,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CH": [
+    {
+      "nameEn": "Bern",
+      "nameAr": "Bern",
+      "countryCode": "CH",
+      "population": 198480,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Zürich",
+      "nameAr": "Zürich",
+      "countryCode": "CH",
+      "population": 724865,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Geneva",
+      "nameAr": "Geneva",
+      "countryCode": "CH",
+      "population": 716193,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Basel",
+      "nameAr": "Basel",
+      "countryCode": "CH",
+      "population": 500318,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lausanne",
+      "nameAr": "Lausanne",
+      "countryCode": "CH",
+      "population": 191227,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "NL": [
+    {
+      "nameEn": "Amsterdam",
+      "nameAr": "Amsterdam",
+      "countryCode": "NL",
+      "population": 886318,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "The Hague",
+      "nameAr": "The Hague",
+      "countryCode": "NL",
+      "population": 953863,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rotterdam",
+      "nameAr": "Rotterdam",
+      "countryCode": "NL",
+      "population": 801600,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Utrecht",
+      "nameAr": "Utrecht",
+      "countryCode": "NL",
+      "population": 478224,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Eindhoven",
+      "nameAr": "Eindhoven",
+      "countryCode": "NL",
+      "population": 303837,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CA": [
+    {
+      "nameEn": "Ottawa",
+      "nameAr": "Ottawa",
+      "countryCode": "CA",
+      "population": 978565,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Toronto",
+      "nameAr": "تورونتو",
+      "countryCode": "CA",
+      "population": 4573711,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Montréal",
+      "nameAr": "Montréal",
+      "countryCode": "CA",
+      "population": 3017278,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Vancouver",
+      "nameAr": "Vancouver",
+      "countryCode": "CA",
+      "population": 1458415,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Calgary",
+      "nameAr": "Calgary",
+      "countryCode": "CA",
+      "population": 1012661,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "US": [
+    {
+      "nameEn": "Washington, D.C.",
+      "nameAr": "Washington, D.C.",
+      "countryCode": "US",
+      "population": 2445217,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "New York",
+      "nameAr": "نيويورك",
+      "countryCode": "US",
+      "population": 13524139,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Los Angeles",
+      "nameAr": "لوس أنجلوس",
+      "countryCode": "US",
+      "population": 8097410,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chicago",
+      "nameAr": "شيكاغو",
+      "countryCode": "US",
+      "population": 5915976,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Houston",
+      "nameAr": "Houston",
+      "countryCode": "US",
+      "population": 4053287,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "AU": [
+    {
+      "nameEn": "Canberra",
+      "nameAr": "Canberra",
+      "countryCode": "AU",
+      "population": 280866,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sydney",
+      "nameAr": "سيدني",
+      "countryCode": "AU",
+      "population": 5230330,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Melbourne",
+      "nameAr": "Melbourne",
+      "countryCode": "AU",
+      "population": 4936000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Brisbane",
+      "nameAr": "Brisbane",
+      "countryCode": "AU",
+      "population": 1393177,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Perth",
+      "nameAr": "Perth",
+      "countryCode": "AU",
+      "population": 1206108,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "NZ": [
+    {
+      "nameEn": "Wellington",
+      "nameAr": "Wellington",
+      "countryCode": "NZ",
+      "population": 296300,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Auckland",
+      "nameAr": "Auckland",
+      "countryCode": "NZ",
+      "population": 759510,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Manukau",
+      "nameAr": "Manukau",
+      "countryCode": "NZ",
+      "population": 336142,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Christchurch",
+      "nameAr": "Christchurch",
+      "countryCode": "NZ",
+      "population": 295352,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Takapuna",
+      "nameAr": "Takapuna",
+      "countryCode": "NZ",
+      "population": 184816,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SG": [
+    {
+      "nameEn": "Singapore",
+      "nameAr": "سنغافورة",
+      "countryCode": "SG",
+      "population": 4236615,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "AT": [
+    {
+      "nameEn": "Vienna",
+      "nameAr": "Vienna",
+      "countryCode": "AT",
+      "population": 2065500,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Linz",
+      "nameAr": "Linz",
+      "countryCode": "AT",
+      "population": 265162,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Graz",
+      "nameAr": "Graz",
+      "countryCode": "AT",
+      "population": 242780,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Salzburg",
+      "nameAr": "Salzburg",
+      "countryCode": "AT",
+      "population": 178274,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Innsbruck",
+      "nameAr": "Innsbruck",
+      "countryCode": "AT",
+      "population": 133841,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PT": [
+    {
+      "nameEn": "Lisbon",
+      "nameAr": "Lisbon",
+      "countryCode": "PT",
+      "population": 1664901,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Porto",
+      "nameAr": "Porto",
+      "countryCode": "PT",
+      "population": 793317,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Braga",
+      "nameAr": "Braga",
+      "countryCode": "PT",
+      "population": 504326,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Funchal",
+      "nameAr": "Funchal",
+      "countryCode": "PT",
+      "population": 152807,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Setubal",
+      "nameAr": "Setubal",
+      "countryCode": "PT",
+      "population": 117542,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GR": [
+    {
+      "nameEn": "Athens",
+      "nameAr": "Athens",
+      "countryCode": "GR",
+      "population": 1985569,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Thessaloniki",
+      "nameAr": "Thessaloniki",
+      "countryCode": "GR",
+      "population": 591145,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Piraiévs",
+      "nameAr": "Piraiévs",
+      "countryCode": "GR",
+      "population": 320881,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Patra",
+      "nameAr": "Patra",
+      "countryCode": "GR",
+      "population": 159580,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Iraklio",
+      "nameAr": "Iraklio",
+      "countryCode": "GR",
+      "population": 134404,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ID": [
+    {
+      "nameEn": "Jakarta",
+      "nameAr": "جاكرتا",
+      "countryCode": "ID",
+      "population": 8832561,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Surabaya",
+      "nameAr": "Surabaya",
+      "countryCode": "ID",
+      "population": 2609829,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bandung",
+      "nameAr": "Bandung",
+      "countryCode": "ID",
+      "population": 2046860,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bekasi",
+      "nameAr": "Bekasi",
+      "countryCode": "ID",
+      "population": 1949165,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Medan",
+      "nameAr": "Medan",
+      "countryCode": "ID",
+      "population": 1932986,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "NO": [
+    {
+      "nameEn": "Oslo",
+      "nameAr": "Oslo",
+      "countryCode": "NO",
+      "population": 707500,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bergen",
+      "nameAr": "Bergen",
+      "countryCode": "NO",
+      "population": 200390,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Trondheim",
+      "nameAr": "Trondheim",
+      "countryCode": "NO",
+      "population": 144336,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Stavanger",
+      "nameAr": "Stavanger",
+      "countryCode": "NO",
+      "population": 136999,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bærum",
+      "nameAr": "Bærum",
+      "countryCode": "NO",
+      "population": 113659,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SE": [
+    {
+      "nameEn": "Stockholm",
+      "nameAr": "Stockholm",
+      "countryCode": "SE",
+      "population": 1258655,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Göteborg",
+      "nameAr": "Göteborg",
+      "countryCode": "SE",
+      "population": 520941,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Malmö",
+      "nameAr": "Malmö",
+      "countryCode": "SE",
+      "population": 265449,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Uppsala",
+      "nameAr": "Uppsala",
+      "countryCode": "SE",
+      "population": 130426,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Västerås",
+      "nameAr": "Västerås",
+      "countryCode": "SE",
+      "population": 100187,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "FI": [
+    {
+      "nameEn": "Helsinki",
+      "nameAr": "Helsinki",
+      "countryCode": "FI",
+      "population": 836729,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tampere",
+      "nameAr": "Tampere",
+      "countryCode": "FI",
+      "population": 230983,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Turku",
+      "nameAr": "Turku",
+      "countryCode": "FI",
+      "population": 175443,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Oulu",
+      "nameAr": "Oulu",
+      "countryCode": "FI",
+      "population": 132685,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lahti",
+      "nameAr": "Lahti",
+      "countryCode": "FI",
+      "population": 97508,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "IE": [
+    {
+      "nameEn": "Dublin",
+      "nameAr": "Dublin",
+      "countryCode": "IE",
+      "population": 1013988,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cork",
+      "nameAr": "Cork",
+      "countryCode": "IE",
+      "population": 162852,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Limerick",
+      "nameAr": "Limerick",
+      "countryCode": "IE",
+      "population": 84066,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Galway",
+      "nameAr": "Galway",
+      "countryCode": "IE",
+      "population": 73140,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Waterford",
+      "nameAr": "Waterford",
+      "countryCode": "IE",
+      "population": 49275,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CZ": [
+    {
+      "nameEn": "Prague",
+      "nameAr": "Prague",
+      "countryCode": "CZ",
+      "population": 582044,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ostrava",
+      "nameAr": "Ostrava",
+      "countryCode": "CZ",
+      "population": 396026,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Brno",
+      "nameAr": "Brno",
+      "countryCode": "CZ",
+      "population": 378918,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Pizen",
+      "nameAr": "Pizen",
+      "countryCode": "CZ",
+      "population": 161043,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Zlin",
+      "nameAr": "Zlin",
+      "countryCode": "CZ",
+      "population": 101894,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PL": [
+    {
+      "nameEn": "Warsaw",
+      "nameAr": "Warsaw",
+      "countryCode": "PL",
+      "population": 1704570,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Katowice",
+      "nameAr": "Katowice",
+      "countryCode": "PL",
+      "population": 1527362,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lódz",
+      "nameAr": "Lódz",
+      "countryCode": "PL",
+      "population": 758000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kraków",
+      "nameAr": "Kraków",
+      "countryCode": "PL",
+      "population": 755525,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Wroclaw",
+      "nameAr": "Wroclaw",
+      "countryCode": "PL",
+      "population": 622471,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "AF": [
+    {
+      "nameEn": "Kabul",
+      "nameAr": "Kabul",
+      "countryCode": "AF",
+      "population": 3160266,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kandahar",
+      "nameAr": "Kandahar",
+      "countryCode": "AF",
+      "population": 613871,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Herat",
+      "nameAr": "Herat",
+      "countryCode": "AF",
+      "population": 439233,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Jalalabad",
+      "nameAr": "Jalalabad",
+      "countryCode": "AF",
+      "population": 401697,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mazar-e Sharif",
+      "nameAr": "Mazar-e Sharif",
+      "countryCode": "AF",
+      "population": 365433,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "AL": [
+    {
+      "nameEn": "Tirana",
+      "nameAr": "Tirana",
+      "countryCode": "AL",
+      "population": 658318,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Elbasan",
+      "nameAr": "Elbasan",
+      "countryCode": "AL",
+      "population": 132957,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Durres",
+      "nameAr": "Durres",
+      "countryCode": "AL",
+      "population": 132233,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Shkoder",
+      "nameAr": "Shkoder",
+      "countryCode": "AL",
+      "population": 122006,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Vlore",
+      "nameAr": "Vlore",
+      "countryCode": "AL",
+      "population": 89509,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "DZ": [
+    {
+      "nameEn": "Algiers",
+      "nameAr": "الجزائر",
+      "countryCode": "DZ",
+      "population": 2665832,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Oran",
+      "nameAr": "Oran",
+      "countryCode": "DZ",
+      "population": 721992,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Constantine",
+      "nameAr": "Constantine",
+      "countryCode": "DZ",
+      "population": 527638,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chlef",
+      "nameAr": "Chlef",
+      "countryCode": "DZ",
+      "population": 449167,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Arak",
+      "nameAr": "Arak",
+      "countryCode": "DZ",
+      "population": 423251,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "AD": [
+    {
+      "nameEn": "Andorra la Vella",
+      "nameAr": "Andorra la Vella",
+      "countryCode": "AD",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Andorra",
+      "nameAr": "Andorra",
+      "countryCode": "AD",
+      "population": 38127,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "AO": [
+    {
+      "nameEn": "Luanda",
+      "nameAr": "Luanda",
+      "countryCode": "AO",
+      "population": 3562086,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Huambo",
+      "nameAr": "Huambo",
+      "countryCode": "AO",
+      "population": 986000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lobito",
+      "nameAr": "Lobito",
+      "countryCode": "AO",
+      "population": 170733,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Benguela",
+      "nameAr": "Benguela",
+      "countryCode": "AO",
+      "population": 142017,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Namibe",
+      "nameAr": "Namibe",
+      "countryCode": "AO",
+      "population": 128131,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "AG": [
+    {
+      "nameEn": "Saint John's",
+      "nameAr": "Saint John's",
+      "countryCode": "AG",
+      "population": 29863,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "AR": [
+    {
+      "nameEn": "Buenos Aires",
+      "nameAr": "Buenos Aires",
+      "countryCode": "AR",
+      "population": 11862073,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Córdoba",
+      "nameAr": "Córdoba",
+      "countryCode": "AR",
+      "population": 1374468,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rosario",
+      "nameAr": "Rosario",
+      "countryCode": "AR",
+      "population": 1094785,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mendoza",
+      "nameAr": "Mendoza",
+      "countryCode": "AR",
+      "population": 827815,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tucumán",
+      "nameAr": "Tucumán",
+      "countryCode": "AR",
+      "population": 678804,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "AM": [
+    {
+      "nameEn": "Yerevan",
+      "nameAr": "Yerevan",
+      "countryCode": "AM",
+      "population": 1097743,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gyumri",
+      "nameAr": "Gyumri",
+      "countryCode": "AM",
+      "population": 140278,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Vanadzor",
+      "nameAr": "Vanadzor",
+      "countryCode": "AM",
+      "population": 89295,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gavarr",
+      "nameAr": "Gavarr",
+      "countryCode": "AM",
+      "population": 21680,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Artashat",
+      "nameAr": "Artashat",
+      "countryCode": "AM",
+      "population": 20562,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "AZ": [
+    {
+      "nameEn": "Baku",
+      "nameAr": "Baku",
+      "countryCode": "AZ",
+      "population": 2007150,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ganca",
+      "nameAr": "Ganca",
+      "countryCode": "AZ",
+      "population": 301700,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sumqayt",
+      "nameAr": "Sumqayt",
+      "countryCode": "AZ",
+      "population": 272155,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Naxcivan",
+      "nameAr": "Naxcivan",
+      "countryCode": "AZ",
+      "population": 79771,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ali Bayramli",
+      "nameAr": "Ali Bayramli",
+      "countryCode": "AZ",
+      "population": 70452,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BS": [
+    {
+      "nameEn": "Nassau",
+      "nameAr": "Nassau",
+      "countryCode": "BS",
+      "population": 194453,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Freeport",
+      "nameAr": "Freeport",
+      "countryCode": "BS",
+      "population": 25383,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BH": [
+    {
+      "nameEn": "Manama",
+      "nameAr": "المنامة",
+      "countryCode": "BH",
+      "population": 360697,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "BD": [
+    {
+      "nameEn": "Dhaka",
+      "nameAr": "Dhaka",
+      "countryCode": "BD",
+      "population": 9899167,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chittagong",
+      "nameAr": "Chittagong",
+      "countryCode": "BD",
+      "population": 4224611,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Khulna",
+      "nameAr": "Khulna",
+      "countryCode": "BD",
+      "population": 1447670,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rajshahi",
+      "nameAr": "Rajshahi",
+      "countryCode": "BD",
+      "population": 755067,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Comilla",
+      "nameAr": "Comilla",
+      "countryCode": "BD",
+      "population": 389411,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BB": [
+    {
+      "nameEn": "Bridgetown",
+      "nameAr": "Bridgetown",
+      "countryCode": "BB",
+      "population": 143865,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "BY": [
+    {
+      "nameEn": "Minsk",
+      "nameAr": "Minsk",
+      "countryCode": "BY",
+      "population": 1691069,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Homyel",
+      "nameAr": "Homyel",
+      "countryCode": "BY",
+      "population": 472338,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mahilyow",
+      "nameAr": "Mahilyow",
+      "countryCode": "BY",
+      "population": 343527,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Vitsyebsk",
+      "nameAr": "Vitsyebsk",
+      "countryCode": "BY",
+      "population": 333319,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Hrodna",
+      "nameAr": "Hrodna",
+      "countryCode": "BY",
+      "population": 285867,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BE": [
+    {
+      "nameEn": "Brussels",
+      "nameAr": "Brussels",
+      "countryCode": "BE",
+      "population": 1381011,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Antwerpen",
+      "nameAr": "Antwerpen",
+      "countryCode": "BE",
+      "population": 689903,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Liege",
+      "nameAr": "Liege",
+      "countryCode": "BE",
+      "population": 472803,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gent",
+      "nameAr": "Gent",
+      "countryCode": "BE",
+      "population": 337915,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Charleroi",
+      "nameAr": "Charleroi",
+      "countryCode": "BE",
+      "population": 272750,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BZ": [
+    {
+      "nameEn": "Belmopan",
+      "nameAr": "Belmopan",
+      "countryCode": "BZ",
+      "population": 14301,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Belize City",
+      "nameAr": "Belize City",
+      "countryCode": "BZ",
+      "population": 62245,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Orange Walk",
+      "nameAr": "Orange Walk",
+      "countryCode": "BZ",
+      "population": 18067,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "El Cayo",
+      "nameAr": "El Cayo",
+      "countryCode": "BZ",
+      "population": 13451,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Corozal",
+      "nameAr": "Corozal",
+      "countryCode": "BZ",
+      "population": 8724,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BJ": [
+    {
+      "nameEn": "Porto-Novo",
+      "nameAr": "Porto-Novo",
+      "countryCode": "BJ",
+      "population": 267084,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cotonou",
+      "nameAr": "Cotonou",
+      "countryCode": "BJ",
+      "population": 726292,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Parakou",
+      "nameAr": "Parakou",
+      "countryCode": "BJ",
+      "population": 176303,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Djougou",
+      "nameAr": "Djougou",
+      "countryCode": "BJ",
+      "population": 152709,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lokossa",
+      "nameAr": "Lokossa",
+      "countryCode": "BJ",
+      "population": 86971,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BT": [
+    {
+      "nameEn": "Thimphu",
+      "nameAr": "Thimphu",
+      "countryCode": "BT",
+      "population": 88931,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Paro",
+      "nameAr": "Paro",
+      "countryCode": "BT",
+      "population": 15000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Punakha",
+      "nameAr": "Punakha",
+      "countryCode": "BT",
+      "population": 5000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Wangdue Prodrang",
+      "nameAr": "Wangdue Prodrang",
+      "countryCode": "BT",
+      "population": 5000,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BO": [
+    {
+      "nameEn": "Sucre",
+      "nameAr": "Sucre",
+      "countryCode": "BO",
+      "population": 223287,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Santa Cruz",
+      "nameAr": "Santa Cruz",
+      "countryCode": "BO",
+      "population": 1859531,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "La Paz",
+      "nameAr": "La Paz",
+      "countryCode": "BO",
+      "population": 1201400,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cochabamba",
+      "nameAr": "Cochabamba",
+      "countryCode": "BO",
+      "population": 804138,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Santa Ana",
+      "nameAr": "Santa Ana",
+      "countryCode": "BO",
+      "population": 234478,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BA": [
+    {
+      "nameEn": "Sarajevo",
+      "nameAr": "Sarajevo",
+      "countryCode": "BA",
+      "population": 662817,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Banja Luka",
+      "nameAr": "Banja Luka",
+      "countryCode": "BA",
+      "population": 221422,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Zenica",
+      "nameAr": "Zenica",
+      "countryCode": "BA",
+      "population": 151388,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tuzla",
+      "nameAr": "Tuzla",
+      "countryCode": "BA",
+      "population": 143410,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mostar",
+      "nameAr": "Mostar",
+      "countryCode": "BA",
+      "population": 133793,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BW": [
+    {
+      "nameEn": "Gaborone",
+      "nameAr": "Gaborone",
+      "countryCode": "BW",
+      "population": 183827,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Francistown",
+      "nameAr": "Francistown",
+      "countryCode": "BW",
+      "population": 89180,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Molepolole",
+      "nameAr": "Molepolole",
+      "countryCode": "BW",
+      "population": 57713,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lobatse",
+      "nameAr": "Lobatse",
+      "countryCode": "BW",
+      "population": 50344,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Serowe",
+      "nameAr": "Serowe",
+      "countryCode": "BW",
+      "population": 47996,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BR": [
+    {
+      "nameEn": "Brasília",
+      "nameAr": "Brasília",
+      "countryCode": "BR",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Sao Paulo",
+      "nameAr": "Sao Paulo",
+      "countryCode": "BR",
+      "population": 14433148,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rio de Janeiro",
+      "nameAr": "Rio de Janeiro",
+      "countryCode": "BR",
+      "population": 6879088,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Belo Horizonte",
+      "nameAr": "Belo Horizonte",
+      "countryCode": "BR",
+      "population": 3974112,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Brasilia",
+      "nameAr": "Brasilia",
+      "countryCode": "BR",
+      "population": 3139980,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BN": [
+    {
+      "nameEn": "Bandar Seri Begawan",
+      "nameAr": "Bandar Seri Begawan",
+      "countryCode": "BN",
+      "population": 218250,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "BG": [
+    {
+      "nameEn": "Sofia",
+      "nameAr": "Sofia",
+      "countryCode": "BG",
+      "population": 1029914,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Plovdiv",
+      "nameAr": "Plovdiv",
+      "countryCode": "BG",
+      "population": 319090,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Varna",
+      "nameAr": "Varna",
+      "countryCode": "BG",
+      "population": 245522,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Burgas",
+      "nameAr": "Burgas",
+      "countryCode": "BG",
+      "population": 174254,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ruse",
+      "nameAr": "Ruse",
+      "countryCode": "BG",
+      "population": 170254,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BF": [
+    {
+      "nameEn": "Ouagadougou",
+      "nameAr": "Ouagadougou",
+      "countryCode": "BF",
+      "population": 992229,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bobo Dioulasso",
+      "nameAr": "Bobo Dioulasso",
+      "countryCode": "BF",
+      "population": 346035,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Koudougou",
+      "nameAr": "Koudougou",
+      "countryCode": "BF",
+      "population": 85339,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ouahigouya",
+      "nameAr": "Ouahigouya",
+      "countryCode": "BF",
+      "population": 70300,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Banfora",
+      "nameAr": "Banfora",
+      "countryCode": "BF",
+      "population": 45904,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "BI": [
+    {
+      "nameEn": "Gitega",
+      "nameAr": "Gitega",
+      "countryCode": "BI",
+      "population": 23167,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bujumbura",
+      "nameAr": "Bujumbura",
+      "countryCode": "BI",
+      "population": 331700,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Muyinga",
+      "nameAr": "Muyinga",
+      "countryCode": "BI",
+      "population": 71076,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ruyigi",
+      "nameAr": "Ruyigi",
+      "countryCode": "BI",
+      "population": 38458,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ngozi",
+      "nameAr": "Ngozi",
+      "countryCode": "BI",
+      "population": 21506,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KH": [
+    {
+      "nameEn": "Phnom Penh",
+      "nameAr": "Phnom Penh",
+      "countryCode": "KH",
+      "population": 1466000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Battambang",
+      "nameAr": "Battambang",
+      "countryCode": "KH",
+      "population": 152609,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Siem Reap",
+      "nameAr": "Siem Reap",
+      "countryCode": "KH",
+      "population": 97199,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Prey Veng",
+      "nameAr": "Prey Veng",
+      "countryCode": "KH",
+      "population": 74000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kampong Cham",
+      "nameAr": "Kampong Cham",
+      "countryCode": "KH",
+      "population": 72492,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CM": [
+    {
+      "nameEn": "Yaoundé",
+      "nameAr": "Yaoundé",
+      "countryCode": "CM",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Douala",
+      "nameAr": "Douala",
+      "countryCode": "CM",
+      "population": 1622041,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Yaounde",
+      "nameAr": "Yaounde",
+      "countryCode": "CM",
+      "population": 1335794,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bamenda",
+      "nameAr": "Bamenda",
+      "countryCode": "CM",
+      "population": 419567,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Garoua",
+      "nameAr": "Garoua",
+      "countryCode": "CM",
+      "population": 365437,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CV": [
+    {
+      "nameEn": "Praia",
+      "nameAr": "Praia",
+      "countryCode": "CV",
+      "population": 101112,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mindelo",
+      "nameAr": "Mindelo",
+      "countryCode": "CV",
+      "population": 62962,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CF": [
+    {
+      "nameEn": "Bangui",
+      "nameAr": "Bangui",
+      "countryCode": "CF",
+      "population": 727348,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Berberati",
+      "nameAr": "Berberati",
+      "countryCode": "CF",
+      "population": 60605,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bambari",
+      "nameAr": "Bambari",
+      "countryCode": "CF",
+      "population": 47323,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bossangoa",
+      "nameAr": "Bossangoa",
+      "countryCode": "CF",
+      "population": 45246,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mbaiki",
+      "nameAr": "Mbaiki",
+      "countryCode": "CF",
+      "population": 43566,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TD": [
+    {
+      "nameEn": "Ndjamena",
+      "nameAr": "Ndjamena",
+      "countryCode": "TD",
+      "population": 835194,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Moundou",
+      "nameAr": "Moundou",
+      "countryCode": "TD",
+      "population": 145936,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sarh",
+      "nameAr": "Sarh",
+      "countryCode": "TD",
+      "population": 135862,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Abeche",
+      "nameAr": "Abeche",
+      "countryCode": "TD",
+      "population": 116253,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bongor",
+      "nameAr": "Bongor",
+      "countryCode": "TD",
+      "population": 112230,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CL": [
+    {
+      "nameEn": "Santiago",
+      "nameAr": "Santiago",
+      "countryCode": "CL",
+      "population": 2883306,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Concepcion",
+      "nameAr": "Concepcion",
+      "countryCode": "CL",
+      "population": 550864,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Valparaiso",
+      "nameAr": "Valparaiso",
+      "countryCode": "CL",
+      "population": 434969,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Vina del Mar",
+      "nameAr": "Vina del Mar",
+      "countryCode": "CL",
+      "population": 399043,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Antofagasta",
+      "nameAr": "Antofagasta",
+      "countryCode": "CL",
+      "population": 295539,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CN": [
+    {
+      "nameEn": "Beijing",
+      "nameAr": "بكين",
+      "countryCode": "CN",
+      "population": 9293301,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Shanghai",
+      "nameAr": "شنغهاي",
+      "countryCode": "CN",
+      "population": 14797756,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Guangzhou",
+      "nameAr": "Guangzhou",
+      "countryCode": "CN",
+      "population": 5990913,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Wuhan",
+      "nameAr": "Wuhan",
+      "countryCode": "CN",
+      "population": 5713603,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tianjin",
+      "nameAr": "Tianjin",
+      "countryCode": "CN",
+      "population": 5473104,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CO": [
+    {
+      "nameEn": "Bogotá",
+      "nameAr": "Bogotá",
+      "countryCode": "CO",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Bogota",
+      "nameAr": "Bogota",
+      "countryCode": "CO",
+      "population": 7052831,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Medellin",
+      "nameAr": "Medellin",
+      "countryCode": "CO",
+      "population": 2648490,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cali",
+      "nameAr": "Cali",
+      "countryCode": "CO",
+      "population": 2216418,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Barranquilla",
+      "nameAr": "Barranquilla",
+      "countryCode": "CO",
+      "population": 1521246,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KM": [
+    {
+      "nameEn": "Moroni",
+      "nameAr": "Moroni",
+      "countryCode": "KM",
+      "population": 85785,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "CR": [
+    {
+      "nameEn": "San José",
+      "nameAr": "San José",
+      "countryCode": "CR",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "San Jose",
+      "nameAr": "San Jose",
+      "countryCode": "CR",
+      "population": 642862,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Alajuela",
+      "nameAr": "Alajuela",
+      "countryCode": "CR",
+      "population": 217619,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cartago",
+      "nameAr": "Cartago",
+      "countryCode": "CR",
+      "population": 111770,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Puerto Limon",
+      "nameAr": "Puerto Limon",
+      "countryCode": "CR",
+      "population": 74041,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "HR": [
+    {
+      "nameEn": "Zagreb",
+      "nameAr": "Zagreb",
+      "countryCode": "HR",
+      "population": 710746,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Split",
+      "nameAr": "Split",
+      "countryCode": "HR",
+      "population": 195528,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rijeka",
+      "nameAr": "Rijeka",
+      "countryCode": "HR",
+      "population": 156082,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Osijek",
+      "nameAr": "Osijek",
+      "countryCode": "HR",
+      "population": 91609,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Slavonski Brod",
+      "nameAr": "Slavonski Brod",
+      "countryCode": "HR",
+      "population": 79230,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CU": [
+    {
+      "nameEn": "Havana",
+      "nameAr": "Havana",
+      "countryCode": "CU",
+      "population": 2082459,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Santiago de Cuba",
+      "nameAr": "Santiago de Cuba",
+      "countryCode": "CU",
+      "population": 500964,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Camaguey",
+      "nameAr": "Camaguey",
+      "countryCode": "CU",
+      "population": 321584,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Holguin",
+      "nameAr": "Holguin",
+      "countryCode": "CU",
+      "population": 309640,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Guantanamo",
+      "nameAr": "Guantanamo",
+      "countryCode": "CU",
+      "population": 245070,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CY": [
+    {
+      "nameEn": "Nicosia",
+      "nameAr": "Nicosia",
+      "countryCode": "CY",
+      "population": 212376,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Limassol",
+      "nameAr": "Limassol",
+      "countryCode": "CY",
+      "population": 149486,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Larnaca",
+      "nameAr": "Larnaca",
+      "countryCode": "CY",
+      "population": 48947,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Paphos",
+      "nameAr": "Paphos",
+      "countryCode": "CY",
+      "population": 35961,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ammochostos",
+      "nameAr": "Ammochostos",
+      "countryCode": "CY",
+      "population": 33017,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "DK": [
+    {
+      "nameEn": "Copenhagen",
+      "nameAr": "Copenhagen",
+      "countryCode": "DK",
+      "population": 602481,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "København",
+      "nameAr": "København",
+      "countryCode": "DK",
+      "population": 1085000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Århus",
+      "nameAr": "Århus",
+      "countryCode": "DK",
+      "population": 232326,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Odense",
+      "nameAr": "Odense",
+      "countryCode": "DK",
+      "population": 152077,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Aalborg",
+      "nameAr": "Aalborg",
+      "countryCode": "DK",
+      "population": 111918,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "DJ": [
+    {
+      "nameEn": "Djibouti",
+      "nameAr": "Djibouti",
+      "countryCode": "DJ",
+      "population": 763507,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ali Sabih",
+      "nameAr": "Ali Sabih",
+      "countryCode": "DJ",
+      "population": 32166,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tadjoura",
+      "nameAr": "Tadjoura",
+      "countryCode": "DJ",
+      "population": 22193,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Obock",
+      "nameAr": "Obock",
+      "countryCode": "DJ",
+      "population": 13142,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Dikhil",
+      "nameAr": "Dikhil",
+      "countryCode": "DJ",
+      "population": 12043,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "DM": [
+    {
+      "nameEn": "Roseau",
+      "nameAr": "Roseau",
+      "countryCode": "DM",
+      "population": 19954,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "DO": [
+    {
+      "nameEn": "Santo Domingo",
+      "nameAr": "Santo Domingo",
+      "countryCode": "DO",
+      "population": 1078437,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Santiago",
+      "nameAr": "Santiago",
+      "countryCode": "DO",
+      "population": 1471008,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "San Pedro de Macoris",
+      "nameAr": "San Pedro de Macoris",
+      "countryCode": "DO",
+      "population": 211020,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "La Romana",
+      "nameAr": "La Romana",
+      "countryCode": "DO",
+      "population": 202472,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "San Cristobal",
+      "nameAr": "San Cristobal",
+      "countryCode": "DO",
+      "population": 154040,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CD": [
+    {
+      "nameEn": "Kinshasa",
+      "nameAr": "Kinshasa",
+      "countryCode": "CD",
+      "population": 6704352,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lubumbashi",
+      "nameAr": "Lubumbashi",
+      "countryCode": "CD",
+      "population": 1114317,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mbuji-Mayi",
+      "nameAr": "Mbuji-Mayi",
+      "countryCode": "CD",
+      "population": 1084881,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kananga",
+      "nameAr": "Kananga",
+      "countryCode": "CD",
+      "population": 614273,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kisangani",
+      "nameAr": "Kisangani",
+      "countryCode": "CD",
+      "population": 558814,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "EC": [
+    {
+      "nameEn": "Quito",
+      "nameAr": "Quito",
+      "countryCode": "EC",
+      "population": 1550407,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Guayaquil",
+      "nameAr": "Guayaquil",
+      "countryCode": "EC",
+      "population": 2233015,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cuenca",
+      "nameAr": "Cuenca",
+      "countryCode": "EC",
+      "population": 281921,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ambato",
+      "nameAr": "Ambato",
+      "countryCode": "EC",
+      "population": 217897,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Machala",
+      "nameAr": "Machala",
+      "countryCode": "EC",
+      "population": 205579,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "EG": [
+    {
+      "nameEn": "Cairo",
+      "nameAr": "القاهرة",
+      "countryCode": "EG",
+      "population": 9813807,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Alexandria",
+      "nameAr": "Alexandria",
+      "countryCode": "EG",
+      "population": 3988258,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "El Giza",
+      "nameAr": "El Giza",
+      "countryCode": "EG",
+      "population": 2681863,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bur Said",
+      "nameAr": "Bur Said",
+      "countryCode": "EG",
+      "population": 561932,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Luxor",
+      "nameAr": "Luxor",
+      "countryCode": "EG",
+      "population": 548572,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SV": [
+    {
+      "nameEn": "San Salvador",
+      "nameAr": "San Salvador",
+      "countryCode": "SV",
+      "population": 717904,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Santa Ana",
+      "nameAr": "Santa Ana",
+      "countryCode": "SV",
+      "population": 205570,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "San Miguel",
+      "nameAr": "San Miguel",
+      "countryCode": "SV",
+      "population": 181722,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sonsonate",
+      "nameAr": "Sonsonate",
+      "countryCode": "SV",
+      "population": 139724,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nueva San Salvador",
+      "nameAr": "Nueva San Salvador",
+      "countryCode": "SV",
+      "population": 124694,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GQ": [
+    {
+      "nameEn": "Malabo",
+      "nameAr": "Malabo",
+      "countryCode": "GQ",
+      "population": 155963,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bata",
+      "nameAr": "Bata",
+      "countryCode": "GQ",
+      "population": 135944,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Luba",
+      "nameAr": "Luba",
+      "countryCode": "GQ",
+      "population": 8655,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Evinayong",
+      "nameAr": "Evinayong",
+      "countryCode": "GQ",
+      "population": 8462,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mongomo",
+      "nameAr": "Mongomo",
+      "countryCode": "GQ",
+      "population": 6477,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ER": [
+    {
+      "nameEn": "Asmara",
+      "nameAr": "Asmara",
+      "countryCode": "ER",
+      "population": 592366,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Keren",
+      "nameAr": "Keren",
+      "countryCode": "ER",
+      "population": 148242,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Massawa",
+      "nameAr": "Massawa",
+      "countryCode": "ER",
+      "population": 142564,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mendefera",
+      "nameAr": "Mendefera",
+      "countryCode": "ER",
+      "population": 137586,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Assab",
+      "nameAr": "Assab",
+      "countryCode": "ER",
+      "population": 105496,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "EE": [
+    {
+      "nameEn": "Tallinn",
+      "nameAr": "Tallinn",
+      "countryCode": "EE",
+      "population": 367026,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tartu",
+      "nameAr": "Tartu",
+      "countryCode": "EE",
+      "population": 90034,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Narva",
+      "nameAr": "Narva",
+      "countryCode": "EE",
+      "population": 65707,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Parnu",
+      "nameAr": "Parnu",
+      "countryCode": "EE",
+      "population": 40256,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kohtla-Jarve",
+      "nameAr": "Kohtla-Jarve",
+      "countryCode": "EE",
+      "population": 31038,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SZ": [
+    {
+      "nameEn": "Lobamba",
+      "nameAr": "Lobamba",
+      "countryCode": "SZ",
+      "population": 7170,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Manzini",
+      "nameAr": "Manzini",
+      "countryCode": "SZ",
+      "population": 110537,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mbabane",
+      "nameAr": "Mbabane",
+      "countryCode": "SZ",
+      "population": 83178,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Siteki",
+      "nameAr": "Siteki",
+      "countryCode": "SZ",
+      "population": 6152,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Piggs Peak",
+      "nameAr": "Piggs Peak",
+      "countryCode": "SZ",
+      "population": 5750,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ET": [
+    {
+      "nameEn": "Addis Ababa",
+      "nameAr": "Addis Ababa",
+      "countryCode": "ET",
+      "population": 2928865,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nazret",
+      "nameAr": "Nazret",
+      "countryCode": "ET",
+      "population": 345444,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Dire Dawa",
+      "nameAr": "Dire Dawa",
+      "countryCode": "ET",
+      "population": 250326,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bahir Dar",
+      "nameAr": "Bahir Dar",
+      "countryCode": "ET",
+      "population": 187824,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Harar",
+      "nameAr": "Harar",
+      "countryCode": "ET",
+      "population": 161150,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "FJ": [
+    {
+      "nameEn": "Suva",
+      "nameAr": "Suva",
+      "countryCode": "FJ",
+      "population": 131835,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lautoka",
+      "nameAr": "Lautoka",
+      "countryCode": "FJ",
+      "population": 55894,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nandi",
+      "nameAr": "Nandi",
+      "countryCode": "FJ",
+      "population": 27329,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Labasa",
+      "nameAr": "Labasa",
+      "countryCode": "FJ",
+      "population": 24187,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GA": [
+    {
+      "nameEn": "Libreville",
+      "nameAr": "Libreville",
+      "countryCode": "GA",
+      "population": 530756,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Port-Gentil",
+      "nameAr": "Port-Gentil",
+      "countryCode": "GA",
+      "population": 113000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Franceville",
+      "nameAr": "Franceville",
+      "countryCode": "GA",
+      "population": 41056,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Oyem",
+      "nameAr": "Oyem",
+      "countryCode": "GA",
+      "population": 37147,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Moanda",
+      "nameAr": "Moanda",
+      "countryCode": "GA",
+      "population": 28633,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GM": [
+    {
+      "nameEn": "Banjul",
+      "nameAr": "Banjul",
+      "countryCode": "GM",
+      "population": 38842,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Brikama",
+      "nameAr": "Brikama",
+      "countryCode": "GM",
+      "population": 136418,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mansa Konko",
+      "nameAr": "Mansa Konko",
+      "countryCode": "GM",
+      "population": 18672,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Basse Santa Su",
+      "nameAr": "Basse Santa Su",
+      "countryCode": "GM",
+      "population": 14380,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bansang",
+      "nameAr": "Bansang",
+      "countryCode": "GM",
+      "population": 4647,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GE": [
+    {
+      "nameEn": "Tbilisi",
+      "nameAr": "Tbilisi",
+      "countryCode": "GE",
+      "population": 1052629,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kutaisi",
+      "nameAr": "Kutaisi",
+      "countryCode": "GE",
+      "population": 181142,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rustavi",
+      "nameAr": "Rustavi",
+      "countryCode": "GE",
+      "population": 156770,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Batumi",
+      "nameAr": "Batumi",
+      "countryCode": "GE",
+      "population": 138674,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sukhumi",
+      "nameAr": "Sukhumi",
+      "countryCode": "GE",
+      "population": 76219,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GH": [
+    {
+      "nameEn": "Accra",
+      "nameAr": "Accra",
+      "countryCode": "GH",
+      "population": 2042132,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kumasi",
+      "nameAr": "Kumasi",
+      "countryCode": "GH",
+      "population": 1468576,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tamale",
+      "nameAr": "Tamale",
+      "countryCode": "GH",
+      "population": 342871,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sekondi",
+      "nameAr": "Sekondi",
+      "countryCode": "GH",
+      "population": 212560,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tema",
+      "nameAr": "Tema",
+      "countryCode": "GH",
+      "population": 184970,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GD": [
+    {
+      "nameEn": "St. George's",
+      "nameAr": "St. George's",
+      "countryCode": "GD",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Saint George's",
+      "nameAr": "Saint George's",
+      "countryCode": "GD",
+      "population": 30539,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GT": [
+    {
+      "nameEn": "Guatemala City",
+      "nameAr": "Guatemala City",
+      "countryCode": "GT",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Guatemala",
+      "nameAr": "Guatemala",
+      "countryCode": "GT",
+      "population": 1009469,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Quetzaltenango",
+      "nameAr": "Quetzaltenango",
+      "countryCode": "GT",
+      "population": 399983,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "El Progreso",
+      "nameAr": "El Progreso",
+      "countryCode": "GT",
+      "population": 147197,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Escuintla",
+      "nameAr": "Escuintla",
+      "countryCode": "GT",
+      "population": 105402,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GN": [
+    {
+      "nameEn": "Conakry",
+      "nameAr": "Conakry",
+      "countryCode": "GN",
+      "population": 1494000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gueckedou",
+      "nameAr": "Gueckedou",
+      "countryCode": "GN",
+      "population": 221715,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nzerekore",
+      "nameAr": "Nzerekore",
+      "countryCode": "GN",
+      "population": 150425,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Boke",
+      "nameAr": "Boke",
+      "countryCode": "GN",
+      "population": 116270,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kankan",
+      "nameAr": "Kankan",
+      "countryCode": "GN",
+      "population": 110458,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GW": [
+    {
+      "nameEn": "Bissau",
+      "nameAr": "Bissau",
+      "countryCode": "GW",
+      "population": 395684,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bafata",
+      "nameAr": "Bafata",
+      "countryCode": "GW",
+      "population": 26113,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gabu",
+      "nameAr": "Gabu",
+      "countryCode": "GW",
+      "population": 14430,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cacheu",
+      "nameAr": "Cacheu",
+      "countryCode": "GW",
+      "population": 10490,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Catio",
+      "nameAr": "Catio",
+      "countryCode": "GW",
+      "population": 9898,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "GY": [
+    {
+      "nameEn": "Georgetown",
+      "nameAr": "Georgetown",
+      "countryCode": "GY",
+      "population": 249684,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "New Amsterdam",
+      "nameAr": "New Amsterdam",
+      "countryCode": "GY",
+      "population": 40957,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Linden",
+      "nameAr": "Linden",
+      "countryCode": "GY",
+      "population": 28042,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Corriverton",
+      "nameAr": "Corriverton",
+      "countryCode": "GY",
+      "population": 11787,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bartica",
+      "nameAr": "Bartica",
+      "countryCode": "GY",
+      "population": 11341,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "HT": [
+    {
+      "nameEn": "Port-au-Prince",
+      "nameAr": "Port-au-Prince",
+      "countryCode": "HT",
+      "population": 1616371,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cap-Haitien",
+      "nameAr": "Cap-Haitien",
+      "countryCode": "HT",
+      "population": 208151,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gonaives",
+      "nameAr": "Gonaives",
+      "countryCode": "HT",
+      "population": 125820,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Les Cayes",
+      "nameAr": "Les Cayes",
+      "countryCode": "HT",
+      "population": 122729,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Port-De-Paix",
+      "nameAr": "Port-De-Paix",
+      "countryCode": "HT",
+      "population": 34657,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "HN": [
+    {
+      "nameEn": "Tegucigalpa",
+      "nameAr": "Tegucigalpa",
+      "countryCode": "HN",
+      "population": 898424,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "San Pedro Sula",
+      "nameAr": "San Pedro Sula",
+      "countryCode": "HN",
+      "population": 584779,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "La Ceiba",
+      "nameAr": "La Ceiba",
+      "countryCode": "HN",
+      "population": 138072,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Choluteca",
+      "nameAr": "Choluteca",
+      "countryCode": "HN",
+      "population": 87651,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Comayagua",
+      "nameAr": "Comayagua",
+      "countryCode": "HN",
+      "population": 64963,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "HU": [
+    {
+      "nameEn": "Budapest",
+      "nameAr": "Budapest",
+      "countryCode": "HU",
+      "population": 1679000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Debrecen",
+      "nameAr": "Debrecen",
+      "countryCode": "HU",
+      "population": 217705,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Miskolc",
+      "nameAr": "Miskolc",
+      "countryCode": "HU",
+      "population": 210197,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Szeged",
+      "nameAr": "Szeged",
+      "countryCode": "HU",
+      "population": 176324,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Pecs",
+      "nameAr": "Pecs",
+      "countryCode": "HU",
+      "population": 171456,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "IS": [
+    {
+      "nameEn": "Reykjavik",
+      "nameAr": "Reykjavik",
+      "countryCode": "IS",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Reykjavík",
+      "nameAr": "Reykjavík",
+      "countryCode": "IS",
+      "population": 140059,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Akureyi",
+      "nameAr": "Akureyi",
+      "countryCode": "IS",
+      "population": 14754,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Keflavík",
+      "nameAr": "Keflavík",
+      "countryCode": "IS",
+      "population": 7377,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Selfoss",
+      "nameAr": "Selfoss",
+      "countryCode": "IS",
+      "population": 5031,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "IN": [
+    {
+      "nameEn": "New Delhi",
+      "nameAr": "New Delhi",
+      "countryCode": "IN",
+      "population": 317797,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mumbai",
+      "nameAr": "مومباي",
+      "countryCode": "IN",
+      "population": 15834918,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Delhi",
+      "nameAr": "دلهي",
+      "countryCode": "IN",
+      "population": 11779607,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kolkata",
+      "nameAr": "Kolkata",
+      "countryCode": "IN",
+      "population": 9709196,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bengaluru",
+      "nameAr": "Bengaluru",
+      "countryCode": "IN",
+      "population": 5945524,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "IR": [
+    {
+      "nameEn": "Tehran",
+      "nameAr": "Tehran",
+      "countryCode": "IR",
+      "population": 7513155,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mashhad",
+      "nameAr": "Mashhad",
+      "countryCode": "IR",
+      "population": 2318127,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Isfahan",
+      "nameAr": "Isfahan",
+      "countryCode": "IR",
+      "population": 1572883,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Karaj",
+      "nameAr": "Karaj",
+      "countryCode": "IR",
+      "population": 1423000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tabriz",
+      "nameAr": "Tabriz",
+      "countryCode": "IR",
+      "population": 1304713,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "IQ": [
+    {
+      "nameEn": "Baghdad",
+      "nameAr": "بغداد",
+      "countryCode": "IQ",
+      "population": 5054000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mosul",
+      "nameAr": "Mosul",
+      "countryCode": "IQ",
+      "population": 1228467,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Basra",
+      "nameAr": "Basra",
+      "countryCode": "IQ",
+      "population": 870000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Irbil",
+      "nameAr": "Irbil",
+      "countryCode": "IQ",
+      "population": 795870,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "As Sulaymaniyah",
+      "nameAr": "As Sulaymaniyah",
+      "countryCode": "IQ",
+      "population": 654318,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CI": [
+    {
+      "nameEn": "Yamoussoukro",
+      "nameAr": "Yamoussoukro",
+      "countryCode": "CI",
+      "population": 200515,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Abidjan",
+      "nameAr": "Abidjan",
+      "countryCode": "CI",
+      "population": 3496198,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bouake",
+      "nameAr": "Bouake",
+      "countryCode": "CI",
+      "population": 511151,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Daloa",
+      "nameAr": "Daloa",
+      "countryCode": "CI",
+      "population": 235410,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "San-Pedro",
+      "nameAr": "San-Pedro",
+      "countryCode": "CI",
+      "population": 203512,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "JM": [
+    {
+      "nameEn": "Kingston",
+      "nameAr": "Kingston",
+      "countryCode": "JM",
+      "population": 801337,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Spanish Town",
+      "nameAr": "Spanish Town",
+      "countryCode": "JM",
+      "population": 297532,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Montego Bay",
+      "nameAr": "Montego Bay",
+      "countryCode": "JM",
+      "population": 104438,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Half Way Tree",
+      "nameAr": "Half Way Tree",
+      "countryCode": "JM",
+      "population": 96494,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "May Pen",
+      "nameAr": "May Pen",
+      "countryCode": "JM",
+      "population": 89949,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "JO": [
+    {
+      "nameEn": "Amman",
+      "nameAr": "عمّان",
+      "countryCode": "JO",
+      "population": 1060000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Az Zarqa",
+      "nameAr": "Az Zarqa",
+      "countryCode": "JO",
+      "population": 843678,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Irbid",
+      "nameAr": "Irbid",
+      "countryCode": "JO",
+      "population": 471020,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "As Salt",
+      "nameAr": "As Salt",
+      "countryCode": "JO",
+      "population": 110439,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Al Aqabah",
+      "nameAr": "Al Aqabah",
+      "countryCode": "JO",
+      "population": 95048,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KZ": [
+    {
+      "nameEn": "Astana",
+      "nameAr": "Astana",
+      "countryCode": "KZ",
+      "population": 335313,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Almaty",
+      "nameAr": "Almaty",
+      "countryCode": "KZ",
+      "population": 1096256,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Shymkent",
+      "nameAr": "Shymkent",
+      "countryCode": "KZ",
+      "population": 439712,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Qaraghandy",
+      "nameAr": "Qaraghandy",
+      "countryCode": "KZ",
+      "population": 378274,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Taraz",
+      "nameAr": "Taraz",
+      "countryCode": "KZ",
+      "population": 332724,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KE": [
+    {
+      "nameEn": "Nairobi",
+      "nameAr": "نيروبي",
+      "countryCode": "KE",
+      "population": 2880274,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mombasa",
+      "nameAr": "Mombasa",
+      "countryCode": "KE",
+      "population": 840834,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nakuru",
+      "nameAr": "Nakuru",
+      "countryCode": "KE",
+      "population": 312315,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kisumu",
+      "nameAr": "Kisumu",
+      "countryCode": "KE",
+      "population": 306047,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Eldoret",
+      "nameAr": "Eldoret",
+      "countryCode": "KE",
+      "population": 285914,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KI": [
+    {
+      "nameEn": "South Tarawa",
+      "nameAr": "South Tarawa",
+      "countryCode": "KI",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Tarawa",
+      "nameAr": "Tarawa",
+      "countryCode": "KI",
+      "population": 25668,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KW": [
+    {
+      "nameEn": "Kuwait City",
+      "nameAr": "Kuwait City",
+      "countryCode": "KW",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Kuwait",
+      "nameAr": "مدينة الكويت",
+      "countryCode": "KW",
+      "population": 1061532,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Al Jahra",
+      "nameAr": "Al Jahra",
+      "countryCode": "KW",
+      "population": 194193,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Hawalli",
+      "nameAr": "Hawalli",
+      "countryCode": "KW",
+      "population": 164212,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Al Ahmadi",
+      "nameAr": "Al Ahmadi",
+      "countryCode": "KW",
+      "population": 68763,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KG": [
+    {
+      "nameEn": "Bishkek",
+      "nameAr": "Bishkek",
+      "countryCode": "KG",
+      "population": 820606,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Osh",
+      "nameAr": "Osh",
+      "countryCode": "KG",
+      "population": 295639,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Jalal Abad",
+      "nameAr": "Jalal Abad",
+      "countryCode": "KG",
+      "population": 162300,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tokmak",
+      "nameAr": "Tokmak",
+      "countryCode": "KG",
+      "population": 87954,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kara Balta",
+      "nameAr": "Kara Balta",
+      "countryCode": "KG",
+      "population": 68465,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "LA": [
+    {
+      "nameEn": "Vientiane",
+      "nameAr": "Vientiane",
+      "countryCode": "LA",
+      "population": 662174,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Pakxe",
+      "nameAr": "Pakxe",
+      "countryCode": "LA",
+      "population": 95554,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Louangphrabang",
+      "nameAr": "Louangphrabang",
+      "countryCode": "LA",
+      "population": 77260,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Savannakhet",
+      "nameAr": "Savannakhet",
+      "countryCode": "LA",
+      "population": 75726,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Thakhek",
+      "nameAr": "Thakhek",
+      "countryCode": "LA",
+      "population": 51564,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "LV": [
+    {
+      "nameEn": "Riga",
+      "nameAr": "Riga",
+      "countryCode": "LV",
+      "population": 723803,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Daugavpils",
+      "nameAr": "Daugavpils",
+      "countryCode": "LV",
+      "population": 109970,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Liepaga",
+      "nameAr": "Liepaga",
+      "countryCode": "LV",
+      "population": 83970,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Jelgava",
+      "nameAr": "Jelgava",
+      "countryCode": "LV",
+      "population": 64499,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ventspils",
+      "nameAr": "Ventspils",
+      "countryCode": "LV",
+      "population": 42764,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "LB": [
+    {
+      "nameEn": "Beirut",
+      "nameAr": "بيروت",
+      "countryCode": "LB",
+      "population": 1779063,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Trablous",
+      "nameAr": "Trablous",
+      "countryCode": "LB",
+      "population": 361286,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Saida",
+      "nameAr": "Saida",
+      "countryCode": "LB",
+      "population": 173894,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Zahle",
+      "nameAr": "Zahle",
+      "countryCode": "LB",
+      "population": 61192,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nabatiye et Tahta",
+      "nameAr": "Nabatiye et Tahta",
+      "countryCode": "LB",
+      "population": 60000,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "LS": [
+    {
+      "nameEn": "Maseru",
+      "nameAr": "Maseru",
+      "countryCode": "LS",
+      "population": 239840,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mafetang",
+      "nameAr": "Mafetang",
+      "countryCode": "LS",
+      "population": 54709,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Hlotse",
+      "nameAr": "Hlotse",
+      "countryCode": "LS",
+      "population": 47675,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mohales Hoek",
+      "nameAr": "Mohales Hoek",
+      "countryCode": "LS",
+      "population": 24992,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Moyeni",
+      "nameAr": "Moyeni",
+      "countryCode": "LS",
+      "population": 24130,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "LR": [
+    {
+      "nameEn": "Monrovia",
+      "nameAr": "Monrovia",
+      "countryCode": "LR",
+      "population": 913331,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Buchanan",
+      "nameAr": "Buchanan",
+      "countryCode": "LR",
+      "population": 37023,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kakata",
+      "nameAr": "Kakata",
+      "countryCode": "LR",
+      "population": 33945,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gbarnga",
+      "nameAr": "Gbarnga",
+      "countryCode": "LR",
+      "population": 31857,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Voinjama",
+      "nameAr": "Voinjama",
+      "countryCode": "LR",
+      "population": 26594,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "LY": [
+    {
+      "nameEn": "Tripoli",
+      "nameAr": "طرابلس",
+      "countryCode": "LY",
+      "population": 1209199,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Banghazi",
+      "nameAr": "Banghazi",
+      "countryCode": "LY",
+      "population": 881187,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Misratah",
+      "nameAr": "Misratah",
+      "countryCode": "LY",
+      "population": 301160,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Az Zawiyah",
+      "nameAr": "Az Zawiyah",
+      "countryCode": "LY",
+      "population": 193062,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Al Khums",
+      "nameAr": "Al Khums",
+      "countryCode": "LY",
+      "population": 192502,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "LI": [
+    {
+      "nameEn": "Vaduz",
+      "nameAr": "Vaduz",
+      "countryCode": "LI",
+      "population": 20812,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "LT": [
+    {
+      "nameEn": "Vilnius",
+      "nameAr": "Vilnius",
+      "countryCode": "LT",
+      "population": 524698,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kaunas",
+      "nameAr": "Kaunas",
+      "countryCode": "LT",
+      "population": 363845,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Klaipeda",
+      "nameAr": "Klaipeda",
+      "countryCode": "LT",
+      "population": 191334,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Siauliai",
+      "nameAr": "Siauliai",
+      "countryCode": "LT",
+      "population": 132058,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Panevežys",
+      "nameAr": "Panevežys",
+      "countryCode": "LT",
+      "population": 122400,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "LU": [
+    {
+      "nameEn": "Luxembourg",
+      "nameAr": "Luxembourg",
+      "countryCode": "LU",
+      "population": 91972,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Diekirch",
+      "nameAr": "Diekirch",
+      "countryCode": "LU",
+      "population": 6242,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Grevenmacher",
+      "nameAr": "Grevenmacher",
+      "countryCode": "LU",
+      "population": 3958,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MG": [
+    {
+      "nameEn": "Antananarivo",
+      "nameAr": "Antananarivo",
+      "countryCode": "MG",
+      "population": 1544217,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Antsirabe",
+      "nameAr": "Antsirabe",
+      "countryCode": "MG",
+      "population": 307921,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Toamasina",
+      "nameAr": "Toamasina",
+      "countryCode": "MG",
+      "population": 208300,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Fianarantsoa",
+      "nameAr": "Fianarantsoa",
+      "countryCode": "MG",
+      "population": 175706,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mahajanga",
+      "nameAr": "Mahajanga",
+      "countryCode": "MG",
+      "population": 145159,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MW": [
+    {
+      "nameEn": "Lilongwe",
+      "nameAr": "Lilongwe",
+      "countryCode": "MW",
+      "population": 646750,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Blantyre",
+      "nameAr": "Blantyre",
+      "countryCode": "MW",
+      "population": 584877,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mzuzu",
+      "nameAr": "Mzuzu",
+      "countryCode": "MW",
+      "population": 110201,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Zomba",
+      "nameAr": "Zomba",
+      "countryCode": "MW",
+      "population": 80932,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mangochi",
+      "nameAr": "Mangochi",
+      "countryCode": "MW",
+      "population": 68974,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MV": [
+    {
+      "nameEn": "Malé",
+      "nameAr": "Malé",
+      "countryCode": "MV",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Male",
+      "nameAr": "Male",
+      "countryCode": "MV",
+      "population": 108310,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ML": [
+    {
+      "nameEn": "Bamako",
+      "nameAr": "Bamako",
+      "countryCode": "ML",
+      "population": 1395641,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sikasso",
+      "nameAr": "Sikasso",
+      "countryCode": "ML",
+      "population": 185270,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Segou",
+      "nameAr": "Segou",
+      "countryCode": "ML",
+      "population": 107752,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Koutiala",
+      "nameAr": "Koutiala",
+      "countryCode": "ML",
+      "population": 102140,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mopti",
+      "nameAr": "Mopti",
+      "countryCode": "ML",
+      "population": 93270,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MT": [
+    {
+      "nameEn": "Valletta",
+      "nameAr": "Valletta",
+      "countryCode": "MT",
+      "population": 187608,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "MH": [
+    {
+      "nameEn": "Majuro",
+      "nameAr": "Majuro",
+      "countryCode": "MH",
+      "population": 22950,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "MR": [
+    {
+      "nameEn": "Nouakchott",
+      "nameAr": "Nouakchott",
+      "countryCode": "MR",
+      "population": 701772,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Saint-Louis",
+      "nameAr": "Saint-Louis",
+      "countryCode": "MR",
+      "population": 198396,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nema",
+      "nameAr": "Nema",
+      "countryCode": "MR",
+      "population": 127500,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nouadhibou",
+      "nameAr": "Nouadhibou",
+      "countryCode": "MR",
+      "population": 86738,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kiffa",
+      "nameAr": "Kiffa",
+      "countryCode": "MR",
+      "population": 73930,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MU": [
+    {
+      "nameEn": "Port Louis",
+      "nameAr": "Port Louis",
+      "countryCode": "MU",
+      "population": 371954,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Curepipe",
+      "nameAr": "Curepipe",
+      "countryCode": "MU",
+      "population": 192088,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MX": [
+    {
+      "nameEn": "Mexico City",
+      "nameAr": "Mexico City",
+      "countryCode": "MX",
+      "population": 14919501,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Guadalajara",
+      "nameAr": "Guadalajara",
+      "countryCode": "MX",
+      "population": 2919295,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Monterrey",
+      "nameAr": "Monterrey",
+      "countryCode": "MX",
+      "population": 2417437,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Puebla",
+      "nameAr": "Puebla",
+      "countryCode": "MX",
+      "population": 1793550,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tijuana",
+      "nameAr": "Tijuana",
+      "countryCode": "MX",
+      "population": 1464729,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "FM": [
+    {
+      "nameEn": "Palikir",
+      "nameAr": "Palikir",
+      "countryCode": "FM",
+      "population": 4645,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "MD": [
+    {
+      "nameEn": "Chișinău",
+      "nameAr": "Chișinău",
+      "countryCode": "MD",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Chisinau",
+      "nameAr": "Chisinau",
+      "countryCode": "MD",
+      "population": 662064,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tiraspol",
+      "nameAr": "Tiraspol",
+      "countryCode": "MD",
+      "population": 137097,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Balti",
+      "nameAr": "Balti",
+      "countryCode": "MD",
+      "population": 135023,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cahul",
+      "nameAr": "Cahul",
+      "countryCode": "MD",
+      "population": 48950,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MC": [
+    {
+      "nameEn": "Monaco",
+      "nameAr": "Monaco",
+      "countryCode": "MC",
+      "population": 36371,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "MN": [
+    {
+      "nameEn": "Ulan Bator",
+      "nameAr": "Ulan Bator",
+      "countryCode": "MN",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Ulaanbaatar",
+      "nameAr": "Ulaanbaatar",
+      "countryCode": "MN",
+      "population": 827306,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Erdenet",
+      "nameAr": "Erdenet",
+      "countryCode": "MN",
+      "population": 79647,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Darhan",
+      "nameAr": "Darhan",
+      "countryCode": "MN",
+      "population": 74738,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Choybalsan",
+      "nameAr": "Choybalsan",
+      "countryCode": "MN",
+      "population": 33376,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ME": [
+    {
+      "nameEn": "Podgorica",
+      "nameAr": "Podgorica",
+      "countryCode": "ME",
+      "population": 141162,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "MA": [
+    {
+      "nameEn": "Rabat",
+      "nameAr": "الرباط",
+      "countryCode": "MA",
+      "population": 1680377,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Casablanca",
+      "nameAr": "الدار البيضاء",
+      "countryCode": "MA",
+      "population": 3162955,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Fez",
+      "nameAr": "Fez",
+      "countryCode": "MA",
+      "population": 983446,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Marrakesh",
+      "nameAr": "Marrakesh",
+      "countryCode": "MA",
+      "population": 855648,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Agadir",
+      "nameAr": "Agadir",
+      "countryCode": "MA",
+      "population": 752032,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MZ": [
+    {
+      "nameEn": "Maputo",
+      "nameAr": "Maputo",
+      "countryCode": "MZ",
+      "population": 1318807,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Beira",
+      "nameAr": "Beira",
+      "countryCode": "MZ",
+      "population": 507197,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Matola",
+      "nameAr": "Matola",
+      "countryCode": "MZ",
+      "population": 503368,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nampula",
+      "nameAr": "Nampula",
+      "countryCode": "MZ",
+      "population": 386186,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chimoio",
+      "nameAr": "Chimoio",
+      "countryCode": "MZ",
+      "population": 242539,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MM": [
+    {
+      "nameEn": "Naypyidaw",
+      "nameAr": "Naypyidaw",
+      "countryCode": "MM",
+      "population": 562412,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rangoon",
+      "nameAr": "Rangoon",
+      "countryCode": "MM",
+      "population": 3694910,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mandalay",
+      "nameAr": "Mandalay",
+      "countryCode": "MM",
+      "population": 1167000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mawlamyine",
+      "nameAr": "Mawlamyine",
+      "countryCode": "MM",
+      "population": 400249,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bago",
+      "nameAr": "Bago",
+      "countryCode": "MM",
+      "population": 264347,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "NA": [
+    {
+      "nameEn": "Windhoek",
+      "nameAr": "Windhoek",
+      "countryCode": "NA",
+      "population": 265464,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Walvis Bay",
+      "nameAr": "Walvis Bay",
+      "countryCode": "NA",
+      "population": 49505,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rundu",
+      "nameAr": "Rundu",
+      "countryCode": "NA",
+      "population": 43485,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Swakopmund",
+      "nameAr": "Swakopmund",
+      "countryCode": "NA",
+      "population": 27269,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rehoboth",
+      "nameAr": "Rehoboth",
+      "countryCode": "NA",
+      "population": 23298,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "NR": [
+    {
+      "nameEn": "Yaren",
+      "nameAr": "Yaren",
+      "countryCode": "NR",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    }
+  ],
+  "NP": [
+    {
+      "nameEn": "Kathmandu",
+      "nameAr": "Kathmandu",
+      "countryCode": "NP",
+      "population": 895000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Pokhara",
+      "nameAr": "Pokhara",
+      "countryCode": "NP",
+      "population": 200000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lalitpur",
+      "nameAr": "Lalitpur",
+      "countryCode": "NP",
+      "population": 191209,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Biratnagar",
+      "nameAr": "Biratnagar",
+      "countryCode": "NP",
+      "population": 182324,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Hetauda",
+      "nameAr": "Hetauda",
+      "countryCode": "NP",
+      "population": 158555,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "NI": [
+    {
+      "nameEn": "Managua",
+      "nameAr": "Managua",
+      "countryCode": "NI",
+      "population": 920000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Leon",
+      "nameAr": "Leon",
+      "countryCode": "NI",
+      "population": 154490,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chinandega",
+      "nameAr": "Chinandega",
+      "countryCode": "NI",
+      "population": 132705,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Masaya",
+      "nameAr": "Masaya",
+      "countryCode": "NI",
+      "population": 130113,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Matagalpa",
+      "nameAr": "Matagalpa",
+      "countryCode": "NI",
+      "population": 106515,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "NE": [
+    {
+      "nameEn": "Niamey",
+      "nameAr": "Niamey",
+      "countryCode": "NE",
+      "population": 828896,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Zinder",
+      "nameAr": "Zinder",
+      "countryCode": "NE",
+      "population": 210891,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Maradi",
+      "nameAr": "Maradi",
+      "countryCode": "NE",
+      "population": 198021,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Agadez",
+      "nameAr": "Agadez",
+      "countryCode": "NE",
+      "population": 103166,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tahoua",
+      "nameAr": "Tahoua",
+      "countryCode": "NE",
+      "population": 98191,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "NG": [
+    {
+      "nameEn": "Abuja",
+      "nameAr": "Abuja",
+      "countryCode": "NG",
+      "population": 869068,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lagos",
+      "nameAr": "لاغوس",
+      "countryCode": "NG",
+      "population": 4733768,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kano",
+      "nameAr": "Kano",
+      "countryCode": "NG",
+      "population": 3140000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ibadan",
+      "nameAr": "Ibadan",
+      "countryCode": "NG",
+      "population": 2221285,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kaduna",
+      "nameAr": "Kaduna",
+      "countryCode": "NG",
+      "population": 1191297,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KP": [
+    {
+      "nameEn": "Pyongyang",
+      "nameAr": "Pyongyang",
+      "countryCode": "KP",
+      "population": 2899399,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nampo",
+      "nameAr": "Nampo",
+      "countryCode": "KP",
+      "population": 791000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Hamhung",
+      "nameAr": "Hamhung",
+      "countryCode": "KP",
+      "population": 595671,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Hungnam",
+      "nameAr": "Hungnam",
+      "countryCode": "KP",
+      "population": 548702,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chongjin",
+      "nameAr": "Chongjin",
+      "countryCode": "KP",
+      "population": 499807,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "MK": [
+    {
+      "nameEn": "Skopje",
+      "nameAr": "Skopje",
+      "countryCode": "MK",
+      "population": 484488,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Tetovo",
+      "nameAr": "Tetovo",
+      "countryCode": "MK",
+      "population": 96038,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bitola",
+      "nameAr": "Bitola",
+      "countryCode": "MK",
+      "population": 75551,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "OM": [
+    {
+      "nameEn": "Muscat",
+      "nameAr": "مسقط",
+      "countryCode": "OM",
+      "population": 660779,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "As Sib",
+      "nameAr": "As Sib",
+      "countryCode": "OM",
+      "population": 237816,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Salalah",
+      "nameAr": "Salalah",
+      "countryCode": "OM",
+      "population": 183509,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Suhar",
+      "nameAr": "Suhar",
+      "countryCode": "OM",
+      "population": 129812,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ibri",
+      "nameAr": "Ibri",
+      "countryCode": "OM",
+      "population": 101640,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PK": [
+    {
+      "nameEn": "Islamabad",
+      "nameAr": "Islamabad",
+      "countryCode": "PK",
+      "population": 690800,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Karachi",
+      "nameAr": "Karachi",
+      "countryCode": "PK",
+      "population": 11877110,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lahore",
+      "nameAr": "Lahore",
+      "countryCode": "PK",
+      "population": 6443944,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Faisalabad",
+      "nameAr": "Faisalabad",
+      "countryCode": "PK",
+      "population": 2561798,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Saidu",
+      "nameAr": "Saidu",
+      "countryCode": "PK",
+      "population": 1860310,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PW": [
+    {
+      "nameEn": "Ngerulmud",
+      "nameAr": "Ngerulmud",
+      "countryCode": "PW",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Koror",
+      "nameAr": "Koror",
+      "countryCode": "PW",
+      "population": 11200,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Melekeok",
+      "nameAr": "Melekeok",
+      "countryCode": "PW",
+      "population": 7026,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PS": [
+    {
+      "nameEn": "Ramallah",
+      "nameAr": "Ramallah",
+      "countryCode": "PS",
+      "population": 24599,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gaza",
+      "nameAr": "Gaza",
+      "countryCode": "PS",
+      "population": 477461,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Al Khalil",
+      "nameAr": "Al Khalil",
+      "countryCode": "PS",
+      "population": 220396,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nablus",
+      "nameAr": "Nablus",
+      "countryCode": "PS",
+      "population": 173154,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PA": [
+    {
+      "nameEn": "Panama City",
+      "nameAr": "Panama City",
+      "countryCode": "PA",
+      "population": 844584,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Colon",
+      "nameAr": "Colon",
+      "countryCode": "PA",
+      "population": 170488,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "David",
+      "nameAr": "David",
+      "countryCode": "PA",
+      "population": 96448,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Balboa",
+      "nameAr": "Balboa",
+      "countryCode": "PA",
+      "population": 62882,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Santiago",
+      "nameAr": "Santiago",
+      "countryCode": "PA",
+      "population": 45655,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PG": [
+    {
+      "nameEn": "Port Moresby",
+      "nameAr": "Port Moresby",
+      "countryCode": "PG",
+      "population": 267435,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lae",
+      "nameAr": "Lae",
+      "countryCode": "PG",
+      "population": 103654,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mt. Hagen",
+      "nameAr": "Mt. Hagen",
+      "countryCode": "PG",
+      "population": 46344,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Madang",
+      "nameAr": "Madang",
+      "countryCode": "PG",
+      "population": 44721,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Arawa",
+      "nameAr": "Arawa",
+      "countryCode": "PG",
+      "population": 40266,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PY": [
+    {
+      "nameEn": "Asunción",
+      "nameAr": "Asunción",
+      "countryCode": "PY",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Asuncion",
+      "nameAr": "Asuncion",
+      "countryCode": "PY",
+      "population": 940847,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "San Lorenzo",
+      "nameAr": "San Lorenzo",
+      "countryCode": "PY",
+      "population": 385532,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ciudad del Este",
+      "nameAr": "Ciudad del Este",
+      "countryCode": "PY",
+      "population": 320872,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Encarnacion",
+      "nameAr": "Encarnacion",
+      "countryCode": "PY",
+      "population": 251814,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PE": [
+    {
+      "nameEn": "Lima",
+      "nameAr": "Lima",
+      "countryCode": "PE",
+      "population": 7385117,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Callao",
+      "nameAr": "Callao",
+      "countryCode": "PE",
+      "population": 786232,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Arequipa",
+      "nameAr": "Arequipa",
+      "countryCode": "PE",
+      "population": 775785,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chiclayo",
+      "nameAr": "Chiclayo",
+      "countryCode": "PE",
+      "population": 587084,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Trujillo",
+      "nameAr": "Trujillo",
+      "countryCode": "PE",
+      "population": 521046,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "PH": [
+    {
+      "nameEn": "Manila",
+      "nameAr": "مانيلا",
+      "countryCode": "PH",
+      "population": 7088788,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Quezon City",
+      "nameAr": "Quezon City",
+      "countryCode": "PH",
+      "population": 2761720,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Davao",
+      "nameAr": "Davao",
+      "countryCode": "PH",
+      "population": 1307252,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cagayan de Oro",
+      "nameAr": "Cagayan de Oro",
+      "countryCode": "PH",
+      "population": 861825,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cebu",
+      "nameAr": "Cebu",
+      "countryCode": "PH",
+      "population": 806817,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "CG": [
+    {
+      "nameEn": "Brazzaville",
+      "nameAr": "Brazzaville",
+      "countryCode": "CG",
+      "population": 1259445,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Pointe-Noire",
+      "nameAr": "Pointe-Noire",
+      "countryCode": "CG",
+      "population": 602441,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Loubomo",
+      "nameAr": "Loubomo",
+      "countryCode": "CG",
+      "population": 97930,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kayes",
+      "nameAr": "Kayes",
+      "countryCode": "CG",
+      "population": 60629,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Owando",
+      "nameAr": "Owando",
+      "countryCode": "CG",
+      "population": 29011,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "RO": [
+    {
+      "nameEn": "Bucharest",
+      "nameAr": "Bucharest",
+      "countryCode": "RO",
+      "population": 1842097,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Iasi",
+      "nameAr": "Iasi",
+      "countryCode": "RO",
+      "population": 325914,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Timisoara",
+      "nameAr": "Timisoara",
+      "countryCode": "RO",
+      "population": 309575,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Galati",
+      "nameAr": "Galati",
+      "countryCode": "RO",
+      "population": 302622,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Craiova",
+      "nameAr": "Craiova",
+      "countryCode": "RO",
+      "population": 301144,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "RU": [
+    {
+      "nameEn": "Moscow",
+      "nameAr": "موسكو",
+      "countryCode": "RU",
+      "population": 10452000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "St. Petersburg",
+      "nameAr": "St. Petersburg",
+      "countryCode": "RU",
+      "population": 4023106,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Yekaterinburg",
+      "nameAr": "Yekaterinburg",
+      "countryCode": "RU",
+      "population": 1270488,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nizhny Novgorod",
+      "nameAr": "Nizhny Novgorod",
+      "countryCode": "RU",
+      "population": 1246463,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Novosibirsk",
+      "nameAr": "Novosibirsk",
+      "countryCode": "RU",
+      "population": 1213101,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "RW": [
+    {
+      "nameEn": "Kigali",
+      "nameAr": "Kigali",
+      "countryCode": "RW",
+      "population": 802631,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nyanza",
+      "nameAr": "Nyanza",
+      "countryCode": "RW",
+      "population": 225209,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gitarama",
+      "nameAr": "Gitarama",
+      "countryCode": "RW",
+      "population": 87613,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ruhengeri",
+      "nameAr": "Ruhengeri",
+      "countryCode": "RW",
+      "population": 86685,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gisenyi",
+      "nameAr": "Gisenyi",
+      "countryCode": "RW",
+      "population": 83623,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "KN": [
+    {
+      "nameEn": "Basseterre",
+      "nameAr": "Basseterre",
+      "countryCode": "KN",
+      "population": 18694,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "LC": [
+    {
+      "nameEn": "Castries",
+      "nameAr": "Castries",
+      "countryCode": "LC",
+      "population": 24299,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "VC": [
+    {
+      "nameEn": "Kingstown",
+      "nameAr": "Kingstown",
+      "countryCode": "VC",
+      "population": 37002,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "WS": [
+    {
+      "nameEn": "Apia",
+      "nameAr": "Apia",
+      "countryCode": "WS",
+      "population": 49812,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "SM": [
+    {
+      "nameEn": "City of San Marino",
+      "nameAr": "City of San Marino",
+      "countryCode": "SM",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "San Marino",
+      "nameAr": "San Marino",
+      "countryCode": "SM",
+      "population": 29290,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ST": [
+    {
+      "nameEn": "São Tomé",
+      "nameAr": "São Tomé",
+      "countryCode": "ST",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Sao Tome",
+      "nameAr": "Sao Tome",
+      "countryCode": "ST",
+      "population": 72193,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Santo Antonio",
+      "nameAr": "Santo Antonio",
+      "countryCode": "ST",
+      "population": 1156,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SN": [
+    {
+      "nameEn": "Dakar",
+      "nameAr": "Dakar",
+      "countryCode": "SN",
+      "population": 2540200,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Thies",
+      "nameAr": "Thies",
+      "countryCode": "SN",
+      "population": 293001,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kaolack",
+      "nameAr": "Kaolack",
+      "countryCode": "SN",
+      "population": 277812,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ziguinchor",
+      "nameAr": "Ziguinchor",
+      "countryCode": "SN",
+      "population": 175747,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Diourbel",
+      "nameAr": "Diourbel",
+      "countryCode": "SN",
+      "population": 148024,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "RS": [
+    {
+      "nameEn": "Belgrade",
+      "nameAr": "Belgrade",
+      "countryCode": "RS",
+      "population": 1099000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nis",
+      "nameAr": "Nis",
+      "countryCode": "RS",
+      "population": 230444,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Novi Sad",
+      "nameAr": "Novi Sad",
+      "countryCode": "RS",
+      "population": 220429,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kragujevac",
+      "nameAr": "Kragujevac",
+      "countryCode": "RS",
+      "population": 159335,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Pec",
+      "nameAr": "Pec",
+      "countryCode": "RS",
+      "population": 137333,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SC": [
+    {
+      "nameEn": "Victoria",
+      "nameAr": "Victoria",
+      "countryCode": "SC",
+      "population": 28229,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "SL": [
+    {
+      "nameEn": "Freetown",
+      "nameAr": "Freetown",
+      "countryCode": "SL",
+      "population": 420384,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bo",
+      "nameAr": "Bo",
+      "countryCode": "SL",
+      "population": 170691,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kenema",
+      "nameAr": "Kenema",
+      "countryCode": "SL",
+      "population": 133919,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Makeni",
+      "nameAr": "Makeni",
+      "countryCode": "SL",
+      "population": 83116,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Koidu",
+      "nameAr": "Koidu",
+      "countryCode": "SL",
+      "population": 45308,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SK": [
+    {
+      "nameEn": "Bratislava",
+      "nameAr": "Bratislava",
+      "countryCode": "SK",
+      "population": 398712,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kosice",
+      "nameAr": "Kosice",
+      "countryCode": "SK",
+      "population": 210317,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Zilina",
+      "nameAr": "Zilina",
+      "countryCode": "SK",
+      "population": 86805,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Presov",
+      "nameAr": "Presov",
+      "countryCode": "SK",
+      "population": 85369,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Banska Bystrica",
+      "nameAr": "Banska Bystrica",
+      "countryCode": "SK",
+      "population": 80784,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SI": [
+    {
+      "nameEn": "Ljubljana",
+      "nameAr": "Ljubljana",
+      "countryCode": "SI",
+      "population": 284961,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Maribor",
+      "nameAr": "Maribor",
+      "countryCode": "SI",
+      "population": 101642,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SB": [
+    {
+      "nameEn": "Honiara",
+      "nameAr": "Honiara",
+      "countryCode": "SB",
+      "population": 66313,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gizo",
+      "nameAr": "Gizo",
+      "countryCode": "SB",
+      "population": 6154,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Lata",
+      "nameAr": "Lata",
+      "countryCode": "SB",
+      "population": 553,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SO": [
+    {
+      "nameEn": "Mogadishu",
+      "nameAr": "Mogadishu",
+      "countryCode": "SO",
+      "population": 987694,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kismaayo",
+      "nameAr": "Kismaayo",
+      "countryCode": "SO",
+      "population": 184902,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Jamaame",
+      "nameAr": "Jamaame",
+      "countryCode": "SO",
+      "population": 156924,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Baydhabo",
+      "nameAr": "Baydhabo",
+      "countryCode": "SO",
+      "population": 128830,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Jawhar",
+      "nameAr": "Jawhar",
+      "countryCode": "SO",
+      "population": 86654,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ZA": [
+    {
+      "nameEn": "Pretoria",
+      "nameAr": "Pretoria",
+      "countryCode": "ZA",
+      "population": 1338000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cape Town",
+      "nameAr": "Cape Town",
+      "countryCode": "ZA",
+      "population": 2823929,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Johannesburg",
+      "nameAr": "جوهانسبرغ",
+      "countryCode": "ZA",
+      "population": 2730735,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Durban",
+      "nameAr": "Durban",
+      "countryCode": "ZA",
+      "population": 2729000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Benoni",
+      "nameAr": "Benoni",
+      "countryCode": "ZA",
+      "population": 1795672,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SS": [
+    {
+      "nameEn": "Juba",
+      "nameAr": "Juba",
+      "countryCode": "SS",
+      "population": 111975,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Malakal",
+      "nameAr": "Malakal",
+      "countryCode": "SS",
+      "population": 160765,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Yei",
+      "nameAr": "Yei",
+      "countryCode": "SS",
+      "population": 112691,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Wau",
+      "nameAr": "Wau",
+      "countryCode": "SS",
+      "population": 99158,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gogrial",
+      "nameAr": "Gogrial",
+      "countryCode": "SS",
+      "population": 44319,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "LK": [
+    {
+      "nameEn": "Colombo",
+      "nameAr": "Colombo",
+      "countryCode": "LK",
+      "population": 217000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Moratuwa",
+      "nameAr": "Moratuwa",
+      "countryCode": "LK",
+      "population": 188595,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Jaffna",
+      "nameAr": "Jaffna",
+      "countryCode": "LK",
+      "population": 169069,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sri Jawewardenepura Kotte",
+      "nameAr": "Sri Jawewardenepura Kotte",
+      "countryCode": "LK",
+      "population": 115826,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kandy",
+      "nameAr": "Kandy",
+      "countryCode": "LK",
+      "population": 111701,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SD": [
+    {
+      "nameEn": "Khartoum",
+      "nameAr": "الخرطوم",
+      "countryCode": "SD",
+      "population": 3364324,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Omdurman",
+      "nameAr": "Omdurman",
+      "countryCode": "SD",
+      "population": 2289429,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Port Sudan",
+      "nameAr": "Port Sudan",
+      "countryCode": "SD",
+      "population": 489725,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Niyala",
+      "nameAr": "Niyala",
+      "countryCode": "SD",
+      "population": 392373,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kassala",
+      "nameAr": "Kassala",
+      "countryCode": "SD",
+      "population": 370499,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SR": [
+    {
+      "nameEn": "Paramaribo",
+      "nameAr": "Paramaribo",
+      "countryCode": "SR",
+      "population": 238963,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cottica",
+      "nameAr": "Cottica",
+      "countryCode": "SR",
+      "population": 24605,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Nieuw Nickerie",
+      "nameAr": "Nieuw Nickerie",
+      "countryCode": "SR",
+      "population": 14568,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Moengo",
+      "nameAr": "Moengo",
+      "countryCode": "SR",
+      "population": 7420,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Brokopondo",
+      "nameAr": "Brokopondo",
+      "countryCode": "SR",
+      "population": 6170,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "SY": [
+    {
+      "nameEn": "Damascus",
+      "nameAr": "دمشق",
+      "countryCode": "SY",
+      "population": 2466000,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Aleppo",
+      "nameAr": "Aleppo",
+      "countryCode": "SY",
+      "population": 2170132,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Hims",
+      "nameAr": "Hims",
+      "countryCode": "SY",
+      "population": 890202,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Hamah",
+      "nameAr": "Hamah",
+      "countryCode": "SY",
+      "population": 439796,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Al Ladhiqiyah",
+      "nameAr": "Al Ladhiqiyah",
+      "countryCode": "SY",
+      "population": 439664,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TJ": [
+    {
+      "nameEn": "Dushanbe",
+      "nameAr": "Dushanbe",
+      "countryCode": "TJ",
+      "population": 882822,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Khujand",
+      "nameAr": "Khujand",
+      "countryCode": "TJ",
+      "population": 291275,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Qurghonteppa",
+      "nameAr": "Qurghonteppa",
+      "countryCode": "TJ",
+      "population": 188287,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Konibodom",
+      "nameAr": "Konibodom",
+      "countryCode": "TJ",
+      "population": 155118,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Uroteppa",
+      "nameAr": "Uroteppa",
+      "countryCode": "TJ",
+      "population": 104736,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TZ": [
+    {
+      "nameEn": "Dodoma",
+      "nameAr": "Dodoma",
+      "countryCode": "TZ",
+      "population": 199405,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Dar es Salaam",
+      "nameAr": "Dar es Salaam",
+      "countryCode": "TZ",
+      "population": 2814326,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mwanza",
+      "nameAr": "Mwanza",
+      "countryCode": "TZ",
+      "population": 465373,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Moshi",
+      "nameAr": "Moshi",
+      "countryCode": "TZ",
+      "population": 463873,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Zanzibar",
+      "nameAr": "Zanzibar",
+      "countryCode": "TZ",
+      "population": 388439,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TL": [
+    {
+      "nameEn": "Dili",
+      "nameAr": "Dili",
+      "countryCode": "TL",
+      "population": 213947,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "TG": [
+    {
+      "nameEn": "Lomé",
+      "nameAr": "Lomé",
+      "countryCode": "TG",
+      "population": null,
+      "capital": true,
+      "source": "world-countries"
+    },
+    {
+      "nameEn": "Lome",
+      "nameAr": "Lome",
+      "countryCode": "TG",
+      "population": 1100850,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sokode",
+      "nameAr": "Sokode",
+      "countryCode": "TG",
+      "population": 99726,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kpalime",
+      "nameAr": "Kpalime",
+      "countryCode": "TG",
+      "population": 98227,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Atakpame",
+      "nameAr": "Atakpame",
+      "countryCode": "TG",
+      "population": 74757,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TO": [
+    {
+      "nameEn": "Nukualofa",
+      "nameAr": "Nukualofa",
+      "countryCode": "TO",
+      "population": 33139,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Neiafu",
+      "nameAr": "Neiafu",
+      "countryCode": "TO",
+      "population": 5856,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TT": [
+    {
+      "nameEn": "Port-of-Spain",
+      "nameAr": "Port-of-Spain",
+      "countryCode": "TT",
+      "population": 171983,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "San Fernando",
+      "nameAr": "San Fernando",
+      "countryCode": "TT",
+      "population": 166039,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TN": [
+    {
+      "nameEn": "Tunis",
+      "nameAr": "تونس",
+      "countryCode": "TN",
+      "population": 1570477,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sfax",
+      "nameAr": "Sfax",
+      "countryCode": "TN",
+      "population": 365164,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sousse",
+      "nameAr": "Sousse",
+      "countryCode": "TN",
+      "population": 245564,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gabes",
+      "nameAr": "Gabes",
+      "countryCode": "TN",
+      "population": 164796,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Qairouan",
+      "nameAr": "Qairouan",
+      "countryCode": "TN",
+      "population": 132158,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TM": [
+    {
+      "nameEn": "Ashgabat",
+      "nameAr": "Ashgabat",
+      "countryCode": "TM",
+      "population": 652841,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Turkmenabat",
+      "nameAr": "Turkmenabat",
+      "countryCode": "TM",
+      "population": 231666,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Dasoguz",
+      "nameAr": "Dasoguz",
+      "countryCode": "TM",
+      "population": 183962,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mary",
+      "nameAr": "Mary",
+      "countryCode": "TM",
+      "population": 146694,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Balkanabat",
+      "nameAr": "Balkanabat",
+      "countryCode": "TM",
+      "population": 99325,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "TV": [
+    {
+      "nameEn": "Funafuti",
+      "nameAr": "Funafuti",
+      "countryCode": "TV",
+      "population": 4749,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "UG": [
+    {
+      "nameEn": "Kampala",
+      "nameAr": "Kampala",
+      "countryCode": "UG",
+      "population": 1386595,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mbale",
+      "nameAr": "Mbale",
+      "countryCode": "UG",
+      "population": 247084,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Jinja",
+      "nameAr": "Jinja",
+      "countryCode": "UG",
+      "population": 195660,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Arua",
+      "nameAr": "Arua",
+      "countryCode": "UG",
+      "population": 154700,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gulu",
+      "nameAr": "Gulu",
+      "countryCode": "UG",
+      "population": 144431,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "UA": [
+    {
+      "nameEn": "Kyiv",
+      "nameAr": "Kyiv",
+      "countryCode": "UA",
+      "population": 2185754,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kharkiv",
+      "nameAr": "Kharkiv",
+      "countryCode": "UA",
+      "population": 1338064,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Dnipropetrovsk",
+      "nameAr": "Dnipropetrovsk",
+      "countryCode": "UA",
+      "population": 949425,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Donetsk",
+      "nameAr": "Donetsk",
+      "countryCode": "UA",
+      "population": 874138,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Odessa",
+      "nameAr": "Odessa",
+      "countryCode": "UA",
+      "population": 847501,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "UY": [
+    {
+      "nameEn": "Montevideo",
+      "nameAr": "Montevideo",
+      "countryCode": "UY",
+      "population": 759162,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Rivera",
+      "nameAr": "Rivera",
+      "countryCode": "UY",
+      "population": 132233,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Salto",
+      "nameAr": "Salto",
+      "countryCode": "UY",
+      "population": 102757,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Punta del Este",
+      "nameAr": "Punta del Este",
+      "countryCode": "UY",
+      "population": 84140,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Paysandu",
+      "nameAr": "Paysandu",
+      "countryCode": "UY",
+      "population": 76133,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "UZ": [
+    {
+      "nameEn": "Tashkent",
+      "nameAr": "Tashkent",
+      "countryCode": "UZ",
+      "population": 2081014,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Samarqand",
+      "nameAr": "Samarqand",
+      "countryCode": "UZ",
+      "population": 652150,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Namangan",
+      "nameAr": "Namangan",
+      "countryCode": "UZ",
+      "population": 599600,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Andijon",
+      "nameAr": "Andijon",
+      "countryCode": "UZ",
+      "population": 486950,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Fargona",
+      "nameAr": "Fargona",
+      "countryCode": "UZ",
+      "population": 482000,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "VU": [
+    {
+      "nameEn": "Port Vila",
+      "nameAr": "Port Vila",
+      "countryCode": "VU",
+      "population": 39971,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Luganville",
+      "nameAr": "Luganville",
+      "countryCode": "VU",
+      "population": 10635,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "VA": [
+    {
+      "nameEn": "Vatican City",
+      "nameAr": "Vatican City",
+      "countryCode": "VA",
+      "population": 832,
+      "capital": true,
+      "source": "city-timezones"
+    }
+  ],
+  "VE": [
+    {
+      "nameEn": "Caracas",
+      "nameAr": "Caracas",
+      "countryCode": "VE",
+      "population": 2400340,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Maracaibo",
+      "nameAr": "Maracaibo",
+      "countryCode": "VE",
+      "population": 1764650,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Valencia",
+      "nameAr": "Valencia",
+      "countryCode": "VE",
+      "population": 1569527,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Maracay",
+      "nameAr": "Maracay",
+      "countryCode": "VE",
+      "population": 1007000,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Barquisimeto",
+      "nameAr": "Barquisimeto",
+      "countryCode": "VE",
+      "population": 962745,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "VN": [
+    {
+      "nameEn": "Hanoi",
+      "nameAr": "Hanoi",
+      "countryCode": "VN",
+      "population": 2904635,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ho Chi Minh City",
+      "nameAr": "Ho Chi Minh City",
+      "countryCode": "VN",
+      "population": 4390666,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Haiphong",
+      "nameAr": "Haiphong",
+      "countryCode": "VN",
+      "population": 1285848,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Da Nang",
+      "nameAr": "Da Nang",
+      "countryCode": "VN",
+      "population": 943535,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Can Tho",
+      "nameAr": "Can Tho",
+      "countryCode": "VN",
+      "population": 690299,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "YE": [
+    {
+      "nameEn": "Sanaa",
+      "nameAr": "صنعاء",
+      "countryCode": "YE",
+      "population": 1921927,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Aden",
+      "nameAr": "Aden",
+      "countryCode": "YE",
+      "population": 775301,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Taizz",
+      "nameAr": "Taizz",
+      "countryCode": "YE",
+      "population": 683111,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Al Hudaydah",
+      "nameAr": "Al Hudaydah",
+      "countryCode": "YE",
+      "population": 627611,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ibb",
+      "nameAr": "Ibb",
+      "countryCode": "YE",
+      "population": 234837,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ZM": [
+    {
+      "nameEn": "Lusaka",
+      "nameAr": "Lusaka",
+      "countryCode": "ZM",
+      "population": 1297720,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kitwe",
+      "nameAr": "Kitwe",
+      "countryCode": "ZM",
+      "population": 402908,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Ndola",
+      "nameAr": "Ndola",
+      "countryCode": "ZM",
+      "population": 395429,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Kabwe",
+      "nameAr": "Kabwe",
+      "countryCode": "ZM",
+      "population": 188667,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chingola",
+      "nameAr": "Chingola",
+      "countryCode": "ZM",
+      "population": 165290,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ],
+  "ZW": [
+    {
+      "nameEn": "Harare",
+      "nameAr": "Harare",
+      "countryCode": "ZW",
+      "population": 1557407,
+      "capital": true,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bulawayo",
+      "nameAr": "Bulawayo",
+      "countryCode": "ZW",
+      "population": 697096,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Chitungwiza",
+      "nameAr": "Chitungwiza",
+      "countryCode": "ZW",
+      "population": 331071,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Mutare",
+      "nameAr": "Mutare",
+      "countryCode": "ZW",
+      "population": 216785,
+      "capital": false,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Gweru",
+      "nameAr": "Gweru",
+      "countryCode": "ZW",
+      "population": 164716,
+      "capital": false,
+      "source": "city-timezones"
+    }
+  ]
+}

@@ -30,12 +30,15 @@ import { AccommodationInfo } from '../components/AccommodationInfo';
 import { DestinationHero } from '../components/DestinationHero';
 import { FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
+import { FeaturedCitiesCard } from '../components/FeaturedCitiesCard';
+import { FeedbackDialog } from '../components/FeedbackDialog';
 import { TravelCostIndexInfo } from '../components/TravelCostIndexInfo';
 import { TourismInsights } from '../components/TourismInsights';
 import { TravelInfo } from '../components/TravelInfo';
 import { regionGradientCss } from '../components/regionGradient';
 import { buildWhyText } from '../engine';
 import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
+import type { DestinationNavigation } from '../state/types';
 
 // Same 7-purpose "best suited for" ranking as the original (excludes "other").
 const PURPOSE_SCORE_KEYS: [PurposeId, keyof DestinationType][] = [
@@ -183,13 +186,63 @@ function basicOverview(
   ].filter(Boolean).join(' ');
 }
 
+function DestinationPager({
+  current,
+  navigation,
+  lang,
+  previousLabel,
+  nextLabel,
+  surpriseLabel,
+}: {
+  current: CatalogEntry;
+  navigation: DestinationNavigation | null;
+  lang: Lang;
+  previousLabel: string;
+  nextLabel: string;
+  surpriseLabel: string;
+}) {
+  if (navigation?.source === 'surprise') {
+    return (
+      <nav className="destination-pager destination-pager-surprise" aria-label={surpriseLabel}>
+        <Link className="destination-pager-link" to="/explore">
+          <small><Icon name="sparkle" size={14} /> {surpriseLabel}</small>
+        </Link>
+      </nav>
+    );
+  }
+  if (!navigation) return null;
+  const actualIndex = navigation.ids.indexOf(current.id);
+  const previous = actualIndex > 0 ? WORLD_CATALOG.find((country) => country.id === navigation.ids[actualIndex - 1]) : undefined;
+  const next = actualIndex >= 0 && actualIndex < navigation.ids.length - 1
+    ? WORLD_CATALOG.find((country) => country.id === navigation.ids[actualIndex + 1])
+    : undefined;
+  if (!previous && !next) return null;
+
+  return (
+    <nav className="destination-pager" aria-label={`${previousLabel} / ${nextLabel}`}>
+      {previous ? (
+        <Link className="destination-pager-link previous" to={`/destination/${previous.id}`} state={{ navigation: { ...navigation, index: actualIndex - 1 } }}>
+          <small><Icon name="arrowStart" size={14} /> {previousLabel}</small>
+          <strong>{nameOf(previous, lang)}</strong>
+        </Link>
+      ) : <span />}
+      {next ? (
+        <Link className="destination-pager-link next" to={`/destination/${next.id}`} state={{ navigation: { ...navigation, index: actualIndex + 1 } }}>
+          <small>{nextLabel} <Icon name="arrowEnd" size={14} /></small>
+          <strong>{nameOf(next, lang)}</strong>
+        </Link>
+      ) : <span />}
+    </nav>
+  );
+}
+
 export function Destination() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
-  const routeState = location.state as { fromResults?: boolean; purpose?: PurposeId } | null;
+  const routeState = location.state as { fromResults?: boolean; purpose?: PurposeId; navigation?: DestinationNavigation } | null;
 
   const d = WORLD_CATALOG.find((x) => x.id === id);
   if (!d) {
@@ -205,6 +258,10 @@ export function Destination() {
   const info = countryInfoOf(d.id);
   const borders = resolvedBordersOf(d.id);
   const profile = RECOMMENDATION_PROFILE_BY_CODE.get(d.countryCode);
+  const directIds = [...WORLD_CATALOG]
+    .sort((a, b) => nameOf(a, lang).localeCompare(nameOf(b, lang), lang === 'ar' ? 'ar' : 'en'))
+    .map((country) => country.id);
+  const navigation = routeState?.navigation ?? { source: 'explore' as const, ids: directIds, index: directIds.indexOf(d.id) };
   const fromResults = !!(routeState?.fromResults && state.results);
   const resultItem = fromResults ? state.results!.find((result) => result.dest.id === d.id) : undefined;
   const matchScore = resultItem?.score ?? null;
@@ -228,6 +285,7 @@ export function Destination() {
             <button type="button" className="btn btn-primary btn-sm" onClick={startAgain}>
               <Icon name="sparkle" size={15} /> {dt.startAgain}
             </button>
+            <FeedbackDialog lang={lang} strings={t.feedback} countryCode={d.countryCode} />
           </div>
 
           <DestinationHero
@@ -267,6 +325,7 @@ export function Destination() {
                 </div>
               </div>
               {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
+              <FeaturedCitiesCard destination={d} lang={lang} strings={dt} />
             </div>
             <div>
               <div className="detail-card">
@@ -287,6 +346,7 @@ export function Destination() {
               <OptionalPlanningInfo destination={d} dt={dt} />
             </div>
           </div>
+          <DestinationPager current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} surpriseLabel={dt.surpriseAgain} />
         </div>
       </div>
     );
@@ -310,6 +370,7 @@ export function Destination() {
           <button type="button" className="btn btn-primary btn-sm" onClick={startAgain}>
             <Icon name="sparkle" size={15} /> {dt.startAgain}
           </button>
+          <FeedbackDialog lang={lang} strings={t.feedback} countryCode={d.countryCode} />
         </div>
 
         <DestinationHero
@@ -372,12 +433,7 @@ export function Destination() {
                 </div>
               </div>
             </div>
-            <div className="detail-card">
-              <h3>
-                <Icon name="map" size={18} /> {dt.cities}
-              </h3>
-              <p>{cities}</p>
-            </div>
+            <FeaturedCitiesCard destination={d} lang={lang} strings={dt} />
             {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
           </div>
           <div>
@@ -466,6 +522,7 @@ export function Destination() {
             <OptionalPlanningInfo destination={d} dt={dt} />
           </div>
         </div>
+        <DestinationPager current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} surpriseLabel={dt.surpriseAgain} />
       </div>
     </div>
   );

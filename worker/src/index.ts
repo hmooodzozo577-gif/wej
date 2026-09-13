@@ -6,8 +6,9 @@ import {
   searchAmadeusFlightOffers,
   type Env as AmadeusEnv,
 } from './amadeus';
+import { handleProductRequest, runProductRetention, type ProductEnv } from './product';
 
-export type Env = AmadeusEnv;
+export type Env = AmadeusEnv & ProductEnv;
 
 const ALLOWED_ORIGIN = 'https://hmooodzozo577-gif.github.io';
 
@@ -16,7 +17,7 @@ function corsHeaders(origin: string | null): HeadersInit {
   return {
     'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 }
 
@@ -113,6 +114,8 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   const url = new URL(request.url);
   const origin = request.headers.get('Origin');
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
+  const productResponse = await handleProductRequest(request, env, origin);
+  if (productResponse) return productResponse;
   if (url.pathname !== '/api/travel/flights') {
     return json({ error: 'not_found', message: 'Unknown endpoint.' }, 404, origin);
   }
@@ -122,4 +125,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   return handleFlights(request, env, origin);
 }
 
-export default { fetch: handleRequest };
+export default {
+  fetch: handleRequest,
+  scheduled: (_controller: unknown, env: Env) => runProductRetention(env),
+};

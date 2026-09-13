@@ -380,6 +380,20 @@ export interface ResultsStrings {
   safety: string;
   climate: string;
   visa: string;
+  ratingTitle: string;
+  ratingBody: string;
+  ratingReasonsTitle: string;
+  ratingRelevant: string;
+  ratingClear: string;
+  ratingUnexpected: string;
+  ratingMissingInfo: string;
+  rateCountries: string;
+  usefulYes: string;
+  usefulNo: string;
+  submitRating: string;
+  ratingSaving: string;
+  ratingThanks: string;
+  ratingFailed: string;
 }
 
 export interface DetailStrings {
@@ -422,6 +436,21 @@ export interface DetailStrings {
   showAdditionalInfo: string;
   hideAdditionalInfo: string;
   additionalInfoTitle: string;
+  previousCountry: string;
+  nextCountry: string;
+  surpriseAgain: string;
+  prominentCities: string;
+  optional: string;
+  capitalCity: string;
+  majorCity: string;
+  capitalCityDescription: string;
+  majorCityDescription: string;
+  capitalCityBestFor: string;
+  majorCityBestFor: string;
+  populationEstimate: string;
+  cityDataSource: string;
+  cityDataNote: string;
+  loadingCities: string;
 }
 
 export interface ExploreStrings {
@@ -438,6 +467,45 @@ export interface ExploreStrings {
   noResults: string;
   noResultsSub: string;
   clearFilters: string;
+  sort: string;
+  sortDefault: string;
+  sortNameAsc: string;
+  sortNameDesc: string;
+  sortAreaDesc: string;
+  sortAreaAsc: string;
+  sortCostAsc: string;
+  sortCostDesc: string;
+  sortNearest: string;
+  surpriseTitle: string;
+  surpriseBody: string;
+  surpriseSpin: string;
+  surpriseAgain: string;
+  surpriseOpen: string;
+  surpriseSpinning: string;
+}
+
+export interface FeedbackStrings {
+  open: string;
+  title: string;
+  countryTitle: string;
+  close: string;
+  type: string;
+  wrongInfo: string;
+  image: string;
+  bug: string;
+  suggestion: string;
+  results: string;
+  translation: string;
+  other: string;
+  message: string;
+  email: string;
+  screenshot: string;
+  screenshotError: string;
+  submit: string;
+  saving: string;
+  thanks: string;
+  reference: string;
+  failed: string;
 }
 
 /** Phase 12 — Location Personalization strings. Not part of the original
@@ -750,6 +818,7 @@ export interface I18nDict {
   results: ResultsStrings;
   detail: DetailStrings;
   explore: ExploreStrings;
+  feedback: FeedbackStrings;
   location: LocationStrings;
   locationIntro: LocationIntroStrings;
   travel: TravelStrings;

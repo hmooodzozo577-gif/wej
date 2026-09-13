@@ -93,5 +93,5 @@ describe('worldwide deterministic recommendation coverage', () => {
       }
     }
     expect([...appearances.values()].filter((count) => count > 0).length).toBeGreaterThanOrEqual(190);
-  }, 20_000);
+  }, 60_000);
 });

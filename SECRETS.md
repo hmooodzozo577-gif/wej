@@ -15,6 +15,13 @@ https://developers.amadeus.com/my-apps:
 - `AMADEUS_API_KEY` — the app's API Key (OAuth2 `client_id`).
 - `AMADEUS_API_SECRET` — the app's API Secret (OAuth2 `client_secret`).
 
+The product-data service has two additional production secrets:
+
+- `ADMIN_TOKEN` — a long random value required by `/api/admin/summary`.
+- `TURNSTILE_SECRET_KEY` — Cloudflare Turnstile server verification for
+  feedback. Its paired site key is public and belongs in the GitHub Actions
+  variable `VITE_TURNSTILE_SITE_KEY`, never in this file.
+
 ## Where they live
 
 Both are stored **only** as Cloudflare Worker secrets, scoped to the
@@ -24,6 +31,8 @@ Both are stored **only** as Cloudflare Worker secrets, scoped to the
 cd worker
 npx wrangler secret put AMADEUS_API_KEY
 npx wrangler secret put AMADEUS_API_SECRET
+npx wrangler secret put ADMIN_TOKEN
+npx wrangler secret put TURNSTILE_SECRET_KEY
 # (each prompts for the value interactively; wrangler must already be
 #  authenticated via `wrangler login` or a CLOUDFLARE_API_TOKEN env var)
 ```

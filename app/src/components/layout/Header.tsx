@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../../state/hooks';
 import { LanguageSwitch } from '../LanguageSwitch';
+import { ThemeSwitch } from '../ThemeSwitch';
 
 export function Header() {
   const navigate = useNavigate();
@@ -74,6 +75,7 @@ export function Header() {
           {navLinks}
         </nav>
         <div className="nav-right">
+          <ThemeSwitch lang={lang} />
           <LanguageSwitch lang={lang} onChange={(l) => dispatch({ type: 'SET_LANG', lang: l })} />
           <button type="button" className="btn btn-primary btn-sm" onClick={goPurpose}>
             {t.nav.cta}

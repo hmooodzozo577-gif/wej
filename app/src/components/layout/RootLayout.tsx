@@ -7,6 +7,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { LocationIntro } from '../LocationIntro';
+import { ProductTelemetry } from '../../telemetry/ProductTelemetry';
 
 export function RootLayout() {
   const location = useLocation();
@@ -18,6 +19,7 @@ export function RootLayout() {
   return (
     <>
       <Header />
+      <ProductTelemetry />
       {/* Workstream C — Global Location Personalization: mounted once
           here (not per-route) so the first-visit intro is reachable
           from anywhere, renders nothing once dismissed/granted/

@@ -10,54 +10,30 @@
 import { useAppState, useI18n } from '../state/hooks';
 import { costLabel } from '../data/destinationText';
 import { PURPOSES } from '../data/purposes';
-import { WORLD_CATALOG, continentOf } from '../data/worldCatalog';
-import type { CatalogEntry, Continent } from '../data/types';
-import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
+import type { Continent } from '../data/types';
 import { DestinationCard } from '../components/DestinationCard';
 import { LocationPersonalize } from '../components/LocationPersonalize';
 import { Icon } from '../components/Icon';
 import type { ExploreFilters } from '../state/types';
+import { SurpriseDestination } from '../components/SurpriseDestination';
+import { filteredCatalog, sortCatalog } from '../data/exploreCatalog';
+import { trackEvent } from '../telemetry/productDataClient';
 
 const CONTINENTS: Continent[] = ['Africa', 'Asia', 'Europe', 'MiddleEast', 'NAmerica', 'SouthAmerica', 'Oceania'];
-
-function searchHaystack(d: CatalogEntry): string {
-  const parts = [d.nameEn, d.nameAr];
-  if (d.recommendationReady) {
-    parts.push(...d.citiesEn, ...d.citiesAr);
-  } else if (d.capitalEn) {
-    parts.push(d.capitalEn);
-  }
-  return parts.join(' ').toLowerCase();
-}
-
-function filteredCatalog(f: ExploreFilters): CatalogEntry[] {
-  const q = f.q.trim().toLowerCase();
-  return WORLD_CATALOG.filter((d) => {
-    if (q && !searchHaystack(d).includes(q)) return false;
-    if (f.region && continentOf(d) !== f.region) return false;
-    // Cost and purpose filters only apply to recommendation-ready entries —
-    // a basic country has neither field, so it's excluded rather than
-    // silently shown as a false match.
-    if (f.cost && String(RECOMMENDATION_PROFILE_BY_CODE.get(d.countryCode)?.costLevel) !== f.cost) return false;
-    if (f.purpose) {
-      const profile = RECOMMENDATION_PROFILE_BY_CODE.get(d.countryCode);
-      if (!profile) return false;
-      const profileKey = f.purpose === 'work' ? 'opportunity' : f.purpose === 'education' ? 'education' : f.purpose === 'medical' ? 'health' : f.purpose === 'investment' ? 'investment' : 'popularity';
-      if (profile[profileKey] < 55) return false;
-    }
-    return true;
-  });
-}
 
 export function Explore() {
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
   const ex = t.explore;
   const purposeOpts = PURPOSES.filter((p) => p.id !== 'other');
-  const list = filteredCatalog(state.explore);
+  const filtered = filteredCatalog(state.explore);
+  const list = sortCatalog(filtered, state.explore.sort, lang, state.location.coords);
+  const navigationIds = list.map((item) => item.id);
 
-  const setFilter = (key: keyof ExploreFilters, value: string) =>
+  const setFilter = (key: keyof ExploreFilters, value: string) => {
     dispatch({ type: 'SET_EXPLORE_FILTER', key, value });
+    if (key !== 'q') trackEvent('explore_filter_changed', { filter: key, value: value || 'all' }, { path: '/explore', locale: lang });
+  };
 
   return (
     <>
@@ -70,6 +46,7 @@ export function Explore() {
       <section className="section" style={{ paddingTop: 30 }}>
         <div className="container">
           <LocationPersonalize />
+          <SurpriseDestination candidates={list} lang={lang} strings={ex} />
           <div className="explore-toolbar">
             <div className="field">
               <label htmlFor="exSearch">{ex.search}</label>
@@ -79,7 +56,21 @@ export function Explore() {
                 value={state.explore.q}
                 placeholder={ex.search}
                 onChange={(e) => setFilter('q', e.target.value)}
+                onBlur={() => trackEvent('explore_search', { used: state.explore.q.trim().length > 0, length: state.explore.q.trim().length }, { path: '/explore', locale: lang })}
               />
+            </div>
+            <div className="field">
+              <label htmlFor="exSort">{ex.sort}</label>
+              <select id="exSort" value={state.explore.sort} onChange={(e) => setFilter('sort', e.target.value)}>
+                <option value="default">{ex.sortDefault}</option>
+                <option value="name-asc">{ex.sortNameAsc}</option>
+                <option value="name-desc">{ex.sortNameDesc}</option>
+                <option value="area-desc">{ex.sortAreaDesc}</option>
+                <option value="area-asc">{ex.sortAreaAsc}</option>
+                <option value="cost-asc">{ex.sortCostAsc}</option>
+                <option value="cost-desc">{ex.sortCostDesc}</option>
+                {state.location.coords ? <option value="nearest">{ex.sortNearest}</option> : null}
+              </select>
             </div>
             <div className="field">
               <label htmlFor="exRegion">{ex.region}</label>
@@ -120,8 +111,8 @@ export function Explore() {
           </div>
           {list.length ? (
             <div className="explore-grid">
-              {list.map((d) => (
-                <DestinationCard key={d.id} dest={d} lang={lang} t={t} />
+              {list.map((d, index) => (
+                <DestinationCard key={d.id} dest={d} lang={lang} t={t} navigation={{ source: 'explore', ids: navigationIds, index }} />
               ))}
             </div>
           ) : (
@@ -132,7 +123,10 @@ export function Explore() {
               <button
                 type="button"
                 className="btn btn-ghost btn-sm"
-                onClick={() => dispatch({ type: 'RESET_EXPLORE_FILTERS' })}
+                onClick={() => {
+                  trackEvent('explore_filters_reset', {}, { path: '/explore', locale: lang });
+                  dispatch({ type: 'RESET_EXPLORE_FILTERS' });
+                }}
               >
                 {ex.clearFilters}
               </button>

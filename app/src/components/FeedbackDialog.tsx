@@ -1,0 +1,166 @@
+import { useEffect, useRef, useState } from 'react';
+import type { FeedbackStrings, Lang } from '../data/types';
+import { submitFeedback } from '../telemetry/productDataClient';
+
+const TURNSTILE_SITE_KEY: string | undefined = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+
+type TurnstileApi = {
+  render(element: HTMLElement, options: Record<string, unknown>): string;
+  remove(widgetId: string): void;
+};
+
+declare global {
+  interface Window { turnstile?: TurnstileApi }
+}
+
+function loadTurnstile(): Promise<TurnstileApi | undefined> {
+  if (!TURNSTILE_SITE_KEY) return Promise.resolve(undefined);
+  if (window.turnstile) return Promise.resolve(window.turnstile);
+  return new Promise((resolve) => {
+    const existing = document.querySelector<HTMLScriptElement>('script[data-wejhaty-turnstile]');
+    const script = existing ?? document.createElement('script');
+    const done = () => resolve(window.turnstile);
+    script.addEventListener('load', done, { once: true });
+    if (!existing) {
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.async = true;
+      script.defer = true;
+      script.dataset.wejhatyTurnstile = 'true';
+      document.head.append(script);
+    }
+  });
+}
+
+export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; strings: FeedbackStrings; countryCode?: string }) {
+  const [open, setOpen] = useState(false);
+  const [type, setType] = useState('suggestion');
+  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [screenshot, setScreenshot] = useState<string | undefined>();
+  const [turnstileToken, setTurnstileToken] = useState<string | undefined>();
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
+  const [reference, setReference] = useState<string | null>(null);
+  const [fileError, setFileError] = useState(false);
+  const challenge = useRef<HTMLDivElement | null>(null);
+  const opener = useRef<HTMLButtonElement | null>(null);
+  const dialog = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    const openerElement = opener.current;
+    document.body.style.overflow = 'hidden';
+    dialog.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+      openerElement?.focus();
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open || !TURNSTILE_SITE_KEY || !challenge.current) return;
+    let widgetId: string | undefined;
+    let cancelled = false;
+    loadTurnstile().then((api) => {
+      if (!api || cancelled || !challenge.current) return;
+      widgetId = api.render(challenge.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        language: lang,
+        callback: (token: string) => setTurnstileToken(token),
+        'expired-callback': () => setTurnstileToken(undefined),
+      });
+    });
+    return () => {
+      cancelled = true;
+      if (widgetId) window.turnstile?.remove(widgetId);
+    };
+  }, [lang, open]);
+
+  const chooseScreenshot = (file?: File) => {
+    setFileError(false);
+    setScreenshot(undefined);
+    if (!file) return;
+    if (file.size > 2_000_000 || !['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      setFileError(true);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setScreenshot(typeof reader.result === 'string' ? reader.result : undefined);
+    reader.onerror = () => setFileError(true);
+    reader.readAsDataURL(file);
+  };
+
+  const save = async () => {
+    if (message.trim().length < 10 || status === 'saving' || (TURNSTILE_SITE_KEY && !turnstileToken)) return;
+    setStatus('saving');
+    const result = await submitFeedback({ type, message: message.trim(), email: email.trim() || undefined, screenshotDataUrl: screenshot, turnstileToken }, {
+      path: window.location.pathname.replace(/^\/wej/, '') || '/',
+      locale: lang,
+      countryCode,
+    });
+    if (result.ok) {
+      setReference(typeof result.data?.referenceId === 'string' ? result.data.referenceId : null);
+      setStatus('saved');
+    } else setStatus('failed');
+  };
+
+  return (
+    <>
+      <button ref={opener} type="button" className="btn btn-ghost btn-sm" onClick={() => setOpen(true)}>{strings.open}</button>
+      {open ? (
+        <div className="feedback-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
+          <section ref={dialog} className="feedback-dialog" role="dialog" aria-modal="true" aria-labelledby="feedback-title" tabIndex={-1}>
+            <div className="feedback-dialog-head">
+              <h2 id="feedback-title">{countryCode ? strings.countryTitle : strings.title}</h2>
+              <button type="button" className="feedback-close" aria-label={strings.close} onClick={() => setOpen(false)}>×</button>
+            </div>
+            {status === 'saved' ? (
+              <div className="feedback-success">
+                <p>{strings.thanks}</p>
+                {reference ? <strong>{strings.reference}: {reference}</strong> : null}
+              </div>
+            ) : (
+              <form onSubmit={(event) => { event.preventDefault(); void save(); }}>
+                <label className="field">
+                  <span>{strings.type}</span>
+                  <select value={type} onChange={(event) => setType(event.target.value)}>
+                    <option value="wrong_info">{strings.wrongInfo}</option>
+                    <option value="image">{strings.image}</option>
+                    <option value="bug">{strings.bug}</option>
+                    <option value="suggestion">{strings.suggestion}</option>
+                    <option value="results">{strings.results}</option>
+                    <option value="translation">{strings.translation}</option>
+                    <option value="other">{strings.other}</option>
+                  </select>
+                </label>
+                <label className="field">
+                  <span>{strings.message}</span>
+                  <textarea required minLength={10} maxLength={4000} rows={6} value={message} onChange={(event) => setMessage(event.target.value)} />
+                </label>
+                <label className="field">
+                  <span>{strings.email}</span>
+                  <input type="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} />
+                </label>
+                <label className="field">
+                  <span>{strings.screenshot}</span>
+                  <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => chooseScreenshot(event.target.files?.[0])} />
+                </label>
+                {fileError ? <p className="form-error">{strings.screenshotError}</p> : null}
+                {TURNSTILE_SITE_KEY ? <div ref={challenge} className="turnstile-slot" /> : null}
+                {status === 'failed' ? <p className="form-error">{strings.failed}</p> : null}
+                <button type="submit" className="btn btn-primary" disabled={message.trim().length < 10 || status === 'saving' || !!(TURNSTILE_SITE_KEY && !turnstileToken)}>
+                  {status === 'saving' ? strings.saving : strings.submit}
+                </button>
+              </form>
+            )}
+          </section>
+        </div>
+      ) : null}
+    </>
+  );
+}

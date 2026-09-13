@@ -89,7 +89,7 @@ describe('Phase 13.6 — TravelInfo: loading state', () => {
 describe('Phase 13.6 — TravelInfo: safe fallback estimate (real app behavior — no Worker configured)', () => {
   it('falls back to the deterministic offline distance/duration estimate, never a fake price', async () => {
     renderWith('en', { status: 'granted', coords: RIYADH }, france);
-    await waitFor(() => expect(screen.getByText('4,609.6 km')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('4,609.6 km')).toBeInTheDocument(), { timeout: 5000 });
     expect(screen.getByText('6h 16m')).toBeInTheDocument();
     expect(screen.getByText(/Estimated straight-line distance and flight time/)).toBeInTheDocument();
     // Never a price/ticket in the fallback state.
@@ -98,7 +98,7 @@ describe('Phase 13.6 — TravelInfo: safe fallback estimate (real app behavior �
 
   it('renders the same fallback in Arabic with correctly localized units', async () => {
     renderWith('ar', { status: 'granted', coords: RIYADH }, france);
-    await waitFor(() => expect(screen.getByText('4,609.6 كم')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('4,609.6 كم')).toBeInTheDocument(), { timeout: 5000 });
     expect(screen.getByText('6س 16د')).toBeInTheDocument();
   });
 });

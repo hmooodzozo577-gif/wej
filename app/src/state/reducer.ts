@@ -10,7 +10,7 @@ export const initialAppState: AppState = {
   answers: {},
   questionnaireCheckpointPassed: false,
   results: null,
-  explore: { q: '', region: '', purpose: '', cost: '' },
+  explore: { q: '', region: '', purpose: '', cost: '', sort: 'default' },
   location: { status: 'idle', coords: null },
 };
 
@@ -87,7 +87,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_EXPLORE_FILTER':
       return { ...state, explore: { ...state.explore, [action.key]: action.value } };
     case 'RESET_EXPLORE_FILTERS':
-      return { ...state, explore: { q: '', region: '', purpose: '', cost: '' } };
+      return { ...state, explore: { q: '', region: '', purpose: '', cost: '', sort: 'default' } };
     case 'LOCATION_REQUEST':
       return { ...state, location: { status: 'requesting', coords: null } };
     case 'LOCATION_GRANTED':

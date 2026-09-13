@@ -14,6 +14,8 @@ import { FlagChip } from './flags/FlagIcon';
 import { Icon } from './Icon';
 import { DestinationImage } from './DestinationImage';
 import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
+import type { DestinationNavigation } from '../state/types';
+import { trackEvent } from '../telemetry/productDataClient';
 
 export function DestinationCard({
   dest,
@@ -22,6 +24,7 @@ export function DestinationCard({
   matchScore,
   whyText,
   purpose,
+  navigation,
 }: {
   dest: CatalogEntry;
   lang: Lang;
@@ -30,6 +33,7 @@ export function DestinationCard({
   matchScore?: number;
   whyText?: string;
   purpose?: PurposeId;
+  navigation?: DestinationNavigation;
 }) {
   const fromResults = matchScore !== undefined;
   const continent = continentOf(dest);
@@ -43,9 +47,14 @@ export function DestinationCard({
   return (
     <Link
       to={`/destination/${dest.id}`}
-      state={{ fromResults, purpose }}
+      state={{ fromResults, purpose, navigation }}
       className="dest-card"
       data-open={dest.id}
+      onClick={() => trackEvent('destination_opened', { source: navigation?.source ?? 'direct' }, {
+        path: window.location.pathname.replace(/^\/wej/, '') || '/',
+        locale: lang,
+        countryCode: dest.countryCode,
+      })}
     >
       <DestinationImage destination={dest} lang={lang} />
       <div className="dest-body">
