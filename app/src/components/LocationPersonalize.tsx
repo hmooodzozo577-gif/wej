@@ -182,7 +182,14 @@ export function LocationPersonalize() {
       <h3>
         <Icon name="compass" size={18} /> {loc.title}
       </h3>
-      <p>{loc.sub}</p>
+      {/* Fix (item #8): this subtitle used to render unconditionally, so
+          Explore kept telling a user to "share your location" even after
+          they had already granted it — on Home via LocationIntro, or here
+          on an earlier visit. state.location is shared app-wide (see
+          useLocationRequest.ts), so the grant was always known; only this
+          line failed to check it. Now shown only while there is still
+          something to ask for. */}
+      {status !== 'granted' ? <p>{loc.sub}</p> : null}
 
       {canRequest ? (
         <button type="button" className="btn btn-gold btn-sm" style={{ marginTop: 10 }} onClick={handleRequest}>

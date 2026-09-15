@@ -1,12 +1,22 @@
+// Item #9 — "Surprise Me" redesign. The previous version was a static
+// conic-gradient disc with no flags, no names, and a single 900ms CSS spin
+// — it never actually showed any candidate while "spinning". This version
+// cycles through real candidate flags/names (a short reel, like a manual
+// destination shuffle rather than a themed slot machine) before landing on
+// the same winner the existing anti-repeat selection logic already picks —
+// that selection logic is untouched, only the presentation around it changes.
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { CatalogEntry, ExploreStrings, Lang } from '../data/types';
 import { nameOf } from '../data/destinationText';
 import { DestinationImage } from './DestinationImage';
+import { FlagChip } from './flags/FlagIcon';
 import { Icon } from './Icon';
 import { trackEvent } from '../telemetry/productDataClient';
 
 const RECENT_STORAGE_KEY = 'wejhaty.surprise.recent';
+const REEL_STEP_MS = 100;
+const REEL_STEPS = 8;
 
 function recentIds(): Set<string> {
   try {
@@ -28,15 +38,23 @@ function randomIndex(length: number): number {
   return values[0]! % length;
 }
 
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 export function SurpriseDestination({ candidates, lang, strings }: { candidates: CatalogEntry[]; lang: Lang; strings: ExploreStrings }) {
   const [open, setOpen] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [selected, setSelected] = useState<CatalogEntry | null>(null);
+  const [reelEntry, setReelEntry] = useState<CatalogEntry | null>(null);
   const recent = useRef(recentIds());
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const interval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => () => {
     if (timer.current) clearTimeout(timer.current);
+    if (interval.current) clearInterval(interval.current);
   }, []);
 
   const visibleSelection = selected && candidates.some((candidate) => candidate.id === selected.id) ? selected : null;
@@ -44,22 +62,46 @@ export function SurpriseDestination({ candidates, lang, strings }: { candidates:
   const spin = () => {
     if (!candidates.length || spinning) return;
     trackEvent('surprise_spin', { candidateCount: candidates.length }, { path: '/explore', locale: lang });
+    let available = candidates.filter((candidate) => !recent.current.has(candidate.id));
+    if (!available.length) {
+      recent.current.clear();
+      available = candidates;
+    }
+    const winner = available[randomIndex(available.length)]!;
+
     setOpen(true);
     setSpinning(true);
-    timer.current = setTimeout(() => {
-      let available = candidates.filter((candidate) => !recent.current.has(candidate.id));
-      if (!available.length) {
-        recent.current.clear();
-        available = candidates;
-      }
-      const winner = available[randomIndex(available.length)]!;
+    setSelected(null);
+
+    const finish = () => {
       recent.current.add(winner.id);
       saveRecent(recent.current);
       trackEvent('surprise_result', { countryCode: winner.countryCode }, { path: '/explore', locale: lang, countryCode: winner.countryCode });
+      setReelEntry(winner);
       setSelected(winner);
       setSpinning(false);
+      interval.current = null;
       timer.current = null;
-    }, 900);
+    };
+
+    if (prefersReducedMotion() || candidates.length < 2) {
+      // No flashing reel for a reduced-motion preference — a single short
+      // pause (still gives "spinning" state something to announce via
+      // aria-live) then land directly on the real winner.
+      timer.current = setTimeout(finish, 250);
+      return;
+    }
+
+    let step = 0;
+    interval.current = setInterval(() => {
+      step += 1;
+      if (step >= REEL_STEPS) {
+        if (interval.current) clearInterval(interval.current);
+        finish();
+        return;
+      }
+      setReelEntry(candidates[randomIndex(candidates.length)]!);
+    }, REEL_STEP_MS);
   };
 
   return (
@@ -73,8 +115,12 @@ export function SurpriseDestination({ candidates, lang, strings }: { candidates:
       </div>
       {open ? (
         <div className="surprise-stage" aria-live="polite" aria-busy={spinning}>
-          <div className={`surprise-wheel${spinning ? ' spinning' : ''}`} aria-hidden="true"><span /></div>
-          {spinning ? <strong>{strings.surpriseSpinning}</strong> : visibleSelection ? (
+          <div className={`surprise-reel${spinning ? ' spinning' : ' landed'}`} aria-hidden={!spinning}>
+            {reelEntry ? <FlagChip dest={reelEntry} width={54} height={40} /> : <span className="surprise-reel-placeholder" />}
+          </div>
+          {spinning ? (
+            <strong>{strings.surpriseSpinning}</strong>
+          ) : visibleSelection ? (
             <div className="surprise-result">
               <DestinationImage destination={visibleSelection} lang={lang} />
               <strong>{nameOf(visibleSelection, lang)}</strong>

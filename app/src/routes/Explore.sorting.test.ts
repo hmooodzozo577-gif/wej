@@ -16,7 +16,11 @@ describe('Explore sorting', () => {
     expect(countryInfoOf(byArea[0]!.id)!.areaKm2).toBeGreaterThanOrEqual(countryInfoOf(byArea[1]!.id)!.areaKm2);
 
     const origin = countryInfoOf('ksa')!.latlng;
-    expect(sortCatalog(WORLD_CATALOG, 'nearest', 'en', origin)[0]!.id).toBe('ksa');
+    const nearest = sortCatalog(WORLD_CATALOG, 'nearest', 'en', origin);
+    // Item #10: "nearest" excludes the user's own country — it is not a
+    // travel recommendation for someone already there.
+    expect(nearest.some((item) => item.id === 'ksa')).toBe(false);
+    expect(nearest[0]!.id).not.toBe('ksa');
   });
 
   it('sorts direct price-level observations and leaves imputed entries last', () => {

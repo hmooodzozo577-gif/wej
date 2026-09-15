@@ -14,6 +14,7 @@ import type { Continent } from '../data/types';
 import { DestinationCard } from '../components/DestinationCard';
 import { LocationPersonalize } from '../components/LocationPersonalize';
 import { Icon } from '../components/Icon';
+import { Select } from '../components/Select';
 import type { ExploreFilters } from '../state/types';
 import { SurpriseDestination } from '../components/SurpriseDestination';
 import { filteredCatalog, sortCatalog } from '../data/exploreCatalog';
@@ -61,7 +62,7 @@ export function Explore() {
             </div>
             <div className="field">
               <label htmlFor="exSort">{ex.sort}</label>
-              <select id="exSort" value={state.explore.sort} onChange={(e) => setFilter('sort', e.target.value)}>
+              <Select id="exSort" value={state.explore.sort} icon={<Icon name="trending" size={15} />} onChange={(e) => setFilter('sort', e.target.value)}>
                 <option value="default">{ex.sortDefault}</option>
                 <option value="name-asc">{ex.sortNameAsc}</option>
                 <option value="name-desc">{ex.sortNameDesc}</option>
@@ -70,40 +71,40 @@ export function Explore() {
                 <option value="cost-asc">{ex.sortCostAsc}</option>
                 <option value="cost-desc">{ex.sortCostDesc}</option>
                 {state.location.coords ? <option value="nearest">{ex.sortNearest}</option> : null}
-              </select>
+              </Select>
             </div>
             <div className="field">
               <label htmlFor="exRegion">{ex.region}</label>
-              <select id="exRegion" value={state.explore.region} onChange={(e) => setFilter('region', e.target.value)}>
+              <Select id="exRegion" value={state.explore.region} icon={<Icon name="globe" size={15} />} onChange={(e) => setFilter('region', e.target.value)}>
                 <option value="">{ex.allRegions}</option>
                 {CONTINENTS.map((r) => (
                   <option value={r} key={r}>
                     {t.regionLabels[r]}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div className="field">
               <label htmlFor="exPurpose">{ex.purpose}</label>
-              <select id="exPurpose" value={state.explore.purpose} onChange={(e) => setFilter('purpose', e.target.value)}>
+              <Select id="exPurpose" value={state.explore.purpose} icon={<Icon name="compass" size={15} />} onChange={(e) => setFilter('purpose', e.target.value)}>
                 <option value="">{ex.allPurposes}</option>
                 {purposeOpts.map((p) => (
                   <option value={p.id} key={p.id}>
                     {t.purposes[p.id].n}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div className="field">
               <label htmlFor="exCost">{ex.cost}</label>
-              <select id="exCost" value={state.explore.cost} onChange={(e) => setFilter('cost', e.target.value)}>
+              <Select id="exCost" value={state.explore.cost} icon={<Icon name="tag" size={15} />} onChange={(e) => setFilter('cost', e.target.value)}>
                 <option value="">{ex.allCosts}</option>
                 {[1, 2, 3, 4].map((c) => (
                   <option value={String(c)} key={c}>
                     {costLabel(t.costLevels, c)}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
           <div className="explore-count">

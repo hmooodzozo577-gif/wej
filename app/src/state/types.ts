@@ -41,6 +41,15 @@ export interface AppState {
   results: RankedResult[] | null;
   explore: ExploreFilters;
   location: LocationState;
+  /** Item #13 — optional, skippable, self-reported nationality (ISO
+   *  3166-1 alpha-2). Never inferred from location/coordinates, never used
+   *  by the ranking engine, and never treated as a passport-level source of
+   *  truth for a real personalized visa-eligibility claim — Wejhaty has no
+   *  verified per-nationality visa data. It exists only so the UI can be
+   *  honest about the difference between a generic visa reference and a
+   *  claim personalized to the user, and to avoid ever conflating location
+   *  (where the user IS) with nationality (what passport they hold). */
+  nationalityCode: string | null;
 }
 
 export type AppAction =
@@ -59,4 +68,5 @@ export type AppAction =
   | { type: 'LOCATION_REQUEST' }
   | { type: 'LOCATION_GRANTED'; coords: LocationCoords }
   | { type: 'LOCATION_FAILED'; status: Exclude<LocationStatus, 'idle' | 'requesting' | 'granted'> }
-  | { type: 'LOCATION_RESET' };
+  | { type: 'LOCATION_RESET' }
+  | { type: 'SET_NATIONALITY'; countryCode: string | null };

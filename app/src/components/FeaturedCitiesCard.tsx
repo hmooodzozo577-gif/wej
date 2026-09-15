@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { CatalogEntry, DetailStrings, Lang } from '../data/types';
 import type { FeaturedCity } from '../data/featuredCities';
+import { formatNumber } from '../data/format';
 import { Icon } from './Icon';
 
 function cityName(city: FeaturedCity, lang: Lang) {
@@ -15,20 +16,22 @@ function sourceUrl(city: FeaturedCity) {
 
 export function FeaturedCitiesCard({ destination, lang, strings }: { destination: CatalogEntry; lang: Lang; strings: DetailStrings }) {
   const [cities, setCities] = useState<FeaturedCity[] | null>(null);
-  const formatter = new Intl.NumberFormat(lang === 'ar' ? 'ar-SA' : 'en-US', { maximumFractionDigits: 0 });
+  const [open, setOpen] = useState(false);
 
   return (
     <details
       className="detail-card featured-cities-card"
       onToggle={(event) => {
-        if (event.currentTarget.open && !cities) {
+        const isOpen = event.currentTarget.open;
+        setOpen(isOpen);
+        if (isOpen && !cities) {
           void import('../data/featuredCities').then((module) => setCities(module.featuredCitiesOf(destination.countryCode)));
         }
       }}
     >
       <summary className="featured-cities-heading">
         <span><Icon name="map" size={18} /> {strings.prominentCities}</span>
-        <small>{strings.optional}</small>
+        <small>{open ? strings.showLess : strings.showMore}</small>
       </summary>
       {cities ? <div className="featured-cities-list">
         {cities.map((city) => (
@@ -41,7 +44,7 @@ export function FeaturedCitiesCard({ destination, lang, strings }: { destination
               <p>{city.capital ? strings.capitalCityDescription : strings.majorCityDescription}</p>
               <p>{city.capital ? strings.capitalCityBestFor : strings.majorCityBestFor}</p>
               {city.population ? (
-                <p><strong>{strings.populationEstimate}:</strong> {formatter.format(city.population)}</p>
+                <p><strong>{strings.populationEstimate}:</strong> {formatNumber(city.population)}</p>
               ) : null}
               <a href={sourceUrl(city)} target="_blank" rel="noreferrer">{strings.cityDataSource}</a>
             </div>

@@ -102,6 +102,15 @@ describe('Phase 12 — LocationPersonalize', () => {
     expect(screen.queryByRole('button', { name: /Try Again/ })).not.toBeInTheDocument();
   });
 
+  it('stops asking to share location once it is already granted (item #8 fix)', async () => {
+    vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue(RIYADH_GEO_RESULT);
+    renderWith('en');
+    expect(screen.getByText(/Share your approximate location/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Use My Location/ }));
+    await waitFor(() => expect(screen.getByText(/Nearby countries/)).toBeInTheDocument(), { timeout: 5000 });
+    expect(screen.queryByText(/Share your approximate location/)).not.toBeInTheDocument();
+  });
+
   it('never shows raw coordinates anywhere in the rendered output when debug mode is off', async () => {
     vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue(RIYADH_GEO_RESULT);
     renderWith('en'); // no ?debugLocation=1

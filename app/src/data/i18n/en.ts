@@ -11,6 +11,7 @@ export const EN: I18nDict = {
   ...base,
   results: {
     ...base.results,
+    visaGeneralNote: 'General reference only, not personalized to your nationality.',
     proximityTieBreak: 'Proximity to your current location was included because you said distance matters.',
     proximityUnavailable: 'You said proximity matters, but location was unavailable, so distance did not affect these results.',
     recommendationMethodNote: 'Match percentages are estimates calculated from your answers and sourced international indicators. Missing values use dataset medians and do not guarantee a travel experience.',
@@ -85,6 +86,7 @@ export const EN: I18nDict = {
   },
   detail: {
     ...base.detail,
+    visaGeneralNote: 'General reference only, not personalized to your nationality — Wejhaty does not have verified per-nationality visa data.',
     capital: 'Capital',
     notRecommendationReady:
       'Core country information and the indicators used in recommendations are available for this destination.',
@@ -107,7 +109,8 @@ export const EN: I18nDict = {
     nextCountry: 'Next country',
     surpriseAgain: 'Surprise me again',
     prominentCities: 'Prominent cities',
-    optional: 'Optional',
+    showMore: 'Show more',
+    showLess: 'Show less',
     capitalCity: 'Capital',
     majorCity: 'Major city',
     capitalCityDescription: 'The national capital and the country’s main administrative center.',
@@ -148,6 +151,16 @@ export const EN: I18nDict = {
     alreadyGrantedBody: 'Your browser already allows this site to use your approximate location — turn it on now to improve your suggestions.',
     alreadyGrantedCta: 'Use my location now',
     deniedNote: 'Location for this site is turned off in your browser settings. You can keep using Wejhaty normally without it.',
+  },
+  // Item #13 — optional nationality selection. Not part of the original
+  // wejhaty.html copy.
+  nationality: {
+    title: 'Nationality (optional)',
+    sub: 'Skippable — this never changes your recommendations or your location, and is only used to be clear about what visa information is and isn\'t personalized to you.',
+    label: 'Your nationality',
+    placeholder: 'Start typing a country…',
+    clear: 'Clear',
+    privacyNote: 'Never inferred from your location, never sent anywhere beyond this session, and never used to score or rank destinations.',
   },
   // Phase 13.6 — Full Travel Integration. Like location above, not part
   // of the original wejhaty.html copy.

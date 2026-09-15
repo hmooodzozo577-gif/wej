@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FeedbackStrings, Lang } from '../data/types';
 import { submitFeedback } from '../telemetry/productDataClient';
+import { Select } from './Select';
 
 const TURNSTILE_SITE_KEY: string | undefined = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
@@ -128,7 +129,7 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
               <form onSubmit={(event) => { event.preventDefault(); void save(); }}>
                 <label className="field">
                   <span>{strings.type}</span>
-                  <select value={type} onChange={(event) => setType(event.target.value)}>
+                  <Select value={type} onChange={(event) => setType(event.target.value)}>
                     <option value="wrong_info">{strings.wrongInfo}</option>
                     <option value="image">{strings.image}</option>
                     <option value="bug">{strings.bug}</option>
@@ -136,7 +137,7 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
                     <option value="results">{strings.results}</option>
                     <option value="translation">{strings.translation}</option>
                     <option value="other">{strings.other}</option>
-                  </select>
+                  </Select>
                 </label>
                 <label className="field">
                   <span>{strings.message}</span>

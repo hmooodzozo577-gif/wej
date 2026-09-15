@@ -52,7 +52,10 @@ describe('Phase 10 — F. destination routing', () => {
   it('a new basic-country route renders a graceful state, not a crash (e.g. Egypt)', () => {
     const { container } = renderAt('/destination/eg');
     expect(screen.getByText('مصر')).toBeInTheDocument();
-    expect(container.textContent).toContain('مصر دولة تقع في أفريقيا');
+    // Item #1: the overview no longer restates facts (capital/area/
+    // currency/languages) already shown in the adjacent Country
+    // Information card — it must never duplicate them.
+    expect(container.textContent).not.toContain('مصر دولة تقع في أفريقيا');
     expect(container.textContent).not.toContain('لا تتوفر بيانات كافية');
     expect(container.textContent).not.toContain('لا تتوفر بعد بيانات كافية');
   });

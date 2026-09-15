@@ -26,6 +26,7 @@ import type {
   Lang,
   PurposeId,
 } from '../data/types';
+import { formatNumber } from '../data/format';
 import { AccommodationInfo } from '../components/AccommodationInfo';
 import { DestinationHero } from '../components/DestinationHero';
 import { FlagChip } from '../components/flags/FlagIcon';
@@ -87,7 +88,7 @@ function CountryInfoCard({
         <div className="info-item">
           <div className="label">{dt.area}</div>
           <div className="value">
-            {info.areaKm2.toLocaleString('en-US')} {dt.areaUnit}
+            {formatNumber(info.areaKm2)} {dt.areaUnit}
           </div>
         </div>
         {currencyText ? (
@@ -155,36 +156,6 @@ function OptionalPlanningInfo({
   );
 }
 
-function basicOverview(
-  destination: CatalogEntry,
-  info: CountryInfo | undefined,
-  continentLabel: string,
-  lang: Lang,
-): string {
-  const name = nameOf(destination, lang);
-  const capital = destination.recommendationReady ? undefined : destination.capitalEn;
-  const area = info?.areaKm2 ? info.areaKm2.toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-US') : undefined;
-  const currencies = info?.currencies.map((currency) => currency.name).join(lang === 'ar' ? '، ' : ', ');
-  const languages = info?.languagesEn.join(lang === 'ar' ? '، ' : ', ');
-
-  if (lang === 'ar') {
-    return [
-      `${name} دولة تقع في ${continentLabel}.`,
-      capital ? `عاصمتها ${capital}.` : '',
-      area ? `تبلغ مساحتها نحو ${area} كم².` : '',
-      currencies ? `عملتها: ${currencies}.` : '',
-      languages ? `ومن لغاتها الرسمية: ${languages}.` : '',
-    ].filter(Boolean).join(' ');
-  }
-
-  return [
-    `${name} is a country in ${continentLabel}.`,
-    capital ? `Its capital is ${capital}.` : '',
-    area ? `It covers about ${area} km².` : '',
-    currencies ? `Its currency is ${currencies}.` : '',
-    languages ? `Its official languages include ${languages}.` : '',
-  ].filter(Boolean).join(' ');
-}
 
 function DestinationPager({
   current,
@@ -265,7 +236,7 @@ export function Destination() {
   const fromResults = !!(routeState?.fromResults && state.results);
   const resultItem = fromResults ? state.results!.find((result) => result.dest.id === d.id) : undefined;
   const matchScore = resultItem?.score ?? null;
-  const why = resultItem && state.purpose ? buildWhyText(lang, state.purpose, resultItem.reasons, d) : null;
+  const why = resultItem && state.purpose ? buildWhyText(lang, state.purpose, resultItem.reasons, d, resultItem.score) : null;
 
   const goBackBasic = () => navigate(fromResults ? '/results' : '/explore');
   const startAgain = () => {
@@ -298,6 +269,7 @@ export function Destination() {
               </div>
             }
           />
+          <DestinationPager current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} surpriseLabel={dt.surpriseAgain} />
 
           {/* Visual refinement pass: two-zone layout. First (now narrow,
               see .detail-grid's 1fr/2fr override in wejhaty.css) column
@@ -328,25 +300,25 @@ export function Destination() {
               <FeaturedCitiesCard destination={d} lang={lang} strings={dt} />
             </div>
             <div>
-              <div className="detail-card">
-                <h3>
-                  <Icon name="info" size={18} /> {dt.overview}
-                </h3>
-                <p>{basicOverview(d, info, t.regionLabels[continent], lang)}</p>
-                {why ? <p>{why}</p> : null}
-                {profile ? (
-                  <div className="info-grid">
-                    <div className="info-item"><div className="label">{t.results.cost}</div><div className="value">{costLabel(t.costLevels, profile.costLevel)}</div></div>
-                    <div className="info-item"><div className="label">{t.results.climate}</div><div className="value">{t.climateLabels[profile.climate]}</div></div>
-                    <div className="info-item"><div className="label">{lang === 'ar' ? 'تغطية البيانات المباشرة' : 'Direct data coverage'}</div><div className="value">{profile.dataCoverage}%</div></div>
-                  </div>
-                ) : null}
-              </div>
+              {why || profile ? (
+                <div className="detail-card">
+                  <h3>
+                    <Icon name="info" size={18} /> {dt.overview}
+                  </h3>
+                  {why ? <p>{why}</p> : null}
+                  {profile ? (
+                    <div className="info-grid">
+                      <div className="info-item"><div className="label">{t.results.cost}</div><div className="value">{costLabel(t.costLevels, profile.costLevel)}</div></div>
+                      <div className="info-item"><div className="label">{t.results.climate}</div><div className="value">{t.climateLabels[profile.climate]}</div></div>
+                      <div className="info-item"><div className="label">{lang === 'ar' ? 'تغطية البيانات المباشرة' : 'Direct data coverage'}</div><div className="value">{formatNumber(profile.dataCoverage)}%</div></div>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
 
               <OptionalPlanningInfo destination={d} dt={dt} />
             </div>
           </div>
-          <DestinationPager current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} surpriseLabel={dt.surpriseAgain} />
         </div>
       </div>
     );
@@ -393,6 +365,7 @@ export function Destination() {
             )
           }
         />
+        <DestinationPager current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} surpriseLabel={dt.surpriseAgain} />
 
         {/* Visual refinement pass: two-zone layout. First (now narrow,
             see .detail-grid's 1fr/2fr override in wejhaty.css) column is
@@ -422,6 +395,7 @@ export function Destination() {
                 <div className="info-item">
                   <div className="label">{dt.visa}</div>
                   <div className="value">{t.visaLabels[d.visaDiff]}</div>
+                  <div className="city-data-note">{dt.visaGeneralNote}</div>
                 </div>
                 <div className="info-item">
                   <div className="label">{dt.language}</div>
@@ -522,7 +496,6 @@ export function Destination() {
             <OptionalPlanningInfo destination={d} dt={dt} />
           </div>
         </div>
-        <DestinationPager current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} surpriseLabel={dt.surpriseAgain} />
       </div>
     </div>
   );

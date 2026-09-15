@@ -211,7 +211,7 @@ export interface PurposeMeta {
   pScoreKey: NumericDestinationKey | null;
 }
 
-export type QuestionKind = 'target' | 'importance' | 'climate' | 'category' | 'flavor' | 'proximity';
+export type QuestionKind = 'target' | 'importance' | 'climate' | 'category' | 'flavor' | 'proximity' | 'landBorder';
 
 export interface LocalizedText {
   en: string;
@@ -380,6 +380,10 @@ export interface ResultsStrings {
   safety: string;
   climate: string;
   visa: string;
+  /** Item #13 — always shown next to a visaLabels value: this is a fixed,
+   *  generic classification, never personalized to the user's own
+   *  nationality (Wejhaty has no verified per-nationality visa data). */
+  visaGeneralNote: string;
   ratingTitle: string;
   ratingBody: string;
   ratingReasonsTitle: string;
@@ -410,6 +414,7 @@ export interface DetailStrings {
   climateL: string;
   language: string;
   visa: string;
+  visaGeneralNote: string;
   livingCost: string;
   region: string;
   match: string;
@@ -440,7 +445,8 @@ export interface DetailStrings {
   nextCountry: string;
   surpriseAgain: string;
   prominentCities: string;
-  optional: string;
+  showMore: string;
+  showLess: string;
   capitalCity: string;
   majorCity: string;
   capitalCityDescription: string;
@@ -564,6 +570,19 @@ export interface LocationIntroStrings {
    *  dismissible non-technical guidance instead (reuses the same
    *  friendly wording as location.denied). */
   deniedNote: string;
+}
+
+/** Item #13 — optional nationality selection strings. Never sourced from
+ *  the original wejhaty.html copy (this feature didn't exist there). */
+export interface NationalityStrings {
+  title: string;
+  sub: string;
+  label: string;
+  placeholder: string;
+  clear: string;
+  /** Explains, up front, why this is asked and what it is NOT used for —
+   *  no sensitive inference, not shared beyond this session's own state. */
+  privacyNote: string;
 }
 
 /** Phase 13.6 — Full Travel Integration strings. Like LocationStrings,
@@ -821,6 +840,7 @@ export interface I18nDict {
   feedback: FeedbackStrings;
   location: LocationStrings;
   locationIntro: LocationIntroStrings;
+  nationality: NationalityStrings;
   travel: TravelStrings;
   accommodation: AccommodationStrings;
   travelCost: TravelCostStrings;

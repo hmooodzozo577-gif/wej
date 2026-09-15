@@ -5,18 +5,37 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 9
-- Last verified date: 2026-09-13
+- State document version: 10
+- Last verified date: 2026-09-15
 - Working branch: `claude/marhaba-kxry8l`
-- Production frontend commit: `e70ff5d2a02fd7aa7a763055b1a76cec9aa12339`
+- Production frontend commit: `e70ff5d2a02fd7aa7a763055b1a76cec9aa12339` (pre-dates
+  this session's changes — see below for what is implemented but not yet
+  deployed)
 - Production Worker source commit: `a2ecc2f18293727bc74575529befb9e0fc6e2c15`
-- Latest verified implementation commit: `1cec93771308a4531ab32a0df6f4a04b098cc9bc`
+  (unchanged this session — no `worker/` files were touched)
+- Latest verified implementation commit: see Git log for this session's commit
+  on `claude/marhaba-kxry8l`
 - The latest discovery, cities, theme, ratings, and feedback UI is deployed and
   production-verified. Worker code is deployed, but D1/R2 storage is unavailable
-  until the Cloudflare API token receives the required account permissions.
+  until the Cloudflare API token receives the required account permissions —
+  re-verified live via GitHub Actions run logs on 2026-09-15 (see Provider and
+  external state): still `Authentication error [code: 10000]`.
 - The worldwide deterministic questionnaire, 194-country ranking, factual
   overview, external-card image, and crop changes are deployed and
   production-verified. User acceptance is pending.
+- 2026-09-15 polish/correction pass (15 approved items: overview
+  deduplication, hero readability, select/dropdown redesign, destination
+  pager placement, "Show more/less" wording, Latin-digit formatting audit, an
+  optional land-travel filter question, a location-reuse fix on Explore, a
+  Surprise Me redesign, excluding the user's own country from "nearest",
+  purpose-specific question wording, a dynamic "why this suits you"
+  explanation, optional nationality with honest visa-limitation disclosure,
+  and re-verification of the result-feedback UX and D1/R2 external state) is
+  implemented and passes the full test suite (567/567 frontend, 57/57
+  worker), TypeScript, oxlint, and the production build locally. It has been
+  committed to this branch but its deployment status must be re-checked
+  against the GitHub Actions run for the commit that introduces it before it
+  is called production-verified.
 
 Always recover with `git branch --show-current`, `git status --short`,
 `git fetch origin`, and `git log --oneline -30`.
@@ -69,6 +88,23 @@ this decision.
   or cost first, and later answers deterministically change which useful
   unresolved dimension is asked next. Region, subregion, latitude/longitude
   band, and compass-direction questions are absent.
+- Every purpose's shared dimension questions (climate, budget, popularity,
+  coastal, island) use purpose-neutral or purpose-templated wording, not
+  hardcoded tourism/"trip" phrasing — Education, Work, Medical, Investment,
+  Immigration, and Wellness no longer ask a tourism-worded question.
+- An optional, deterministic land-travel question is appended to a purpose's
+  bank only when the app already has the user's location. Answering "yes"
+  narrows ranked candidates to countries sharing a direct land border with
+  the nearest-centroid-resolved current country (an approximation, same
+  technique as the existing nearby-country feature); it never claims open
+  crossings, visa eligibility, or a currently drivable route, and it falls
+  back to the unfiltered catalog rather than ever returning zero results
+  (e.g. an island nation with no land borders).
+- "Why this suits you" is generated from the same real per-destination
+  `Reason` weights the ranking engine already produces: the match-strength
+  phrasing varies with the real score, the strongest matched factor is named
+  first, and one honest trade-off (an actually-answered, meaningfully
+  weaker-fitting factor) is named only when one exists — never invented.
 - Selecting an option advances automatically. A brief transition indicates that
   the next question is being prepared.
 - After five answered questions, the traveler may show results now or continue
@@ -120,21 +156,54 @@ of the questionnaire's combinatorial answer space.
   approximate population when available, source link, and data caveat. This is
   factual coverage, not unique hand-written tourism editorial for every city;
   many Arabic city names honestly fall back to their source-language spelling.
+  Its toggle label reads "Show more"/"Show less" (Arabic: "إظهار
+  المزيد"/"إظهار أقل"), reflecting real open/closed state.
+- The auto-generated overview paragraph for the 164 non-editorial countries no
+  longer restates facts already shown in the adjacent Country Information
+  card (capital, area, currency, languages); that card, "why this suits you"
+  (when present), and the recommendation-profile summary are the overview.
+- The destination hero's name/subtitle color is fixed (not `var(--white)`,
+  which dark theme redefines to a dark surface color) plus a stronger text
+  shadow, so it stays legible over any hero photo in both themes. Optional
+  nationality (self-reported, skippable, never inferred from location, never
+  scored) can be set on the Results page; every existing generic
+  easy/medium/hard visa label now carries an explicit note that it is a
+  general reference, not personalized to the user's nationality — Wejhaty has
+  no verified per-nationality visa data.
 
 ## Destination discovery, navigation, and theme
 
 - Explore sorting supports default order, localized A–Z/Z–A, largest/smallest
   area, lower/higher relative price level, and nearest when location exists.
   Missing/imputed price observations do not outrank direct sourced values.
+  "Nearest" excludes the user's own (nearest-centroid-resolved) country from
+  its own results; other sort/filter modes are unaffected.
+- Explore's location card previously kept showing its "share your location"
+  prompt even after location was already granted elsewhere in the app
+  (e.g. via the Home first-visit prompt); it now hides that prompt once
+  granted, since app-wide location state was already shared correctly and
+  only that one line failed to check it.
 - “Surprise me” chooses equally from the current filtered catalog and avoids
   repeating a destination during the browser session until candidates are
-  exhausted.
+  exhausted. It now shows a short reel of real candidate flags while
+  choosing (previously an abstract color wheel with no flags/names at all),
+  settles on the same winner with one restrained pop, and skips the reel
+  entirely under a reduced-motion preference.
 - Destination pages preserve the list context from Explore or Results and show
-  previous/next controls in that exact order. Direct links use localized
-  alphabetical order; surprise entries return to the surprise experience.
+  previous/next controls immediately beside the hero (previously a detached
+  section at the bottom of the page), in that exact order. Direct links use
+  localized alphabetical order; surprise entries return to the surprise
+  experience.
 - Theme supports system, light, and dark modes. System is the default, tracks
   live device changes, manual choice persists locally, and the pre-render boot
-  script prevents a wrong-theme flash.
+  script prevents a wrong-theme flash. The theme control, and every other
+  select in the app (Explore's filters, feedback type), now share one
+  reusable select shell with a leading icon (device/sun/moon for the theme
+  control), a visible dropdown chevron, and a clear keyboard focus ring —
+  previously a bare native `<select>` with no dropdown affordance.
+- All visible numbers use Latin digits in both languages via a centralized
+  `formatNumber()` helper; the two spots that previously formatted numbers
+  with an `ar-SA` locale (producing Arabic-Indic digits) are fixed.
 
 ## Anonymous product data, ratings, and feedback
 
@@ -162,7 +231,14 @@ of the questionnaire's combinatorial answer space.
   dry-run pass. The production `/admin` shell and updated Worker are live; the
   flight validation route remains healthy. Product-data requests currently
   return `503 product_data_unavailable` because D1/R2 provisioning was rejected
-  by Cloudflare with authentication error `10000`.
+  by Cloudflare with authentication error `10000`. Re-verified 2026-09-15
+  directly from the latest "Deploy Cloudflare Worker" GitHub Actions run logs
+  (run for commit `a2ecc2f1`): the same `Authentication error [code: 10000]`
+  on `/accounts/*/d1/database` still occurs; the worker code itself still
+  deploys successfully without the D1/R2 bindings via the workflow's
+  documented fallback path. This is an external Cloudflare account/token
+  permission gap (`CLOUDFLARE_API_TOKEN` lacks D1/R2/Workers edit access), not
+  a code defect — `READY — USER/ACCOUNT CONFIGURATION REQUIRED`.
 
 ## Destination images
 

@@ -7,10 +7,12 @@ export function Icon({
   name,
   size = 22,
   stroke = 2,
+  className,
 }: {
   name: keyof typeof ICON;
   size?: number;
   stroke?: number;
+  className?: string;
 }) {
   return (
     <svg
@@ -23,6 +25,7 @@ export function Icon({
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
+      className={className}
       dangerouslySetInnerHTML={{ __html: ICON[name] }}
     />
   );

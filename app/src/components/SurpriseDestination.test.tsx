@@ -41,4 +41,18 @@ describe('SurpriseDestination', () => {
     act(() => vi.advanceTimersByTime(900));
     expect(screen.getByText('France')).toBeInTheDocument();
   });
+
+  it('item #9: skips the flag reel and lands directly on the winner when reduced motion is preferred', () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }));
+    const candidates = [
+      WORLD_CATALOG.find((country) => country.id === 'japan')!,
+      WORLD_CATALOG.find((country) => country.id === 'france')!,
+    ];
+    render(<MemoryRouter><SurpriseDestination candidates={candidates} lang="en" strings={I18N.en.explore} /></MemoryRouter>);
+    fireEvent.click(screen.getByRole('button', { name: I18N.en.explore.surpriseSpin }));
+    act(() => vi.advanceTimersByTime(300));
+    expect(screen.getByRole('link', { name: /Explore country/ })).toBeInTheDocument();
+    vi.unstubAllGlobals();
+  });
 });

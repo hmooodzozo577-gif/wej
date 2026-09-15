@@ -11,6 +11,7 @@ import { buildWhyText } from '../engine';
 import { DestinationImage } from '../components/DestinationImage';
 import { QUESTION_BANKS } from '../data/questionBanks';
 import { ResultRating } from '../components/ResultRating';
+import { NationalitySelect } from '../components/NationalitySelect';
 
 /** Ports the original's setInterval-based count-up for `.matchNum`:
  *  step = max(1, round(target/30)), tick every 16ms. */
@@ -53,7 +54,7 @@ export function Results() {
   const first = top5[0];
   const rest = top5.slice(1);
   const resultNavigationIds = top5.map((item) => item.dest.id);
-  const whyFirst = buildWhyText(lang, state.purpose, first.reasons, first.dest);
+  const whyFirst = buildWhyText(lang, state.purpose, first.reasons, first.dest, first.score);
 
   return (
     <div className="results-wrap">
@@ -91,10 +92,11 @@ export function Results() {
               <span className="mini-tag">
                 <Icon name="sun" size={13} stroke={2.4} /> {r.climate}: {t.climateLabels[first.dest.climate]}
               </span>
-              <span className="mini-tag">
-                <Icon name="check" size={13} stroke={2.4} /> {r.visa}: {t.visaLabels[first.dest.visaDiff]}
+              <span className="mini-tag" title={r.visaGeneralNote}>
+                <Icon name="info" size={13} stroke={2.4} /> {r.visa}: {t.visaLabels[first.dest.visaDiff]}
               </span>
             </div> : null}
+            {first.dest.recommendationReady ? <p className="results-method-note">{r.visaGeneralNote}</p> : null}
           </div>
           <div className="match-ring-wrap">
             <DestinationImage destination={first.dest} lang={lang} />
@@ -116,13 +118,14 @@ export function Results() {
               lang={lang}
               t={t}
               matchScore={item.score}
-              whyText={buildWhyText(lang, state.purpose!, item.reasons, item.dest)}
+              whyText={buildWhyText(lang, state.purpose!, item.reasons, item.dest, item.score)}
               purpose={state.purpose!}
               navigation={{ source: 'results', ids: resultNavigationIds, index: index + 1 }}
             />
           ))}
         </div>
 
+        <NationalitySelect />
         <ResultRating results={top5} lang={lang} strings={r} />
 
         <div className="results-actions">

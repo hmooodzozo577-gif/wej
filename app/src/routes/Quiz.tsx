@@ -4,7 +4,7 @@ import { selectNextQuestion } from '../adaptive';
 import { Icon } from '../components/Icon';
 import { ProgressBar } from '../components/ProgressBar';
 import { QuestionOption } from '../components/QuestionOption';
-import { QUESTION_BANKS } from '../data/questionBanks';
+import { effectiveQuestionBank, QUESTION_BANKS } from '../data/questionBanks';
 import type { PurposeId } from '../data/types';
 import { rankDestinations } from '../engine';
 import { useAppState, useI18n } from '../state/hooks';
@@ -44,7 +44,7 @@ export function Quiz() {
   if (!validPurpose) return <Navigate to="/purpose" replace />;
   if (!purposeSynced) return null;
 
-  const questions = QUESTION_BANKS[purposeParam];
+  const questions = effectiveQuestionBank(purposeParam, !!state.location.coords);
   const reachableQuestionCount = new Set(questions.map((item) => item.profileKey ?? item.id)).size;
   const purposeName = t.purposes[purposeParam].n;
   const qIndex = Math.min(state.qIndex, Math.max(0, state.path.length - 1));

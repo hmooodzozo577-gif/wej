@@ -1,5 +1,5 @@
 import { nameOf } from './destinationText';
-import { haversineKm } from './geo';
+import { approximateCountryOf, haversineKm } from './geo';
 import type { CatalogEntry } from './types';
 import { RECOMMENDATION_PROFILE_BY_CODE } from './worldRecommendation';
 import { WORLD_CATALOG, continentOf, countryInfoOf } from './worldCatalog';
@@ -47,15 +47,25 @@ export function sortCatalog(list: CatalogEntry[], sort: ExploreSort, lang: 'ar' 
         const difference = (aProfile?.costLevel ?? 0) - (bProfile?.costLevel ?? 0);
         return (sort === 'cost-asc' ? difference : -difference) || byName(a, b);
       });
-    case 'nearest':
+    case 'nearest': {
       if (!origin) return sorted;
-      return sorted.sort((a, b) => {
+      // Item #10: "nearest" means nearest OTHER destination — the user's own
+      // country isn't a travel recommendation. Nearest-centroid is the same
+      // approximate technique LocationPersonalize already uses to identify
+      // "current country" for its own nearby-country exclusion; sortCatalog
+      // is synchronous so it can't await the more precise boundary-polygon
+      // resolver here, but a country whose centroid is nearest to the user's
+      // own coordinates is, in practice, virtually always that user's country.
+      const currentCode = approximateCountryOf(origin)?.entry.countryCode;
+      const candidates = currentCode ? sorted.filter((entry) => entry.countryCode !== currentCode) : sorted;
+      return candidates.sort((a, b) => {
         const aInfo = countryInfoOf(a.id);
         const bInfo = countryInfoOf(b.id);
         const aDistance = aInfo ? haversineKm(origin, aInfo.latlng) : Number.POSITIVE_INFINITY;
         const bDistance = bInfo ? haversineKm(origin, bInfo.latlng) : Number.POSITIVE_INFINITY;
         return aDistance - bDistance || byName(a, b);
       });
+    }
     default: return sorted;
   }
 }

@@ -1,5 +1,5 @@
 import { selectNextQuestion } from '../adaptive';
-import { QUESTION_BANKS } from '../data/questionBanks';
+import { effectiveQuestionBank } from '../data/questionBanks';
 import type { AppAction, AppState } from './types';
 
 export const initialAppState: AppState = {
@@ -12,11 +12,12 @@ export const initialAppState: AppState = {
   results: null,
   explore: { q: '', region: '', purpose: '', cost: '', sort: 'default' },
   location: { status: 'idle', coords: null },
+  nationalityCode: null,
 };
 
-function initialPath(purpose: AppState['purpose']): string[] {
+function initialPath(purpose: AppState['purpose'], hasLocation: boolean): string[] {
   if (!purpose) return [];
-  const first = selectNextQuestion(QUESTION_BANKS[purpose], {}, []);
+  const first = selectNextQuestion(effectiveQuestionBank(purpose, hasLocation), {}, []);
   return first ? [first.id] : [];
 }
 
@@ -25,7 +26,7 @@ function startPurpose(state: AppState, purpose: NonNullable<AppState['purpose']>
     ...state,
     purpose,
     qIndex: 0,
-    path: initialPath(purpose),
+    path: initialPath(purpose, !!state.location.coords),
     answers: {},
     questionnaireCheckpointPassed: false,
     results: null,
@@ -35,7 +36,7 @@ function startPurpose(state: AppState, purpose: NonNullable<AppState['purpose']>
 function advance(state: AppState): AppState {
   if (!state.purpose) return state;
   if (state.qIndex + 1 < state.path.length) return { ...state, qIndex: state.qIndex + 1 };
-  const next = selectNextQuestion(QUESTION_BANKS[state.purpose], state.answers, state.path);
+  const next = selectNextQuestion(effectiveQuestionBank(state.purpose, !!state.location.coords), state.answers, state.path);
   if (!next) return state;
   return { ...state, path: [...state.path, next.id], qIndex: state.qIndex + 1 };
 }
@@ -96,6 +97,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, location: { status: action.status, coords: null } };
     case 'LOCATION_RESET':
       return { ...state, location: { status: 'idle', coords: null } };
+    case 'SET_NATIONALITY':
+      return { ...state, nationalityCode: action.countryCode };
     default:
       return state;
   }

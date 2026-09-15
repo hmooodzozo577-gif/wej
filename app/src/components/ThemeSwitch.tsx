@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Lang } from '../data/types';
+import { Icon } from './Icon';
+import { Select } from './Select';
 
 export type ThemePreference = 'auto' | 'light' | 'dark';
 export const THEME_STORAGE_KEY = 'wejhaty.theme';
@@ -29,8 +31,8 @@ export function ThemeSwitch({ lang }: { lang: Lang }) {
   }, [preference]);
 
   const labels = lang === 'ar'
-    ? { label: 'المظهر', auto: 'تلقائي', light: 'فاتح', dark: 'داكن' }
-    : { label: 'Theme', auto: 'Auto', light: 'Light', dark: 'Dark' };
+    ? { label: 'المظهر', auto: 'حسب النظام', light: 'فاتح', dark: 'داكن' }
+    : { label: 'Theme', auto: 'System', light: 'Light', dark: 'Dark' };
 
   const changePreference = (next: ThemePreference) => {
     setPreference(next);
@@ -38,17 +40,24 @@ export function ThemeSwitch({ lang }: { lang: Lang }) {
     else localStorage.setItem(THEME_STORAGE_KEY, next);
   };
 
+  // Item #3: a bare native select gave no visual cue of its current state
+  // beyond the text itself. The leading icon now mirrors the live
+  // selection — device/monitor for System, sun for Light, moon for Dark —
+  // and the chevron (from Select) makes the control read as a dropdown.
+  const currentIcon = preference === 'dark' ? 'moon' : preference === 'light' ? 'sun' : 'monitor';
+
   return (
     <label className="theme-switch">
-      <select
+      <Select
         aria-label={labels.label}
         value={preference}
+        icon={<Icon name={currentIcon} size={15} stroke={2.2} />}
         onChange={(event) => changePreference(event.target.value as ThemePreference)}
       >
         <option value="auto">{labels.auto}</option>
         <option value="light">{labels.light}</option>
         <option value="dark">{labels.dark}</option>
-      </select>
+      </Select>
     </label>
   );
 }
