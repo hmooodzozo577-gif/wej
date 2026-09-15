@@ -5,16 +5,15 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 10
+- State document version: 11
 - Last verified date: 2026-09-15
 - Working branch: `claude/marhaba-kxry8l`
-- Production frontend commit: `e70ff5d2a02fd7aa7a763055b1a76cec9aa12339` (pre-dates
-  this session's changes — see below for what is implemented but not yet
-  deployed)
+- Final HEAD / production frontend commit: `f60efd932607835b8541f552a4addb70c9289082`
 - Production Worker source commit: `a2ecc2f18293727bc74575529befb9e0fc6e2c15`
   (unchanged this session — no `worker/` files were touched)
-- Latest verified implementation commit: see Git log for this session's commit
-  on `claude/marhaba-kxry8l`
+- Git state re-verified directly before writing this: local HEAD equals
+  `origin/claude/marhaba-kxry8l`, working tree clean, no unpushed commits, no
+  untracked files, no merge/rebase in progress.
 - The latest discovery, cities, theme, ratings, and feedback UI is deployed and
   production-verified. Worker code is deployed, but D1/R2 storage is unavailable
   until the Cloudflare API token receives the required account permissions —
@@ -31,11 +30,16 @@ configuration, and current Git state outrank this document when they differ.
   purpose-specific question wording, a dynamic "why this suits you"
   explanation, optional nationality with honest visa-limitation disclosure,
   and re-verification of the result-feedback UX and D1/R2 external state) is
-  implemented and passes the full test suite (567/567 frontend, 57/57
-  worker), TypeScript, oxlint, and the production build locally. It has been
-  committed to this branch but its deployment status must be re-checked
-  against the GitHub Actions run for the commit that introduces it before it
-  is called production-verified.
+  implemented, passes the full test suite (567/567 frontend, 57/57 worker),
+  TypeScript, oxlint, and the production build, and is committed as
+  `f60efd93`. The GitHub Pages deploy workflow for this exact commit
+  completed with `conclusion: success` (verified directly from the Actions
+  run, not assumed) — this is the same deploy-success evidence this document
+  uses elsewhere to call a change deployed. A direct browser fetch of the
+  live URL to eyeball the served bundle has not been independently done from
+  a Claude session (blocked by that session's own sandbox network egress
+  policy, not a deployment failure); treat the UI behavior itself as
+  `USER ACCEPTANCE PENDING` until the user confirms it live.
 
 Always recover with `git branch --show-current`, `git status --short`,
 `git fetch origin`, and `git log --oneline -30`.
@@ -59,11 +63,24 @@ server-side travel-provider integrations.
   traveler budgets. Real provider prices and estimates must stay distinct.
 - Never infer religion, ethnicity, politics, values, or cultural adaptability
   from location, nationality, language, or locale.
+- Location and nationality/passport are different concepts and must never be
+  conflated: location (from the browser, always optional) answers "where is
+  the user now"; nationality (self-reported, optional, skippable, never
+  scored) answers "what passport might they hold". Neither may be inferred
+  from the other.
+- Never fabricate a personalized visa-eligibility claim. A generic
+  easy/medium/hard visa label may be shown only when it is explicitly
+  disclosed as a general reference, not personalized to the viewer's
+  nationality — Wejhaty has no verified per-nationality visa dataset.
 - Precise coordinates remain in memory only and are not sent to external
-  recommendation services.
+  recommendation services, and are never exposed or transmitted beyond what a
+  feature actually needs.
 - Secrets never belong in the frontend or a `VITE_*` value.
 - Preserve accepted destination and questionnaire layouts unless the user asks
   for a design change.
+- `PROJECT_STATE.md` is the canonical current-state memory for this project.
+  When it conflicts with current Git/code, current repository evidence wins
+  and this file must be corrected, not the other way around.
 
 ## Current product decision: no AI
 
@@ -123,9 +140,11 @@ this decision.
 - If the traveler explicitly shared location, distance breaks exact score ties
   only. It does not change match scores, and the Results page displays a note
   when the proximity tie-break is used.
-- Latest full frontend verification: 553/553 tests passed in one complete
-  run. TypeScript, oxlint, the production build, AR/EN browser checks, and
-  mobile overflow checks pass.
+- Latest full frontend verification: 567/567 tests passed in one complete
+  run (2026-09-15). TypeScript, oxlint, and the production build pass; AR/EN,
+  RTL/LTR, light/dark, and land-border-question-gating checks were done via a
+  local Playwright pass against the built app (see Destination discovery,
+  navigation, and theme for what changed).
 
 ### Current recommendation limitation
 

@@ -46,6 +46,13 @@ persistent autonomous engineering operating contract for this project.
   `VITE_*` variable — Worker-side only.
 - Never infer religion, ethnicity, politics, personal values, or
   cultural tolerance from location, nationality, language, or locale.
+- Location (from the browser) and nationality/passport (self-reported,
+  optional, skippable, never scored) are different concepts — never
+  infer one from the other, and never treat location as nationality.
+- Never fabricate a personalized visa-eligibility claim. A generic
+  easy/medium/hard visa label must be explicitly disclosed as a
+  general reference, not personalized to the viewer, unless a real
+  per-nationality visa dataset is actually wired in.
 - Preserve Arabic + English parity; Arabic stays the default language.
 - Cancelled roadmap features (see `PROJECT_STATE.md`) stay cancelled
   unless the user explicitly reopens the topic.
