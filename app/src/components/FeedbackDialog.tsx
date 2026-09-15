@@ -127,18 +127,27 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
               </div>
             ) : (
               <form onSubmit={(event) => { event.preventDefault(); void save(); }}>
-                <label className="field">
-                  <span>{strings.type}</span>
-                  <Select value={type} onChange={(event) => setType(event.target.value)}>
-                    <option value="wrong_info">{strings.wrongInfo}</option>
-                    <option value="image">{strings.image}</option>
-                    <option value="bug">{strings.bug}</option>
-                    <option value="suggestion">{strings.suggestion}</option>
-                    <option value="results">{strings.results}</option>
-                    <option value="translation">{strings.translation}</option>
-                    <option value="other">{strings.other}</option>
-                  </Select>
-                </label>
+                {/* A <label> cannot wrap the custom listbox trigger (a
+                    <button> is not a labelable control), so the visible text
+                    is wired up with aria-labelledby instead of nesting. */}
+                <div className="field">
+                  <span id="feedback-type-label">{strings.type}</span>
+                  <Select
+                    id="feedback-type"
+                    labelledBy="feedback-type-label"
+                    value={type}
+                    options={[
+                      { value: 'wrong_info', label: strings.wrongInfo },
+                      { value: 'image', label: strings.image },
+                      { value: 'bug', label: strings.bug },
+                      { value: 'suggestion', label: strings.suggestion },
+                      { value: 'results', label: strings.results },
+                      { value: 'translation', label: strings.translation },
+                      { value: 'other', label: strings.other },
+                    ]}
+                    onChange={setType}
+                  />
+                </div>
                 <label className="field">
                   <span>{strings.message}</span>
                   <textarea required minLength={10} maxLength={4000} rows={6} value={message} onChange={(event) => setMessage(event.target.value)} />

@@ -482,6 +482,12 @@ export interface ExploreStrings {
   sortCostAsc: string;
   sortCostDesc: string;
   sortNearest: string;
+  /** Item #7 — the mirror of sortNearest. Both are offered ONLY when real
+   *  location context exists (Explore.tsx), never as dead options. */
+  sortFarthest: string;
+  /** Says WHY the two distance sorts are absent, instead of leaving a user
+   *  to wonder where "nearest" went. */
+  sortDistanceLocked: string;
   surpriseTitle: string;
   surpriseBody: string;
   surpriseSpin: string;
@@ -570,6 +576,15 @@ export interface LocationIntroStrings {
    *  dismissible non-technical guidance instead (reuses the same
    *  friendly wording as location.denied). */
   deniedNote: string;
+  /** Item #6 — shown INSTEAD of the first-visit pitch when a previous
+   *  attempt failed recoverably (timeout / position unavailable). Before
+   *  this existed, a failed attempt left app-wide location status stuck on
+   *  a failure value, this component rendered nothing (it only handled
+   *  'idle'), and Explore's card was the ONLY place in the entire app
+   *  offering a retry. */
+  retryTitle: string;
+  retryBody: string;
+  retryCta: string;
 }
 
 /** Item #13 — optional nationality selection strings. Never sourced from

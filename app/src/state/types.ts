@@ -9,7 +9,22 @@ export interface ExploreFilters {
   sort: ExploreSort;
 }
 
-export type ExploreSort = 'default' | 'name-asc' | 'name-desc' | 'area-desc' | 'area-asc' | 'cost-asc' | 'cost-desc' | 'nearest';
+export type ExploreSort =
+  | 'default'
+  | 'name-asc'
+  | 'name-desc'
+  | 'area-desc'
+  | 'area-asc'
+  | 'cost-asc'
+  | 'cost-desc'
+  | 'nearest'
+  | 'farthest';
+
+/** The two distance sorts are only meaningful with real location context —
+ *  see Explore.tsx, which gates them on `state.location.coords`, and
+ *  exploreCatalog.ts, which returns the list unsorted rather than
+ *  pretending when `origin` is absent. */
+export const LOCATION_DEPENDENT_SORTS: ExploreSort[] = ['nearest', 'farthest'];
 
 export interface DestinationNavigation {
   source: 'explore' | 'results' | 'surprise';
@@ -24,10 +39,33 @@ export interface LocationCoords {
 
 export type LocationStatus = 'idle' | 'requesting' | 'granted' | 'denied' | 'unavailable' | 'timeout' | 'unsupported';
 
+/** Item #6 — WHERE a location request spent its time / failed, with no
+ *  coordinates in it, so it is safe to render in the debug panel and to
+ *  send as anonymous telemetry. 'browser' covers waiting for
+ *  getCurrentPosition (see geo/geolocation.ts, which builds this);
+ *  'resolve' covers the app's own country/city resolution AFTER real
+ *  coordinates were already available. Distinguishing the two is the whole
+ *  point: the same "this took too long" symptom has two different causes
+ *  and only one of them is a browser timeout. */
+export interface LocationDiagnostic {
+  phase: 'browser' | 'resolve';
+  attempts: {
+    stage: number;
+    highAccuracy: boolean;
+    timeoutMs: number;
+    durationMs: number;
+    outcome: string;
+  }[];
+  totalMs: number;
+}
+
 /** Precise coordinates remain in memory only and are never persisted. */
 export interface LocationState {
   status: LocationStatus;
   coords: LocationCoords | null;
+  /** Last request's timing/outcome breakdown. Never contains coordinates.
+   *  Optional so a test can build a LocationState without one. */
+  diagnostic?: LocationDiagnostic | null;
 }
 
 export interface AppState {
@@ -66,7 +104,8 @@ export type AppAction =
   | { type: 'SET_EXPLORE_FILTER'; key: keyof ExploreFilters; value: string }
   | { type: 'RESET_EXPLORE_FILTERS' }
   | { type: 'LOCATION_REQUEST' }
-  | { type: 'LOCATION_GRANTED'; coords: LocationCoords }
-  | { type: 'LOCATION_FAILED'; status: Exclude<LocationStatus, 'idle' | 'requesting' | 'granted'> }
+  | { type: 'LOCATION_GRANTED'; coords: LocationCoords; diagnostic?: LocationDiagnostic }
+  | { type: 'LOCATION_FAILED'; status: Exclude<LocationStatus, 'idle' | 'requesting' | 'granted'>; diagnostic?: LocationDiagnostic }
+  | { type: 'LOCATION_RESOLVE_DIAGNOSTIC'; diagnostic: LocationDiagnostic }
   | { type: 'LOCATION_RESET' }
   | { type: 'SET_NATIONALITY'; countryCode: string | null };

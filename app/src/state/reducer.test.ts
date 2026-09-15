@@ -34,6 +34,6 @@ describe('deterministic questionnaire reducer', () => {
   it('keeps precise location in memory and clears it on reset', () => {
     const granted = appReducer(initialAppState, { type: 'LOCATION_GRANTED', coords: { lat: 24.7, lng: 46.7 } });
     expect(granted.location.status).toBe('granted');
-    expect(appReducer(granted, { type: 'LOCATION_RESET' }).location).toEqual({ status: 'idle', coords: null });
+    expect(appReducer(granted, { type: 'LOCATION_RESET' }).location).toEqual({ status: 'idle', coords: null, diagnostic: null });
   });
 });

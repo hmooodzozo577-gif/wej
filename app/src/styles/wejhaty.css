@@ -211,72 +211,261 @@
    affordance), and a clear keyboard focus ring. Used by the theme switch,
    every Explore filter, and the feedback type field, so a dropdown looks
    and behaves the same everywhere in the app. */
+/* A .field whose control is the custom listbox uses a <span> heading rather
+   than a <label> (a button is not labelable), so it needs the same visual
+   treatment the generated .field label rule gives a real <label>. */
+.field .field-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.field .field-note {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+/* Item #1 — the custom Wejhaty listbox (components/Select.tsx). Replaces a
+   styled native <select>, whose OPEN menu was drawn by the browser/OS and
+   therefore ignored every token below. All positioning uses logical
+   properties so RTL mirrors without a single dir-specific rule. */
 .wj-select {
   position: relative;
   display: block;
   width: 100%;
 }
 
-.wj-select-input {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 100%;
-  padding-inline-end: 34px;
-  cursor: pointer;
-}
-
-.wj-select-has-icon .wj-select-input {
-  padding-inline-start: 36px;
-}
-
-.wj-select-icon,
-.wj-select-chevron {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+.wj-select-trigger {
   display: flex;
-  color: var(--muted);
-  pointer-events: none;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-3);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.92rem;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
-.wj-select-icon {
-  inset-inline-start: 12px;
+.wj-select-trigger:hover:not(:disabled) {
+  border-color: var(--teal);
 }
 
-.wj-select-chevron {
-  inset-inline-end: 10px;
+.wj-select-trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
-.wj-select-input:focus-visible {
-  outline: 2px solid var(--teal);
+.wj-select.is-open .wj-select-trigger {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(30, 107, 103, 0.16);
+}
+
+.wj-select-trigger:focus-visible {
+  outline: 2.5px solid var(--gold);
   outline-offset: 2px;
 }
 
-/* The nav-bar theme switch keeps its own compact pill look; every other
-   .wj-select (Explore filters, feedback type) uses the plain .field
-   input/select block styling from wejhaty.generated.css unchanged. */
-.theme-switch .wj-select {
-  width: auto;
-  min-width: 118px;
+.wj-select-trigger.is-placeholder .wj-select-value {
+  color: var(--muted);
 }
 
-.theme-switch .wj-select-input {
+.wj-select-icon {
+  display: flex;
+  flex: 0 0 auto;
+  color: var(--muted);
+}
+
+.wj-select-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wj-select-chevron {
+  flex: 0 0 auto;
+  color: var(--muted);
+  transition: transform 0.18s ease;
+}
+
+.wj-select.is-open .wj-select-chevron {
+  transform: rotate(180deg);
+}
+
+.wj-select-popover {
+  position: absolute;
+  z-index: 60;
+  inset-inline: 0;
+  top: calc(100% + 6px);
+  display: flex;
+  flex-direction: column;
+  max-height: min(320px, 60vh);
+  overflow: hidden;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  box-shadow: var(--shadow);
+  animation: wjSelectIn 0.14s ease;
+}
+
+.wj-select-popover.drop-up {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+@keyframes wjSelectIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wj-select-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.wj-select-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.wj-select-search input:focus {
+  outline: none;
+}
+
+.wj-select-list {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px;
+}
+
+.wj-select-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.wj-select-option.is-active {
+  background: var(--paper-2);
+}
+
+.wj-select-option.is-selected {
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.wj-select-option.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wj-select-option-icon {
+  display: flex;
+  flex: 0 0 auto;
+}
+
+.wj-select-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.wj-select-option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wj-select-option-hint {
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.wj-select-check {
+  flex: 0 0 auto;
+  color: var(--teal);
+  opacity: 0;
+}
+
+.wj-select-option.is-selected .wj-select-check {
+  opacity: 1;
+}
+
+.wj-select-empty {
+  margin: 0;
+  padding: 18px 14px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wj-select-popover {
+    animation: none;
+  }
+  .wj-select-chevron {
+    transition: none;
+  }
+}
+
+/* The nav-bar theme switch keeps its own compact pill look; every other
+   .wj-select (Explore filters, feedback type, passport) uses the .field
+   block styling above. */
+.theme-switch .wj-select {
+  width: auto;
+  min-width: 132px;
+}
+
+.theme-switch .wj-select-trigger {
   min-height: 36px;
-  width: 100%;
-  padding: 6px 30px 6px 32px;
+  padding: 6px 12px;
   border: 1.5px solid var(--line);
   border-radius: 100px;
   background: var(--white);
-  color: var(--text);
-  font: 700 0.78rem/1 inherit;
+  font: 700 0.78rem/1.2 inherit;
 }
 
-html[dir='rtl'] .theme-switch .wj-select-input {
-  padding: 6px 32px 6px 30px;
-}
-
-.theme-switch .wj-select-icon {
-  inset-inline-start: 10px;
+.theme-switch .wj-select-popover {
+  min-width: 170px;
+  inset-inline-start: auto;
+  inset-inline-end: 0;
 }
 
 [data-theme='dark'] {

@@ -1,5 +1,5 @@
 import { selectNextQuestion } from '../adaptive';
-import { effectiveQuestionBank } from '../data/questionBanks';
+import { effectiveQuestionBank, isLocationDependentQuestionId } from '../data/questionBanks';
 import type { AppAction, AppState } from './types';
 
 export const initialAppState: AppState = {
@@ -11,7 +11,7 @@ export const initialAppState: AppState = {
   questionnaireCheckpointPassed: false,
   results: null,
   explore: { q: '', region: '', purpose: '', cost: '', sort: 'default' },
-  location: { status: 'idle', coords: null },
+  location: { status: 'idle', coords: null, diagnostic: null },
   nationalityCode: null,
 };
 
@@ -29,6 +29,28 @@ function startPurpose(state: AppState, purpose: NonNullable<AppState['purpose']>
     path: initialPath(purpose, !!state.location.coords),
     answers: {},
     questionnaireCheckpointPassed: false,
+    results: null,
+  };
+}
+
+/** Item #8 — when location context goes away, any answer that only existed
+ *  BECAUSE there was location context (proximity, land-border) can no longer
+ *  be honoured honestly, so it is dropped from both the answered set and the
+ *  asked path rather than silently surviving as a stale preference. Ranking
+ *  already ignores them without coordinates (rankDestinations.ts guards on
+ *  `origin`); this keeps the questionnaire's own state consistent with what
+ *  effectiveQuestionBank() would produce now. */
+function withoutLocationQuestions(state: AppState): AppState {
+  const stale = state.path.filter((id) => isLocationDependentQuestionId(id));
+  if (!stale.length && !Object.keys(state.answers).some(isLocationDependentQuestionId)) return state;
+  const answers = { ...state.answers };
+  for (const id of Object.keys(answers)) if (isLocationDependentQuestionId(id)) delete answers[id];
+  const path = state.path.filter((id) => !isLocationDependentQuestionId(id));
+  return {
+    ...state,
+    answers,
+    path,
+    qIndex: Math.min(state.qIndex, Math.max(0, path.length - 1)),
     results: null,
   };
 }
@@ -90,13 +112,18 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'RESET_EXPLORE_FILTERS':
       return { ...state, explore: { q: '', region: '', purpose: '', cost: '', sort: 'default' } };
     case 'LOCATION_REQUEST':
-      return { ...state, location: { status: 'requesting', coords: null } };
+      return { ...state, location: { status: 'requesting', coords: null, diagnostic: null } };
     case 'LOCATION_GRANTED':
-      return { ...state, location: { status: 'granted', coords: action.coords } };
+      return { ...state, location: { status: 'granted', coords: action.coords, diagnostic: action.diagnostic ?? null } };
     case 'LOCATION_FAILED':
-      return { ...state, location: { status: action.status, coords: null } };
+      return withoutLocationQuestions({
+        ...state,
+        location: { status: action.status, coords: null, diagnostic: action.diagnostic ?? null },
+      });
+    case 'LOCATION_RESOLVE_DIAGNOSTIC':
+      return { ...state, location: { ...state.location, diagnostic: action.diagnostic } };
     case 'LOCATION_RESET':
-      return { ...state, location: { status: 'idle', coords: null } };
+      return withoutLocationQuestions({ ...state, location: { status: 'idle', coords: null, diagnostic: null } });
     case 'SET_NATIONALITY':
       return { ...state, nationalityCode: action.countryCode };
     default:

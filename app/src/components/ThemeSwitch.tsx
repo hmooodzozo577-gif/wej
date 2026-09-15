@@ -40,24 +40,27 @@ export function ThemeSwitch({ lang }: { lang: Lang }) {
     else localStorage.setItem(THEME_STORAGE_KEY, next);
   };
 
-  // Item #3: a bare native select gave no visual cue of its current state
-  // beyond the text itself. The leading icon now mirrors the live
-  // selection — device/monitor for System, sun for Light, moon for Dark —
-  // and the chevron (from Select) makes the control read as a dropdown.
-  const currentIcon = preference === 'dark' ? 'moon' : preference === 'light' ? 'sun' : 'monitor';
+  // Item #2 — the System option shows a SUN, not the monitor/device glyph,
+  // as the user asked for directly. Light and dark keep their own sun/moon
+  // treatment, so the sun appears twice by design: on System it means
+  // "whatever your device is doing", on Light it means the light theme.
+  const iconFor = (value: ThemePreference) => (value === 'dark' ? 'moon' : 'sun');
+
+  const options = [
+    { value: 'auto', label: labels.auto, icon: <Icon name={iconFor('auto')} size={15} stroke={2.2} /> },
+    { value: 'light', label: labels.light, icon: <Icon name={iconFor('light')} size={15} stroke={2.2} /> },
+    { value: 'dark', label: labels.dark, icon: <Icon name={iconFor('dark')} size={15} stroke={2.2} /> },
+  ];
 
   return (
-    <label className="theme-switch">
+    <div className="theme-switch">
       <Select
         aria-label={labels.label}
         value={preference}
-        icon={<Icon name={currentIcon} size={15} stroke={2.2} />}
-        onChange={(event) => changePreference(event.target.value as ThemePreference)}
-      >
-        <option value="auto">{labels.auto}</option>
-        <option value="light">{labels.light}</option>
-        <option value="dark">{labels.dark}</option>
-      </Select>
-    </label>
+        options={options}
+        icon={<Icon name={iconFor(preference)} size={15} stroke={2.2} />}
+        onChange={(value) => changePreference(value as ThemePreference)}
+      />
+    </div>
   );
 }

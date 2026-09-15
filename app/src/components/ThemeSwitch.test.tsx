@@ -48,7 +48,10 @@ describe('ThemeSwitch', () => {
     const changeSystemTheme = installMatchMedia(false);
     render(<ThemeSwitch lang="ar" />);
 
-    fireEvent.change(screen.getByRole('combobox', { name: 'المظهر' }), { target: { value: 'dark' } });
+    // Item #1: this is a real listbox now, not a native <select> — open it
+    // and click the option, exactly as a user would.
+    fireEvent.click(screen.getByRole('combobox', { name: 'المظهر' }));
+    fireEvent.click(screen.getByRole('option', { name: 'داكن' }));
 
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
     expect(document.documentElement.dataset.theme).toBe('dark');
@@ -60,7 +63,7 @@ describe('ThemeSwitch', () => {
     localStorage.setItem(THEME_STORAGE_KEY, 'light');
     render(<ThemeSwitch lang="en" />);
 
-    expect(screen.getByRole('combobox', { name: 'Theme' })).toHaveValue('light');
+    expect(screen.getByRole('combobox', { name: 'Theme' })).toHaveTextContent('Light');
     expect(document.documentElement.dataset.theme).toBe('light');
   });
 });

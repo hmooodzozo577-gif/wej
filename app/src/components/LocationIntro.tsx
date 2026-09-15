@@ -59,7 +59,14 @@ export function LocationIntro() {
   // ask/copy below, unchanged.
   const permission = useGeolocationPermission();
 
-  if (dismissed || state.location.status !== 'idle') return null;
+  // Item #6 — a recoverable failure (the browser never produced a fix) must
+  // not permanently remove the only app-wide way to ask again. Before this,
+  // a single timeout left status stuck on 'timeout', this component bailed
+  // out on `status !== 'idle'`, and Explore's own card was the ONLY retry
+  // affordance left anywhere in the app. 'denied' and 'unsupported' stay
+  // excluded: re-asking cannot change either of those.
+  const isRecoverableFailure = state.location.status === 'timeout' || state.location.status === 'unavailable';
+  if (dismissed || (state.location.status !== 'idle' && !isRecoverableFailure)) return null;
 
   const handleAllow = () => {
     setDismissed(true);
@@ -73,6 +80,25 @@ export function LocationIntro() {
   // DENIED: a doomed "Allow" click is never offered — non-technical
   // guidance instead, still dismissible, never blocking the rest of the
   // app (Section 66/67).
+  if (isRecoverableFailure) {
+    return (
+      <div className="location-intro-wrap">
+        <div className="location-intro detail-card" role="region" aria-label={li.retryTitle}>
+          <strong>{li.retryTitle}</strong>
+          <p style={{ marginTop: 6 }}>{li.retryBody}</p>
+          <div style={{ marginTop: 10, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <button type="button" className="btn btn-gold btn-sm" onClick={handleAllow}>
+              {li.retryCta}
+            </button>
+            <button type="button" className="btn btn-ghost btn-sm" onClick={handleNotNow}>
+              {li.notNow}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (permission === 'denied') {
     return (
       <div className="location-intro-wrap">

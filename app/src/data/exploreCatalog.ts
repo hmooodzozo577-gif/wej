@@ -47,7 +47,12 @@ export function sortCatalog(list: CatalogEntry[], sort: ExploreSort, lang: 'ar' 
         const difference = (aProfile?.costLevel ?? 0) - (bProfile?.costLevel ?? 0);
         return (sort === 'cost-asc' ? difference : -difference) || byName(a, b);
       });
-    case 'nearest': {
+    case 'nearest':
+    case 'farthest': {
+      // Item #7 — with no real location context these sorts cannot operate,
+      // so the list is returned in its existing order rather than pretending.
+      // Explore.tsx additionally never OFFERS them without coordinates, so
+      // this branch is the defensive half of the same gate.
       if (!origin) return sorted;
       // Item #10: "nearest" means nearest OTHER destination — the user's own
       // country isn't a travel recommendation. Nearest-centroid is the same
@@ -57,13 +62,25 @@ export function sortCatalog(list: CatalogEntry[], sort: ExploreSort, lang: 'ar' 
       // resolver here, but a country whose centroid is nearest to the user's
       // own coordinates is, in practice, virtually always that user's country.
       const currentCode = approximateCountryOf(origin)?.entry.countryCode;
+      // The user's own country is excluded from BOTH distance sorts: it is
+      // not a travel recommendation in either direction, and leaving it in
+      // "farthest" would only bury it at the bottom while still inflating
+      // the count.
       const candidates = currentCode ? sorted.filter((entry) => entry.countryCode !== currentCode) : sorted;
+      const distanceOf = (entry: CatalogEntry) => {
+        const info = countryInfoOf(entry.id);
+        return info ? haversineKm(origin, info.latlng) : undefined;
+      };
       return candidates.sort((a, b) => {
-        const aInfo = countryInfoOf(a.id);
-        const bInfo = countryInfoOf(b.id);
-        const aDistance = aInfo ? haversineKm(origin, aInfo.latlng) : Number.POSITIVE_INFINITY;
-        const bDistance = bInfo ? haversineKm(origin, bInfo.latlng) : Number.POSITIVE_INFINITY;
-        return aDistance - bDistance || byName(a, b);
+        const aDistance = distanceOf(a);
+        const bDistance = distanceOf(b);
+        // A country with no resolvable centroid has no distance at all, so it
+        // sorts last in BOTH directions rather than winning "farthest" on a
+        // missing value.
+        const missing = missingLast(aDistance === undefined, bDistance === undefined);
+        if (missing) return missing;
+        const difference = (aDistance ?? 0) - (bDistance ?? 0);
+        return (sort === 'nearest' ? difference : -difference) || byName(a, b);
       });
     }
     default: return sorted;

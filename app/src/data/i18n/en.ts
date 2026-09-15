@@ -49,6 +49,8 @@ export const EN: I18nDict = {
     sortCostAsc: 'Price level: lowest first',
     sortCostDesc: 'Price level: highest first',
     sortNearest: 'Nearest to me',
+    sortFarthest: 'Farthest from you',
+    sortDistanceLocked: 'Share your location to enable sorting by nearest and farthest.',
     surpriseTitle: 'Surprise me',
     surpriseBody: 'Let the wheel choose a random country from the visible results.',
     surpriseSpin: 'Spin the wheel',
@@ -151,6 +153,9 @@ export const EN: I18nDict = {
     alreadyGrantedBody: 'Your browser already allows this site to use your approximate location — turn it on now to improve your suggestions.',
     alreadyGrantedCta: 'Use my location now',
     deniedNote: 'Location for this site is turned off in your browser settings. You can keep using Wejhaty normally without it.',
+    retryTitle: 'We could not find your location',
+    retryBody: 'Your browser could not determine your location on the last attempt. You can try again, or keep using Wejhaty without it.',
+    retryCta: 'Try again',
   },
   // Item #13 — optional nationality selection. Not part of the original
   // wejhaty.html copy.

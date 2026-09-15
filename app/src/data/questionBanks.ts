@@ -51,7 +51,7 @@ function buildBank(purpose: PurposeId): Question[] {
       `Does it matter that ${destination.en} is close to your current location?`,
     ),
     options: [
-      option(100, 'نعم، القرب مهم', 'Yes, proximity matters', 'سنستخدم الموقع الذي سمحت به سابقًا لحساب القرب.', 'We will use the location you previously allowed to calculate proximity.'),
+      option(100, 'نعم، القرب مهم', 'Yes, proximity matters', 'سنستخدم الموقع الذي سمحت به لحساب القرب.', 'We will use the location you allowed to calculate proximity.'),
       option(0, 'لا، المسافة لا تهمني', 'No, distance does not matter', 'لن تؤثر المسافة في التوصيات.', 'Distance will not affect your recommendations.'),
     ],
     nextByValue: { '100': ids.climate, '0': ids.cost },
@@ -149,14 +149,37 @@ function landBorderQuestion(purpose: PurposeId): Question {
   };
 }
 
+/** Item #8 — question KINDS whose answer is only meaningful relative to the
+ *  user's real current position. Asking any of these without location
+ *  context invites an answer the app then cannot honour: the previous build
+ *  asked "does it matter that the destination is close to your current
+ *  location?" before any location permission existed, and a "yes" silently
+ *  did nothing. These are appended to a purpose's bank only when there IS
+ *  location context, and stripped from questionnaire state when it goes away
+ *  (see state/reducer.ts). */
+const LOCATION_DEPENDENT_KINDS: ReadonlySet<Question['kind']> = new Set(['proximity', 'landBorder']);
+
+/** True for a question id that belongs to a location-dependent question, for
+ *  any purpose. Id-based (rather than object-based) because the reducer has
+ *  to make this call about ids already recorded in `path`/`answers`, whose
+ *  question objects may no longer be in the effective bank at all. */
+export function isLocationDependentQuestionId(id: string): boolean {
+  const suffix = id.slice(id.indexOf('-') + 1);
+  return suffix === 'proximity' || suffix === 'landBorder';
+}
+
 /** The question bank actually shown to the user for a purpose: the fixed
- *  bank plus the optional land-travel question, appended ONLY when there is
- *  real location context (`hasLocation`) — never asked when it can't be
- *  answered honestly. Both the reducer (path/advance) and Quiz.tsx must use
- *  this instead of reading QUESTION_BANKS[purpose] directly, so the
- *  question's presence stays consistent across the whole quiz flow. */
+ *  bank, minus any location-dependent question, plus (when there IS location
+ *  context) proximity in its original leading position and the optional
+ *  land-travel question at the end. Both the reducer (path/advance) and
+ *  Quiz.tsx must use this instead of reading QUESTION_BANKS[purpose]
+ *  directly, so a question's presence stays consistent across the whole quiz
+ *  flow. QUESTION_BANKS itself deliberately still CONTAINS proximity: the
+ *  scoring engine looks questions up there by id, and a question that is not
+ *  asked simply has no answer to score. */
 export function effectiveQuestionBank(purpose: PurposeId, hasLocation: boolean): Question[] {
   const bank = QUESTION_BANKS[purpose];
-  return hasLocation ? [...bank, landBorderQuestion(purpose)] : bank;
+  if (!hasLocation) return bank.filter((question) => !LOCATION_DEPENDENT_KINDS.has(question.kind));
+  return [...bank, landBorderQuestion(purpose)];
 }
 export const CLIMATE_COMPAT: ClimateCompat = climateCompatJson as ClimateCompat;

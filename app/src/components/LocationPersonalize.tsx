@@ -109,18 +109,38 @@ export function LocationPersonalize() {
         });
       }
       setResolving(true);
+      // Item #6, phase B: time the app's OWN resolution separately from the
+      // browser's fix, so "this took too long" can be attributed to the
+      // right phase instead of always being blamed on a geolocation
+      // timeout. Durations only — never coordinates.
+      const countryStartedAt = Date.now();
       const result = await resolveCurrentCountry(browserCoords);
+      const countryMs = Date.now() - countryStartedAt;
       setResolution(result);
       // City resolution only follows a real boundary match — compounding
       // it on top of the already-approximate centroid fallback would
       // stack two approximations, so that case stays country-only.
+      let cityMs = 0;
       if (result?.method === 'boundary') {
+        const cityStartedAt = Date.now();
         const city = await resolveNearestCity(browserCoords, result.result.entry.countryCode);
+        cityMs = Date.now() - cityStartedAt;
         setCityResolution(city);
       }
+      dispatch({
+        type: 'LOCATION_RESOLVE_DIAGNOSTIC',
+        diagnostic: {
+          phase: 'resolve',
+          attempts: [
+            { stage: 1, highAccuracy: false, timeoutMs: 0, durationMs: countryMs, outcome: result ? result.method : 'unresolved' },
+            { stage: 2, highAccuracy: false, timeoutMs: 0, durationMs: cityMs, outcome: cityMs ? 'city-lookup' : 'skipped' },
+          ],
+          totalMs: countryMs + cityMs,
+        },
+      });
       setResolving(false);
     });
-  }, [request, debugEnabled]);
+  }, [request, debugEnabled, dispatch]);
 
   const handleReset = useCallback(() => {
     dispatch({ type: 'LOCATION_RESET' });
@@ -256,6 +276,17 @@ export function LocationPersonalize() {
           <p style={{ marginTop: 8 }}>Resolved country: {resolution ? nameOf(resolution.result.entry, 'en') : '—'}</p>
           <p style={{ marginTop: 4 }}>Resolution method: {resolution?.method ?? '—'}</p>
           <p style={{ marginTop: 4 }}>Resolved city: {cityResolution ? cityResolution.city.nameEn : 'none (country-only)'}</p>
+          {/* Item #6: which phase actually consumed the time. No coordinates
+              appear in `diagnostic` by construction (see state/types.ts). */}
+          <p style={{ marginTop: 8 }}>
+            Timing phase: {state.location.diagnostic?.phase ?? '—'} ({state.location.diagnostic?.totalMs ?? 0} ms total)
+          </p>
+          {(state.location.diagnostic?.attempts ?? []).map((item) => (
+            <p key={`${item.stage}-${item.outcome}`} style={{ marginTop: 4 }}>
+              Stage {item.stage}: {item.outcome} in {item.durationMs} ms
+              {item.timeoutMs ? ` (deadline ${item.timeoutMs} ms, highAccuracy=${String(item.highAccuracy)})` : ''}
+            </p>
+          ))}
           {debugDistances.map((d) => (
             <p key={d.iso2} style={{ marginTop: 4 }}>
               Distance to {d.label} centroid: {d.distanceKm !== undefined ? `${d.distanceKm.toFixed(1)} km` : 'n/a'}
