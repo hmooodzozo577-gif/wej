@@ -23,6 +23,7 @@ import { estimateFlight, searchFlights } from '../travel/travelService';
 import type { FlightOffer } from '../travel/types';
 import type { CatalogEntry } from '../data/types';
 import { Icon } from './Icon';
+import { formatNumber } from '../data/format';
 
 // A fixed, deterministic lookahead — this app has no date picker (Phase
 // 13.6 is explicitly "no UI overhaul"), so a single representative future
@@ -159,7 +160,7 @@ export function TravelInfo({ destination }: { destination: CatalogEntry }) {
           <div className="info-grid">
             <div className="info-item">
               <div className="label">{tt.distanceLabel}</div>
-              <div className="value">{info.distanceKm.toLocaleString('en-US')} {tt.distanceUnit}</div>
+              <div className="value">{formatNumber(info.distanceKm)} {tt.distanceUnit}</div>
             </div>
             <div className="info-item">
               <div className="label">{tt.durationLabel}</div>
@@ -175,7 +176,7 @@ export function TravelInfo({ destination }: { destination: CatalogEntry }) {
             <div className="info-item">
               <div className="label">{tt.priceLabel}</div>
               <div className="value">
-                {info.offer.price.amount.toLocaleString('en-US')} {info.offer.price.currency}
+                {formatNumber(info.offer.price.amount)} {info.offer.price.currency}
               </div>
             </div>
             <div className="info-item">

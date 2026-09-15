@@ -12,6 +12,7 @@ import { costLabel, descOf, nameOf } from '../data/destinationText';
 import { continentOf, countryInfoOf } from '../data/worldCatalog';
 import { FlagChip } from './flags/FlagIcon';
 import { Icon } from './Icon';
+import { formatNumber } from '../data/format';
 import { DestinationImage } from './DestinationImage';
 import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
 import type { DestinationNavigation } from '../state/types';
@@ -98,7 +99,7 @@ export function DestinationCard({
               <Icon name="tag" size={13} stroke={2.4} /> {costLabel(t.costLevels, profile.costLevel)}
             </span>
             <span className="meta-chip"><Icon name="sun" size={13} stroke={2.4} /> {t.climateLabels[profile.climate]}</span>
-            <span className="meta-chip"><Icon name="globe" size={13} stroke={2.4} /> {info.areaKm2.toLocaleString('en-US')} {t.detail.areaUnit}</span>
+            <span className="meta-chip"><Icon name="globe" size={13} stroke={2.4} /> {formatNumber(info.areaKm2)} {t.detail.areaUnit}</span>
           </div>
         ) : null}
       </div>

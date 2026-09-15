@@ -126,11 +126,136 @@
   max-width: 360px;
 }
 
+/* Item #3 — previous/next now live INSIDE the hero image, in its side
+   gutters. What is left of .destination-pager is the surprise-context
+   return link, which is a single centered element. */
 .destination-pager {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
   margin: -14px 0 24px;
+}
+
+.hero-nav {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  /* 44px minimum touch target at every breakpoint. */
+  min-width: 44px;
+  min-height: 44px;
+  max-width: 44px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 100px;
+  /* Translucent over the photograph rather than a solid block: the country
+     imagery is the point of the hero and must stay visible through it. */
+  background: rgba(16, 28, 44, 0.34);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  /* Fixed light foreground, never var(--white) — dark theme redefines that
+     token to a dark SURFACE color, which is exactly the bug the hero title
+     had. The shadow keeps the arrow legible over a bright sky too. */
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.6);
+  transition: max-width 0.22s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.hero-nav-previous {
+  inset-inline-start: 12px;
+}
+
+.hero-nav-next {
+  inset-inline-end: 12px;
+}
+
+.hero-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+}
+
+/* data/icons.json's arrowStart/arrowEnd are physically left/right glyphs.
+   In RTL, "previous" sits at the inline start (the right-hand side) and
+   must point that way, so the glyph is mirrored. */
+html[dir='rtl'] .hero-nav-icon svg {
+  transform: scaleX(-1);
+}
+
+.hero-nav-name {
+  padding-inline-end: 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  transition: opacity 0.18s ease;
+}
+
+.hero-nav-previous .hero-nav-name {
+  padding-inline: 0 16px;
+}
+
+.hero-nav-next .hero-nav-name {
+  order: -1;
+  padding-inline: 16px 0;
+}
+
+/* The name is a reveal, not a requirement: it is already in the control's
+   aria-label, so nothing is lost when it stays collapsed (touch, narrow
+   screens). max-width is capped so a long country name can never push the
+   control across the hero and cover the photo or the title. */
+.hero-nav:hover,
+.hero-nav:focus-visible {
+  max-width: min(60%, 240px);
+  background: rgba(16, 28, 44, 0.62);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.hero-nav:hover .hero-nav-name,
+.hero-nav:focus-visible .hero-nav-name {
+  opacity: 1;
+}
+
+.hero-nav:focus-visible {
+  outline: 2.5px solid var(--gold-2);
+  outline-offset: 2px;
+}
+
+@media (hover: none) {
+  /* No hover on touch: keep the control compact and let the tap navigate,
+     rather than requiring a first tap just to reveal a label. */
+  .hero-nav:hover {
+    max-width: 44px;
+  }
+  .hero-nav:hover .hero-nav-name {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .hero-nav-previous {
+    inset-inline-start: 8px;
+  }
+  .hero-nav-next {
+    inset-inline-end: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-nav,
+  .hero-nav-name {
+    transition: none;
+  }
 }
 
 /* Hero-title readability pass (item #2): the hero's name/subtitle previously

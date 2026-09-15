@@ -29,6 +29,7 @@ import type {
 import { formatNumber } from '../data/format';
 import { AccommodationInfo } from '../components/AccommodationInfo';
 import { DestinationHero } from '../components/DestinationHero';
+import { HeroNavButton, heroNavTargets } from '../components/DestinationHeroNav';
 import { FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
 import { FeaturedCitiesCard } from '../components/FeaturedCitiesCard';
@@ -157,53 +158,51 @@ function OptionalPlanningInfo({
 }
 
 
-function DestinationPager({
+/** Item #3 — what remains of the below-hero pager: the surprise-context
+ *  return link only. Previous/next now live inside the hero image itself
+ *  (components/DestinationHeroNav.tsx); a surprise result has no ordered
+ *  siblings to page through, so it keeps its single centered link back to
+ *  the surprise experience — unchanged behavior, unchanged wording. */
+function SurprisePager({
+  navigation,
+  surpriseLabel,
+}: {
+  navigation: DestinationNavigation | null;
+  surpriseLabel: string;
+}) {
+  if (navigation?.source !== 'surprise') return null;
+  return (
+    <nav className="destination-pager destination-pager-surprise" aria-label={surpriseLabel}>
+      <Link className="destination-pager-link" to="/explore">
+        <small><Icon name="sparkle" size={14} /> {surpriseLabel}</small>
+      </Link>
+    </nav>
+  );
+}
+
+/** The pair of hero-edge controls for a destination, or nothing when the
+ *  current navigation context has no siblings (a surprise result, a single
+ *  -entry list, or an id that is not in the preserved list at all). */
+function HeroEdgeControls({
   current,
   navigation,
   lang,
   previousLabel,
   nextLabel,
-  surpriseLabel,
 }: {
   current: CatalogEntry;
   navigation: DestinationNavigation | null;
   lang: Lang;
   previousLabel: string;
   nextLabel: string;
-  surpriseLabel: string;
 }) {
-  if (navigation?.source === 'surprise') {
-    return (
-      <nav className="destination-pager destination-pager-surprise" aria-label={surpriseLabel}>
-        <Link className="destination-pager-link" to="/explore">
-          <small><Icon name="sparkle" size={14} /> {surpriseLabel}</small>
-        </Link>
-      </nav>
-    );
-  }
-  if (!navigation) return null;
-  const actualIndex = navigation.ids.indexOf(current.id);
-  const previous = actualIndex > 0 ? WORLD_CATALOG.find((country) => country.id === navigation.ids[actualIndex - 1]) : undefined;
-  const next = actualIndex >= 0 && actualIndex < navigation.ids.length - 1
-    ? WORLD_CATALOG.find((country) => country.id === navigation.ids[actualIndex + 1])
-    : undefined;
+  const { previous, next } = heroNavTargets(current, navigation, WORLD_CATALOG);
   if (!previous && !next) return null;
-
   return (
-    <nav className="destination-pager" aria-label={`${previousLabel} / ${nextLabel}`}>
-      {previous ? (
-        <Link className="destination-pager-link previous" to={`/destination/${previous.id}`} state={{ navigation: { ...navigation, index: actualIndex - 1 } }}>
-          <small><Icon name="arrowStart" size={14} /> {previousLabel}</small>
-          <strong>{nameOf(previous, lang)}</strong>
-        </Link>
-      ) : <span />}
-      {next ? (
-        <Link className="destination-pager-link next" to={`/destination/${next.id}`} state={{ navigation: { ...navigation, index: actualIndex + 1 } }}>
-          <small>{nextLabel} <Icon name="arrowEnd" size={14} /></small>
-          <strong>{nameOf(next, lang)}</strong>
-        </Link>
-      ) : <span />}
-    </nav>
+    <>
+      {previous ? <HeroNavButton target={previous} direction="previous" label={previousLabel} lang={lang} /> : null}
+      {next ? <HeroNavButton target={next} direction="next" label={nextLabel} lang={lang} /> : null}
+    </>
   );
 }
 
@@ -268,8 +267,11 @@ export function Destination() {
                 {matchScore !== null ? `${matchScore}% ${t.results.match}` : dt.browse}
               </div>
             }
+            edgeControls={
+              <HeroEdgeControls current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} />
+            }
           />
-          <DestinationPager current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} surpriseLabel={dt.surpriseAgain} />
+          <SurprisePager navigation={navigation} surpriseLabel={dt.surpriseAgain} />
 
           {/* Visual refinement pass: two-zone layout. First (now narrow,
               see .detail-grid's 1fr/2fr override in wejhaty.css) column
@@ -364,8 +366,11 @@ export function Destination() {
               </div>
             )
           }
+          edgeControls={
+            <HeroEdgeControls current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} />
+          }
         />
-        <DestinationPager current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} surpriseLabel={dt.surpriseAgain} />
+        <SurprisePager navigation={navigation} surpriseLabel={dt.surpriseAgain} />
 
         {/* Visual refinement pass: two-zone layout. First (now narrow,
             see .detail-grid's 1fr/2fr override in wejhaty.css) column is

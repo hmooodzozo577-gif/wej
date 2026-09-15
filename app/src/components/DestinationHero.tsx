@@ -30,12 +30,17 @@ export function DestinationHero({
   fallbackBackground,
   subContent,
   rightContent,
+  edgeControls,
 }: {
   d: FlagSubject;
   /** regionGradientCss(...) result, used verbatim when no real photo exists. */
   fallbackBackground: string;
   subContent: ReactNode;
   rightContent: ReactNode;
+  /** Item #3 — previous/next controls rendered in the hero's own side
+   *  gutters (see DestinationHeroNav.tsx), replacing the pair of full-width
+   *  cards that used to sit below the hero. */
+  edgeControls?: ReactNode;
 }) {
   const { lang } = useI18n();
   const visual = d.countryCode ? DESTINATION_VISUALS[d.countryCode] : undefined;
@@ -53,6 +58,7 @@ export function DestinationHero({
           small identity chip next to the country name below, never
           rendered as the big blurred/centered banner at the same time. */}
       {visual ? null : <FlagBanner dest={d} lang={lang} />}
+      {edgeControls}
       <div className="detail-hero-inner">
         <div>
           <span className="name-flag">

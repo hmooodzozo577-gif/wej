@@ -7,8 +7,14 @@
 // the generated file) — standard geographic terminology, not invented data.
 import arJson from '../generated/i18n.ar.json';
 import type { I18nDict } from '../types';
+import { deepLatinDigits } from '../format';
 
-const base = arJson as I18nDict;
+// Item #4 — the extracted Arabic copy contains literal Arabic-Indic digits
+// ("٨", "٪ ٠", "أفضل ٥ وجهات", "رؤية ٢٠٣٠"). They are normalized to Latin
+// digits HERE, at the boundary, rather than by editing the generated file:
+// scripts/extract-source.mjs must keep producing a byte-for-byte verbatim
+// extraction, and a future re-extraction must not silently undo this.
+const base = deepLatinDigits(arJson as I18nDict);
 
 export const AR: I18nDict = {
   ...base,
