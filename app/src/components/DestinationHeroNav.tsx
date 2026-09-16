@@ -12,9 +12,11 @@
 //     bright sky and a dark night shot (the same problem, and the same
 //     solution, as the hero title — see wejhaty.css)
 //   - 44px minimum hit area at every breakpoint, so it stays usable on touch
-//   - the destination NAME is revealed on hover/focus as a compact inline
-//     label, and is always in the accessible name, so a screen reader and a
-//     keyboard user never get less information than a mouse user
+//   - the destination NAME is the control's accessible name and its native
+//     tooltip. It is deliberately NOT an inline expanding label: visual QA
+//     showed no collision-free room for one inside this hero (see the
+//     .hero-nav rules in wejhaty.css), and this way a screen-reader user, a
+//     keyboard user and a mouse user all get the same information
 //   - the arrow glyphs are physically left/right (see data/icons.json), so
 //     they are mirrored in RTL by CSS — in Arabic, "previous" points toward
 //     the start of the reading direction, which is the right-hand side
@@ -44,10 +46,13 @@ export function HeroNavButton({
       aria-label={`${label}: ${name}`}
       title={`${label}: ${name}`}
     >
+      {/* The destination name is the control's accessible name and its
+          native tooltip, not a visible inline label — see the .hero-nav
+          rules in wejhaty.css for why an inline one cannot fit this hero
+          without covering the country title. */}
       <span className="hero-nav-icon" aria-hidden="true">
         <Icon name={direction === 'previous' ? 'arrowStart' : 'arrowEnd'} size={20} stroke={2.4} />
       </span>
-      <span className="hero-nav-name" aria-hidden="true">{name}</span>
     </Link>
   );
 }

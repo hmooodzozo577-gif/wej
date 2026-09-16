@@ -74,13 +74,16 @@ describe('contextual destination navigation', () => {
       expect(container.querySelector('.detail-hero .hero-nav-next')).not.toBeNull();
     });
 
-    it('keeps the destination name in the accessible name even while it is visually collapsed', () => {
+    it('carries the destination name in both the accessible name and the tooltip', () => {
       renderWithState({ navigation: { source: 'explore', ids: ['france', 'japan', 'ksa'], index: 1 } });
       const previous = screen.getByRole('link', { name: /الدولة السابقة: فرنسا/ });
-      // The visible label is aria-hidden (it is a duplicate of the accessible
-      // name), so a screen reader hears the name exactly once.
-      expect(previous.querySelector('.hero-nav-name')).toHaveAttribute('aria-hidden', 'true');
+      // There is no visible inline label (it could not fit this hero without
+      // covering the country title — see .hero-nav in wejhaty.css), so the
+      // name has to reach a mouse user through the tooltip and everyone else
+      // through the accessible name.
       expect(previous).toHaveAttribute('title', expect.stringContaining('فرنسا'));
+      expect(previous.querySelector('.hero-nav-name')).toBeNull();
+      expect(previous.textContent).toBe('');
     });
   });
 });

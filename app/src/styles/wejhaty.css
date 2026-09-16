@@ -17,6 +17,13 @@
   text-decoration: none;
 }
 
+/* Same reason, one case the original never had: a .btn that is a real link
+   (the Surprise result's "Explore country", the hero edge controls) picks up
+   the browser's anchor underline, which no button in this design has. */
+a.btn {
+  text-decoration: none;
+}
+
 .destination-card-image {
   display: block;
   width: 100%;
@@ -205,6 +212,20 @@
   margin: -14px 0 24px;
 }
 
+/* Item #3 — previous/next inside the hero image, in its side gutters.
+   Visual QA drove three decisions here:
+   - the control is a fixed 44px circle. An earlier version sized to its
+     contents with overflow:hidden, which pushed the arrow itself out of view
+     on the inline-end button at 390px.
+   - the destination name is the control's accessible name and native
+     tooltip, NOT a visible expanding label. This hero is a fixed 280px tall
+     with a bottom-anchored title that starts only 102px down at 390px, so an
+     expanding pill in the gutter covers the country name at every width that
+     matters. The brief allows the name "on hover/focus OR in a compact
+     secondary label"; this way a screen-reader user, a keyboard user and a
+     mouse user all get the same information.
+   - .detail-hero-inner reserves the gutters these occupy, so the hero's own
+     text never runs underneath them. */
 .hero-nav {
   position: absolute;
   z-index: 2;
@@ -212,13 +233,11 @@
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 0;
+  justify-content: center;
   /* 44px minimum touch target at every breakpoint. */
-  min-width: 44px;
-  min-height: 44px;
-  max-width: 44px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.34);
   border-radius: 100px;
   /* Translucent over the photograph rather than a solid block: the country
@@ -232,7 +251,7 @@
   color: #fff;
   text-decoration: none;
   box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.6);
-  transition: max-width 0.22s ease, background 0.18s ease, border-color 0.18s ease;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
 .hero-nav-previous {
@@ -247,9 +266,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
 }
 
@@ -260,55 +276,16 @@ html[dir='rtl'] .hero-nav-icon svg {
   transform: scaleX(-1);
 }
 
-.hero-nav-name {
-  padding-inline-end: 16px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  white-space: nowrap;
-  opacity: 0;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-  transition: opacity 0.18s ease;
-}
-
-.hero-nav-previous .hero-nav-name {
-  padding-inline: 0 16px;
-}
-
-.hero-nav-next .hero-nav-name {
-  order: -1;
-  padding-inline: 16px 0;
-}
-
-/* The name is a reveal, not a requirement: it is already in the control's
-   aria-label, so nothing is lost when it stays collapsed (touch, narrow
-   screens). max-width is capped so a long country name can never push the
-   control across the hero and cover the photo or the title. */
 .hero-nav:hover,
 .hero-nav:focus-visible {
-  max-width: min(60%, 240px);
-  background: rgba(16, 28, 44, 0.62);
-  border-color: rgba(255, 255, 255, 0.6);
-}
-
-.hero-nav:hover .hero-nav-name,
-.hero-nav:focus-visible .hero-nav-name {
-  opacity: 1;
+  background: rgba(16, 28, 44, 0.66);
+  border-color: rgba(255, 255, 255, 0.62);
+  transform: translateY(-50%) scale(1.06);
 }
 
 .hero-nav:focus-visible {
   outline: 2.5px solid var(--gold-2);
   outline-offset: 2px;
-}
-
-@media (hover: none) {
-  /* No hover on touch: keep the control compact and let the tap navigate,
-     rather than requiring a first tap just to reveal a label. */
-  .hero-nav:hover {
-    max-width: 44px;
-  }
-  .hero-nav:hover .hero-nav-name {
-    opacity: 0;
-  }
 }
 
 @media (max-width: 620px) {
@@ -321,9 +298,12 @@ html[dir='rtl'] .hero-nav-icon svg {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-nav,
-  .hero-nav-name {
+  .hero-nav {
     transition: none;
+  }
+  .hero-nav:hover,
+  .hero-nav:focus-visible {
+    transform: translateY(-50%);
   }
 }
 
@@ -336,6 +316,18 @@ html[dir='rtl'] .hero-nav-icon svg {
    stronger shadow so it stays legible over bright photo content too. */
 .detail-hero-inner {
   color: #fff;
+  /* Item #3 — the previous/next controls live in the hero's side gutters, so
+     the hero's own text must not use them. Visual QA caught the title running
+     underneath an expanded control at 390px; reserving the gutter fixes it at
+     every width instead of nudging the controls out of the centre. 64px is
+     the collapsed control (44px) plus its inset and a little breathing room. */
+  padding-inline: 64px;
+}
+
+@media (max-width: 640px) {
+  .detail-hero-inner {
+    padding-inline: 58px;
+  }
 }
 
 .detail-hero-inner .name-flag h1 {
@@ -496,6 +488,7 @@ html[dir='rtl'] .hero-nav-icon svg {
   margin: 18px 0 4px;
   max-width: 420px;
 }
+
 
 /* Item #5 — per-city sourced facts, replacing the two template paragraphs
    every city used to share. A definition list keeps label/value pairing
@@ -920,70 +913,70 @@ html[dir='rtl'] .hero-nav-icon svg {
   margin: 18px 0;
 }
 
+/* Visual QA finding (dark theme): unselected stars were var(--paper-2),
+   which is a pale beige in light mode but a near-black SURFACE colour in
+   dark mode — so the whole control was invisible on a dark card. Same class
+   of bug as the hero title using var(--white). --muted is a text colour and
+   flips correctly, and the reduced opacity keeps an unselected star reading
+   as an outline rather than competing with the gold selected state. */
 .rating-stars button {
-  padding: 2px;
+  padding: 2px 4px;
   border: 0;
   background: none;
-  color: var(--paper-2);
+  color: var(--muted);
+  opacity: 0.45;
   font-size: 2rem;
+  line-height: 1;
   cursor: pointer;
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+
+.rating-stars button:hover:not(:disabled) {
+  opacity: 0.75;
+  transform: translateY(-1px);
 }
 
 .rating-stars button.selected {
   color: var(--gold);
+  opacity: 1;
 }
 
-.rating-reasons,
-.rating-countries {
-  margin: 18px 0;
+.rating-stars button:focus-visible {
+  outline: 2.5px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+  opacity: 1;
 }
 
-.rating-reasons .pill-list {
-  margin-top: 10px;
+.rating-stars button:disabled {
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rating-stars button {
+    transition: none;
+  }
 }
 
 button.meta-chip {
   cursor: pointer;
 }
 
-button.meta-chip.selected,
-.rating-country button.selected {
+button.meta-chip.selected {
   border-color: var(--gold);
   background: rgba(217, 168, 92, 0.16);
 }
 
-.rating-countries > summary {
-  cursor: pointer;
-  color: var(--teal);
-  font-weight: 700;
-}
-
-.rating-country {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.rating-country > div {
-  display: flex;
-  gap: 6px;
-}
-
-.rating-country button {
-  padding: 7px 10px;
-  border: 1px solid var(--line);
-  border-radius: 100px;
-  background: var(--paper-3);
-  color: var(--text);
-  cursor: pointer;
-}
-
+/* Visual QA: the hard-coded red was chosen for the light card and is too
+   dark to read on the dark one. --danger flips with the theme; dark mode
+   lifts it so an error is legible on both surfaces. */
 .form-error {
-  color: #b42318;
+  color: var(--danger);
   font-weight: 600;
+}
+
+[data-theme='dark'] .form-error {
+  color: #f08a72;
 }
 
 .footer-actions {
@@ -1070,7 +1063,6 @@ button.meta-chip.selected,
 
 @media (max-width: 640px) {
   .footer-actions { align-items: stretch; flex-direction: column; }
-  .rating-country { align-items: flex-start; flex-direction: column; }
 }
 
 /* --- Header nav: fix real horizontal overflow at very narrow widths ----
@@ -1484,5 +1476,33 @@ button.meta-chip.selected,
 @media (max-width: 640px) {
   .location-intro-wrap {
     padding-inline: 18px;
+  }
+}
+
+/* Visual QA finding (mobile, 390px): the nav row overflowed by ~27px, which
+   pushed the hamburger off the inline start edge. The theme control is the
+   widest optional thing in that row, so below 640px it collapses to its icon
+   and chevron — the accessible name is on the trigger, and the open list
+   keeps its own readable width, so nothing is lost but the redundant text. */
+@media (max-width: 640px) {
+  .theme-switch .wj-select {
+    min-width: 0;
+  }
+
+  .theme-switch .wj-select-value {
+    display: none;
+  }
+
+  .theme-switch .wj-select-trigger {
+    gap: 6px;
+    padding-inline: 10px;
+  }
+
+  /* The nav's "Start now" button goes to /purpose — exactly where the
+     hamburger menu's own "Start quiz" link goes. Keeping both on a phone
+     cost more width than the row had, so the duplicate is hidden and the
+     action stays one tap away in the menu. */
+  .nav-right > .btn-primary {
+    display: none;
   }
 }

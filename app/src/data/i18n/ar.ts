@@ -58,9 +58,9 @@ export const AR: I18nDict = {
     sortFarthest: 'الأبعد إليك',
     sortDistanceLocked: 'شارك موقعك لتفعيل الترتيب حسب الأقرب والأبعد.',
     surpriseTitle: 'فاجئني بوجهة',
-    surpriseBody: 'دع العجلة تختار لك دولة عشوائية من النتائج الظاهرة.',
-    surpriseSpin: 'تدوير العجلة',
-    surpriseAgain: 'تدوير مرة أخرى',
+    surpriseBody: 'دع البوصلة تختار لك وجهة عشوائية من النتائج الظاهرة.',
+    surpriseSpin: 'أدر البوصلة',
+    surpriseAgain: 'أدرها مرة أخرى',
     surpriseOpen: 'استكشف الدولة',
     surpriseSpinning: 'جارٍ اختيار وجهتك…',
     surpriseDirections: {
