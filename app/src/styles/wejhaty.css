@@ -1550,3 +1550,152 @@ button.meta-chip.selected {
   color: inherit;
   text-decoration: underline;
 }
+
+/* --- Country Intelligence + Purpose Suitability ("Suitable for" card) ---
+   Bars use plain percentage `width` inside a block-flow container, the
+   same technique already relied on elsewhere in this file for RTL/LTR
+   correctness: block layout fills from the container's own inline-start
+   automatically under `dir="rtl"`, so no physical left/right property or
+   JS mirroring is needed. */
+.country-suitability-card .suitability-intro {
+  margin-bottom: 14px;
+  font-size: 0.92rem;
+}
+
+.suitability-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.suitability-row-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.suitability-purpose-label {
+  font-weight: 700;
+  flex: 1;
+}
+
+.suitability-score {
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.suitability-insufficient {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.suitability-bar,
+.suitability-component-bar {
+  display: block;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--paper-3);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.suitability-bar-fill,
+.suitability-component-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--teal);
+  border-radius: inherit;
+}
+
+.suitability-meta {
+  margin-top: 4px !important;
+  font-size: 0.8rem;
+  color: var(--muted) !important;
+}
+
+.suitability-why {
+  margin-top: 8px;
+}
+
+.suitability-why > summary {
+  cursor: pointer;
+  color: var(--teal);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.suitability-why-body {
+  margin-top: 8px;
+}
+
+.suitability-why-body p {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+}
+
+.suitability-updated {
+  color: var(--muted) !important;
+}
+
+.suitability-insight-group {
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+.suitability-insight-group ul {
+  margin: 4px 0 0;
+  padding-inline-start: 18px;
+}
+
+.suitability-component-list {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.suitability-component-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px 30px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+
+.suitability-component-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suitability-component-value {
+  text-align: end;
+  color: var(--muted);
+}
+
+.suitability-component-missing {
+  grid-column: 2 / span 2;
+  color: var(--muted);
+  font-style: italic;
+  text-align: end;
+}
+
+.suitability-sources {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.suitability-sources a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .suitability-component-row {
+    grid-template-columns: minmax(0, 1fr) 70px 26px;
+  }
+}

@@ -92,6 +92,19 @@ const ANALYTICS = {
     byLang: [{ lang: 'en', count: 810, verified: 612 }, { lang: 'ar', count: 410, verified: 268 }],
     countriesSeen: 188,
   },
+  intelligence: {
+    generatedAt: '2026-09-16T22:45:20.565Z',
+    totalCountries: 194,
+    purposes: [
+      { purpose: 'tourism', modelVersion: 'tourism-v1', totalCountries: 194, sufficientDataCount: 190, insufficientDataCount: 4, averageCoverage: 92, confidenceHighCount: 120 },
+      { purpose: 'work', modelVersion: 'work-v1', totalCountries: 194, sufficientDataCount: 186, insufficientDataCount: 8, averageCoverage: 91, confidenceHighCount: 124 },
+      { purpose: 'education', modelVersion: 'education-v1', totalCountries: 194, sufficientDataCount: 186, insufficientDataCount: 8, averageCoverage: 88, confidenceHighCount: 101 },
+      { purpose: 'medical', modelVersion: 'medical-v1', totalCountries: 194, sufficientDataCount: 188, insufficientDataCount: 6, averageCoverage: 92, confidenceHighCount: 130 },
+      { purpose: 'immigration', modelVersion: 'immigration-v1', totalCountries: 194, sufficientDataCount: 183, insufficientDataCount: 11, averageCoverage: 88, confidenceHighCount: 99 },
+      { purpose: 'investment', modelVersion: 'investment-v1', totalCountries: 194, sufficientDataCount: 185, insufficientDataCount: 9, averageCoverage: 91, confidenceHighCount: 112 },
+      { purpose: 'wellness', modelVersion: 'wellness-v1', totalCountries: 194, sufficientDataCount: 192, insufficientDataCount: 2, averageCoverage: 92, confidenceHighCount: 128 },
+    ],
+  },
 };
 
 const FEEDBACK = {

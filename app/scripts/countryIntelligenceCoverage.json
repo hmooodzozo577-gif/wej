@@ -1,0 +1,205 @@
+{
+  "generatedAt": "2026-09-16T22:45:20.565Z",
+  "totalEffectiveCountries": 194,
+  "purposesScored": [
+    "tourism",
+    "work",
+    "education",
+    "medical",
+    "immigration",
+    "investment",
+    "wellness"
+  ],
+  "purposesExcluded": [
+    {
+      "purpose": "other",
+      "reason": "Catch-all fallback purpose with no defined identity (pScoreKey: null) — no methodology to build."
+    }
+  ],
+  "byPurpose": {
+    "tourism": {
+      "modelVersion": "tourism-v1",
+      "totalCountries": 194,
+      "sufficientDataCount": 190,
+      "insufficientDataCount": 4,
+      "sufficientDataPct": 98,
+      "confidenceHighCount": 120,
+      "confidenceMediumCount": 70,
+      "averageCoverage": 92,
+      "insufficientDataCountries": [
+        "ER",
+        "KP",
+        "SS",
+        "VA"
+      ],
+      "factorObservationCounts": {
+        "safety": 139,
+        "affordability": 179,
+        "touristDraw": 180,
+        "healthSafetyNet": 193,
+        "economicStability": 189,
+        "amenityDensity": 193
+      }
+    },
+    "work": {
+      "modelVersion": "work-v1",
+      "totalCountries": 194,
+      "sufficientDataCount": 186,
+      "insufficientDataCount": 8,
+      "sufficientDataPct": 96,
+      "confidenceHighCount": 124,
+      "confidenceMediumCount": 62,
+      "averageCoverage": 91,
+      "insufficientDataCountries": [
+        "ER",
+        "KP",
+        "LI",
+        "MC",
+        "SM",
+        "SS",
+        "VA",
+        "YE"
+      ],
+      "factorObservationCounts": {
+        "laborMarket": 178,
+        "income": 185,
+        "economicGrowth": 189,
+        "costOfLiving": 179,
+        "safety": 139,
+        "health": 193
+      }
+    },
+    "education": {
+      "modelVersion": "education-v1",
+      "totalCountries": 194,
+      "sufficientDataCount": 186,
+      "insufficientDataCount": 8,
+      "sufficientDataPct": 96,
+      "confidenceHighCount": 116,
+      "confidenceMediumCount": 70,
+      "averageCoverage": 88,
+      "insufficientDataCountries": [
+        "ER",
+        "KP",
+        "MC",
+        "SS",
+        "SY",
+        "VA",
+        "VE",
+        "YE"
+      ],
+      "factorObservationCounts": {
+        "educationAccess": 154,
+        "affordability": 179,
+        "safety": 139,
+        "postGradEnvironment": 185,
+        "health": 193
+      }
+    },
+    "medical": {
+      "modelVersion": "medical-v1",
+      "totalCountries": 194,
+      "sufficientDataCount": 188,
+      "insufficientDataCount": 6,
+      "sufficientDataPct": 97,
+      "confidenceHighCount": 132,
+      "confidenceMediumCount": 56,
+      "averageCoverage": 92,
+      "insufficientDataCountries": [
+        "ER",
+        "KP",
+        "MC",
+        "SS",
+        "VA",
+        "YE"
+      ],
+      "factorObservationCounts": {
+        "healthSystemInvestment": 192,
+        "healthOutcomes": 193,
+        "safety": 139,
+        "affordability": 179,
+        "economicContext": 185
+      }
+    },
+    "immigration": {
+      "modelVersion": "immigration-v1",
+      "totalCountries": 194,
+      "sufficientDataCount": 183,
+      "insufficientDataCount": 11,
+      "sufficientDataPct": 94,
+      "confidenceHighCount": 113,
+      "confidenceMediumCount": 70,
+      "averageCoverage": 88,
+      "insufficientDataCountries": [
+        "ER",
+        "KP",
+        "LI",
+        "MC",
+        "NR",
+        "SM",
+        "SS",
+        "SY",
+        "VA",
+        "VE",
+        "YE"
+      ],
+      "factorObservationCounts": {
+        "income": 185,
+        "health": 193,
+        "safety": 139,
+        "laborMarket": 178,
+        "costOfLiving": 179,
+        "educationForFamily": 154
+      }
+    },
+    "investment": {
+      "modelVersion": "investment-v1",
+      "totalCountries": 194,
+      "sufficientDataCount": 185,
+      "insufficientDataCount": 9,
+      "sufficientDataPct": 95,
+      "confidenceHighCount": 131,
+      "confidenceMediumCount": 54,
+      "averageCoverage": 91,
+      "insufficientDataCountries": [
+        "CU",
+        "ER",
+        "KP",
+        "LI",
+        "MC",
+        "SS",
+        "SY",
+        "VA",
+        "YE"
+      ],
+      "factorObservationCounts": {
+        "fdiAttractiveness": 186,
+        "economicGrowth": 189,
+        "marketPurchasingPower": 185,
+        "safety": 139,
+        "costBase": 179
+      }
+    },
+    "wellness": {
+      "modelVersion": "wellness-v1",
+      "totalCountries": 194,
+      "sufficientDataCount": 192,
+      "insufficientDataCount": 2,
+      "sufficientDataPct": 99,
+      "confidenceHighCount": 132,
+      "confidenceMediumCount": 60,
+      "averageCoverage": 92,
+      "insufficientDataCountries": [
+        "KP",
+        "VA"
+      ],
+      "factorObservationCounts": {
+        "health": 193,
+        "healthSystem": 192,
+        "safety": 139,
+        "affordability": 179,
+        "tranquility": 193
+      }
+    }
+  }
+}

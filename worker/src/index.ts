@@ -9,6 +9,7 @@ import {
 import { handleProductRequest, runProductRetention, type ProductEnv } from './product';
 import { handleVisaRequest, type VisaEnv } from './visa';
 import { handleCityDescriptionRequest, type CityDescriptionEnv } from './cityDescriptions';
+import { handleIntelligenceRequest } from './intelligence';
 import { handleAdminRequest, type AdminEnv } from './admin';
 
 export type Env = AmadeusEnv & ProductEnv & VisaEnv & CityDescriptionEnv & AdminEnv;
@@ -137,6 +138,13 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   // fabricated description. See cityDescriptions.ts.
   const cityResponse = await handleCityDescriptionRequest(request, env, (body, status) => json(body, status, origin));
   if (cityResponse) return cityResponse;
+
+  // Country Intelligence "Why this score?" detail — a static, versioned,
+  // build-time-computed dataset (see intelligence.ts), never fetched live
+  // and never dependent on D1, so it is safe to check unconditionally.
+  const intelligenceResponse = await handleIntelligenceRequest(request, (body, status) => json(body, status, origin));
+  if (intelligenceResponse) return intelligenceResponse;
+
   if (url.pathname !== '/api/travel/flights') {
     return json({ error: 'not_found', message: 'Unknown endpoint.' }, 404, origin);
   }

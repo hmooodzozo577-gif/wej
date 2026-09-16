@@ -17,6 +17,7 @@
 //   * free text (a rating comment, a report message) is shown to the
 //     operator because they asked for it; it is never mined or classified.
 import type { D1DatabaseLike } from './product';
+import countryIntelligenceSnapshot from './generated/countryIntelligenceDetail.json';
 
 export interface AnalyticsFilters {
   from: string | null;
@@ -400,6 +401,52 @@ export async function buildTechnical(db: D1DatabaseLike, filters: AnalyticsFilte
   return { errors, performance, browsers, devices, locales, themes, referrers };
 }
 
+// ------------------------------------------------------- country intelligence
+
+/** Country Intelligence + Purpose Suitability admin observability (task
+ *  3.23). Deliberately NOT a D1 query — this is a static, versioned,
+ *  build-time-computed dataset (see app/scripts/generate-country-
+ *  intelligence.mjs), bundled with the Worker exactly like
+ *  generated/countryIntelligenceDetail.json already is for the "Why this
+ *  score?" endpoint (intelligence.ts). Reusing that same bundled data here
+ *  means one source of truth for both the public detail API and this
+ *  admin panel, and no live query is needed for reference data that only
+ *  changes when the pipeline re-runs. Takes no `db` because there is
+ *  nothing to query — kept `async` only so it drops into buildAnalytics()'s
+ *  existing Promise.all alongside the D1-backed builders without a
+ *  special case. */
+export async function buildIntelligenceHealth() {
+  const { generatedAt, entries } = countryIntelligenceSnapshot as {
+    generatedAt: string;
+    entries: { countryCode: string; purpose: string; modelVersion: string; insufficientData: boolean; coverage: number; confidence: string | null }[];
+  };
+  const byPurpose = new Map<string, typeof entries>();
+  for (const entry of entries) {
+    const list = byPurpose.get(entry.purpose);
+    if (list) list.push(entry);
+    else byPurpose.set(entry.purpose, [entry]);
+  }
+  const purposes = [...byPurpose.entries()].map(([purpose, purposeEntries]) => {
+    const sufficient = purposeEntries.filter((entry) => !entry.insufficientData);
+    return {
+      purpose,
+      modelVersion: purposeEntries[0]?.modelVersion ?? '',
+      totalCountries: purposeEntries.length,
+      sufficientDataCount: sufficient.length,
+      insufficientDataCount: purposeEntries.length - sufficient.length,
+      averageCoverage: purposeEntries.length
+        ? Math.round(purposeEntries.reduce((sum, entry) => sum + entry.coverage, 0) / purposeEntries.length)
+        : 0,
+      confidenceHighCount: purposeEntries.filter((entry) => entry.confidence === 'high').length,
+    };
+  });
+  return {
+    generatedAt,
+    totalCountries: new Set(entries.map((entry) => entry.countryCode)).size,
+    purposes,
+  };
+}
+
 // ----------------------------------------------------------------- content
 
 /** Acceptance item #3 — real city-description coverage, straight from the
@@ -506,7 +553,7 @@ export async function buildTrend(db: D1DatabaseLike, filters: AnalyticsFilters) 
 }
 
 export async function buildAnalytics(db: D1DatabaseLike, filters: AnalyticsFilters) {
-  const [overview, trend, funnel, quality, countries, discovery, location, technical, content] = await Promise.all([
+  const [overview, trend, funnel, quality, countries, discovery, location, technical, content, intelligence] = await Promise.all([
     buildOverview(db, filters),
     buildTrend(db, filters),
     buildFunnel(db, filters),
@@ -516,6 +563,7 @@ export async function buildAnalytics(db: D1DatabaseLike, filters: AnalyticsFilte
     buildLocation(db, filters),
     buildTechnical(db, filters),
     buildContent(db),
+    buildIntelligenceHealth(),
   ]);
-  return { filters, overview, trend, funnel, quality, countries, discovery, location, technical, content };
+  return { filters, overview, trend, funnel, quality, countries, discovery, location, technical, content, intelligence };
 }

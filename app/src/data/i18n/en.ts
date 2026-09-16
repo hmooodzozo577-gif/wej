@@ -309,4 +309,22 @@ export const EN: I18nDict = {
     disclaimer:
       'International arrivals and receipts figures from UN Tourism (via Our World in Data) — not a live measurement, and not a personal travel budget.',
   },
+  countrySuitability: {
+    title: 'Suitable for',
+    intro: 'A general suitability estimate for each purpose, from official public indicators — not personalized to you.',
+    insufficientData: 'Insufficient data',
+    confidenceHigh: 'High confidence',
+    confidenceMedium: 'Medium confidence',
+    confidenceLow: 'Low confidence',
+    coverageLabel: 'Data coverage: {pct}%',
+    whyThisScore: 'Why this score?',
+    loadingDetail: 'Loading details…',
+    detailUnavailable: 'Details are not available right now.',
+    strengthsLabel: 'Main strengths',
+    limitationsLabel: 'Main limitations',
+    sourcesLabel: 'Sources',
+    updatedLabel: 'Updated {date}',
+    missingFactorLabel: 'No data',
+    modelVersionLabel: 'Methodology: {version}',
+  },
 };

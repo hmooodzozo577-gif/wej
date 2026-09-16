@@ -39,6 +39,7 @@ import { FeedbackDialog } from '../components/FeedbackDialog';
 import { TravelCostIndexInfo } from '../components/TravelCostIndexInfo';
 import { TourismInsights } from '../components/TourismInsights';
 import { TravelInfo } from '../components/TravelInfo';
+import { CountrySuitability } from '../components/CountrySuitability';
 import { regionGradientCss } from '../components/regionGradient';
 import { buildWhyText } from '../engine';
 import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
@@ -153,6 +154,15 @@ function OptionalPlanningInfo({
             <TravelCostIndexInfo destination={destination} />
             <TourismInsights destination={destination} />
           </div>
+          {/* Deliberately OUTSIDE .info-cards-grid: that 4-card layout is a
+              hand-tuned named CSS grid (grid-template-areas) with its own
+              history of rejected/corrected compositions (see
+              Destination.infoCardsLayout.test.tsx) — adding a 5th item
+              without an assigned grid-area would auto-place awkwardly and
+              risk exactly the kind of accepted-layout regression that file
+              guards against. Country Suitability gets its own full-width
+              row below it instead. */}
+          <CountrySuitability destination={destination} />
         </section>
       ) : null}
     </div>

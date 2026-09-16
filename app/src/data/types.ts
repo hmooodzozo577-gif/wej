@@ -938,6 +938,30 @@ export interface TourismInsightsStrings {
   disclaimer: string;
 }
 
+/** Country Intelligence + Purpose Suitability (Phase 11.x/14.x) — the
+ *  "Suitable for" card on a country page. No wejhaty.html equivalent. */
+export interface CountrySuitabilityStrings {
+  title: string;
+  intro: string;
+  insufficientData: string;
+  confidenceHigh: string;
+  confidenceMedium: string;
+  confidenceLow: string;
+  /** e.g. "Data coverage: {pct}%" */
+  coverageLabel: string;
+  whyThisScore: string;
+  loadingDetail: string;
+  detailUnavailable: string;
+  strengthsLabel: string;
+  limitationsLabel: string;
+  sourcesLabel: string;
+  /** e.g. "Updated {date}" */
+  updatedLabel: string;
+  missingFactorLabel: string;
+  /** e.g. "Methodology: {version}" */
+  modelVersionLabel: string;
+}
+
 export interface I18nDict {
   dir: 'rtl' | 'ltr';
   htmlLang: 'ar' | 'en';
@@ -962,6 +986,7 @@ export interface I18nDict {
   accommodation: AccommodationStrings;
   travelCost: TravelCostStrings;
   tourismInsights: TourismInsightsStrings;
+  countrySuitability: CountrySuitabilityStrings;
   costLevels: [string, string, string, string];
   climateLabels: Record<ClimateKind, string>;
   visaLabels: Record<VisaDifficulty, string>;

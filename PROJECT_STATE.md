@@ -5,11 +5,14 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 15
-- Last verified date: 2026-09-16 (admin AR/EN language switcher round: 164
-  worker tests, 736 frontend tests, TypeScript and oxlint clean on both,
-  frontend production build, worker `wrangler deploy --dry-run`, and the
-  extended admin Playwright sweep at 0 findings)
+- State document version: 16
+- Last verified date: 2026-09-16 (theme-icon fix + Contact/Suggestion fix +
+  Country Intelligence round: 180 worker tests, 813 frontend tests,
+  TypeScript and oxlint clean on both, frontend production build, worker
+  `wrangler deploy --dry-run`, the admin Playwright sweep at 0 findings,
+  and a 32-combination Country Suitability Playwright sweep — 4
+  representative countries x desktop/mobile x AR/EN x light/dark — also
+  at 0 findings)
 - Working branch: `claude/modest-cray-34bvoa`
 - Previous production frontend commit: `f60efd93`
 - Production Worker source commit: `077d76a5` — DEPLOYED 2026-09-16 from run
@@ -345,6 +348,116 @@ enumeration of the questionnaire's combinatorial answer space.
 - Every destination page ends with its own 1-5 star rating form (see
   Anonymous product data, ratings, and feedback).
 
+## Country Intelligence + Purpose Suitability Scoring
+
+Phase 11.x (country intelligence expansion) / Phase 14.x (purpose
+suitability scoring) — added 2026-09-16. Full architecture, methodology,
+source catalog, and coverage numbers are in `/COUNTRY_INTELLIGENCE.md`;
+this is the summary.
+
+- A COUNTRY SUITABILITY layer — how suitable a country is IN GENERAL for a
+  purpose — deliberately separate from Phase 14's MATCH score (how well a
+  country matches one traveller's OWN answers). Phase 14's
+  `DIMENSIONS`/`PURPOSE_DIMENSIONS`/weights are UNCHANGED by this round —
+  proven by `app/src/engine/phase14WeightsBaseline.test.ts`, which deep-
+  compares the live `QUESTION_BANKS` against a baseline captured before
+  this work began. Personal Match (blending suitability with a traveller's
+  own preferences) is explicitly left for Phase 18 — not started here.
+- Scored for 7 of Wejhaty's 8 purposes (`tourism`, `work`, `education`,
+  `medical`, `immigration`, `investment`, `wellness`) across all 194
+  effective countries. `other` is excluded — a catch-all fallback purpose
+  with no defined identity (`pScoreKey: null`), so there is no methodology
+  to build for it.
+- Each purpose has its OWN factor set and weights (never reused from
+  another purpose), built ONLY from indicators Wejhaty's own pipelines
+  already fetch and commit with real provenance — no new network fetch for
+  this layer, no invented values, no scraped rankings. Sources: 9 World
+  Bank indicators (urbanization, income PPP, unemployment, life
+  expectancy, health spend, tertiary enrollment, FDI, GDP growth,
+  homicide rate) plus the already-committed price-level snapshot
+  (`PA.NUS.GDP.PLI`) and UN Tourism/OWID arrivals snapshot. Visa/entry
+  requirements are never a scoring input (task rule: `unknown` must never
+  be penalized/rewarded); climate is never a scoring input (a traveller
+  preference, not an objective quality).
+  Real per-purpose measured coverage: tourism 190/194 sufficient (98%,
+  avg 92% coverage), work 186/194 (96%, 91%), education 186/194 (96%,
+  88%), medical 188/194 (97%, 92%), immigration 183/194 (94%, 88%),
+  investment 185/194 (95%, 91%), wellness 192/194 (99%, 92%). Countries
+  short of the 60% minimum-coverage threshold (Eritrea, North Korea,
+  South Sudan, Vatican City for tourism, similar small/data-poor
+  economies for the others) show "insufficient data", never a fabricated
+  number — the full per-purpose list regenerates at
+  `app/scripts/countryIntelligenceCoverage.json`.
+  A score is a weighted average of NORMALIZED values actually observed,
+  re-weighted over just the observed factors (a missing indicator does
+  not silently drag the score down — the gap shows separately as
+  coverage/confidence, never blended into the score itself). Normalized
+  0-100 means "position within the winsorized 5th-95th percentile range
+  of countries actually observed for that factor" — documented, bounded,
+  outlier-robust, and never confused with a global rank/percentile.
+  Confidence is `high`/`medium`/`low` from coverage % and data recency.
+  Each purpose is versioned (`tourism-v1`, `work-v1`, etc.).
+- Architecture: `app/src/intelligence/` is the pure, framework-free
+  scoring engine (types, real source catalog, normalization, per-purpose
+  methodology, scoring). `app/scripts/generate-country-intelligence.mjs`
+  runs it (via Vite's SSR module loader, reusing the real tested TS code
+  rather than a second JS copy) over the ALREADY-COMMITTED
+  `recommendationIndicators.json`/`travelCostIndex.json`/
+  `tourismInsights.json` snapshots — no network fetch of its own. Writes
+  a compact summary bundled with the frontend
+  (`app/src/data/generated/countryIntelligence.json`, ~9KB gzip) and a
+  full per-component/per-source detail file bundled with the WORKER
+  (`worker/src/generated/countryIntelligenceDetail.json`, ~133KB gzip) —
+  the same "keep the frontend bundle light, serve full detail from the
+  Worker" split already used for city descriptions. Deliberately NOT in
+  D1: this is static, versioned, build-time-computed reference data, the
+  same shape as the other generated snapshots, not user-generated data —
+  see `/COUNTRY_INTELLIGENCE.md`'s "Why not D1" for the full reasoning.
+  `worker/src/intelligence.ts` serves `GET /api/intelligence/:countryCode/
+  :purpose` from the bundled detail JSON — no D1, no secret, no external
+  fetch at request time.
+- UI: a "Suitable for" card (`app/src/components/CountrySuitability.tsx`)
+  inside Destination.tsx's existing "Show additional information" optional
+  section, but as its OWN full-width row BELOW `.info-cards-grid` rather
+  than a 5th item inside it — that 4-card grid is a hand-tuned named CSS
+  grid with its own history of rejected/corrected layouts
+  (`Destination.infoCardsLayout.test.tsx`); adding an untyped 5th item to
+  it would have risked exactly that kind of accepted-layout regression.
+  Shows each purpose's score/confidence/coverage (from the bundled
+  summary, no network call) with a lazy "Why this score?" `<details>` per
+  purpose that fetches the full component/source breakdown from the
+  Worker only when opened — never eagerly. AR/EN, RTL/LTR-safe (logical
+  CSS properties, no physical left/right), explicitly discloses it is a
+  general estimate, "not personalized to you" (the Phase 18 Personal
+  Match distinction, stated in-product).
+- Admin observability: extends the EXISTING Content tab
+  (`worker/src/adminPage.ts`'s `renderContent`, `worker/src/analytics.ts`'s
+  `buildIntelligenceHealth`, `worker/src/adminI18n.ts`'s `intelligence.*`
+  strings) rather than adding a new tab, per this round's own scope
+  instruction to extend Admin/Content/Technical "without rewriting the
+  Admin system." Shows countries covered, purposes scored, last generated
+  date, and per-purpose sufficient-data count/avg coverage/high-confidence
+  count. Reads the same bundled Worker JSON, not D1.
+- Traveler Budget stays `CANCELLED / OUT OF SCOPE` (no new source
+  discovered or invented this round). Visa stays `unknown` unless a real
+  provider is configured, never used as a scoring input here.
+- Tests: `app/src/intelligence/{normalize,methodology,score}.test.ts` (32
+  tests — normalization boundaries/outliers/degenerate populations,
+  structural methodology invariants, score bounds/insufficient-
+  data/determinism/model-versioning), `app/src/data/
+  countryIntelligence.test.ts` (5, against the real committed snapshot),
+  `worker/src/intelligence.test.ts` (10) and `worker/src/analytics.test.ts`
+  (6, both against the real committed data), `app/src/components/
+  CountrySuitability.test.tsx` (8), `app/src/countryIntelligence/
+  insights.test.ts` (5), and the Phase 14 regression guard (9). Playwright
+  visual QA: 4 representative countries (excellent coverage/Arabic name —
+  Saudi Arabia; large economy/high coverage — Japan; medium coverage —
+  Afghanistan; insufficient data/tiny population — Vatican City) x
+  desktop/mobile x AR/EN x light/dark = 32 combinations, 0 findings. Admin
+  extension re-verified with the existing admin Playwright sweep, also 0
+  findings.
+- Full doc: `/COUNTRY_INTELLIGENCE.md`.
+
 ## Destination discovery, navigation, and theme
 
 - Explore sorting supports default order, localized A–Z/Z–A, largest/smallest
@@ -422,9 +535,20 @@ enumeration of the questionnaire's combinatorial answer space.
   the ~194-option passport selector. No dependency was added.
 - Theme supports system, light, and dark modes. System is the default, tracks
   live device changes, manual choice persists locally, and the pre-render boot
-  script prevents a wrong-theme flash. The System option uses a SUN icon, not
-  a monitor glyph. Below 640px the control collapses to its icon and chevron
-  so the nav row fits a 390px screen.
+  script prevents a wrong-theme flash. Below 640px the control collapses to
+  its icon and chevron so the nav row fits a 390px screen.
+  FIXED 2026-09-16: the System option's icon is now the EFFECTIVE appearance
+  (moon when the OS is dark, sun when light), tracked live via the same
+  `prefers-color-scheme` listener the control already subscribed to — it
+  previously always showed a sun regardless of the OS's actual theme, a real
+  reported bug (`ThemeSwitch.tsx`'s `iconFor()` branched on the raw
+  `'auto'|'light'|'dark'` preference value, never the OS query). The stored
+  preference itself is unchanged by this fix — System never silently
+  converts to explicit Light/Dark. A hint next to the "System" option label
+  in the open dropdown also now shows the current effective mode. 11
+  tests in `ThemeSwitch.test.tsx` cover explicit Light/Dark, System+OS-light,
+  System+OS-dark, live OS changes in both directions while staying on
+  System, persistence after reload, and the hint text in both languages.
 - All visible numbers render as Latin digits in both languages. Two separate
   leaks existed and both are closed at `data/format.ts`: locale-aware
   formatters (pinned to 'en-US' digits regardless of UI language) and literal
@@ -532,6 +656,33 @@ enumeration of the questionnaire's combinatorial answer space.
   halves (`TURNSTILE_SECRET_KEY` on the Worker, `VITE_TURNSTILE_SITE_KEY` on
   the build) are independently inert when unset, so they can be switched on
   in either order without a window where submissions are rejected.
+  FIXED 2026-09-16: `app/src/telemetry/turnstile.ts`'s `loadTurnstile()`
+  previously listened only for the challenge script's `load` event. A
+  blocked or failed script load — an ad blocker, a firewall, or any network
+  policy that refuses `challenges.cloudflare.com` (reproduced directly
+  against this sandbox's own blocked egress to that host before fixing) —
+  never fires `load`, so the returned promise never settled and every
+  caller waiting on it (the report dialog, both rating forms) hung
+  indefinitely: Submit stayed disabled forever with zero explanation and no
+  way out — the reported "cannot be pressed or completed" bug. Fixed in the
+  shared `useTurnstile` hook: listens for the script's `error` event too
+  (resolves to "failed" instead of hanging), an 8s timeout backstop for a
+  network policy that drops the connection without ever firing `error`, and
+  a new `failed` state distinct from a failed SEND — submission still stays
+  blocked while `failed`, since a Turnstile load failure must never
+  silently waive the challenge (that would be a trivial client-side bypass
+  of the anti-abuse gate). All three forms show the same honest
+  "verification could not load, retry" affordance when this happens; when
+  Turnstile is not configured at all (today's production state) the
+  behavior is unchanged from before. `FeedbackDialog.tsx` previously
+  reimplemented Turnstile handling ad hoc instead of using the shared hook
+  (missing `error-callback` entirely); it now uses `useTurnstile` like the
+  other two forms. Verified: 6 new tests in
+  `app/src/telemetry/turnstile.test.ts` (script error, load timeout,
+  retry recovery, widget-level error-callback — `blocking` stays `true`
+  throughout every failure case), 5 new/updated tests in
+  `FeedbackDialog.test.tsx`, and a live browser reproduction against the
+  real blocked-network failure mode both before and after the fix.
 - D1 REALITY — UPDATED 2026-09-16, later the same day. The account/token
   permission gap described below is now CLOSED.
   MEASURED on worker run 35154518086 (the admin-language-switcher deploy),
@@ -629,6 +780,13 @@ language switcher, and the full panel set above. Two things are still open:
 | Travel Worker | `worker/` |
 | Amadeus adapter | `worker/src/amadeus.ts` |
 | Tourism data | `app/src/data/tourismInsights.ts` |
+| Country Intelligence scoring engine | `app/src/intelligence/` |
+| Country Intelligence generator | `app/scripts/generate-country-intelligence.mjs` |
+| Country Intelligence frontend accessor | `app/src/data/countryIntelligence.ts` |
+| Country Intelligence detail client / insights | `app/src/countryIntelligence/` |
+| Country Intelligence UI | `app/src/components/CountrySuitability.tsx` |
+| Country Intelligence detail API (Worker) | `worker/src/intelligence.ts` |
+| Country Intelligence doc | `/COUNTRY_INTELLIGENCE.md` |
 | Relative price-level data | `app/src/data/travelCostIndex.ts` |
 
 ## Provider and external state

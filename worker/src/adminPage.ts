@@ -612,7 +612,33 @@ function renderTechnical(root, data) {
   root.append(grid);
 }
 
+function renderIntelligenceHealth(root, data) {
+  var intelligence = data.intelligence;
+  var cards = node('div', 'kpis');
+  kpi(cards, t('intelligence.totalCountries'), num(intelligence.totalCountries));
+  kpi(cards, t('intelligence.purposesScored'), num(intelligence.purposes.length));
+  kpi(cards, t('intelligence.generatedAt'), (intelligence.generatedAt || '').slice(0, 10) || t('common.dash'));
+  root.append(panel(t('intelligence.title'), t('intelligence.hint'), cards));
+  var rows = intelligence.purposes.map(function (p) {
+    return {
+      purpose: t('purposes.' + p.purpose) || p.purpose,
+      modelVersion: p.modelVersion,
+      sufficient: p.sufficientDataCount + ' / ' + p.totalCountries,
+      averageCoverage: p.averageCoverage + '%',
+      highConfidence: p.confidenceHighCount,
+    };
+  });
+  root.append(panel(t('intelligence.title'), '', rankTable(rows, [
+    { key: 'purpose', label: t('intelligence.purpose') },
+    { key: 'modelVersion', label: t('intelligence.modelVersion') },
+    { key: 'sufficient', label: t('intelligence.sufficientCount') },
+    { key: 'averageCoverage', label: t('intelligence.averageCoverage') },
+    { key: 'highConfidence', label: t('intelligence.highConfidenceCount'), numeric: true },
+  ], 'highConfidence')));
+}
+
 function renderContent(root, data) {
+  renderIntelligenceHealth(root, data);
   var content = data.content;
   if (!content.available) {
     root.append(panel(t('content.unavailableTitle'), t('content.unavailableHint'), node('p', 'empty', t('common.noData'))));

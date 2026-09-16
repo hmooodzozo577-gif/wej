@@ -1,0 +1,557 @@
+{
+ "tourism": [
+  {
+   "id": "tourism-proximity",
+   "weight": 12,
+   "kind": "proximity",
+   "profileKey": null,
+   "scale": null
+  },
+  {
+   "id": "tourism-climate",
+   "weight": 12,
+   "kind": "climate",
+   "profileKey": "climate",
+   "scale": null
+  },
+  {
+   "id": "tourism-cost",
+   "weight": 14,
+   "kind": "target",
+   "profileKey": "costLevel",
+   "scale": 4
+  },
+  {
+   "id": "tourism-urbanity",
+   "weight": 10,
+   "kind": "target",
+   "profileKey": "urbanity",
+   "scale": null
+  },
+  {
+   "id": "tourism-coastal",
+   "weight": 11,
+   "kind": "target",
+   "profileKey": "coastal",
+   "scale": null
+  },
+  {
+   "id": "tourism-size",
+   "weight": 6,
+   "kind": "target",
+   "profileKey": "size",
+   "scale": null
+  },
+  {
+   "id": "tourism-island",
+   "weight": 5,
+   "kind": "target",
+   "profileKey": "island",
+   "scale": null
+  },
+  {
+   "id": "tourism-popularity",
+   "weight": 8,
+   "kind": "target",
+   "profileKey": "popularity",
+   "scale": null
+  },
+  {
+   "id": "tourism-safety",
+   "weight": 11,
+   "kind": "importance",
+   "profileKey": "safety",
+   "scale": null
+  },
+  {
+   "id": "tourism-health",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "health",
+   "scale": null
+  }
+ ],
+ "work": [
+  {
+   "id": "work-proximity",
+   "weight": 12,
+   "kind": "proximity",
+   "profileKey": null,
+   "scale": null
+  },
+  {
+   "id": "work-climate",
+   "weight": 12,
+   "kind": "climate",
+   "profileKey": "climate",
+   "scale": null
+  },
+  {
+   "id": "work-cost",
+   "weight": 14,
+   "kind": "target",
+   "profileKey": "costLevel",
+   "scale": 4
+  },
+  {
+   "id": "work-urbanity",
+   "weight": 10,
+   "kind": "target",
+   "profileKey": "urbanity",
+   "scale": null
+  },
+  {
+   "id": "work-size",
+   "weight": 6,
+   "kind": "target",
+   "profileKey": "size",
+   "scale": null
+  },
+  {
+   "id": "work-safety",
+   "weight": 11,
+   "kind": "importance",
+   "profileKey": "safety",
+   "scale": null
+  },
+  {
+   "id": "work-opportunity",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "opportunity",
+   "scale": null
+  },
+  {
+   "id": "work-income",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "income",
+   "scale": null
+  },
+  {
+   "id": "work-growth",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "growth",
+   "scale": null
+  },
+  {
+   "id": "work-health",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "health",
+   "scale": null
+  }
+ ],
+ "education": [
+  {
+   "id": "education-proximity",
+   "weight": 12,
+   "kind": "proximity",
+   "profileKey": null,
+   "scale": null
+  },
+  {
+   "id": "education-climate",
+   "weight": 12,
+   "kind": "climate",
+   "profileKey": "climate",
+   "scale": null
+  },
+  {
+   "id": "education-cost",
+   "weight": 14,
+   "kind": "target",
+   "profileKey": "costLevel",
+   "scale": 4
+  },
+  {
+   "id": "education-urbanity",
+   "weight": 10,
+   "kind": "target",
+   "profileKey": "urbanity",
+   "scale": null
+  },
+  {
+   "id": "education-size",
+   "weight": 6,
+   "kind": "target",
+   "profileKey": "size",
+   "scale": null
+  },
+  {
+   "id": "education-safety",
+   "weight": 11,
+   "kind": "importance",
+   "profileKey": "safety",
+   "scale": null
+  },
+  {
+   "id": "education-education",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "education",
+   "scale": null
+  },
+  {
+   "id": "education-opportunity",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "opportunity",
+   "scale": null
+  },
+  {
+   "id": "education-health",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "health",
+   "scale": null
+  }
+ ],
+ "medical": [
+  {
+   "id": "medical-proximity",
+   "weight": 12,
+   "kind": "proximity",
+   "profileKey": null,
+   "scale": null
+  },
+  {
+   "id": "medical-climate",
+   "weight": 12,
+   "kind": "climate",
+   "profileKey": "climate",
+   "scale": null
+  },
+  {
+   "id": "medical-cost",
+   "weight": 14,
+   "kind": "target",
+   "profileKey": "costLevel",
+   "scale": 4
+  },
+  {
+   "id": "medical-urbanity",
+   "weight": 10,
+   "kind": "target",
+   "profileKey": "urbanity",
+   "scale": null
+  },
+  {
+   "id": "medical-size",
+   "weight": 6,
+   "kind": "target",
+   "profileKey": "size",
+   "scale": null
+  },
+  {
+   "id": "medical-safety",
+   "weight": 11,
+   "kind": "importance",
+   "profileKey": "safety",
+   "scale": null
+  },
+  {
+   "id": "medical-health",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "health",
+   "scale": null
+  },
+  {
+   "id": "medical-income",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "income",
+   "scale": null
+  }
+ ],
+ "immigration": [
+  {
+   "id": "immigration-proximity",
+   "weight": 12,
+   "kind": "proximity",
+   "profileKey": null,
+   "scale": null
+  },
+  {
+   "id": "immigration-climate",
+   "weight": 12,
+   "kind": "climate",
+   "profileKey": "climate",
+   "scale": null
+  },
+  {
+   "id": "immigration-cost",
+   "weight": 14,
+   "kind": "target",
+   "profileKey": "costLevel",
+   "scale": 4
+  },
+  {
+   "id": "immigration-urbanity",
+   "weight": 10,
+   "kind": "target",
+   "profileKey": "urbanity",
+   "scale": null
+  },
+  {
+   "id": "immigration-coastal",
+   "weight": 11,
+   "kind": "target",
+   "profileKey": "coastal",
+   "scale": null
+  },
+  {
+   "id": "immigration-size",
+   "weight": 6,
+   "kind": "target",
+   "profileKey": "size",
+   "scale": null
+  },
+  {
+   "id": "immigration-safety",
+   "weight": 11,
+   "kind": "importance",
+   "profileKey": "safety",
+   "scale": null
+  },
+  {
+   "id": "immigration-income",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "income",
+   "scale": null
+  },
+  {
+   "id": "immigration-health",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "health",
+   "scale": null
+  },
+  {
+   "id": "immigration-education",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "education",
+   "scale": null
+  }
+ ],
+ "investment": [
+  {
+   "id": "investment-proximity",
+   "weight": 12,
+   "kind": "proximity",
+   "profileKey": null,
+   "scale": null
+  },
+  {
+   "id": "investment-climate",
+   "weight": 12,
+   "kind": "climate",
+   "profileKey": "climate",
+   "scale": null
+  },
+  {
+   "id": "investment-cost",
+   "weight": 14,
+   "kind": "target",
+   "profileKey": "costLevel",
+   "scale": 4
+  },
+  {
+   "id": "investment-urbanity",
+   "weight": 10,
+   "kind": "target",
+   "profileKey": "urbanity",
+   "scale": null
+  },
+  {
+   "id": "investment-size",
+   "weight": 6,
+   "kind": "target",
+   "profileKey": "size",
+   "scale": null
+  },
+  {
+   "id": "investment-safety",
+   "weight": 11,
+   "kind": "importance",
+   "profileKey": "safety",
+   "scale": null
+  },
+  {
+   "id": "investment-investment",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "investment",
+   "scale": null
+  },
+  {
+   "id": "investment-growth",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "growth",
+   "scale": null
+  },
+  {
+   "id": "investment-income",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "income",
+   "scale": null
+  },
+  {
+   "id": "investment-opportunity",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "opportunity",
+   "scale": null
+  }
+ ],
+ "wellness": [
+  {
+   "id": "wellness-proximity",
+   "weight": 12,
+   "kind": "proximity",
+   "profileKey": null,
+   "scale": null
+  },
+  {
+   "id": "wellness-climate",
+   "weight": 12,
+   "kind": "climate",
+   "profileKey": "climate",
+   "scale": null
+  },
+  {
+   "id": "wellness-cost",
+   "weight": 14,
+   "kind": "target",
+   "profileKey": "costLevel",
+   "scale": 4
+  },
+  {
+   "id": "wellness-urbanity",
+   "weight": 10,
+   "kind": "target",
+   "profileKey": "urbanity",
+   "scale": null
+  },
+  {
+   "id": "wellness-coastal",
+   "weight": 11,
+   "kind": "target",
+   "profileKey": "coastal",
+   "scale": null
+  },
+  {
+   "id": "wellness-size",
+   "weight": 6,
+   "kind": "target",
+   "profileKey": "size",
+   "scale": null
+  },
+  {
+   "id": "wellness-island",
+   "weight": 5,
+   "kind": "target",
+   "profileKey": "island",
+   "scale": null
+  },
+  {
+   "id": "wellness-popularity",
+   "weight": 8,
+   "kind": "target",
+   "profileKey": "popularity",
+   "scale": null
+  },
+  {
+   "id": "wellness-safety",
+   "weight": 11,
+   "kind": "importance",
+   "profileKey": "safety",
+   "scale": null
+  },
+  {
+   "id": "wellness-health",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "health",
+   "scale": null
+  }
+ ],
+ "other": [
+  {
+   "id": "other-proximity",
+   "weight": 12,
+   "kind": "proximity",
+   "profileKey": null,
+   "scale": null
+  },
+  {
+   "id": "other-climate",
+   "weight": 12,
+   "kind": "climate",
+   "profileKey": "climate",
+   "scale": null
+  },
+  {
+   "id": "other-cost",
+   "weight": 14,
+   "kind": "target",
+   "profileKey": "costLevel",
+   "scale": 4
+  },
+  {
+   "id": "other-urbanity",
+   "weight": 10,
+   "kind": "target",
+   "profileKey": "urbanity",
+   "scale": null
+  },
+  {
+   "id": "other-coastal",
+   "weight": 11,
+   "kind": "target",
+   "profileKey": "coastal",
+   "scale": null
+  },
+  {
+   "id": "other-size",
+   "weight": 6,
+   "kind": "target",
+   "profileKey": "size",
+   "scale": null
+  },
+  {
+   "id": "other-island",
+   "weight": 5,
+   "kind": "target",
+   "profileKey": "island",
+   "scale": null
+  },
+  {
+   "id": "other-popularity",
+   "weight": 8,
+   "kind": "target",
+   "profileKey": "popularity",
+   "scale": null
+  },
+  {
+   "id": "other-safety",
+   "weight": 11,
+   "kind": "importance",
+   "profileKey": "safety",
+   "scale": null
+  },
+  {
+   "id": "other-growth",
+   "weight": 10,
+   "kind": "importance",
+   "profileKey": "growth",
+   "scale": null
+  }
+ ]
+}
