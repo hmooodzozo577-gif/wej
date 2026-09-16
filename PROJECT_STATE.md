@@ -12,15 +12,31 @@ configuration, and current Git state outrank this document when they differ.
   extended admin Playwright sweep at 0 findings)
 - Working branch: `claude/modest-cray-34bvoa`
 - Previous production frontend commit: `f60efd93`
-- Production Worker source commit: `3fa14fa3` — DEPLOYED 2026-09-16 from run
-  35126621883 (Version ID `f1e2b232-6d61-4b9d-b155-11eb1c32ab32`). The run's
-  overall conclusion is `failure`, and that is by design: the workflow
-  deploys the Worker without the D1/R2 bindings and then exits 1 so the
-  provisioning failure is not concealed. The visa endpoints, the city
-  description endpoint and the admin surface are live; D1 and R2 are not
-  bound, so everything that needs them answers 503.
-- Production FRONTEND commit: `3fa14fa3` — DEPLOYED 2026-09-16 from Pages run
-  35126621769 (`build` success, `deploy` success, environment URL
+- Production Worker source commit: `077d76a5` — DEPLOYED 2026-09-16 from run
+  35154518086 (Version ID `365c337c-7327-4559-baf6-e3f293a3349a`).
+  **This run's overall conclusion is `success` — the first fully-green
+  Worker deploy in this project's history.** The "Diagnose Cloudflare token
+  capability" step, freshly measured on THIS run, now reads `OK` on all
+  four checks (identity, Workers, D1, R2) where the prior round read
+  `FAILED` on D1 and R2 with `Authentication error [code: 10000]`. The
+  account/token permission gap is CLOSED — not something this round set out
+  to fix; it was discovered as a side effect of deploying the admin
+  language-switcher change and is recorded here rather than left buried in
+  a deploy log. The Worker's own log confirms both bindings are live:
+  `env.PRODUCT_DB (wejhaty-product-data)` D1 Database and
+  `env.FEEDBACK_SCREENSHOTS (wejhaty-feedback-screenshots)` R2 Bucket.
+  Migrations reported "No migrations to apply" (they were already current —
+  applied in an earlier retried run, `deploy-worker.yml` run 35127073171,
+  attempt 4, which also concluded `success`). The R2 bucket already existed
+  and is owned by this account.
+  **What is confirmed:** the bindings exist and the Worker deployed with
+  them. **What is NOT independently verified in this round:** an actual
+  end-to-end write (submitting a real rating/report against the live API
+  and confirming a row lands in D1) — that is application-level
+  verification, out of scope for "add a language switcher only", and should
+  be the next thing checked before calling persistence production-accepted.
+- Production FRONTEND commit: `077d76a5` — DEPLOYED 2026-09-16 from Pages run
+  35154518098 (`build` success, `deploy` success, environment URL
   `https://hmooodzozo577-gif.github.io/wej/`). The Pages
   environment-protection blocker was cleared on 2026-09-16 by
   fast-forwarding `claude/marhaba-kxry8l`, the branch the environment
@@ -516,40 +532,52 @@ enumeration of the questionnaire's combinatorial answer space.
   halves (`TURNSTILE_SECRET_KEY` on the Worker, `VITE_TURNSTILE_SITE_KEY` on
   the build) are independently inert when unset, so they can be switched on
   in either order without a window where submissions are rejected.
-- D1 REALITY — nothing persists in production yet. Product-data requests
-  return `503 product_data_unavailable`; the rating UI therefore shows its
-  error-and-retry state honestly, which is exactly the message the user
-  reported and is NOT hidden.
-  MEASURED 2026-09-16, worker run 35126621883, the new read-only capability
-  diagnostic — the token's exact capability, no longer inferred:
+- D1 REALITY — UPDATED 2026-09-16, later the same day. The account/token
+  permission gap described below is now CLOSED.
+  MEASURED on worker run 35154518086 (the admin-language-switcher deploy),
+  the same read-only capability diagnostic that previously read FAILED:
 
       OK       identity (whoami)
       OK       Workers: list
-      FAILED   D1: list          — Authentication error [code: 10000]
-                                   on /accounts/*/d1/database
-      FAILED   R2: list buckets  — Authentication error [code: 10000]
-                                   on /accounts/*/r2/buckets
+      OK       D1: list
+      OK       R2: list buckets
 
-  So `CLOUDFLARE_API_TOKEN` CAN deploy Workers and CANNOT touch D1 or R2.
-  That is an account/token permission gap, not a code defect —
-  `READY — USER/ACCOUNT CONFIGURATION REQUIRED`. Required grants, at the
-  account level: Workers Scripts:Edit, D1:Edit, Workers R2 Storage:Edit
-  (see SECRETS.md).
-  Do not describe rating or feedback persistence as working until a deploy
-  run shows the provisioning step succeeding AND a row is confirmed in D1.
+  The Worker deployed WITH both bindings live:
+  `env.PRODUCT_DB (wejhaty-product-data)` (D1) and
+  `env.FEEDBACK_SCREENSHOTS (wejhaty-feedback-screenshots)` (R2). Migrations
+  report current (applied in an earlier retried run, 35127073171 attempt 4).
+  This run's overall conclusion is `success` for the first time — the
+  workflow's deliberate `exit 1`-on-provisioning-failure path was not
+  taken, because provisioning did not fail.
+  **Not yet independently verified:** an actual end-to-end write (submit a
+  real rating/report against the live API, confirm a row lands in D1). That
+  is application-level verification and was out of scope for the round that
+  found this; do it before describing rating/feedback persistence as
+  production-accepted. Until then: the bindings existing is confirmed, a
+  successful round-trip write is not.
+  Earlier same-day reading, for the record: worker run 35126621883 measured
+  `FAILED` on D1 and R2 with `Authentication error [code: 10000]` — that
+  reading is superseded by the OK reading above, not merged with it; the
+  underlying account permission changed between the two runs.
+  Required grants for reference, at the account level: Workers
+  Scripts:Edit, D1:Edit, Workers R2 Storage:Edit (see SECRETS.md).
 
-### Analytics plan — now BUILT, awaiting D1
+### Analytics plan — BUILT; D1 is now bound, real-data verification still pending
 
 What was previously "kept, not started" is implemented: migrations, the
-dashboard, the filters, Turnstile, Cloudflare Access support and the full
-panel set above. Two things are deliberately still open:
+dashboard, the filters, Turnstile, Cloudflare Access support, the AR/EN
+language switcher, and the full panel set above. Two things are still open:
 
 - **Export.** Not built. Nothing depends on it and no one has asked for it.
 - **Real data.** Every panel is verified against realistic stubbed shapes
-  (`app/scripts/admin-visual-check.mjs`, desktop and mobile, 0 findings) but
-  has never run against a populated D1, because D1 does not exist yet. The
-  queries are covered by tests; their OUTPUT is unverified until the account
-  gap above is closed.
+  (`app/scripts/admin-visual-check.mjs`, desktop and mobile in both
+  languages, 0 findings) but has never run against a populated D1. D1 IS
+  now bound in production (see D1 REALITY above), so this is reachable —
+  it just has not been done yet, because it requires live traffic or a
+  deliberate test write against the production API, which is
+  application-level verification distinct from what any round so far has
+  been scoped to do. The queries are covered by tests; their OUTPUT against
+  real rows is unverified.
 
 ## Destination images
 
@@ -621,12 +649,13 @@ panel set above. Two things are deliberately still open:
   cache) and 0004 (report workflow). The Worker deployment workflow creates
   D1/R2 and applies migrations when its Cloudflare token has D1, R2 and
   Workers edit permissions; it now prints a read-only per-capability
-  diagnostic first, so a failure names the missing permission. The last
-  observed state of the repository token is that it lacks D1 access.
+  diagnostic first, so a failure names the missing permission. As of
+  2026-09-16 (worker run 35154518086) the token HAS D1, R2 and Workers
+  access, and both bindings are live in production — see D1 REALITY above.
   `ADMIN_TOKEN` (or `ADMIN_ACCESS_AUD` + `ADMIN_ACCESS_TEAM_DOMAIN`),
-  `TURNSTILE_SECRET_KEY` and `VITE_TURNSTILE_SITE_KEY` are external account
-  configuration and are not yet set. SECRETS.md lists every one of them, what
-  it does, and what happens while it is unset.
+  `TURNSTILE_SECRET_KEY` and `VITE_TURNSTILE_SITE_KEY` remain external
+  account configuration and are not yet set. SECRETS.md lists every one of
+  them, what it does, and what happens while it is unset.
 - Visa data: no provider is configured. The abstraction, the canonical
   vocabulary, request validation (including the IL exclusion), the Sherpa
   adapter and its category mapping, failure behaviour, the Worker endpoint,
@@ -675,17 +704,12 @@ Do not resurrect without an explicit user decision:
 
 Phase 17 has not started. Current order:
 
-1. **UPDATE `CLOUDFLARE_API_TOKEN`.** This is now the single blocker holding
-   back the most product value. Until it has Workers Scripts:Edit, D1:Edit and
-   Workers R2 Storage:Edit at the account level:
-     * no rating or report can persist — the user's "تعذر حفظ التقييم الآن"
-       is correct and will keep appearing;
-     * no city description can be cached, so every card re-fetches (it still
-       works, just without a cache);
-     * the admin dashboard has nothing to show;
-     * R2 report screenshots cannot be stored.
-   The deploy workflow prints a per-capability diagnostic, so the next run's
-   log names exactly what is missing. Exact grants: SECRETS.md.
+1. **RESOLVED 2026-09-16 — `CLOUDFLARE_API_TOKEN` now has D1/R2/Workers
+   access; the bindings are live** (see D1 REALITY above). What used to
+   block here is closed. The one remaining step in this item, NOT yet
+   done: production-verify an actual end-to-end write (submit a real
+   rating/report and confirm a row in D1) before calling rating/feedback
+   persistence, admin real-data, or R2 screenshot storage accepted.
 2. AWAITING THE USER'S OWN PRODUCTION TEST of the six acceptance findings.
    Nothing in this round is user-accepted. The live app cannot be reached
    from the agent sandbox (403 at the egress proxy for `github.io` and
@@ -714,9 +738,11 @@ Phase 17 has not started. Current order:
    response, confirm in writing what the terms permit (caching, storage,
    attribution, and whether the data may inform ranking as well as display),
    then set `SHERPA_API_KEY` as a Worker secret.
-5. Once D1 exists: production-verify event, rating, feedback, retention, city
+5. D1 IS now bound (2026-09-16) — this item moves from "once D1 exists" to
+   ready-to-do: production-verify event, rating, feedback, retention, city
    description caching and the admin panels against real rows — and confirm
-   the failure path still fails honestly by a controlled safe test.
+   the failure path still fails honestly by a controlled safe test. Not yet
+   done; the bindings existing is not the same as a verified write.
 6. Configure admin access (`ADMIN_ACCESS_AUD` + `ADMIN_ACCESS_TEAM_DOMAIN`
    preferred, else `ADMIN_TOKEN`) and, if abuse appears, the two Turnstile
    keys. All are documented in SECRETS.md and all are inert until set.
