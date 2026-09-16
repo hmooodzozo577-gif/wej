@@ -1,36 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FeedbackStrings, Lang } from '../data/types';
 import { submitFeedback } from '../telemetry/productDataClient';
+import { TURNSTILE_SITE_KEY, loadTurnstile } from '../telemetry/turnstile';
 import { Select } from './Select';
-
-const TURNSTILE_SITE_KEY: string | undefined = import.meta.env.VITE_TURNSTILE_SITE_KEY;
-
-type TurnstileApi = {
-  render(element: HTMLElement, options: Record<string, unknown>): string;
-  remove(widgetId: string): void;
-};
-
-declare global {
-  interface Window { turnstile?: TurnstileApi }
-}
-
-function loadTurnstile(): Promise<TurnstileApi | undefined> {
-  if (!TURNSTILE_SITE_KEY) return Promise.resolve(undefined);
-  if (window.turnstile) return Promise.resolve(window.turnstile);
-  return new Promise((resolve) => {
-    const existing = document.querySelector<HTMLScriptElement>('script[data-wejhaty-turnstile]');
-    const script = existing ?? document.createElement('script');
-    const done = () => resolve(window.turnstile);
-    script.addEventListener('load', done, { once: true });
-    if (!existing) {
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-      script.async = true;
-      script.defer = true;
-      script.dataset.wejhatyTurnstile = 'true';
-      document.head.append(script);
-    }
-  });
-}
 
 export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; strings: FeedbackStrings; countryCode?: string }) {
   const [open, setOpen] = useState(false);

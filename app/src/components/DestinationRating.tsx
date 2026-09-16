@@ -11,11 +11,12 @@
 // star control: the requirement is stated before the traveller tries, the
 // request has a loading state, and a failure offers a retry that keeps what
 // was typed.
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { CatalogEntry, DestinationRatingStrings, Lang } from '../data/types';
 import type { DestinationNavigation } from '../state/types';
 import { submitRating } from '../telemetry/productDataClient';
 import { StarRating } from './StarRating';
+import { useTurnstile } from '../telemetry/turnstile';
 
 function originOf(navigation: DestinationNavigation | null): 'results' | 'explore' | 'surprise' | 'direct' {
   if (!navigation) return 'direct';
@@ -36,15 +37,19 @@ export function DestinationRating({
   const [score, setScore] = useState(0);
   const [comment, setComment] = useState('');
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
+  // Inert unless a Turnstile site key was configured at build time.
+  const turnstileSlot = useRef<HTMLDivElement | null>(null);
+  const turnstile = useTurnstile(turnstileSlot, status !== 'saved');
 
   const save = async () => {
-    if (!score || status === 'saving') return;
+    if (!score || status === 'saving' || turnstile.blocking) return;
     setStatus('saving');
     const response = await submitRating({
       kind: 'destination',
       overallScore: score,
       countryCode: destination.countryCode,
       origin: originOf(navigation),
+      ...(turnstile.token ? { turnstileToken: turnstile.token } : {}),
       // Spread rather than `comment: ... || undefined`: an explicit
       // `comment: undefined` is still a key on the wire.
       ...(comment.trim() ? { comment: comment.trim() } : {}),
@@ -79,10 +84,12 @@ export function DestinationRating({
         />
       </div>
 
+      {turnstile.required ? <div ref={turnstileSlot} className="turnstile-slot" /> : null}
+
       {!score ? <p className="rating-required">{strings.requiredNote}</p> : null}
       {status === 'failed' ? <p className="form-error" role="alert">{strings.failed}</p> : null}
 
-      <button type="button" className="btn btn-primary" disabled={!score || status === 'saving'} onClick={save}>
+      <button type="button" className="btn btn-primary" disabled={!score || status === 'saving' || turnstile.blocking} onClick={save}>
         {status === 'saving' ? strings.saving : status === 'failed' ? strings.retry : strings.submit}
       </button>
     </section>

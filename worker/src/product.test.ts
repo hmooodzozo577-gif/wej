@@ -196,14 +196,15 @@ describe('anonymous product data endpoints', () => {
     expect(response?.status).toBe(429);
   });
 
-  it('keeps admin summaries private behind the configured bearer secret', async () => {
+  // Admin authentication moved to admin.ts, which owns the whole private
+  // surface — see admin.test.ts. What product.ts must still guarantee is
+  // that it does NOT answer an admin path itself, because it does not
+  // authenticate one.
+  it('never answers an admin path, which would bypass admin authentication', async () => {
     const env = { PRODUCT_DB: new FakeDb(), ADMIN_TOKEN: 'fixture-admin-secret' } as unknown as ProductEnv;
-    const denied = await handleProductRequest(new Request('https://worker.example/api/admin/summary'), env, null);
-    expect(denied?.status).toBe(401);
-    const allowed = await handleProductRequest(new Request('https://worker.example/api/admin/summary', {
-      headers: { Authorization: 'Bearer fixture-admin-secret' },
-    }), env, null);
-    expect(allowed?.status).toBe(200);
+    for (const path of ['/admin', '/api/admin/summary', '/api/admin/analytics', '/api/admin/feedback']) {
+      expect(await handleProductRequest(new Request(`https://worker.example${path}`), env, null), path).toBeNull();
+    }
   });
 
   it('aggregates before deleting raw data older than 90 days', async () => {

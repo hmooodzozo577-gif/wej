@@ -10,6 +10,7 @@ import { rankDestinations } from '../engine';
 import { useAppState, useI18n } from '../state/hooks';
 import { trackEvent } from '../telemetry/productDataClient';
 import { PassportSelect } from '../components/PassportSelect';
+import { useVisaProviderActive } from '../visa/useVisaRequirements';
 
 const OPTIONAL_RESULTS_AFTER = 5;
 const ANSWER_TRANSITION_MS = 140;
@@ -28,6 +29,10 @@ export function Quiz() {
   // not a card below the results. It has to be answerable while the ranking
   // is still being decided; below the results it could not affect anything.
   const [passportStep, setPassportStep] = useState(false);
+  // Acceptance item #5 — asked once, fails closed: until a Worker actually
+  // reports a configured provider, the step says the personalization is not
+  // running rather than implying it is.
+  const visaProviderActive = useVisaProviderActive();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const validPurpose = isPurposeId(purposeParam);
@@ -127,6 +132,15 @@ export function Quiz() {
           <div className="q-eyebrow">{purposeName}</div>
           <h2 className="q-text">{t.passport.title}</h2>
           <p>{t.passport.body}</p>
+          {/* Acceptance item #5 — the explanation, in the order a traveller
+              needs it: what the answer is FOR, what it does to the results
+              right now (which today is nothing, because no provider is
+              live), and what we never ask for. The middle line is driven by
+              the Worker's real provider state, not by a hard-coded claim. */}
+          <p className="passport-why">{t.passport.purposeNote}</p>
+          <p className="passport-why">
+            {visaProviderActive ? t.passport.providerActiveNote : t.passport.providerInactiveNote}
+          </p>
           <PassportSelect />
           <p className="city-data-note">{t.passport.privacyNote}</p>
           <div className="quiz-checkpoint-actions">

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { I18N } from '../data/i18n';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { featuredCitiesOf } from '../data/featuredCities';
@@ -15,6 +15,19 @@ async function openCard(countryId: string, lang: 'ar' | 'en' = 'ar') {
   // not in the DOM on the tick the card opens.
   await waitFor(() => expect(result.container.querySelectorAll('.featured-city').length).toBeGreaterThan(0));
   return result;
+}
+
+/** Opens the card AND the first city's own <details>, which is where the
+ *  description and the facts live. */
+function renderCard(lang: 'ar' | 'en' = 'en') {
+  const japan = WORLD_CATALOG.find((country) => country.id === 'japan')!;
+  return render(<FeaturedCitiesCard destination={japan} lang={lang} strings={I18N[lang].detail} />);
+}
+
+async function openCardAndFirstCity(container: HTMLElement) {
+  fireEvent.click(screen.getByText(I18N.en.detail.prominentCities).closest('summary')!);
+  await waitFor(() => expect(container.querySelectorAll('.featured-city').length).toBeGreaterThan(0));
+  fireEvent.click(container.querySelector('.featured-city > summary')!);
 }
 
 describe('FeaturedCitiesCard', () => {
@@ -166,5 +179,100 @@ describe('the generated city dataset itself', () => {
         }
       }
     }
+  });
+});
+
+// Acceptance item #3 — the general description, on top of the facts.
+//
+// The description is fetched by the Worker and verified there; what this
+// file guards is the CONTRACT the card keeps with it: show a verified
+// description with its credit, show nothing at all when there is none, and
+// never lose the structured facts either way.
+describe('item #3 — a general description above the structured facts', () => {
+  const originalFetch = globalThis.fetch;
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
+
+  function stubWorker(descriptions: unknown[]) {
+    vi.stubEnv('VITE_TRAVEL_WORKER_URL', 'https://worker.test');
+    globalThis.fetch = vi.fn(async () => new Response(
+      JSON.stringify({ descriptions, attribution: { source: 'Wikipedia', license: 'CC BY-SA 4.0' } }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    )) as typeof fetch;
+  }
+
+  const verified = {
+    cityName: 'Tokyo',
+    countryCode: 'JP',
+    lang: 'en',
+    status: 'ok',
+    summary: 'Tokyo is the capital of Japan and the core of the largest metropolitan area in the world.',
+    source: 'Wikipedia',
+    sourceUrl: 'https://en.wikipedia.org/wiki/Tokyo',
+    license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+    fetchedAt: new Date().toISOString(),
+  };
+
+  it('renders a verified description with its source and licence credit', async () => {
+    stubWorker([verified]);
+    const { container } = renderCard('en');
+    await openCardAndFirstCity(container);
+
+    expect(await screen.findByText(/core of the largest metropolitan area/)).toBeInTheDocument();
+    expect(screen.getByText(/Description from Wikipedia/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'CC BY-SA 4.0' })).toHaveAttribute(
+      'href', 'https://creativecommons.org/licenses/by-sa/4.0/',
+    );
+    expect(screen.getByRole('link', { name: /Read the full article/ })).toHaveAttribute(
+      'href', 'https://en.wikipedia.org/wiki/Tokyo',
+    );
+  });
+
+  it('shows the structured facts and NO description text when nothing was verified', async () => {
+    stubWorker([{ ...verified, status: 'wrong_place', summary: null, source: null, sourceUrl: null, license: null }]);
+    const { container } = renderCard('en');
+    await openCardAndFirstCity(container);
+
+    await waitFor(() => expect(container.querySelector('.city-facts')).not.toBeNull());
+    expect(container.querySelector('.city-description')).toBeNull();
+    expect(screen.queryByText(/Description from/)).not.toBeInTheDocument();
+  });
+
+  it('shows the facts alone when the lookup fails outright', async () => {
+    vi.stubEnv('VITE_TRAVEL_WORKER_URL', 'https://worker.test');
+    globalThis.fetch = vi.fn(async () => { throw new Error('offline'); }) as typeof fetch;
+    const { container } = renderCard('en');
+    await openCardAndFirstCity(container);
+
+    await waitFor(() => expect(container.querySelector('.city-facts')).not.toBeNull());
+    expect(container.querySelector('.city-description')).toBeNull();
+  });
+
+  it('never asks for a description before the card is opened', async () => {
+    stubWorker([verified]);
+    renderCard('en');
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('sends no coordinates and nothing about the traveller', async () => {
+    stubWorker([verified]);
+    const { container } = renderCard('en');
+    await openCardAndFirstCity(container);
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalled());
+
+    const [, init] = (globalThis.fetch as unknown as { mock: { calls: [string, RequestInit][] } }).mock.calls[0]!;
+    const sent = JSON.parse(String(init.body));
+    const serialized = JSON.stringify(sent).toLowerCase();
+    for (const forbidden of ['lat', 'lng', 'latitude', 'longitude', 'coordinates', 'sessionid', 'passport']) {
+      expect(serialized, forbidden).not.toContain(forbidden);
+    }
+    expect(sent.countryCode).toBe('JP');
+    expect(Array.isArray(sent.cities)).toBe(true);
   });
 });

@@ -74,117 +74,56 @@ a.btn {
   gap: 14px;
 }
 
-/* Item #11 — "Surprise me", second design pass: a travel COMPASS, not a
-   wheel or a reel. Wejhaty's own ink dial with a gold needle; the needle
-   settles on the destination's real bearing from the traveller when their
-   location is known (see SurpriseDestination.tsx), and due north — claiming
-   nothing — when it is not. */
-.surprise-compass {
+/* Acceptance item #4 — "Surprise me", restored to the FLAG REEL that
+   preceded the travel-compass pass (recovered from commit 5838723). A
+   compact badge in Wejhaty's own gold-ring identity that cycles real
+   candidate flags while spinning and settles with one restrained pop —
+   never a themed slot machine, and no longer a compass dial. */
+.surprise-reel {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 128px;
-  height: 128px;
+  width: 88px;
+  height: 88px;
   flex: 0 0 auto;
+  border: 3px solid var(--gold);
   border-radius: 50%;
-  border: 2px solid var(--line);
-  background:
-    radial-gradient(circle at 50% 42%, var(--white) 0%, var(--paper-3) 72%, var(--paper-2) 100%);
-  box-shadow: inset 0 2px 10px rgba(16, 28, 44, 0.08), var(--shadow);
-}
-
-.compass-ticks {
-  position: absolute;
-  inset: 8px;
-  border-radius: 50%;
-}
-
-.compass-ticks i {
-  position: absolute;
-  inset-inline-start: 50%;
-  top: 0;
-  width: 1px;
-  height: 7px;
-  margin-inline-start: -0.5px;
-  background: var(--line);
-  transform-origin: 50% 52px;
-}
-
-/* The four quarter marks read as structure, not noise. */
-.compass-ticks i:nth-child(6n + 1) {
-  height: 11px;
-  width: 2px;
-  margin-inline-start: -1px;
-  background: var(--muted);
-}
-
-.compass-cardinal {
-  position: absolute;
-  font-size: 0.66rem;
-  font-weight: 800;
-  color: var(--muted);
-  letter-spacing: 0.04em;
-}
-
-.compass-n { top: 12px; color: var(--gold); }
-.compass-s { bottom: 12px; }
-.compass-e { inset-inline-end: 13px; }
-.compass-w { inset-inline-start: 13px; }
-
-/* A real needle: weighted north half in gold, south half muted, on a pivot.
-   Rotation is driven from JS, so only the transition is described here. */
-.compass-needle {
-  position: absolute;
-  top: 50%;
-  inset-inline-start: 50%;
-  width: 4px;
-  height: 78px;
-  margin: -39px 0 0 -2px;
-  border-radius: 4px;
-  background: linear-gradient(180deg, var(--gold-2) 0%, var(--gold) 46%, var(--line) 46%, var(--muted) 100%);
-  transform-origin: 50% 50%;
-  /* Long, heavily-eased settle: the deceleration is what makes it read as a
-     compass finding its bearing rather than a dial being reset. */
-  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 1px 3px rgba(16, 28, 44, 0.35);
-  pointer-events: none;
-}
-
-/* The centre window, where real candidate flags cycle. It sits ABOVE the
-   needle so the flag is never crossed by it. */
-.compass-window {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 54px;
-  height: 42px;
-  border-radius: 8px;
-  border: 2px solid var(--gold);
   background: var(--white);
+  box-shadow: 0 0 0 1px var(--line), var(--shadow);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(16, 28, 44, 0.22);
 }
 
-.surprise-compass.is-spinning .compass-window {
-  animation: compass-cycle 110ms ease-in-out infinite;
+.surprise-reel-placeholder {
+  width: 54px;
+  height: 40px;
+  border-radius: 6px;
+  background: var(--paper-2);
 }
 
-.surprise-compass.is-settled .compass-window {
-  animation: compass-settle 420ms cubic-bezier(0.34, 1.4, 0.64, 1);
+.surprise-reel.spinning {
+  animation: surprise-pulse 100ms ease-in-out infinite;
 }
 
-@keyframes compass-cycle {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.94); opacity: 0.82; }
+.surprise-reel.landed {
+  animation: surprise-land 360ms cubic-bezier(.34, 1.56, .64, 1);
 }
 
-@keyframes compass-settle {
-  0% { transform: scale(0.88); }
-  60% { transform: scale(1.06); }
+@keyframes surprise-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+}
+
+@keyframes surprise-land {
+  0% { transform: scale(0.85); }
+  60% { transform: scale(1.08); }
   100% { transform: scale(1); }
+}
+
+/* The live region that wraps the outcome. It is a layout-neutral wrapper:
+   the flex row is .surprise-stage above it and .surprise-result inside it. */
+.surprise-outcome {
+  min-width: 0;
 }
 
 .surprise-direction {
@@ -234,7 +173,11 @@ a.btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* 44px minimum touch target at every breakpoint. */
+  /* 44px minimum touch target at every breakpoint. The circle keeps the
+     exact geometry the user already accepted — the visible label is a
+     floating caption ABOVE it (see .hero-nav-name), never an expansion of
+     this box, because measurement showed an expanding box lands on the
+     country title at every width wide enough to show a label at all. */
   width: 44px;
   height: 44px;
   padding: 0;
@@ -263,29 +206,89 @@ a.btn {
 }
 
 .hero-nav-icon {
+  /* Fixed: an earlier pass let the icon share content sizing with a label
+     and the arrow was pushed out of its own 44px box at 390px. */
+  flex: 0 0 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 44px;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
 }
 
-/* data/icons.json's arrowStart/arrowEnd are physically left/right glyphs.
-   In RTL, "previous" sits at the inline start (the right-hand side) and
-   must point that way, so the glyph is mirrored. */
-html[dir='rtl'] .hero-nav-icon svg {
-  transform: scaleX(-1);
+/* Acceptance item #2 — the compact visible label.
+   MEASURED, not assumed (app/scripts/hero-label-qa.mjs). The first attempt
+   opened the control itself into a pill. At every width where a label is
+   worth showing, the opened pill overlapped the country title: the control's
+   row is y=118..165 inside the 280px hero, and the title block starts at
+   y=147..160 on desktop. Both languages, both themes, 8 of 8 widths.
+   So the label is NOT an expansion of the control. It is a small caption
+   floating in the clear photo band directly ABOVE the arrow (y=92..114),
+   which measurement confirms is clear of the title at every desktop width,
+   and the arrow itself keeps the accepted geometry exactly.
+   It is shown only at >=900px: below that the hero's inner block wraps (name
+   and match badge on separate rows) and climbs into the caption's band, and
+   a touch device has no hover to reveal it with anyway. There the
+   accessible name and the native tooltip carry the same words. */
+.hero-nav-name {
+  display: none;
 }
 
-.hero-nav:hover,
-.hero-nav:focus-visible {
-  background: rgba(16, 28, 44, 0.66);
-  border-color: rgba(255, 255, 255, 0.62);
-  transform: translateY(-50%) scale(1.06);
-}
+@media (min-width: 900px) {
+  .hero-nav-name {
+    position: absolute;
+    bottom: calc(100% + 9px);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    max-width: 210px;
+    padding: 6px 11px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 12px;
+    background: rgba(16, 28, 44, 0.62);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+    box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.7);
+    text-align: start;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(4px);
+    pointer-events: none;
+    transition: opacity 0.16s ease, transform 0.18s ease;
+  }
 
-.hero-nav:focus-visible {
-  outline: 2.5px solid var(--gold-2);
-  outline-offset: 2px;
+  /* Each caption grows inward from its own gutter, so neither can reach the
+     opposite edge of the hero. */
+  .hero-nav-previous .hero-nav-name {
+    inset-inline-start: 0;
+  }
+
+  .hero-nav-next .hero-nav-name {
+    inset-inline-end: 0;
+    text-align: end;
+  }
+
+  .hero-nav-name b {
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.78;
+  }
+
+  .hero-nav-name i {
+    font-style: normal;
+    font-size: 0.85rem;
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hero-nav:hover .hero-nav-name,
+  .hero-nav:focus-visible .hero-nav-name {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 620px) {
@@ -299,6 +302,9 @@ html[dir='rtl'] .hero-nav-icon svg {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-nav {
+    transition: none;
+  }
+  .hero-nav-name {
     transition: none;
   }
   .hero-nav:hover,
@@ -387,17 +393,14 @@ html[dir='rtl'] .hero-nav-icon svg {
   .surprise-stage, .surprise-result { align-items: flex-start; }
   /* A smaller dial on a phone, still comfortably above a 44px target for
      everything interactive around it. */
-  .surprise-compass { width: 104px; height: 104px; }
-  .compass-ticks i { transform-origin: 50% 40px; }
-  .compass-needle { height: 62px; margin-top: -31px; }
+  .surprise-reel { width: 72px; height: 72px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   /* The needle still moves to its final bearing — that position is
      information — but it gets there instantly, and nothing pulses. */
-  .compass-needle { transition: none; }
-  .surprise-compass.is-spinning .compass-window,
-  .surprise-compass.is-settled .compass-window { animation: none; }
+  .surprise-reel.spinning,
+  .surprise-reel.landed { animation: none; }
 }
 
 /* Item #3 — shared select shell: a leading icon slot, an always-visible
@@ -1505,4 +1508,45 @@ button.meta-chip.selected {
   .nav-right > .btn-primary {
     display: none;
   }
+}
+
+/* Acceptance item #5 — the passport explanation. Two short paragraphs above
+   the selector: what the answer is for, and what it does today. Quieter than
+   body copy, but not as quiet as the .city-data-note footnote below the
+   selector, because a traveller has to read these before answering. */
+.passport-why {
+  margin: 0 0 10px;
+  max-width: 62ch;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.quiz-passport .passport-why + .passport-why {
+  margin-bottom: 18px;
+}
+
+/* Acceptance item #3 — the city description, above its structured facts.
+   Reads as prose, not as another data row: full line length, normal body
+   weight, and a quiet credit line underneath carrying the source and the
+   licence the text is used under. */
+.city-description {
+  margin: 0 0 14px;
+}
+
+.city-description p {
+  margin: 0;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.city-description-credit {
+  margin-top: 6px !important;
+  font-size: 0.78rem;
+  color: var(--muted) !important;
+}
+
+.city-description-credit a {
+  color: inherit;
+  text-decoration: underline;
 }

@@ -77,3 +77,30 @@ export async function lookupVisaRequirements(
   }
   return { requirements, providerConfigured };
 }
+
+/** Acceptance item #5 — is live entry-requirement data actually active?
+ *
+ *  The passport step has to answer this BEFORE any destination exists, so it
+ *  cannot infer it from a requirements lookup. Fails CLOSED: any error, any
+ *  missing Worker URL, any non-200 means "not active". Claiming a live
+ *  provider we do not have would be exactly the kind of promise the passport
+ *  copy must not make. */
+export async function fetchVisaProviderStatus(): Promise<{ providerConfigured: boolean; provider: string | null }> {
+  const base = workerBaseUrl();
+  if (!base) return { providerConfigured: false, provider: null };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), LOOKUP_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${base}/api/visa/status`, { signal: controller.signal });
+    if (!response.ok) return { providerConfigured: false, provider: null };
+    const body = (await response.json()) as { providerConfigured?: unknown; provider?: unknown };
+    return {
+      providerConfigured: body.providerConfigured === true,
+      provider: typeof body.provider === 'string' ? body.provider : null,
+    };
+  } catch {
+    return { providerConfigured: false, provider: null };
+  } finally {
+    clearTimeout(timer);
+  }
+}

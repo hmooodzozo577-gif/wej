@@ -11,24 +11,30 @@
 // stated BEFORE the traveller tries; a request shows a loading state;
 // success and failure are both explicit, and failure offers a retry that
 // keeps what was typed.
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { Lang, ResultsStrings } from '../data/types';
 import type { RankedResult } from '../engine';
 import { submitRating } from '../telemetry/productDataClient';
 import { StarRating } from './StarRating';
+import { useTurnstile } from '../telemetry/turnstile';
 
 export function ResultRating({ results, lang, strings }: { results: RankedResult[]; lang: Lang; strings: ResultsStrings }) {
   const [score, setScore] = useState(0);
   const [comment, setComment] = useState('');
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
+  // Inert unless a Turnstile site key was configured at build time, which is
+  // how this stays a no-op in the current production build.
+  const turnstileSlot = useRef<HTMLDivElement | null>(null);
+  const turnstile = useTurnstile(turnstileSlot, status !== 'saved');
 
   const save = async () => {
-    if (!score || status === 'saving') return;
+    if (!score || status === 'saving' || turnstile.blocking) return;
     setStatus('saving');
     const response = await submitRating({
       kind: 'results',
       overallScore: score,
       ...(comment.trim() ? { comment: comment.trim() } : {}),
+      ...(turnstile.token ? { turnstileToken: turnstile.token } : {}),
       resultContext: results.slice(0, 5).map((item) => ({ countryCode: item.dest.countryCode, score: item.score })),
     }, { path: '/results', locale: lang });
     setStatus(response.ok ? 'saved' : 'failed');
@@ -61,11 +67,13 @@ export function ResultRating({ results, lang, strings }: { results: RankedResult
         />
       </div>
 
+      {turnstile.required ? <div ref={turnstileSlot} className="turnstile-slot" /> : null}
+
       {/* Said up front, not discovered by clicking a dead button. */}
       {!score ? <p className="rating-required">{strings.ratingRequiredNote}</p> : null}
       {status === 'failed' ? <p className="form-error" role="alert">{strings.ratingFailed}</p> : null}
 
-      <button type="button" className="btn btn-primary" disabled={!score || status === 'saving'} onClick={save}>
+      <button type="button" className="btn btn-primary" disabled={!score || status === 'saving' || turnstile.blocking} onClick={save}>
         {status === 'saving' ? strings.ratingSaving : status === 'failed' ? strings.ratingRetry : strings.submitRating}
       </button>
     </section>

@@ -55,6 +55,53 @@ describe('the passport step sits between the questionnaire and the results', () 
     expect(screen.getByText(I18N.ar.passport.privacyNote)).toBeInTheDocument();
   });
 
+  // Acceptance item #5 — the user could not tell WHY the passport was being
+  // asked for. Each of the five things the explanation has to convey is
+  // asserted against the copy, in both languages, so a future rewrite that
+  // drops one of them fails here rather than in production.
+  describe('item #5 — the explanation is complete and does not overclaim', () => {
+    it('shows the purpose line and the current-provider line on the step itself', async () => {
+      const { container } = renderQuiz();
+      await answerUntilCheckpoint(container);
+      fireEvent.click(screen.getByText(I18N.ar.quiz.showResultsNow));
+      await screen.findByText(I18N.ar.passport.title);
+
+      expect(screen.getByText(I18N.ar.passport.purposeNote)).toBeInTheDocument();
+      // No provider is configured in the test environment, so the honest
+      // "not switched on yet" line is the one that must render.
+      expect(screen.getByText(I18N.ar.passport.providerInactiveNote)).toBeInTheDocument();
+      expect(screen.queryByText(I18N.ar.passport.providerActiveNote)).not.toBeInTheDocument();
+    });
+
+    for (const lang of ['ar', 'en'] as const) {
+      it(`says it is optional, entry-requirement-scoped, not location, and number-free (${lang})`, () => {
+        const p = I18N[lang].passport;
+        const all = `${p.title} ${p.body} ${p.purposeNote} ${p.providerInactiveNote} ${p.privacyNote}`;
+
+        const optional = lang === 'ar' ? ['اختياري', 'تخطي'] : ['Optional', 'skip'];
+        const entry = lang === 'ar' ? ['متطلبات الدخول', 'التأشيرة'] : ['entry', 'visa'];
+        const notLocation = lang === 'ar' ? ['ليست موقعك'] : ['not your location'];
+        const noNumber = lang === 'ar' ? ['لا نطلب رقم جواز السفر'] : ['never ask for'];
+        const issuingCountry = lang === 'ar' ? ['الدولة التي أصدرت'] : ['country that issued'];
+
+        for (const group of [optional, entry, notLocation, noNumber, issuingCountry]) {
+          expect(group.some((phrase) => all.includes(phrase)), `${lang}: ${group.join(' / ')}`).toBe(true);
+        }
+      });
+
+      it(`does not claim the passport changes recommendations while no provider is live (${lang})`, () => {
+        const p = I18N[lang].passport;
+        const shownToday = `${p.body} ${p.purposeNote} ${p.providerInactiveNote} ${p.privacyNote}`;
+        // The only line allowed to say the ordering is affected is the one
+        // that renders once a provider actually reports itself configured.
+        const claims = lang === 'ar' ? 'تقديم الوجهة الأسهل' : 'order';
+        expect(p.providerActiveNote.includes(claims)).toBe(true);
+        const inactive = lang === 'ar' ? 'لا يغيّر اختيارك ترتيب التوصيات' : 'does not change your recommendations';
+        expect(shownToday.includes(inactive)).toBe(true);
+      });
+    }
+  });
+
   it('offers a real skip that goes on to the results', async () => {
     const { container } = renderQuiz();
     await answerUntilCheckpoint(container);

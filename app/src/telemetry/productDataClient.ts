@@ -4,12 +4,26 @@ const WORKER_BASE_URL: string | undefined = import.meta.env.VITE_TRAVEL_WORKER_U
 const SESSION_KEY = 'wejhaty.analytics.session';
 const FORBIDDEN_KEYS = new Set(['lat', 'lng', 'latitude', 'longitude', 'coordinates', 'ip', 'ipaddress', 'fingerprint', 'devicefingerprint']);
 
+/** Fallback when sessionStorage cannot be used at all (Safari private
+ *  browsing, blocked site data, an embedded webview). The identifier is
+ *  still random and still anonymous — it just does not survive a reload. */
+let memorySessionId: string | null = null;
+
 function sessionId(): string {
-  const existing = sessionStorage.getItem(SESSION_KEY);
-  if (existing) return existing;
-  const id = crypto.randomUUID();
-  sessionStorage.setItem(SESSION_KEY, id);
-  return id;
+  try {
+    const existing = sessionStorage.getItem(SESSION_KEY);
+    if (existing) return existing;
+  } catch {
+    // Reading threw — fall through to the in-memory identifier.
+  }
+  if (!memorySessionId) memorySessionId = crypto.randomUUID();
+  try {
+    sessionStorage.setItem(SESSION_KEY, memorySessionId);
+  } catch {
+    // Writing threw. A blocked sessionStorage must never throw out of a
+    // click handler: analytics is the least important thing on the page.
+  }
+  return memorySessionId;
 }
 
 function deviceClass(): string {
@@ -89,6 +103,9 @@ export async function submitRating(payload: {
   countryCode?: string;
   origin?: 'results' | 'explore' | 'surprise' | 'direct';
   resultContext?: { countryCode: string; score: number }[];
+  /** Present only when Turnstile is configured — a rating carries free text
+   *  and is challenged like a report. See telemetry/turnstile.ts. */
+  turnstileToken?: string;
 }, context: ProductContext) {
   return post('/api/ratings', { ...common(context), ...payload });
 }

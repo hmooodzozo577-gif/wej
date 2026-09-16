@@ -13,10 +13,14 @@
 //     solution, as the hero title — see wejhaty.css)
 //   - 44px minimum hit area at every breakpoint, so it stays usable on touch
 //   - the destination NAME is the control's accessible name and its native
-//     tooltip. It is deliberately NOT an inline expanding label: visual QA
-//     showed no collision-free room for one inside this hero (see the
-//     .hero-nav rules in wejhaty.css), and this way a screen-reader user, a
-//     keyboard user and a mouse user all get the same information
+//     tooltip, and — where the hero has the room for it — a visible label
+//     revealed on hover/focus. Acceptance item #2 asked for the visible
+//     "previous country" / "next country" wording, but only if it does not
+//     damage the photography, collide with the title, or clutter mobile.
+//     Measured outcome: at >=900px the control's row sits clear above the
+//     title block, so the label is shown there; below 900px the title block
+//     reaches the control's row (and there is no hover anyway), so the label
+//     is not rendered at all and the accessible name plus tooltip carry it
 //   - the arrow glyphs are physically left/right (see data/icons.json), so
 //     they are mirrored in RTL by CSS — in Arabic, "previous" points toward
 //     the start of the reading direction, which is the right-hand side
@@ -46,12 +50,18 @@ export function HeroNavButton({
       aria-label={`${label}: ${name}`}
       title={`${label}: ${name}`}
     >
-      {/* The destination name is the control's accessible name and its
-          native tooltip, not a visible inline label — see the .hero-nav
-          rules in wejhaty.css for why an inline one cannot fit this hero
-          without covering the country title. */}
       <span className="hero-nav-icon" aria-hidden="true">
         <Icon name={direction === 'previous' ? 'arrowStart' : 'arrowEnd'} size={20} stroke={2.4} />
+      </span>
+      {/* Acceptance item #2 — the compact visible label, revealed on hover
+          or keyboard focus and ONLY on viewports wide enough that the hero's
+          title block does not reach the control's row (see the .hero-nav-name
+          rules in wejhaty.css, which hide it entirely below 900px). It is
+          aria-hidden because the same words are already in the link's
+          accessible name; announcing them twice would be worse, not better. */}
+      <span className="hero-nav-name" aria-hidden="true">
+        <b>{label}</b>
+        <i>{name}</i>
       </span>
     </Link>
   );

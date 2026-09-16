@@ -8,8 +8,10 @@ import {
 } from './amadeus';
 import { handleProductRequest, runProductRetention, type ProductEnv } from './product';
 import { handleVisaRequest, type VisaEnv } from './visa';
+import { handleCityDescriptionRequest, type CityDescriptionEnv } from './cityDescriptions';
+import { handleAdminRequest, type AdminEnv } from './admin';
 
-export type Env = AmadeusEnv & ProductEnv & VisaEnv;
+export type Env = AmadeusEnv & ProductEnv & VisaEnv & CityDescriptionEnv & AdminEnv;
 
 const ALLOWED_ORIGIN = 'https://hmooodzozo577-gif.github.io';
 
@@ -115,6 +117,12 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   const url = new URL(request.url);
   const origin = request.headers.get('Origin');
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
+  // The private admin surface owns its own authentication, so it is matched
+  // BEFORE the public product endpoints — an admin path must never fall
+  // through to a handler that does not check credentials.
+  const adminResponse = await handleAdminRequest(request, env, (body, status) => json(body, status, null));
+  if (adminResponse) return adminResponse;
+
   const productResponse = await handleProductRequest(request, env, origin);
   if (productResponse) return productResponse;
   // Item #12 — passport/visa entry requirements. Returns 200 with
@@ -122,6 +130,13 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   // answer and the state this deployment is actually in (see visa.ts).
   const visaResponse = await handleVisaRequest(request, env, (body, status) => json(body, status, origin));
   if (visaResponse) return visaResponse;
+
+  // Acceptance item #3 — per-city general descriptions, fetched from
+  // Wikipedia's public REST API by this Worker (the build sandbox cannot
+  // reach it) and cached in D1. Always a 200 with an honest status, never a
+  // fabricated description. See cityDescriptions.ts.
+  const cityResponse = await handleCityDescriptionRequest(request, env, (body, status) => json(body, status, origin));
+  if (cityResponse) return cityResponse;
   if (url.pathname !== '/api/travel/flights') {
     return json({ error: 'not_found', message: 'Unknown endpoint.' }, 404, origin);
   }

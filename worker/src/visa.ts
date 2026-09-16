@@ -228,6 +228,21 @@ export async function handleVisaRequest(
   json: (body: unknown, status: number) => Response,
 ): Promise<Response | null> {
   const url = new URL(request.url);
+  // Acceptance item #5 — the passport step must be able to tell the
+  // traveller, BEFORE they choose, whether live entry-requirement data is
+  // actually active. It cannot learn that from a requirements lookup,
+  // because it has no destination yet. This is that answer, and nothing
+  // else: no credential, no provider configuration, no traveller data.
+  if (url.pathname === '/api/visa/status') {
+    if (request.method !== 'GET') {
+      return json({ error: 'method_not_allowed', message: 'Use GET.' }, 405);
+    }
+    const configured = resolveVisaProvider(env);
+    return json(
+      { providerConfigured: configured.isConfigured(), provider: configured.isConfigured() ? configured.name : null },
+      200,
+    );
+  }
   if (url.pathname !== '/api/visa/requirements') return null;
   if (request.method !== 'POST') {
     return json({ error: 'method_not_allowed', message: 'Use POST.' }, 405);

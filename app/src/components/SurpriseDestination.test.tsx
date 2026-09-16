@@ -43,13 +43,57 @@ describe('SurpriseDestination', () => {
   });
 
 
-  // Item #11 — the compass. The needle's resting angle is a real bearing
-  // when there is a location to measure from, and a claim of nothing when
-  // there is not.
-  describe('the compass points at something real, or at nothing', () => {
+  // Acceptance item #4 — the reel is restored, and the later fixes that
+  // arrived with the compass pass survive the rollback.
+  describe('the restored flag reel', () => {
     const japan = WORLD_CATALOG.find((country) => country.id === 'japan')!;
 
-    it('captions the result with the real direction when the traveller shared a location', () => {
+    it('renders a flag reel, and none of the compass dial it replaced', () => {
+      vi.useFakeTimers();
+      const { container } = render(
+        <MemoryRouter><SurpriseDestination candidates={[japan]} lang="en" strings={I18N.en.explore} /></MemoryRouter>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: I18N.en.explore.surpriseSpin }));
+      act(() => vi.advanceTimersByTime(900));
+      // A real flag in the reel, not an abstract disc.
+      expect(container.querySelector('.surprise-reel svg')).not.toBeNull();
+      // And nothing left of the rejected design.
+      expect(container.querySelector('.surprise-compass')).toBeNull();
+      expect(container.querySelector('.compass-needle')).toBeNull();
+      expect(container.querySelector('.compass-ticks')).toBeNull();
+      expect(container.querySelector('.compass-window')).toBeNull();
+    });
+
+    it('keeps the reel out of the accessibility tree and announces the outcome once', () => {
+      vi.useFakeTimers();
+      const { container } = render(
+        <MemoryRouter><SurpriseDestination candidates={[japan]} lang="en" strings={I18N.en.explore} /></MemoryRouter>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: I18N.en.explore.surpriseSpin }));
+      // The cycled flags must never be announced; only the outcome region is live.
+      expect(container.querySelector('.surprise-reel')).toHaveAttribute('aria-hidden', 'true');
+      const live = container.querySelectorAll('[aria-live]');
+      expect(live).toHaveLength(1);
+      expect(live[0]).toHaveClass('surprise-outcome');
+      act(() => vi.advanceTimersByTime(900));
+      expect(container.querySelector('.surprise-reel')).toHaveAttribute('aria-hidden', 'true');
+    });
+
+    it('survives a blocked sessionStorage instead of throwing out of the click handler', () => {
+      vi.useFakeTimers();
+      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('QuotaExceededError');
+      });
+      render(<MemoryRouter><SurpriseDestination candidates={[japan]} lang="en" strings={I18N.en.explore} /></MemoryRouter>);
+      expect(() => {
+        fireEvent.click(screen.getByRole('button', { name: I18N.en.explore.surpriseSpin }));
+        act(() => vi.advanceTimersByTime(900));
+      }).not.toThrow();
+      expect(screen.getByRole('link', { name: /Explore country/ })).toBeInTheDocument();
+      vi.restoreAllMocks();
+    });
+
+    it('still captions the result with the real direction when a location was shared', () => {
       vi.useFakeTimers();
       // Riyadh: Japan is clearly to the east/north-east.
       render(
@@ -72,48 +116,9 @@ describe('SurpriseDestination', () => {
         expect(screen.queryByText(label)).toBeNull();
       }
     });
-
-    it('rotates the needle to the destination\'s bearing, not to a random angle', () => {
-      vi.useFakeTimers();
-      const { container } = render(
-        <MemoryRouter>
-          <SurpriseDestination candidates={[japan]} lang="en" strings={I18N.en.explore} origin={{ lat: 24.7, lng: 46.7 }} />
-        </MemoryRouter>,
-      );
-      fireEvent.click(screen.getByRole('button', { name: I18N.en.explore.surpriseSpin }));
-      act(() => vi.advanceTimersByTime(900));
-      const needle = container.querySelector('.compass-needle') as HTMLElement;
-      const degrees = Number(/rotate\((-?[\d.]+)deg\)/.exec(needle.style.transform)?.[1] ?? '0') % 360;
-      // Japan from Riyadh is roughly east-north-east.
-      expect(degrees).toBeGreaterThan(40);
-      expect(degrees).toBeLessThan(110);
-    });
-
-    it('settles due north when there is no bearing to show', () => {
-      vi.useFakeTimers();
-      const { container } = render(
-        <MemoryRouter><SurpriseDestination candidates={[japan]} lang="en" strings={I18N.en.explore} /></MemoryRouter>,
-      );
-      fireEvent.click(screen.getByRole('button', { name: I18N.en.explore.surpriseSpin }));
-      act(() => vi.advanceTimersByTime(900));
-      const needle = container.querySelector('.compass-needle') as HTMLElement;
-      const degrees = Number(/rotate\((-?[\d.]+)deg\)/.exec(needle.style.transform)?.[1] ?? '0') % 360;
-      expect(degrees).toBe(0);
-    });
-
-    it('renders the dial with real flags in its window, not an abstract disc', () => {
-      vi.useFakeTimers();
-      const { container } = render(
-        <MemoryRouter><SurpriseDestination candidates={[japan]} lang="en" strings={I18N.en.explore} /></MemoryRouter>,
-      );
-      fireEvent.click(screen.getByRole('button', { name: I18N.en.explore.surpriseSpin }));
-      act(() => vi.advanceTimersByTime(900));
-      expect(container.querySelector('.compass-window svg')).not.toBeNull();
-      expect(container.querySelectorAll('.compass-ticks i').length).toBe(24);
-    });
   });
 
-  it('item #11: skips the sweep and lands directly on the winner when reduced motion is preferred', () => {
+  it('skips the reel and lands directly on the winner when reduced motion is preferred', () => {
     vi.useFakeTimers();
     vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }));
     const candidates = [

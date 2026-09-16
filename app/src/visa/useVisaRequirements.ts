@@ -9,7 +9,7 @@
 // The distinction matters to a traveller: "we can't tell you" for a reason
 // they can understand is not the same as a silent blank.
 import { useEffect, useState } from 'react';
-import { lookupVisaRequirements } from './visaClient';
+import { fetchVisaProviderStatus, lookupVisaRequirements } from './visaClient';
 import type { VisaRequirement } from './types';
 
 export interface VisaRequirementsState {
@@ -60,4 +60,25 @@ export function useVisaRequirements(
     providerConfigured: current ? loaded.providerConfigured : false,
     loading: !!requestKey && !current,
   };
+}
+
+/** Acceptance item #5 — whether live entry-requirement data is active,
+ *  asked once, before any destination is known.
+ *
+ *  Starts false and stays false until a Worker actually says otherwise, so
+ *  the passport step never implies a personalization it cannot deliver. */
+export function useVisaProviderActive(): boolean {
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchVisaProviderStatus().then((status) => {
+      if (!cancelled) setActive(status.providerConfigured);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return active;
 }

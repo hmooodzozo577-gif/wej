@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
+import { I18N } from '../data/i18n';
 import { AppStateProvider } from '../state/AppStateContext';
 import { Destination } from './Destination';
 
@@ -77,13 +78,40 @@ describe('contextual destination navigation', () => {
     it('carries the destination name in both the accessible name and the tooltip', () => {
       renderWithState({ navigation: { source: 'explore', ids: ['france', 'japan', 'ksa'], index: 1 } });
       const previous = screen.getByRole('link', { name: /الدولة السابقة: فرنسا/ });
-      // There is no visible inline label (it could not fit this hero without
-      // covering the country title — see .hero-nav in wejhaty.css), so the
-      // name has to reach a mouse user through the tooltip and everyone else
-      // through the accessible name.
       expect(previous).toHaveAttribute('title', expect.stringContaining('فرنسا'));
-      expect(previous.querySelector('.hero-nav-name')).toBeNull();
-      expect(previous.textContent).toBe('');
+    });
+
+    // Acceptance item #2 — the visible label. It carries the direction wording
+    // the user asked for AND the destination name, it is hidden from the
+    // accessibility tree because the link's own accessible name already says
+    // both, and CSS collapses it to nothing below 900px (see wejhaty.css).
+    it('renders a compact visible label without changing the accessible name', () => {
+      renderWithState({ navigation: { source: 'explore', ids: ['france', 'japan', 'ksa'], index: 1 } });
+      const previous = screen.getByRole('link', { name: 'الدولة السابقة: فرنسا' });
+      const next = screen.getByRole('link', { name: 'الدولة التالية: المملكة العربية السعودية' });
+
+      const previousLabel = previous.querySelector('.hero-nav-name');
+      expect(previousLabel).not.toBeNull();
+      expect(previousLabel).toHaveAttribute('aria-hidden', 'true');
+      expect(previousLabel!.textContent).toContain('الدولة السابقة');
+      expect(previousLabel!.textContent).toContain('فرنسا');
+
+      const nextLabel = next.querySelector('.hero-nav-name');
+      expect(nextLabel!.textContent).toContain('الدولة التالية');
+      expect(nextLabel!.textContent).toContain('المملكة العربية السعودية');
+
+      // The accessible name must still be exactly one copy of each word —
+      // an aria-hidden label is how the visible text avoids doubling it.
+      expect(previous.getAttribute('aria-label')).toBe('الدولة السابقة: فرنسا');
+    });
+
+    it('uses the English direction wording in English', () => {
+      // The direction labels come from the same i18n keys the pager used, so
+      // asserting the Arabic pair above and the English keys here covers both.
+      expect(I18N.en.detail.previousCountry).toBe('Previous country');
+      expect(I18N.en.detail.nextCountry).toBe('Next country');
+      expect(I18N.ar.detail.previousCountry).toBe('الدولة السابقة');
+      expect(I18N.ar.detail.nextCountry).toBe('الدولة التالية');
     });
   });
 });

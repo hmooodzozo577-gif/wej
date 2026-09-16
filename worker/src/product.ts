@@ -169,6 +169,20 @@ async function handleRating(request: Request, env: ProductEnv, origin: string | 
     return response({ error: 'invalid_request' }, 400, origin);
   }
 
+  // A rating carries free text, so it is an abuse surface in the same class
+  // as a report and gets the same challenge. Analytics events do NOT — they
+  // are automatic, they carry no free text, and challenging them would mean
+  // challenging every page view.
+  const turnstileToken = optionalText(body.turnstileToken, 2048) ?? null;
+  if (!await verifyTurnstile(turnstileToken, env.TURNSTILE_SECRET_KEY)) {
+    return response({ error: 'challenge_failed' }, 403, origin);
+  }
+
+  // One traveller cannot flood the table from a single session.
+  const recent = await env.PRODUCT_DB!.prepare(`SELECT COUNT(*) AS count FROM ratings
+    WHERE session_id = ? AND created_at >= datetime('now', '-1 hour')`).bind(sessionId).first<{ count: number }>();
+  if ((recent?.count ?? 0) >= 20) return response({ error: 'rate_limited' }, 429, origin);
+
   await upsertSession(env.PRODUCT_DB!, body, request);
   await env.PRODUCT_DB!.prepare(`INSERT INTO ratings
     (id, session_id, created_at, overall_score, reasons_json, country_votes_json, result_context_json, kind, comment, country_code, origin)
@@ -257,56 +271,6 @@ async function handleFeedback(request: Request, env: ProductEnv, origin: string 
   return response({ saved: true, referenceId }, 201, origin);
 }
 
-function secureEqual(actual: string | null, expected: string): boolean {
-  if (!actual || actual.length !== expected.length) return false;
-  let difference = 0;
-  for (let index = 0; index < actual.length; index += 1) difference |= actual.charCodeAt(index) ^ expected.charCodeAt(index);
-  return difference === 0;
-}
-
-async function handleAdmin(request: Request, env: ProductEnv) {
-  if (!env.ADMIN_TOKEN) return response({ error: 'admin_not_configured' }, 503, null);
-  const bearer = request.headers.get('Authorization')?.replace(/^Bearer\s+/i, '') ?? null;
-  if (!secureEqual(bearer, env.ADMIN_TOKEN)) return response({ error: 'unauthorized' }, 401, null);
-  const db = env.PRODUCT_DB!;
-  const [sessions, events, ratings, feedback, topEvents, topCountries, topPages, dailySessions, ratingDistribution, recentFeedback, recentRatings] = await Promise.all([
-    db.prepare('SELECT COUNT(*) AS count FROM sessions').first(),
-    db.prepare("SELECT COUNT(*) AS count FROM events WHERE occurred_at >= datetime('now', '-7 days')").first(),
-    db.prepare('SELECT COUNT(*) AS count, ROUND(AVG(overall_score), 2) AS average FROM ratings').first(),
-    db.prepare("SELECT COUNT(*) AS count FROM feedback WHERE status = 'new'").first(),
-    db.prepare("SELECT name, COUNT(*) AS count FROM events WHERE occurred_at >= datetime('now', '-30 days') GROUP BY name ORDER BY count DESC LIMIT 20").all(),
-    db.prepare("SELECT edge_country AS country, COUNT(*) AS count FROM sessions WHERE edge_country IS NOT NULL GROUP BY edge_country ORDER BY count DESC LIMIT 20").all(),
-    db.prepare("SELECT path, COUNT(*) AS count FROM events WHERE name = 'page_view' AND occurred_at >= datetime('now', '-30 days') GROUP BY path ORDER BY count DESC LIMIT 20").all(),
-    db.prepare("SELECT substr(first_seen_at, 1, 10) AS day, COUNT(*) AS sessions FROM sessions WHERE first_seen_at >= datetime('now', '-30 days') GROUP BY day ORDER BY day").all(),
-    db.prepare('SELECT overall_score AS score, COUNT(*) AS count FROM ratings GROUP BY overall_score ORDER BY overall_score').all(),
-    db.prepare("SELECT reference_id, created_at, type, message, email, country_code, path, locale, screenshot_key, status FROM feedback ORDER BY created_at DESC LIMIT 100").all(),
-    db.prepare("SELECT created_at, overall_score, reasons_json, country_votes_json, result_context_json FROM ratings ORDER BY created_at DESC LIMIT 100").all(),
-  ]);
-  return response({
-    sessions,
-    eventsLast7Days: events,
-    ratings,
-    newFeedback: feedback,
-    topEvents: topEvents.results ?? [],
-    topCountries: topCountries.results ?? [],
-    topPages: topPages.results ?? [],
-    dailySessions: dailySessions.results ?? [],
-    ratingDistribution: ratingDistribution.results ?? [],
-    recentFeedback: recentFeedback.results ?? [],
-    recentRatings: recentRatings.results ?? [],
-  }, 200, null);
-}
-
-function adminPage(): Response {
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wejhaty Product Data</title><style>
-  :root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#101722;color:#edf2f7}body{margin:0;padding:32px}.wrap{max-width:1200px;margin:auto}h1{margin-top:0}.login,.panel{background:#172231;border:1px solid #344255;border-radius:18px;padding:20px;margin:18px 0}.row{display:flex;gap:10px;flex-wrap:wrap}input,button{font:inherit;padding:10px 13px;border-radius:10px;border:1px solid #526176;background:#101722;color:#fff}button{background:#d9a85c;color:#101722;font-weight:800;cursor:pointer}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.metric{background:#1d2a39;padding:16px;border-radius:14px}.metric b{display:block;font-size:1.8rem;margin-top:6px}pre{white-space:pre-wrap;word-break:break-word;max-height:65vh;overflow:auto;background:#0b111a;padding:16px;border-radius:12px}small{color:#afbac7}.error{color:#ff9b8e}</style></head><body><main class="wrap"><h1>Wejhaty Product Data</h1><p><small>Anonymous product analytics, ratings, and feedback. Protected API access is required.</small></p><form id="login" class="login"><label>Admin token <input id="token" type="password" autocomplete="current-password" required></label> <button>Load dashboard</button><span id="error" class="error"></span></form><section id="content" hidden><div class="metrics" id="metrics"></div><div class="panel"><h2>Complete data snapshot</h2><pre id="raw"></pre></div></section></main><script>
-  const login=document.getElementById('login'),error=document.getElementById('error'),content=document.getElementById('content'),metrics=document.getElementById('metrics'),raw=document.getElementById('raw');
-  const card=(label,value)=>{const el=document.createElement('div');el.className='metric';const s=document.createElement('span');s.textContent=label;const b=document.createElement('b');b.textContent=String(value??0);el.append(s,b);return el};
-  login.addEventListener('submit',async(e)=>{e.preventDefault();error.textContent='';const token=document.getElementById('token').value;try{const r=await fetch('/api/admin/summary',{headers:{Authorization:'Bearer '+token}});if(!r.ok)throw new Error(r.status===401?'Invalid token':'Dashboard unavailable');const d=await r.json();metrics.replaceChildren(card('Sessions',d.sessions?.count),card('Events · 7 days',d.eventsLast7Days?.count),card('Ratings',d.ratings?.count),card('Average rating',d.ratings?.average),card('New feedback',d.newFeedback?.count));raw.textContent=JSON.stringify(d,null,2);content.hidden=false}catch(err){error.textContent=err.message||'Unable to load'}});
-  </script></body></html>`;
-  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY', 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'" } });
-}
-
 export async function runProductRetention(env: ProductEnv): Promise<void> {
   if (!env.PRODUCT_DB) return;
   const db = env.PRODUCT_DB;
@@ -335,13 +299,10 @@ export async function runProductRetention(env: ProductEnv): Promise<void> {
 
 export async function handleProductRequest(request: Request, env: ProductEnv, origin: string | null): Promise<Response | null> {
   const path = new URL(request.url).pathname;
-  if (path === '/admin') return request.method === 'GET' ? adminPage() : response({ error: 'method_not_allowed' }, 405, origin);
-  if (!['/api/events', '/api/ratings', '/api/feedback', '/api/admin/summary'].includes(path)) return null;
+  // /admin and /api/admin/* are served by admin.ts, which owns
+  // authentication for the whole private surface.
+  if (!['/api/events', '/api/ratings', '/api/feedback'].includes(path)) return null;
   if (!env.PRODUCT_DB) return response({ error: 'product_data_unavailable' }, 503, origin);
-  if (path === '/api/admin/summary') {
-    if (request.method !== 'GET') return response({ error: 'method_not_allowed' }, 405, origin);
-    return handleAdmin(request, env);
-  }
   if (request.method !== 'POST') return response({ error: 'method_not_allowed' }, 405, origin);
   if (path === '/api/events') return handleEvent(request, env, origin);
   if (path === '/api/ratings') return handleRating(request, env, origin);

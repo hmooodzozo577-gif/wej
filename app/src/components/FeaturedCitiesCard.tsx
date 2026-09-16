@@ -11,13 +11,18 @@
 // those differs city by city because it is read from data, not written from
 // a template. A field with no source value is omitted rather than filled in.
 //
-// What is deliberately absent: "known for", "notable attractions",
-// "character". No licensed offline source covers those for ~830 cities in
-// this project, and inventing them is the one thing the brief rules out.
-import { useState } from 'react';
+// Acceptance item #3 added the missing half: a GENERAL DESCRIPTION above
+// those facts — what the city is, what it is known for, what kind of place
+// it is. It is fetched from Wikipedia by the Worker (see
+// worker/src/cityDescriptions.ts), verified against the city's real
+// coordinates so a namesake can never be described in its place, and
+// rendered WITH its source and licence. A city with no verified article
+// shows its facts alone; nothing is ever written to fill the gap.
+import { useEffect, useState } from 'react';
 import type { CatalogEntry, DetailStrings, Lang } from '../data/types';
 import type { FeaturedCity } from '../data/featuredCities';
 import { formatNumber } from '../data/format';
+import { lookupCityDescriptions, type CityDescription } from '../cities/cityDescriptionClient';
 import { Icon } from './Icon';
 
 function cityName(city: FeaturedCity, lang: Lang) {
@@ -87,9 +92,50 @@ function CityFacts({ city, strings }: { city: FeaturedCity; strings: DetailStrin
   return <dl className="city-facts">{facts}</dl>;
 }
 
+/** The description block: the prose, then who it came from and under what
+ *  licence. The attribution is not optional decoration — CC BY-SA requires
+ *  it, and a traveller deserves to know whose words these are. */
+function CityDescriptionBlock({ description, strings }: { description: CityDescription; strings: DetailStrings }) {
+  return (
+    <div className="city-description">
+      <p>{description.summary}</p>
+      <p className="city-description-credit">
+        {strings.cityDescriptionSource.replace('{source}', description.source ?? '')}{' '}
+        {description.sourceUrl ? (
+          <a href={description.sourceUrl} target="_blank" rel="noreferrer">{strings.cityDescriptionReadMore}</a>
+        ) : null}{' '}
+        {description.licenseUrl ? (
+          <a href={description.licenseUrl} target="_blank" rel="noreferrer">{description.license}</a>
+        ) : description.license}
+      </p>
+    </div>
+  );
+}
+
 export function FeaturedCitiesCard({ destination, lang, strings }: { destination: CatalogEntry; lang: Lang; strings: DetailStrings }) {
   const [cities, setCities] = useState<FeaturedCity[] | null>(null);
   const [open, setOpen] = useState(false);
+  const [descriptions, setDescriptions] = useState<Map<string, CityDescription>>(new Map());
+
+  // Asked for once the card is open and its city list is known — never on
+  // page load, so a traveller who does not open the card costs nothing.
+  useEffect(() => {
+    if (!open || !cities?.length) return;
+    let cancelled = false;
+    void lookupCityDescriptions(
+      destination.countryCode,
+      // The article title is the city's English name: the Arabic Wikipedia
+      // resolves it through a redirect, and it is the only name every city
+      // in this data set actually has.
+      cities.map((city) => ({ name: city.nameEn, title: lang === 'ar' && city.nameAr !== city.nameEn ? city.nameAr : city.nameEn })),
+      lang,
+    ).then((result) => {
+      if (!cancelled) setDescriptions(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, cities, destination.countryCode, lang]);
 
   return (
     <details
@@ -114,6 +160,9 @@ export function FeaturedCitiesCard({ destination, lang, strings }: { destination
               <span className="meta-chip">{roleLabel(city, strings)}</span>
             </summary>
             <div className="featured-city-body">
+              {descriptions.get(city.nameEn)
+                ? <CityDescriptionBlock description={descriptions.get(city.nameEn)!} strings={strings} />
+                : null}
               <CityFacts city={city} strings={strings} />
               <a href={sourceUrl(city)} target="_blank" rel="noreferrer">{strings.cityDataSource}</a>
             </div>

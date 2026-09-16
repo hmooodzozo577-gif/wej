@@ -474,6 +474,10 @@ export interface DetailStrings {
    *  facts, not hand-written editorial, with source-language names where no
    *  Arabic form is available. */
   cityFactsNote: string;
+  /** Acceptance item #3 — attribution for a fetched city description.
+   *  '{source}' is replaced with the source's own name. */
+  cityDescriptionSource: string;
+  cityDescriptionReadMore: string;
   cityNoFacts: string;
   loadingCities: string;
 }
@@ -634,6 +638,15 @@ export interface PassportStrings {
   title: string;
   /** Says in one line WHY it is asked, before it is asked. */
   body: string;
+  /** Acceptance item #5 — what the passport country IS for, in plain words:
+   *  entry and visa requirements, not the traveller's current location. */
+  purposeNote: string;
+  /** Shown while NO live entry-requirement provider is active, which is the
+   *  current production state. It must say that the personalization is not
+   *  running yet, so the step never implies an effect it does not have. */
+  providerInactiveNote: string;
+  /** Shown instead of providerInactiveNote once a provider is live. */
+  providerActiveNote: string;
   label: string;
   placeholder: string;
   searchPlaceholder: string;
