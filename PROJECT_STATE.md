@@ -5,7 +5,7 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 12
+- State document version: 13
 - Last verified date: 2026-09-16
 - Working branch: `claude/modest-cray-34bvoa`
 - Previous production frontend commit: `f60efd93`
@@ -15,11 +15,16 @@ configuration, and current Git state outrank this document when they differ.
   deploys the Worker without the D1/R2 bindings and then exits 1 so the
   provisioning failure is not concealed. The visa endpoint and the extended
   ratings endpoint are live; D1 is still unavailable.
-- Production FRONTEND commit: still `f60efd93`. This round is NOT deployed —
-  see the Pages blocker in Provider and external state.
+- Production FRONTEND commit: `e3f8e4a8` — DEPLOYED 2026-09-16 from Pages run
+  35097793153 (`build` success, `deploy` success, environment URL
+  `https://hmooodzozo577-gif.github.io/wej/`, `pages_build_version`
+  `e3f8e4a8f798add2068dc60efd290952d690d8ad`). The Pages environment-protection
+  blocker is CLEARED: `claude/marhaba-kxry8l` was fast-forwarded from
+  `4f3d419` to `e3f8e4a8` (remedy (b) below), and its push trigger deployed
+  normally. No history was rewritten and no workflow was modified.
 - Git state re-verified directly before writing this: working tree clean, no
-  merge/rebase in progress, branch pushed to
-  `origin/claude/modest-cray-34bvoa`.
+  merge/rebase in progress; `origin/claude/modest-cray-34bvoa` and
+  `origin/claude/marhaba-kxry8l` are both at `e3f8e4a8`.
 - 2026-09-16 USER ACCEPTANCE ROUND. The user personally tested the deployed
   build and reported 14 findings. All 14 are implemented and verified
   locally (718/718 frontend tests, 90/90 worker tests, TypeScript, oxlint,
@@ -27,14 +32,13 @@ configuration, and current Git state outrank this document when they differ.
   Arabic RTL / English LTR x 390px / 1280px x light / dark, and 26
   delivery-critical behaviour checks driven against the production build
   with the Worker stubbed to return exactly what production returns today).
-  The WORKER is deployed. The FRONTEND is not, and nothing in this round is
-  user-accepted.
-- THREE external dependencies now block delivery. None is a code defect and
-  none may be worked around unofficially:
-  1. GitHub Pages environment protection (NEW, 2026-09-16) — blocks the
-     frontend deploy. See Provider and external state.
-  2. Cloudflare D1/R2 (`Authentication error [code: 10000]`).
-  3. A visa-data provider account.
+  The WORKER and the FRONTEND are both deployed. Nothing in this round is
+  user-accepted — the user's own production test is still outstanding.
+- TWO external dependencies remain. Neither is a code defect and neither may
+  be worked around unofficially:
+  1. Cloudflare D1/R2 (`Authentication error [code: 10000]`).
+  2. A visa-data provider account.
+  The third (GitHub Pages environment protection) was cleared on 2026-09-16.
 
 Always recover with `git branch --show-current`, `git status --short`,
 `git fetch origin`, and `git log --oneline -30`.
@@ -456,25 +460,28 @@ this round and must not be started without an explicit instruction.
   the extended ratings endpoint are live. That run's conclusion is `failure`
   purely because the workflow deliberately exits 1 after reporting the D1/R2
   provisioning failure — the Worker upload itself succeeded in the same run.
-- GITHUB PAGES DEPLOY IS BLOCKED (2026-09-16). Run 35094587702 on
+- GITHUB PAGES DEPLOY IS UNBLOCKED (2026-09-16, resolved). Run 35094587702 on
   `claude/modest-cray-34bvoa`: the `build` job succeeded and uploaded the
   Pages artifact; the `deploy` job was rejected outright with
   `Branch "claude/modest-cray-34bvoa" is not allowed to deploy to
   github-pages due to environment protection rules.` Every previous
   successful Pages deploy came from `claude/marhaba-kxry8l`, which is the
-  branch the environment permits. The production frontend therefore remains
-  `f60efd93`.
-  This is a repository-settings gate the repo owner controls, in the same
-  class as the Cloudflare token, and was deliberately NOT worked around.
-  Two legitimate remedies, either of which is the owner's call:
+  branch the environment permits.
+  This is a repository-settings gate the repo owner controls, and it was
+  deliberately NOT worked around. Of the two legitimate remedies, the user
+  chose (b):
     (a) add `claude/modest-cray-34bvoa` to the `github-pages` environment's
         deployment branch policy (Settings -> Environments -> github-pages),
         then re-run workflow `deploy-pages.yml` on this branch; or
-    (b) fast-forward `claude/marhaba-kxry8l` to `08ebdcb5` — a clean
-        fast-forward, since that branch is still at `4f3d419` and `4f3d419`
-        is an ancestor of `08ebdcb5` — whose `app/**` push trigger then
-        deploys Pages normally.
-  `READY — USER/ACCOUNT CONFIGURATION REQUIRED`.
+    (b) fast-forward `claude/marhaba-kxry8l` — the branch the environment
+        already permits — whose `app/**` push trigger then deploys Pages
+        normally. DONE: `4f3d419..e3f8e4a8`, a clean fast-forward (0 commits
+        behind on the left side, 11 ahead), pushed without force and without
+        rewriting history.
+  Pages run 35097793153 then deployed `e3f8e4a8f798add2068dc60efd290952d690d8ad`:
+  `build` success, `deploy` success, environment URL
+  `https://hmooodzozo577-gif.github.io/wej/`.
+  `RESOLVED`.
 
 ## Cancelled/out-of-scope features
 
@@ -488,12 +495,14 @@ Do not resurrect without an explicit user decision:
 
 Phase 17 has not started. Current order:
 
-1. UNBLOCK THE FRONTEND DEPLOY. The Worker is live from `08ebdcb5`; the
-   frontend is not, because the `github-pages` environment does not permit
-   `claude/modest-cray-34bvoa`. Either widen that environment's deployment
-   branch policy and re-run `deploy-pages.yml`, or fast-forward
-   `claude/marhaba-kxry8l` to `08ebdcb5`. Then obtain the user's own
-   production test — nothing from that round is user-accepted yet.
+1. AWAITING THE USER'S OWN PRODUCTION TEST. The Worker is live from
+   `08ebdcb5` and the frontend is live from `e3f8e4a8`, so the full
+   acceptance round is now reachable at
+   `https://hmooodzozo577-gif.github.io/wej/`. Nothing from that round is
+   user-accepted yet. Note the live app cannot be reached from the agent
+   sandbox (egress proxy returns 403 for `github.io` and `workers.dev`), so
+   no claim in this document is live-UI-verified; the deploy facts above come
+   from the GitHub Actions run itself.
 2. AWAITING A PRODUCT DECISION — visa scoring. The current visa layer only
    reorders destinations already within 3 Phase 14 points of each other. The
    alternative, NOT implemented, is to blend visa convenience into the
