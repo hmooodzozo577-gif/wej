@@ -336,6 +336,45 @@ html[dir='rtl'] .hero-nav-icon svg {
    affordance), and a clear keyboard focus ring. Used by the theme switch,
    every Explore filter, and the feedback type field, so a dropdown looks
    and behaves the same everywhere in the app. */
+/* Item #5 — per-city sourced facts, replacing the two template paragraphs
+   every city used to share. A definition list keeps label/value pairing
+   semantic, and the grid keeps labels aligned without a table. */
+.city-facts {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.city-fact {
+  display: grid;
+  grid-template-columns: minmax(120px, 34%) 1fr;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.city-fact dt {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.city-fact dd {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  /* Region and airport names can be long and are often in a source language
+     with no break opportunities; never let one push the card sideways. */
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+  .city-fact {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
+
 /* A .field whose control is the custom listbox uses a <span> heading rather
    than a <label> (a button is not labelable), so it needs the same visual
    treatment the generated .field label rule gives a real <label>. */

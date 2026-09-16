@@ -449,13 +449,31 @@ export interface DetailStrings {
   showLess: string;
   capitalCity: string;
   majorCity: string;
-  capitalCityDescription: string;
-  majorCityDescription: string;
-  capitalCityBestFor: string;
-  majorCityBestFor: string;
+  /** Item #5 — the two template descriptions these replace
+   *  (capitalCityDescription / majorCityDescription) were the whole reason
+   *  every city read the same: they were fixed sentences chosen by city TYPE,
+   *  so five cities in a country differed only by name and population. These
+   *  are field LABELS for per-city sourced facts instead of prose. */
+  largestCity: string;
+  /** "No. {rank} by population" — {rank} is substituted at render time. */
+  cityPopulationRank: string;
+  cityRegion: string;
+  cityTimezone: string;
+  cityFromCapital: string;
+  /** "{distance} km {direction} of the capital" */
+  cityFromCapitalValue: string;
+  cityNearestAirport: string;
+  /** Eight compass points, keyed n/ne/e/se/s/sw/w/nw. */
+  cityBearings: Record<string, string>;
+  cityDistanceUnit: string;
   populationEstimate: string;
   cityDataSource: string;
   cityDataNote: string;
+  /** Says plainly what this section is and is not — sourced structured
+   *  facts, not hand-written editorial, with source-language names where no
+   *  Arabic form is available. */
+  cityFactsNote: string;
+  cityNoFacts: string;
   loadingCities: string;
 }
 
