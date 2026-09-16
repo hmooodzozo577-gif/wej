@@ -1,4 +1,5 @@
-// Visual QA for the private admin dashboard (worker/src/adminPage.ts).
+// Visual QA for the private admin dashboard (worker/src/adminPage.ts),
+// including the AR/EN language switcher added on top of it.
 //
 // The dashboard is served by the Worker, so QA'ing it does not need a
 // deployment — it needs the page's HTML and a stubbed API. Both are local:
@@ -15,10 +16,11 @@
 //
 // Every /api/admin/* call is intercepted and answered with realistic shapes,
 // so no real product data is involved and no credential is needed. It fails
-// on a page error, a console error, horizontal overflow, an empty panel, or
-// a report detail view that will not open.
-// Visual QA for the admin dashboard, against a stubbed API so the panels
-// render with realistic shapes without needing a live D1.
+// on a page error, a console error, horizontal overflow, an empty panel, a
+// report detail view that will not open, OR — the language feature's own
+// checks — a dir/lang mismatch, a language that fails to persist across a
+// reload, or ANY visible text shaped like a raw "section.key" translation
+// key (a walk of every text node on the page, not just known labels).
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 
@@ -102,47 +104,205 @@ const FEEDBACK = {
   ],
 };
 
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const TAB_LABELS = {
+  en: ['Overview', 'Funnel', 'Recommendation quality', 'Countries', 'Discovery', 'Location', 'Reports', 'Technical', 'Content'],
+  ar: ['نظرة عامة', 'مسار الاستبيان', 'جودة التوصيات', 'الدول', 'الاستكشاف', 'الموقع', 'البلاغات', 'تقني', 'المحتوى'],
+};
+const OPEN_LABEL = { en: 'Open', ar: 'فتح' };
+
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH ?? '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
 const findings = [];
-for (const [name, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 900 }]]) {
-  const ctx = await browser.newContext({ viewport });
-  const page = await ctx.newPage();
-  page.on('pageerror', (error) => findings.push(name + ': page error ' + error.message));
-  page.on('console', (message) => { if (message.type() === 'error') findings.push(name + ': console error ' + message.text()); });
+
+async function stubApi(page) {
   await page.route('**/api/admin/analytics*', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ANALYTICS) }));
   await page.route('**/api/admin/feedback*', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(FEEDBACK) }));
+}
+
+/** Every visible text node on the page. Used both for the raw-key check and
+ *  for spot-checking that known labels actually changed language. */
+async function visibleText(page) {
+  return page.evaluate(() => document.body.innerText);
+}
+
+/** The invariant the whole feature rests on: no text node anywhere may look
+ *  like a dot-path translation key (e.g. "overview.sessions") — the exact
+ *  shape a missing/broken lookup would produce if it ever fell back to
+ *  returning its own key instead of an empty string. */
+async function assertNoRawKeys(page, tag) {
+  const offenders = await page.evaluate(() => {
+    const pattern = /^[a-z][a-zA-Z]*(\.[a-zA-Z_]+)+$/;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const hits = [];
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const text = (node.textContent || '').trim();
+      if (text && pattern.test(text)) hits.push(text);
+    }
+    return hits;
+  });
+  for (const offender of offenders) findings.push(`${tag}: raw translation key visible: "${offender}"`);
+}
+
+// --- 1. Functional language-switch check: clicking, dir/lang, persistence -
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (error) => findings.push('lang-switch: page error ' + error.message));
+  await stubApi(page);
   await page.goto('http://127.0.0.1:5179/admin.html');
-  await page.waitForTimeout(700);
-
-  for (const tab of ['Overview', 'Funnel', 'Recommendation quality', 'Countries', 'Discovery', 'Location', 'Reports', 'Technical', 'Content']) {
-    const button = page.locator('nav.tabs button', { hasText: tab });
-    if (!(await button.count())) { findings.push(name + ': missing tab ' + tab); continue; }
-    await button.first().click();
-    await page.waitForTimeout(450);
-    const slug = tab.toLowerCase().replace(/[^a-z]+/g, '-');
-    await page.screenshot({ path: '/tmp/admin-' + name + '-' + slug + '.png', fullPage: false });
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
-    if (overflow) findings.push(name + ': horizontal overflow on ' + tab);
-    const empty = await page.locator('#body').evaluate((node) => node.textContent.trim().length);
-    if (empty < 40) findings.push(name + ': ' + tab + ' rendered essentially nothing');
-  }
-
-  // Report detail + status workflow.
-  await page.locator('nav.tabs button', { hasText: 'Reports' }).first().click();
   await page.waitForTimeout(500);
-  const open = page.locator('#reportList button', { hasText: 'Open' });
-  if (await open.count()) {
-    await open.first().click();
-    await page.waitForTimeout(400);
-    const visible = await page.locator('#reportDialog').evaluate((node) => node.open === true);
-    if (!visible) findings.push(name + ': the report detail dialog did not open');
-    await page.screenshot({ path: '/tmp/admin-' + name + '-report-detail.png' });
-  } else {
-    findings.push(name + ': no report row to open');
-  }
+
+  const dirLang = () => page.evaluate(() => ({ dir: document.documentElement.dir, lang: document.documentElement.lang }));
+
+  const initial = await dirLang();
+  if (initial.lang !== 'en' || initial.dir !== 'ltr') findings.push(`lang-switch: default should be en/ltr, got ${initial.lang}/${initial.dir}`);
+
+  await page.click('#langAr');
+  await page.waitForTimeout(200);
+  const afterAr = await dirLang();
+  if (afterAr.lang !== 'ar' || afterAr.dir !== 'rtl') findings.push(`lang-switch: clicking AR should set ar/rtl, got ${afterAr.lang}/${afterAr.dir}`);
+  const arPressed = await page.getAttribute('#langAr', 'aria-pressed');
+  const enPressed = await page.getAttribute('#langEn', 'aria-pressed');
+  if (arPressed !== 'true' || enPressed !== 'false') findings.push(`lang-switch: aria-pressed should reflect AR active, got ar=${arPressed} en=${enPressed}`);
+  // The stub answers /api/admin/analytics unconditionally, so load()
+  // succeeds immediately and the dashboard (not the login form) is what is
+  // actually on screen from here on — check chrome that is really visible,
+  // not the now-hidden sign-in form.
+  const arText = await visibleText(page);
+  if (!arText.includes('وجهتي')) findings.push('lang-switch: header did not switch to Arabic brand text');
+  if (!arText.includes('عوامل التصفية')) findings.push('lang-switch: filters panel title did not switch to Arabic');
+  if (arText.includes('Filters') || arText.includes('Overview')) findings.push('lang-switch: English chrome text survived the switch to Arabic');
+  await assertNoRawKeys(page, 'lang-switch (ar, no auth)');
+
+  await page.click('#langEn');
+  await page.waitForTimeout(200);
+  const afterEn = await dirLang();
+  if (afterEn.lang !== 'en' || afterEn.dir !== 'ltr') findings.push(`lang-switch: clicking EN should revert to en/ltr, got ${afterEn.lang}/${afterEn.dir}`);
+  const enText = await visibleText(page);
+  if (!enText.includes('Filters')) findings.push('lang-switch: English chrome text did not return after switching back');
+  if (enText.includes('عوامل التصفية')) findings.push('lang-switch: Arabic chrome text survived the switch back to English');
+
+  // Persistence: switch to Arabic, reload, and confirm it survives without
+  // re-clicking — this is the localStorage round-trip, not the button.
+  await page.click('#langAr');
+  await page.waitForTimeout(200);
+  await page.reload();
+  await page.waitForTimeout(500);
+  const afterReload = await dirLang();
+  if (afterReload.lang !== 'ar' || afterReload.dir !== 'rtl') findings.push(`lang-switch: Arabic choice did not survive a reload, got ${afterReload.lang}/${afterReload.dir}`);
+  const arPressedAfterReload = await page.getAttribute('#langAr', 'aria-pressed');
+  if (arPressedAfterReload !== 'true') findings.push('lang-switch: switcher UI did not reflect the persisted language after reload');
+
+  // Reset to English and confirm THAT persists too, both directions covered.
+  await page.click('#langEn');
+  await page.waitForTimeout(200);
+  await page.reload();
+  await page.waitForTimeout(500);
+  const backToEn = await dirLang();
+  if (backToEn.lang !== 'en' || backToEn.dir !== 'ltr') findings.push(`lang-switch: English choice did not survive a reload, got ${backToEn.lang}/${backToEn.dir}`);
+
   await ctx.close();
 }
+
+// --- 2. Safe-storage fallback: localStorage blocked must not break the page
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (error) => findings.push('storage-blocked: page error ' + error.message));
+  await stubApi(page);
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'localStorage', {
+      get() { throw new Error('blocked, as in Safari private browsing'); },
+    });
+  });
+  await page.goto('http://127.0.0.1:5179/admin.html');
+  await page.waitForTimeout(500);
+  const stillDefaultsCorrectly = await page.evaluate(() => document.documentElement.lang === 'en');
+  if (!stillDefaultsCorrectly) findings.push('storage-blocked: default language was not applied when localStorage throws');
+  await page.click('#langAr');
+  await page.waitForTimeout(200);
+  const stillSwitches = await page.evaluate(() => document.documentElement.lang === 'ar' && document.documentElement.dir === 'rtl');
+  if (!stillSwitches) findings.push('storage-blocked: switching language still failed to apply even though it cannot persist');
+  await ctx.close();
+}
+
+// --- 3. Per-language, per-viewport sweep: screenshots + panel/report checks
+for (const lang of ['en', 'ar']) {
+  for (const [name, viewport] of [['desktop', { width: 1440, height: 1000 }], ['mobile', { width: 390, height: 900 }]]) {
+    const tag = `${name}-${lang}`;
+    const ctx = await browser.newContext({ viewport });
+    const page = await ctx.newPage();
+    page.on('pageerror', (error) => findings.push(tag + ': page error ' + error.message));
+    page.on('console', (message) => { if (message.type() === 'error') findings.push(tag + ': console error ' + message.text()); });
+    // Pre-seed the persisted language before the page's own script runs, so
+    // this sweep also exercises "arrives with a stored preference already
+    // set" — the cold-start half of persistence, distinct from the
+    // click-then-reload check above.
+    await page.addInitScript((value) => { try { localStorage.setItem('wejhaty.admin.lang', value); } catch { /* ignore */ } }, lang);
+    await stubApi(page);
+    await page.goto('http://127.0.0.1:5179/admin.html');
+    await page.waitForTimeout(600);
+
+    const dirLang = await page.evaluate(() => ({ dir: document.documentElement.dir, lang: document.documentElement.lang }));
+    const expectedDir = lang === 'ar' ? 'rtl' : 'ltr';
+    if (dirLang.lang !== lang || dirLang.dir !== expectedDir) findings.push(`${tag}: expected ${lang}/${expectedDir}, got ${dirLang.lang}/${dirLang.dir}`);
+
+    const overflowAtLogin = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+    if (overflowAtLogin) findings.push(`${tag}: horizontal overflow on the sign-in screen`);
+    await page.screenshot({ path: `/tmp/admin-${tag}-login.png`, fullPage: false });
+    await assertNoRawKeys(page, `${tag} (login)`);
+
+    for (const label of TAB_LABELS[lang]) {
+      const button = page.locator('nav.tabs button', { hasText: label });
+      if (!(await button.count())) { findings.push(`${tag}: missing tab "${label}"`); continue; }
+      await button.first().click();
+      await page.waitForTimeout(450);
+      const slug = label.replace(/[^\p{L}\p{N}]+/gu, '-');
+      await page.screenshot({ path: `/tmp/admin-${tag}-${slug}.png`, fullPage: false });
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
+      if (overflow) findings.push(`${tag}: horizontal overflow on ${label}`);
+      const empty = await page.locator('#body').evaluate((node) => node.textContent.trim().length);
+      if (empty < 20) findings.push(`${tag}: ${label} rendered essentially nothing`);
+      await assertNoRawKeys(page, `${tag} (${label})`);
+    }
+
+    // Report detail + status workflow, in this language.
+    await page.locator('nav.tabs button', { hasText: TAB_LABELS[lang][6] }).first().click();
+    await page.waitForTimeout(500);
+    const open = page.locator('#reportList button', { hasText: OPEN_LABEL[lang] });
+    if (await open.count()) {
+      await open.first().click();
+      await page.waitForTimeout(400);
+      const isOpen = await page.locator('#reportDialog').evaluate((node) => node.open === true);
+      if (!isOpen) findings.push(`${tag}: the report detail dialog did not open`);
+      const dialogOverflow = await page.evaluate(() => {
+        const dialog = document.getElementById('reportDialog');
+        return dialog ? dialog.scrollWidth > dialog.clientWidth + 4 : false;
+      });
+      if (dialogOverflow) findings.push(`${tag}: report detail dialog overflows horizontally`);
+      await assertNoRawKeys(page, `${tag} (report detail)`);
+      await page.screenshot({ path: `/tmp/admin-${tag}-report-detail.png` });
+
+      // Exercise the status workflow itself, in this language: change status
+      // and save. The PATCH is stubbed to a generic 200 so this proves the
+      // UI round-trip, not the Worker's own persistence logic (covered by
+      // admin.test.ts).
+      await page.route('**/api/admin/feedback/status', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ updated: true }) }));
+      const statusSelect = page.locator('#reportStatus');
+      await statusSelect.selectOption('resolved');
+      await page.click('#reportSave');
+      await page.waitForTimeout(400);
+      const dialogClosed = await page.locator('#reportDialog').evaluate((node) => node.open === false);
+      if (!dialogClosed) findings.push(`${tag}: saving a report status did not close the dialog`);
+    } else {
+      findings.push(`${tag}: no report row to open`);
+    }
+
+    await ctx.close();
+  }
+}
+
 await browser.close();
 fs.writeFileSync('/tmp/admin-findings.txt', findings.join('\n') || 'none');
 console.log('=== ' + findings.length + ' finding(s) ===');
 for (const finding of [...new Set(findings)]) console.log('-', finding);
+process.exit(findings.length ? 1 : 0);

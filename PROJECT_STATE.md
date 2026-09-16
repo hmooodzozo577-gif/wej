@@ -5,8 +5,11 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 14
-- Last verified date: 2026-09-16
+- State document version: 15
+- Last verified date: 2026-09-16 (admin AR/EN language switcher round: 164
+  worker tests, 736 frontend tests, TypeScript and oxlint clean on both,
+  frontend production build, worker `wrangler deploy --dry-run`, and the
+  extended admin Playwright sweep at 0 findings)
 - Working branch: `claude/modest-cray-34bvoa`
 - Previous production frontend commit: `f60efd93`
 - Production Worker source commit: `3fa14fa3` — DEPLOYED 2026-09-16 from run
@@ -453,6 +456,41 @@ enumeration of the questionnaire's combinatorial answer space.
   Panels: Overview, Funnel, Recommendation quality, Countries, Discovery,
   Location, Reports, Technical, Content. Every panel obeys one filter bar —
   date range, language, device, purpose, country, and min/max rating.
+- ADMIN LANGUAGE — Arabic / English, a header pill switcher ("AR | EN"),
+  independent of the public site's own language. Independent is correct
+  here, not a compromise: the public site does not persist a language
+  choice to localStorage at all (it defaults to Arabic every session — see
+  Product below), so there was nothing shared to preserve. The admin's
+  choice persists under its own key, `wejhaty.admin.lang`, defaulting to
+  English, with a try/catch around every localStorage read/write so a
+  blocked store (Safari private mode) degrades to "does not persist"
+  rather than breaking the page.
+  Switching sets `<html lang>`/`dir` and re-renders every panel from the
+  data ALREADY on screen — no re-fetch, no re-authentication. The
+  dictionary (`worker/src/adminI18n.ts`) is the single source of truth,
+  typed so English and Arabic are forced to carry the same keys; it is
+  serialized once per request into the page (`adminPage.ts` cannot
+  literally reuse the public app's React-bundle i18n — different runtime,
+  no build step — so it re-expresses the same flat-dictionary-plus-t()
+  pattern instead). A missing key falls back to English, then to an empty
+  string — NEVER to the raw key — enforced by both a static dictionary test
+  and a runtime Playwright walk of every text node on the page.
+  Report workflow statuses (new/triaged/in_progress/resolved/declined) and
+  report types are translated as UI labels while the value sent to the API
+  stays the fixed English enum code, the same pattern already used for the
+  device/purpose filters. Country codes, dates, reference IDs and other
+  underlying data values are deliberately left untranslated. A traveller's
+  own free-text report/comment gets `dir="auto"` rather than inheriting the
+  page's direction, so an English report does not right-align inside the
+  Arabic dashboard — found and fixed during this round's RTL visual QA.
+  Verified: `worker/src/adminI18n.test.ts` (dictionary completeness, no
+  leftover English in the Arabic dictionary, no raw-key-shaped value),
+  `worker/src/adminPage.test.ts` (the switcher and the embedded dictionary
+  are actually in the generated page), and `app/scripts/admin-visual-check.mjs`
+  extended to sweep Arabic/English × desktop/mobile (4 combinations) plus
+  dedicated functional checks — click-to-switch, dir/lang correctness,
+  persistence across a real reload, the blocked-storage fallback, and a
+  full-page raw-translation-key scan — all at 0 findings.
 - ADMIN AUTHENTICATION, two independent mechanisms (see SECRETS.md):
     * Cloudflare Access (preferred). Setting `ADMIN_ACCESS_AUD` and
       `ADMIN_ACCESS_TEAM_DOMAIN` makes the Worker verify the Access JWT
@@ -557,6 +595,7 @@ panel set above. Two things are deliberately still open:
 | Admin auth and routing | `worker/src/admin.ts` |
 | Analytics queries | `worker/src/analytics.ts` |
 | Admin dashboard UI | `worker/src/adminPage.ts` |
+| Admin dashboard i18n dictionary | `worker/src/adminI18n.ts` |
 | Turnstile (shared) | `app/src/telemetry/turnstile.ts` |
 | Rating forms | `app/src/components/ResultRating.tsx`, `DestinationRating.tsx` |
 | Travel Worker | `worker/` |
