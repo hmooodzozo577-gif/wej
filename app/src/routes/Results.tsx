@@ -54,7 +54,10 @@ export function Results() {
   const first = top5[0];
   const rest = top5.slice(1);
   const resultNavigationIds = top5.map((item) => item.dest.id);
-  const whyFirst = buildWhyText(lang, state.purpose, first.reasons, first.dest, first.score);
+  // Item #10 — the explanation is built from the traveller's OWN answers,
+  // so they have to be passed in; without them it could only name engine
+  // dimensions, which is exactly the problem being fixed.
+  const whyFirst = buildWhyText(lang, state.purpose, first.reasons, first.dest, first.score, state.answers);
 
   return (
     <div className="results-wrap">
@@ -118,7 +121,7 @@ export function Results() {
               lang={lang}
               t={t}
               matchScore={item.score}
-              whyText={buildWhyText(lang, state.purpose!, item.reasons, item.dest, item.score)}
+              whyText={buildWhyText(lang, state.purpose!, item.reasons, item.dest, item.score, state.answers)}
               purpose={state.purpose!}
               navigation={{ source: 'results', ids: resultNavigationIds, index: index + 1 }}
             />

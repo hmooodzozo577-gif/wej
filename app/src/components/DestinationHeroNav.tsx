@@ -19,38 +19,10 @@
 //     they are mirrored in RTL by CSS — in Arabic, "previous" points toward
 //     the start of the reading direction, which is the right-hand side
 import { Link } from 'react-router-dom';
-import type { CatalogEntry, Lang } from '../data/types';
-import type { DestinationNavigation } from '../state/types';
+import type { Lang } from '../data/types';
 import { nameOf } from '../data/destinationText';
 import { Icon } from './Icon';
-
-export interface HeroNavTarget {
-  entry: CatalogEntry;
-  navigation: DestinationNavigation;
-}
-
-/** Resolves the previous/next entries for the current destination from the
- *  preserved navigation context. Deliberately unchanged in behavior from the
- *  pager it replaces: same `ids` ordering (recommendation order, Explore's
- *  filtered+sorted order, or the direct-link alphabetical fallback), same
- *  index arithmetic, same "surprise has no siblings" rule. Only where the
- *  controls RENDER has changed. */
-export function heroNavTargets(
-  current: CatalogEntry,
-  navigation: DestinationNavigation | null,
-  catalog: CatalogEntry[],
-): { previous?: HeroNavTarget; next?: HeroNavTarget } {
-  if (!navigation || navigation.source === 'surprise') return {};
-  const index = navigation.ids.indexOf(current.id);
-  if (index < 0) return {};
-  const at = (offset: number): HeroNavTarget | undefined => {
-    const id = navigation.ids[index + offset];
-    if (!id) return undefined;
-    const entry = catalog.find((country) => country.id === id);
-    return entry ? { entry, navigation: { ...navigation, index: index + offset } } : undefined;
-  };
-  return { previous: at(-1), next: at(1) };
-}
+import type { HeroNavTarget } from './heroNavTargets';
 
 export function HeroNavButton({
   target,

@@ -29,7 +29,8 @@ import type {
 import { formatNumber } from '../data/format';
 import { AccommodationInfo } from '../components/AccommodationInfo';
 import { DestinationHero } from '../components/DestinationHero';
-import { HeroNavButton, heroNavTargets } from '../components/DestinationHeroNav';
+import { HeroNavButton } from '../components/DestinationHeroNav';
+import { heroNavTargets } from '../components/heroNavTargets';
 import { FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
 import { FeaturedCitiesCard } from '../components/FeaturedCitiesCard';
@@ -235,7 +236,7 @@ export function Destination() {
   const fromResults = !!(routeState?.fromResults && state.results);
   const resultItem = fromResults ? state.results!.find((result) => result.dest.id === d.id) : undefined;
   const matchScore = resultItem?.score ?? null;
-  const why = resultItem && state.purpose ? buildWhyText(lang, state.purpose, resultItem.reasons, d, resultItem.score) : null;
+  const why = resultItem && state.purpose ? buildWhyText(lang, state.purpose, resultItem.reasons, d, resultItem.score, state.answers) : null;
 
   const goBackBasic = () => navigate(fromResults ? '/results' : '/explore');
   const startAgain = () => {

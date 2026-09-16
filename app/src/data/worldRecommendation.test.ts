@@ -68,13 +68,23 @@ describe('worldwide deterministic recommendation coverage', () => {
     );
   });
 
-  it('covers at least 190 countries across 16,000 varied real branch paths', () => {
+  // Item #9 note: this sample is deterministic (fixed LCG seed, fixed origin
+  // rotation), so it never flakes — it either passes or a real ranking change
+  // moved it. It was widened from 2,000 to 5,000 paths per purpose when the
+  // per-purpose dimension audit landed: at the old sample size five countries
+  // that score low on nearly every sourced indicator (CD, HN, NG, SO, ZA)
+  // happened not to surface under random answers. At this size every one of
+  // the 194 does, which is a strictly stronger claim than the old
+  // "at least 190". This remains broad coverage over a deterministic sample,
+  // NOT an exhaustive enumeration of the answer space — the authoritative
+  // per-country guarantee is the reachable-ideal-profile test above.
+  it('covers every one of the 194 countries across 40,000 varied real branch paths', () => {
     let seed = 194;
     const random = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 2 ** 32);
     const appearances = new Map(RECOMMENDATION_PROFILES.map((profile) => [profile.countryCode, 0]));
     for (const purpose of PURPOSES) {
       const bank = QUESTION_BANKS[purpose];
-      for (let run = 0; run < 2000; run += 1) {
+      for (let run = 0; run < 5000; run += 1) {
         const answers: Record<string, string | number> = {};
         const path: string[] = [];
         let question = selectNextQuestion(bank, answers, path);
@@ -92,6 +102,7 @@ describe('worldwide deterministic recommendation coverage', () => {
         }
       }
     }
-    expect([...appearances.values()].filter((count) => count > 0).length).toBeGreaterThanOrEqual(190);
-  }, 60_000);
+    const unseen = [...appearances.entries()].filter(([, count]) => count === 0).map(([code]) => code);
+    expect(unseen).toEqual([]);
+  }, 120_000);
 });
