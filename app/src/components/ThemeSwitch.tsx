@@ -21,10 +21,19 @@ function applyTheme(preference: ThemePreference, systemDark: boolean) {
 
 export function ThemeSwitch({ lang }: { lang: Lang }) {
   const [preference, setPreference] = useState<ThemePreference>(savedPreference);
+  // Tracks the OS's live prefers-color-scheme, independently of `preference`.
+  // Needed so the control's icon can reflect the effective appearance while
+  // System is selected — `preference` itself stays 'auto' either way, there
+  // is no second theme state, just this one extra read of the same media
+  // query the effect below already subscribes to.
+  const [systemDark, setSystemDark] = useState(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const update = () => applyTheme(preference, media.matches);
+    const update = () => {
+      setSystemDark(media.matches);
+      applyTheme(preference, media.matches);
+    };
     update();
     media.addEventListener('change', update);
     return () => media.removeEventListener('change', update);
@@ -40,14 +49,18 @@ export function ThemeSwitch({ lang }: { lang: Lang }) {
     else localStorage.setItem(THEME_STORAGE_KEY, next);
   };
 
-  // Item #2 — the System option shows a SUN, not the monitor/device glyph,
-  // as the user asked for directly. Light and dark keep their own sun/moon
-  // treatment, so the sun appears twice by design: on System it means
-  // "whatever your device is doing", on Light it means the light theme.
-  const iconFor = (value: ThemePreference) => (value === 'dark' ? 'moon' : 'sun');
+  // The effective appearance for a given preference value: System resolves
+  // through the live OS query, Light/Dark are explicit. The icon always
+  // shows what the page actually looks like right now — on System it used
+  // to be pinned to a sun even when the device was dark, which is the bug
+  // this fixes.
+  const iconFor = (value: ThemePreference) => ((value === 'auto' ? systemDark : value === 'dark') ? 'moon' : 'sun');
 
   const options = [
-    { value: 'auto', label: labels.auto, icon: <Icon name={iconFor('auto')} size={15} stroke={2.2} /> },
+    // The hint communicates the effective appearance next to the "System"
+    // label itself, so it reads e.g. "System — Dark" while the preference
+    // stays System.
+    { value: 'auto', label: labels.auto, hint: systemDark ? labels.dark : labels.light, icon: <Icon name={iconFor('auto')} size={15} stroke={2.2} /> },
     { value: 'light', label: labels.light, icon: <Icon name={iconFor('light')} size={15} stroke={2.2} /> },
     { value: 'dark', label: labels.dark, icon: <Icon name={iconFor('dark')} size={15} stroke={2.2} /> },
   ];
