@@ -336,6 +336,45 @@ html[dir='rtl'] .hero-nav-icon svg {
    affordance), and a clear keyboard focus ring. Used by the theme switch,
    every Explore filter, and the feedback type field, so a dropdown looks
    and behaves the same everywhere in the app. */
+/* Item #13 — the two rating forms share one look, because they are the
+   same control doing the same job in two places. */
+.rating-comment {
+  margin: 14px 0 10px;
+  max-width: 540px;
+}
+
+.rating-comment textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  background: var(--paper-3);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.rating-comment textarea:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+
+.rating-required {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.destination-rating {
+  margin-top: 22px;
+}
+
+.destination-rating h3 {
+  margin: 0 0 6px;
+}
+
 /* Item #12E — entry-requirement display. Provenance and the standing
    caveat are always visible, never hidden behind a disclosure. */
 .visa-note h4 {

@@ -86,6 +86,101 @@ describe('anonymous product data endpoints', () => {
     expect(db.writes.some((write) => write.sql.includes('INSERT INTO ratings'))).toBe(true);
   });
 
+  // Item #13 — two rating levels, and what each one is allowed to carry.
+  describe('item #13 — results and destination ratings', () => {
+    it('accepts a results rating with an optional free-text comment and no votes', async () => {
+      const db = new FakeDb();
+      const env = { PRODUCT_DB: db } as unknown as ProductEnv;
+      const response = await handleProductRequest(request('/api/ratings', {
+        sessionId,
+        kind: 'results',
+        overallScore: 5,
+        comment: 'Useful, but I expected somewhere closer.',
+        resultContext: [{ countryCode: 'JP', score: 91 }],
+      }), env, allowedOrigin);
+      expect(response?.status).toBe(201);
+      const write = db.writes.find((entry) => entry.sql.includes('INSERT INTO ratings'))!;
+      expect(write.values).toContain('results');
+      expect(write.values).toContain('Useful, but I expected somewhere closer.');
+    });
+
+    it('accepts a destination rating with its country and origin', async () => {
+      const db = new FakeDb();
+      const env = { PRODUCT_DB: db } as unknown as ProductEnv;
+      const response = await handleProductRequest(request('/api/ratings', {
+        sessionId,
+        kind: 'destination',
+        overallScore: 3,
+        countryCode: 'JP',
+        origin: 'explore',
+      }), env, allowedOrigin);
+      expect(response?.status).toBe(201);
+      const write = db.writes.find((entry) => entry.sql.includes('INSERT INTO ratings'))!;
+      expect(write.values).toContain('destination');
+      expect(write.values).toContain('JP');
+      expect(write.values).toContain('explore');
+    });
+
+    it('requires a country for a destination rating', async () => {
+      const env = { PRODUCT_DB: new FakeDb() } as unknown as ProductEnv;
+      const response = await handleProductRequest(request('/api/ratings', {
+        sessionId,
+        kind: 'destination',
+        overallScore: 3,
+      }), env, allowedOrigin);
+      expect(response?.status).toBe(400);
+    });
+
+    it('refuses a country on a results rating, which is about the whole set', async () => {
+      const env = { PRODUCT_DB: new FakeDb() } as unknown as ProductEnv;
+      const response = await handleProductRequest(request('/api/ratings', {
+        sessionId,
+        kind: 'results',
+        overallScore: 3,
+        countryCode: 'JP',
+      }), env, allowedOrigin);
+      expect(response?.status).toBe(400);
+    });
+
+    it('refuses an excluded country, here as everywhere', async () => {
+      const env = { PRODUCT_DB: new FakeDb() } as unknown as ProductEnv;
+      const response = await handleProductRequest(request('/api/ratings', {
+        sessionId,
+        kind: 'destination',
+        overallScore: 3,
+        countryCode: 'IL',
+      }), env, allowedOrigin);
+      expect(response?.status).toBe(400);
+    });
+
+    it('refuses an unknown rating kind or origin rather than storing it', async () => {
+      const env = { PRODUCT_DB: new FakeDb() } as unknown as ProductEnv;
+      expect((await handleProductRequest(request('/api/ratings', {
+        sessionId, kind: 'something_else', overallScore: 3,
+      }), env, allowedOrigin))?.status).toBe(400);
+      expect((await handleProductRequest(request('/api/ratings', {
+        sessionId, kind: 'destination', overallScore: 3, countryCode: 'JP', origin: 'elsewhere',
+      }), env, allowedOrigin))?.status).toBe(400);
+    });
+
+    it('still requires a score between 1 and 5', async () => {
+      const env = { PRODUCT_DB: new FakeDb() } as unknown as ProductEnv;
+      for (const overallScore of [0, 6, 2.5, '3']) {
+        expect((await handleProductRequest(request('/api/ratings', {
+          sessionId, kind: 'destination', overallScore, countryCode: 'JP',
+        }), env, allowedOrigin))?.status, String(overallScore)).toBe(400);
+      }
+    });
+
+    it('rejects an over-long comment instead of silently truncating it', async () => {
+      const env = { PRODUCT_DB: new FakeDb() } as unknown as ProductEnv;
+      const response = await handleProductRequest(request('/api/ratings', {
+        sessionId, kind: 'results', overallScore: 3, comment: 'x'.repeat(2001),
+      }), env, allowedOrigin);
+      expect(response?.status).toBe(400);
+    });
+  });
+
   it('rate-limits feedback by anonymous session and validates optional email', async () => {
     const db = new FakeDb();
     db.feedbackCount = 5;

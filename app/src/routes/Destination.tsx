@@ -30,6 +30,7 @@ import { formatNumber } from '../data/format';
 import { AccommodationInfo } from '../components/AccommodationInfo';
 import { DestinationHero } from '../components/DestinationHero';
 import { HeroNavButton } from '../components/DestinationHeroNav';
+import { DestinationRating } from '../components/DestinationRating';
 import { heroNavTargets } from '../components/heroNavTargets';
 import { FlagChip } from '../components/flags/FlagIcon';
 import { Icon } from '../components/Icon';
@@ -320,6 +321,10 @@ export function Destination() {
               ) : null}
 
               <OptionalPlanningInfo destination={d} dt={dt} />
+
+              {/* Item #13B — usable from every entry path (recommendations,
+                  Explore, a surprise result, a direct link). */}
+              <DestinationRating destination={d} navigation={navigation} lang={lang} strings={t.destinationRating} />
             </div>
           </div>
         </div>
@@ -500,6 +505,10 @@ export function Destination() {
             </div>
 
             <OptionalPlanningInfo destination={d} dt={dt} />
+
+            {/* Item #13B — usable from every entry path (recommendations,
+                Explore, a surprise result, a direct link). */}
+            <DestinationRating destination={d} navigation={navigation} lang={lang} strings={t.destinationRating} />
           </div>
         </div>
       </div>

@@ -386,18 +386,19 @@ export interface ResultsStrings {
   visaGeneralNote: string;
   ratingTitle: string;
   ratingBody: string;
-  ratingReasonsTitle: string;
-  ratingRelevant: string;
-  ratingClear: string;
-  ratingUnexpected: string;
-  ratingMissingInfo: string;
-  rateCountries: string;
-  usefulYes: string;
-  usefulNo: string;
+  /** Item #13A — the results form is now 1-5 stars, an optional free-text
+   *  box, and Submit. The per-country "useful / not useful" votes and the
+   *  reason pills are gone: the acceptance round replaced them. */
+  ratingStarsLabel: string;
+  ratingCommentLabel: string;
+  ratingCommentPlaceholder: string;
+  /** Says, before the traveller tries, that a star rating is required. */
+  ratingRequiredNote: string;
   submitRating: string;
   ratingSaving: string;
   ratingThanks: string;
   ratingFailed: string;
+  ratingRetry: string;
 }
 
 export interface DetailStrings {
@@ -609,6 +610,22 @@ export interface LocationIntroStrings {
  *  questionnaire before results. Deliberately not called "nationality":
  *  entry-requirement providers key on the travel document, and a traveller
  *  may hold a passport of a country they are not in. */
+/** Item #13B — the rating form at the bottom of every destination page,
+ *  usable whichever route the traveller arrived by. */
+export interface DestinationRatingStrings {
+  title: string;
+  body: string;
+  starsLabel: string;
+  commentLabel: string;
+  commentPlaceholder: string;
+  requiredNote: string;
+  submit: string;
+  saving: string;
+  thanks: string;
+  failed: string;
+  retry: string;
+}
+
 export interface PassportStrings {
   title: string;
   /** Says in one line WHY it is asked, before it is asked. */
@@ -907,6 +924,7 @@ export interface I18nDict {
   feedback: FeedbackStrings;
   location: LocationStrings;
   locationIntro: LocationIntroStrings;
+  destinationRating: DestinationRatingStrings;
   passport: PassportStrings;
   visa: VisaStrings;
   travel: TravelStrings;

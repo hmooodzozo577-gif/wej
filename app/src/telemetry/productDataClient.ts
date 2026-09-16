@@ -78,11 +78,17 @@ export function trackEvent(name: string, properties: Record<string, unknown>, co
   void sendProductEvent(name, properties, context);
 }
 
+/** Item #13 — two rating levels share one endpoint. 'results' rates a whole
+ *  recommendation set; 'destination' rates one country page and carries the
+ *  country plus the coarse route the traveller arrived by. The per-country
+ *  "useful / not useful" votes the results form used to send are gone. */
 export async function submitRating(payload: {
+  kind: 'results' | 'destination';
   overallScore: number;
-  reasons: string[];
-  countryVotes: { countryCode: string; useful: boolean }[];
-  resultContext: { countryCode: string; score: number }[];
+  comment?: string;
+  countryCode?: string;
+  origin?: 'results' | 'explore' | 'surprise' | 'direct';
+  resultContext?: { countryCode: string; score: number }[];
 }, context: ProductContext) {
   return post('/api/ratings', { ...common(context), ...payload });
 }

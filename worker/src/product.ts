@@ -126,21 +126,66 @@ function validCountryItems(value: unknown, withUseful: boolean) {
   });
 }
 
+// Item #13 — two rating levels. 'results' rates a whole recommendation set;
+// 'destination' rates one country page, whichever route the traveller
+// reached it by. Both are a 1-5 score plus an optional free-text comment.
+const RATING_KINDS = new Set(['results', 'destination']);
+// Where the traveller came from. Context only: never a precise location,
+// never anything identifying.
+const RATING_ORIGINS = new Set(['results', 'explore', 'surprise', 'direct']);
+const MAX_RATING_COMMENT = 2000;
+
 async function handleRating(request: Request, env: ProductEnv, origin: string | null) {
   const body = await bodyOf(request);
   const sessionId = body && sessionIdOf(body);
   const score = body?.overallScore;
-  const reasons = body?.reasons;
+  // Absent reasons are valid: the results form no longer collects reason
+  // tags, and older clients that still send them stay accepted.
+  const reasons = body?.reasons ?? [];
+  const kind = typeof body?.kind === 'string' ? body.kind : 'results';
+  // optionalText, not text: an over-long comment must be REJECTED, not
+  // silently discarded as if the traveller had written nothing.
+  const comment = body ? optionalText(body.comment, MAX_RATING_COMMENT) : null;
+  const countryCode = body?.countryCode;
+  const ratingOrigin = body?.origin;
+
   if (!body || !sessionId || typeof score !== 'number' || !Number.isInteger(score) || score < 1 || score > 5 ||
+      !RATING_KINDS.has(kind) ||
+      comment === undefined ||
       !Array.isArray(reasons) || reasons.length > 5 || !reasons.every((reason) => typeof reason === 'string' && RATING_REASONS.has(reason)) ||
-      !validCountryItems(body.countryVotes, true) || !validCountryItems(body.resultContext, false)) {
+      (body.countryVotes !== undefined && !validCountryItems(body.countryVotes, true)) ||
+      (body.resultContext !== undefined && !validCountryItems(body.resultContext, false)) ||
+      (ratingOrigin !== undefined && (typeof ratingOrigin !== 'string' || !RATING_ORIGINS.has(ratingOrigin)))) {
     return response({ error: 'invalid_request' }, 400, origin);
   }
+
+  // A destination rating is about exactly one country, and the IL exclusion
+  // is absolute here as on every other path.
+  if (kind === 'destination') {
+    if (typeof countryCode !== 'string' || !COUNTRY_RE.test(countryCode) || countryCode === 'IL') {
+      return response({ error: 'invalid_request' }, 400, origin);
+    }
+  } else if (countryCode !== undefined) {
+    return response({ error: 'invalid_request' }, 400, origin);
+  }
+
   await upsertSession(env.PRODUCT_DB!, body, request);
   await env.PRODUCT_DB!.prepare(`INSERT INTO ratings
-    (id, session_id, created_at, overall_score, reasons_json, country_votes_json, result_context_json)
-    VALUES (?, ?, ?, ?, ?, ?, ?)`)
-    .bind(crypto.randomUUID(), sessionId, new Date().toISOString(), score, JSON.stringify(reasons), JSON.stringify(body.countryVotes), JSON.stringify(body.resultContext)).run();
+    (id, session_id, created_at, overall_score, reasons_json, country_votes_json, result_context_json, kind, comment, country_code, origin)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .bind(
+      crypto.randomUUID(),
+      sessionId,
+      new Date().toISOString(),
+      score,
+      JSON.stringify(reasons),
+      JSON.stringify(body.countryVotes ?? []),
+      JSON.stringify(body.resultContext ?? []),
+      kind,
+      comment,
+      kind === 'destination' ? countryCode : null,
+      typeof ratingOrigin === 'string' ? ratingOrigin : null,
+    ).run();
   return response({ saved: true }, 201, origin);
 }
 
