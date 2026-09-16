@@ -4,6 +4,7 @@ import { I18N } from '../data/i18n';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { featuredCitiesOf } from '../data/featuredCities';
 import { FeaturedCitiesCard } from './FeaturedCitiesCard';
+import { clearCityDescriptionMemo } from '../cities/cityDescriptionClient';
 
 async function openCard(countryId: string, lang: 'ar' | 'en' = 'ar') {
   const country = WORLD_CATALOG.find((entry) => entry.id === countryId)!;
@@ -195,6 +196,9 @@ describe('item #3 — a general description above the structured facts', () => {
     globalThis.fetch = originalFetch;
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
+    // The client memoizes a real answer for the life of the page, so each
+    // case has to start from a clean one.
+    clearCityDescriptionMemo();
   });
 
   function stubWorker(descriptions: unknown[]) {
@@ -274,5 +278,52 @@ describe('item #3 — a general description above the structured facts', () => {
     }
     expect(sent.countryCode).toBe('JP');
     expect(Array.isArray(sent.cities)).toBe(true);
+  });
+});
+
+// The Worker is a guest of the API behind it, so the browser must not ask the
+// same question twice in one visit — and must not remember a failure, which
+// would turn one bad moment into a permanently empty card.
+describe('item #3 — asking once, and only for a real answer', () => {
+  const originalFetch = globalThis.fetch;
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+    clearCityDescriptionMemo();
+  });
+
+  it('does not ask again for the same country and language', async () => {
+    vi.stubEnv('VITE_TRAVEL_WORKER_URL', 'https://worker.test');
+    globalThis.fetch = vi.fn(async () => new Response(
+      JSON.stringify({ descriptions: [], attribution: {} }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    )) as typeof fetch;
+
+    const japan = WORLD_CATALOG.find((country) => country.id === 'japan')!;
+    const first = render(<FeaturedCitiesCard destination={japan} lang="en" strings={I18N.en.detail} />);
+    fireEvent.click(screen.getByText(I18N.en.detail.prominentCities).closest('summary')!);
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledTimes(1));
+    first.unmount();
+
+    render(<FeaturedCitiesCard destination={japan} lang="en" strings={I18N.en.detail} />);
+    fireEvent.click(screen.getByText(I18N.en.detail.prominentCities).closest('summary')!);
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries after a failure instead of remembering it', async () => {
+    vi.stubEnv('VITE_TRAVEL_WORKER_URL', 'https://worker.test');
+    globalThis.fetch = vi.fn(async () => { throw new Error('offline'); }) as typeof fetch;
+
+    const japan = WORLD_CATALOG.find((country) => country.id === 'japan')!;
+    const first = render(<FeaturedCitiesCard destination={japan} lang="en" strings={I18N.en.detail} />);
+    fireEvent.click(screen.getByText(I18N.en.detail.prominentCities).closest('summary')!);
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledTimes(1));
+    first.unmount();
+
+    render(<FeaturedCitiesCard destination={japan} lang="en" strings={I18N.en.detail} />);
+    fireEvent.click(screen.getByText(I18N.en.detail.prominentCities).closest('summary')!);
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledTimes(2));
   });
 });

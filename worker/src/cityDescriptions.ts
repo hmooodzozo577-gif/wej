@@ -153,16 +153,47 @@ export function evaluateSummary(
   };
 }
 
+/** Edge cache in front of the upstream call.
+ *
+ *  D1 is the durable cache, but it is not guaranteed to exist — and while it
+ *  does not, every open of a city card would otherwise be five fresh calls to
+ *  Wikipedia. Cloudflare's own cache absorbs that, costs nothing, and is
+ *  polite to an API we are a guest of. It is optional everywhere: no `caches`
+ *  binding (tests, a local runtime) simply means no edge cache. */
+async function cachedFetch(url: string): Promise<Response | null> {
+  const edge = (globalThis as { caches?: { default?: Cache } }).caches?.default;
+  const request = new Request(url, { headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' } });
+  if (edge) {
+    try {
+      const hit = await edge.match(request);
+      if (hit) return hit;
+    } catch {
+      // A cache that cannot be read is not a reason to fail the lookup.
+    }
+  }
+  const response = await fetch(request);
+  if (edge && response.ok) {
+    try {
+      const copy = new Response(response.clone().body, response);
+      copy.headers.set('Cache-Control', `public, max-age=${OK_TTL_DAYS * 24 * 60 * 60}`);
+      await edge.put(request, copy);
+    } catch {
+      // Same: a cache write failure is invisible to the traveller.
+    }
+  }
+  return response;
+}
+
 async function fetchSummary(lang: 'ar' | 'en', title: string): Promise<unknown | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
     const url = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}?redirect=true`;
-    const response = await fetch(url, {
-      headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
-      signal: controller.signal,
-    });
-    if (!response.ok) return null;
+    const response = await Promise.race([
+      cachedFetch(url),
+      new Promise<null>((resolve) => controller.signal.addEventListener('abort', () => resolve(null))),
+    ]);
+    if (!response || !response.ok) return null;
     return await response.json();
   } catch {
     return null;

@@ -9,22 +9,22 @@ configuration, and current Git state outrank this document when they differ.
 - Last verified date: 2026-09-16
 - Working branch: `claude/modest-cray-34bvoa`
 - Previous production frontend commit: `f60efd93`
-- Production Worker source commit: `08ebdcb5` — DEPLOYED 2026-09-16 from run
-  35094594557 (Version ID `54c3994c-2298-4b17-af62-2a3e29b784d2`). The run's
+- Production Worker source commit: `3fa14fa3` — DEPLOYED 2026-09-16 from run
+  35126621883 (Version ID `f1e2b232-6d61-4b9d-b155-11eb1c32ab32`). The run's
   overall conclusion is `failure`, and that is by design: the workflow
   deploys the Worker without the D1/R2 bindings and then exits 1 so the
-  provisioning failure is not concealed. The visa endpoint and the extended
-  ratings endpoint are live; D1 is still unavailable.
-- Production FRONTEND commit: `e3f8e4a8` — DEPLOYED 2026-09-16 from Pages run
-  35097793153 (`build` success, `deploy` success, environment URL
-  `https://hmooodzozo577-gif.github.io/wej/`, `pages_build_version`
-  `e3f8e4a8f798add2068dc60efd290952d690d8ad`). The Pages environment-protection
-  blocker is CLEARED: `claude/marhaba-kxry8l` was fast-forwarded from
-  `4f3d419` to `e3f8e4a8` (remedy (b) below), and its push trigger deployed
-  normally. No history was rewritten and no workflow was modified.
+  provisioning failure is not concealed. The visa endpoints, the city
+  description endpoint and the admin surface are live; D1 and R2 are not
+  bound, so everything that needs them answers 503.
+- Production FRONTEND commit: `3fa14fa3` — DEPLOYED 2026-09-16 from Pages run
+  35126621769 (`build` success, `deploy` success, environment URL
+  `https://hmooodzozo577-gif.github.io/wej/`). The Pages
+  environment-protection blocker was cleared on 2026-09-16 by
+  fast-forwarding `claude/marhaba-kxry8l`, the branch the environment
+  permits; every deploy since has gone through its push trigger normally.
 - Git state re-verified directly before writing this: working tree clean, no
   merge/rebase in progress; `origin/claude/modest-cray-34bvoa` and
-  `origin/claude/marhaba-kxry8l` are both at `e3f8e4a8`.
+  `origin/claude/marhaba-kxry8l` hold the same commit.
 - ACCEPTANCE STATE, 2026-09-16 (second round). The user re-tested the
   deployed build and said "the rest is fine" apart from six findings.
 
@@ -479,18 +479,24 @@ enumeration of the questionnaire's combinatorial answer space.
   the build) are independently inert when unset, so they can be switched on
   in either order without a window where submissions are rejected.
 - D1 REALITY — nothing persists in production yet. Product-data requests
-  return `503 product_data_unavailable` because D1/R2 provisioning was
-  rejected by Cloudflare with authentication error `10000`; the rating UI
-  therefore shows its error-and-retry state honestly, which is exactly the
-  message the user reported and is NOT hidden. This is an external Cloudflare
-  account/token permission gap (`CLOUDFLARE_API_TOKEN` lacking D1 / R2 /
-  Workers edit access), not a code defect —
-  `READY — USER/ACCOUNT CONFIGURATION REQUIRED`.
-  The deploy workflow now runs a read-only capability diagnostic BEFORE
-  provisioning (`wrangler whoami`, `deployments list`, `d1 list`,
-  `r2 bucket list`) and prints one OK/FAILED line each, so a repeat failure
-  names the exact missing permission instead of leaving it to be guessed. It
-  prints no token. The required grants are in SECRETS.md.
+  return `503 product_data_unavailable`; the rating UI therefore shows its
+  error-and-retry state honestly, which is exactly the message the user
+  reported and is NOT hidden.
+  MEASURED 2026-09-16, worker run 35126621883, the new read-only capability
+  diagnostic — the token's exact capability, no longer inferred:
+
+      OK       identity (whoami)
+      OK       Workers: list
+      FAILED   D1: list          — Authentication error [code: 10000]
+                                   on /accounts/*/d1/database
+      FAILED   R2: list buckets  — Authentication error [code: 10000]
+                                   on /accounts/*/r2/buckets
+
+  So `CLOUDFLARE_API_TOKEN` CAN deploy Workers and CANNOT touch D1 or R2.
+  That is an account/token permission gap, not a code defect —
+  `READY — USER/ACCOUNT CONFIGURATION REQUIRED`. Required grants, at the
+  account level: Workers Scripts:Edit, D1:Edit, Workers R2 Storage:Edit
+  (see SECRETS.md).
   Do not describe rating or feedback persistence as working until a deploy
   run shows the provisioning step succeeding AND a row is confirmed in D1.
 

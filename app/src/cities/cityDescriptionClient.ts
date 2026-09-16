@@ -31,6 +31,21 @@ function workerBaseUrl(): string | undefined {
 
 const LOOKUP_TIMEOUT_MS = 9000;
 
+/** Per-page-load memo. Reopening a city card, or coming back to a country
+ *  during the same visit, must not ask again — the answer cannot have
+ *  changed, and the Worker is a guest of the API behind it.
+ *
+ *  Only a real answer is remembered. A failed request is NOT: "we could not
+ *  reach the Worker" is a temporary state, and caching it would turn one bad
+ *  moment into a permanently empty card for the rest of the visit. */
+const memo = new Map<string, Map<string, CityDescription>>();
+
+/** Test seam. The memo is module state, so a suite that stubs different
+ *  responses in successive cases has to be able to clear it. */
+export function clearCityDescriptionMemo() {
+  memo.clear();
+}
+
 export async function lookupCityDescriptions(
   countryCode: string,
   cities: { name: string; title?: string }[],
@@ -39,6 +54,10 @@ export async function lookupCityDescriptions(
   const base = workerBaseUrl();
   const empty = new Map<string, CityDescription>();
   if (!base || !cities.length) return empty;
+
+  const memoKey = `${lang}|${countryCode}|${cities.map((city) => city.name).join(',')}`;
+  const remembered = memo.get(memoKey);
+  if (remembered) return remembered;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), LOOKUP_TIMEOUT_MS);
@@ -59,6 +78,7 @@ export async function lookupCityDescriptions(
         result.set(description.cityName, description);
       }
     }
+    memo.set(memoKey, result);
     return result;
   } catch {
     return empty;
