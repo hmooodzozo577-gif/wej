@@ -180,7 +180,6 @@ export const EN: I18nDict = {
     retryBody: 'Your browser could not determine your location on the last attempt. You can try again, or keep using Wejhaty without it.',
     retryCta: 'Try again',
   },
-  // Item #13 — optional nationality selection. Not part of the original
   // Item #12 — the optional passport question inside the questionnaire.
   // Item #13B — the destination-page rating.
   destinationRating: {

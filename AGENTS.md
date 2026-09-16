@@ -46,13 +46,24 @@ persistent autonomous engineering operating contract for this project.
   `VITE_*` variable — Worker-side only.
 - Never infer religion, ethnicity, politics, personal values, or
   cultural tolerance from location, nationality, language, or locale.
-- Location (from the browser) and nationality/passport (self-reported,
-  optional, skippable, never scored) are different concepts — never
-  infer one from the other, and never treat location as nationality.
-- Never fabricate a personalized visa-eligibility claim. A generic
-  easy/medium/hard visa label must be explicitly disclosed as a
-  general reference, not personalized to the viewer, unless a real
-  per-nationality visa dataset is actually wired in.
+- Location (from the browser) and passport (self-reported, optional,
+  skippable) are different concepts — never infer one from the other.
+  Location drives proximity, land borders and nearest/farthest;
+  passport drives entry requirements only.
+- Never fabricate a visa or entry-requirement claim. The editorial
+  easy/medium/hard label stays disclosed as a general reference. A
+  passport-specific entry requirement may only be shown when a real
+  provider returned it, with that provider's name and a check date;
+  with no provider configured the answer is "unknown". Scraped or
+  unofficial passport-index datasets are not an acceptable source.
+- The visa layer never changes a Phase 14 weight or a match score. It
+  may only reorder destinations already within 3 points of each other.
+  Blending visa convenience into the score itself needs an explicit
+  user decision first (see `PROJECT_STATE.md`, Roadmap gate).
+- Only a passport COUNTRY is ever collected — never a passport number.
+- Every visible number renders as Latin digits in both languages. New
+  numbers go through `app/src/data/format.ts`; new localized content
+  loaded from generated JSON goes through `deepLatinDigits`.
 - Preserve Arabic + English parity; Arabic stays the default language.
 - Cancelled roadmap features (see `PROJECT_STATE.md`) stay cancelled
   unless the user explicitly reopens the topic.
