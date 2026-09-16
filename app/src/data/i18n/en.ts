@@ -54,6 +54,16 @@ export const EN: I18nDict = {
     surpriseAgain: 'Spin again',
     surpriseOpen: 'Explore country',
     surpriseSpinning: 'Choosing your destination…',
+    surpriseDirections: {
+      n: 'North of you',
+      ne: 'North-east of you',
+      e: 'East of you',
+      se: 'South-east of you',
+      s: 'South of you',
+      sw: 'South-west of you',
+      w: 'West of you',
+      nw: 'North-west of you',
+    },
   },
   feedback: {
     open: 'Contact, suggest, or report',

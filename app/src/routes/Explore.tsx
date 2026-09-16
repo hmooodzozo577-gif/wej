@@ -67,7 +67,7 @@ export function Explore() {
       <section className="section" style={{ paddingTop: 30 }}>
         <div className="container">
           <LocationPersonalize />
-          <SurpriseDestination candidates={list} lang={lang} strings={ex} />
+          <SurpriseDestination candidates={list} lang={lang} strings={ex} origin={state.location.coords} />
           <div className="explore-toolbar">
             <div className="field">
               <label htmlFor="exSearch">{ex.search}</label>

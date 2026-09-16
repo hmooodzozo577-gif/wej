@@ -56,6 +56,29 @@ export function haversineKm(a: Coords, b: Coords): number {
   return 2 * EARTH_RADIUS_KM * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
+/** Eight-point compass keys, in bearing order starting at north. */
+export type CompassPoint = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
+
+const COMPASS_POINTS: CompassPoint[] = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'];
+
+/** Initial great-circle bearing from `from` to `to`, in degrees clockwise
+ *  from true north. A real derived geographic fact, like haversineKm above —
+ *  used to point the Surprise compass at where the destination actually is,
+ *  never to imply a route. */
+export function bearingDegrees(from: Coords, to: Coords): number {
+  const lat1 = toRadians(from.lat);
+  const lat2 = toRadians(to.lat);
+  const dLng = toRadians(to.lng - from.lng);
+  const y = Math.sin(dLng) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+  return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+}
+
+/** The same bearing snapped to one of eight compass points. */
+export function compassPointOf(from: Coords, to: Coords): CompassPoint {
+  return COMPASS_POINTS[Math.round(bearingDegrees(from, to) / 45) % 8]!;
+}
+
 export interface NearbyCountry {
   entry: CatalogEntry;
   /** Straight-line (great-circle) distance to the country's approximate

@@ -67,52 +67,121 @@
   gap: 14px;
 }
 
-/* Item #9 — "Surprise Me" redesign. The old wheel was a decorative
-   conic-gradient disc with no flags and no names — it never showed a real
-   candidate while spinning. This is a compact badge, in Wejhaty's own gold
-   ring identity (matches the compass motif on the home hero), that cycles
-   real candidate flags during the reel (see SurpriseDestination.tsx) and
-   settles with one restrained pop, never a themed slot-machine or glass
-   effect. */
-.surprise-reel {
+/* Item #11 — "Surprise me", second design pass: a travel COMPASS, not a
+   wheel or a reel. Wejhaty's own ink dial with a gold needle; the needle
+   settles on the destination's real bearing from the traveller when their
+   location is known (see SurpriseDestination.tsx), and due north — claiming
+   nothing — when it is not. */
+.surprise-compass {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 88px;
-  height: 88px;
+  width: 128px;
+  height: 128px;
   flex: 0 0 auto;
-  border: 3px solid var(--gold);
   border-radius: 50%;
-  background: var(--white);
-  box-shadow: 0 0 0 1px var(--line), var(--shadow);
-  overflow: hidden;
+  border: 2px solid var(--line);
+  background:
+    radial-gradient(circle at 50% 42%, var(--white) 0%, var(--paper-3) 72%, var(--paper-2) 100%);
+  box-shadow: inset 0 2px 10px rgba(16, 28, 44, 0.08), var(--shadow);
 }
 
-.surprise-reel-placeholder {
+.compass-ticks {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+}
+
+.compass-ticks i {
+  position: absolute;
+  inset-inline-start: 50%;
+  top: 0;
+  width: 1px;
+  height: 7px;
+  margin-inline-start: -0.5px;
+  background: var(--line);
+  transform-origin: 50% 52px;
+}
+
+/* The four quarter marks read as structure, not noise. */
+.compass-ticks i:nth-child(6n + 1) {
+  height: 11px;
+  width: 2px;
+  margin-inline-start: -1px;
+  background: var(--muted);
+}
+
+.compass-cardinal {
+  position: absolute;
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.compass-n { top: 12px; color: var(--gold); }
+.compass-s { bottom: 12px; }
+.compass-e { inset-inline-end: 13px; }
+.compass-w { inset-inline-start: 13px; }
+
+/* A real needle: weighted north half in gold, south half muted, on a pivot.
+   Rotation is driven from JS, so only the transition is described here. */
+.compass-needle {
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 50%;
+  width: 4px;
+  height: 78px;
+  margin: -39px 0 0 -2px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--gold-2) 0%, var(--gold) 46%, var(--line) 46%, var(--muted) 100%);
+  transform-origin: 50% 50%;
+  /* Long, heavily-eased settle: the deceleration is what makes it read as a
+     compass finding its bearing rather than a dial being reset. */
+  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(16, 28, 44, 0.35);
+  pointer-events: none;
+}
+
+/* The centre window, where real candidate flags cycle. It sits ABOVE the
+   needle so the flag is never crossed by it. */
+.compass-window {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 54px;
-  height: 40px;
-  border-radius: 6px;
-  background: var(--paper-2);
+  height: 42px;
+  border-radius: 8px;
+  border: 2px solid var(--gold);
+  background: var(--white);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(16, 28, 44, 0.22);
 }
 
-.surprise-reel.spinning {
-  animation: surprise-pulse 100ms ease-in-out infinite;
+.surprise-compass.is-spinning .compass-window {
+  animation: compass-cycle 110ms ease-in-out infinite;
 }
 
-.surprise-reel.landed {
-  animation: surprise-land 360ms cubic-bezier(.34, 1.56, .64, 1);
+.surprise-compass.is-settled .compass-window {
+  animation: compass-settle 420ms cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
-@keyframes surprise-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(0.9); }
+@keyframes compass-cycle {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.94); opacity: 0.82; }
 }
 
-@keyframes surprise-land {
-  0% { transform: scale(0.85); }
-  60% { transform: scale(1.08); }
+@keyframes compass-settle {
+  0% { transform: scale(0.88); }
+  60% { transform: scale(1.06); }
   100% { transform: scale(1); }
+}
+
+.surprise-direction {
+  white-space: nowrap;
 }
 
 .surprise-result .destination-card-image {
@@ -324,11 +393,19 @@ html[dir='rtl'] .hero-nav-icon svg {
   .explore-toolbar { grid-template-columns: 1fr; }
   .surprise-card { grid-template-columns: 1fr; }
   .surprise-stage, .surprise-result { align-items: flex-start; }
+  /* A smaller dial on a phone, still comfortably above a 44px target for
+     everything interactive around it. */
+  .surprise-compass { width: 104px; height: 104px; }
+  .compass-ticks i { transform-origin: 50% 40px; }
+  .compass-needle { height: 62px; margin-top: -31px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .surprise-reel.spinning,
-  .surprise-reel.landed { animation: none; }
+  /* The needle still moves to its final bearing — that position is
+     information — but it gets there instantly, and nothing pulses. */
+  .compass-needle { transition: none; }
+  .surprise-compass.is-spinning .compass-window,
+  .surprise-compass.is-settled .compass-window { animation: none; }
 }
 
 /* Item #3 — shared select shell: a leading icon slot, an always-visible

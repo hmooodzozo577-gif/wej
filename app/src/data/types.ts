@@ -513,6 +513,10 @@ export interface ExploreStrings {
   surpriseAgain: string;
   surpriseOpen: string;
   surpriseSpinning: string;
+  /** Item #11 — the eight compass points, used ONLY to caption the real
+   *  bearing from the traveller to the chosen destination. Absent from the
+   *  UI entirely when there is no location to measure from. */
+  surpriseDirections: Record<string, string>;
 }
 
 export interface FeedbackStrings {
