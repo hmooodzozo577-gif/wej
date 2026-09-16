@@ -79,15 +79,22 @@ export interface AppState {
   results: RankedResult[] | null;
   explore: ExploreFilters;
   location: LocationState;
-  /** Item #13 — optional, skippable, self-reported nationality (ISO
-   *  3166-1 alpha-2). Never inferred from location/coordinates, never used
-   *  by the ranking engine, and never treated as a passport-level source of
-   *  truth for a real personalized visa-eligibility claim — Wejhaty has no
-   *  verified per-nationality visa data. It exists only so the UI can be
-   *  honest about the difference between a generic visa reference and a
-   *  claim personalized to the user, and to avoid ever conflating location
-   *  (where the user IS) with nationality (what passport they hold). */
-  nationalityCode: string | null;
+  /** Item #12 — the optional, skippable PASSPORT country (ISO 3166-1
+   *  alpha-2) the traveller would travel with.
+   *
+   *  "Passport", not "nationality": every entry-requirement provider keys on
+   *  the travel document, and a person may hold a passport of a country they
+   *  are not currently in and may hold more than one. The question asks
+   *  which passport they will travel with, which is the question that can
+   *  actually be answered against provider data.
+   *
+   *  LOCATION AND PASSPORT ARE DIFFERENT CONCEPTS and are never derived from
+   *  one another. A Saudi passport holder currently in Germany is not a
+   *  German passport holder. `location` answers "where is the traveller
+   *  now" (proximity, land borders, nearest/farthest); this answers "what
+   *  document will they travel on" (entry requirements). Never a passport
+   *  NUMBER — only the country. */
+  passportCode: string | null;
 }
 
 export type AppAction =
@@ -108,4 +115,4 @@ export type AppAction =
   | { type: 'LOCATION_FAILED'; status: Exclude<LocationStatus, 'idle' | 'requesting' | 'granted'>; diagnostic?: LocationDiagnostic }
   | { type: 'LOCATION_RESOLVE_DIAGNOSTIC'; diagnostic: LocationDiagnostic }
   | { type: 'LOCATION_RESET' }
-  | { type: 'SET_NATIONALITY'; countryCode: string | null };
+  | { type: 'SET_PASSPORT'; countryCode: string | null };

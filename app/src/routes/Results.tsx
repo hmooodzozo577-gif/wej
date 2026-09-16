@@ -11,7 +11,9 @@ import { buildWhyText } from '../engine';
 import { DestinationImage } from '../components/DestinationImage';
 import { QUESTION_BANKS } from '../data/questionBanks';
 import { ResultRating } from '../components/ResultRating';
-import { NationalitySelect } from '../components/NationalitySelect';
+import { VisaRequirementNote } from '../components/VisaRequirementNote';
+import { useVisaRequirements } from '../visa/useVisaRequirements';
+import { applyVisaRanking, visaRankingChangedOrder } from '../visa/visaRanking';
 
 /** Ports the original's setInterval-based count-up for `.matchNum`:
  *  step = max(1, round(target/30)), tick every 16ms. */
@@ -41,13 +43,29 @@ export function Results() {
   // count-up target with a safe fallback *before* the guard below, rather
   // than skipping the hook call entirely when there's nothing to show yet.
   const animatedMatch = useCountUp(state.results?.[0]?.score ?? 0);
+  // Item #12C — the visa layer only ever REORDERS near-equal results. It
+  // touches no Phase 14 score, so the match percentage below is the same
+  // number with or without a passport. Hooks run unconditionally, before the
+  // guard, so the top-five codes are derived defensively here.
+  const rankedTop = (state.results ?? []).slice(0, 8);
+  const { requirements, providerConfigured } = useVisaRequirements(
+    state.passportCode,
+    rankedTop.map((item) => item.dest.countryCode),
+    state.purpose ?? undefined,
+  );
 
   if (!state.purpose || !state.results) {
     return <Navigate to="/purpose" replace />;
   }
 
   const r = t.results;
-  const top5 = state.results.slice(0, 5);
+  const visaOrdered = applyVisaRanking({
+    results: rankedTop,
+    requirements,
+    passportCode: state.passportCode,
+  });
+  const visaChangedOrder = visaRankingChangedOrder(rankedTop, visaOrdered);
+  const top5 = visaOrdered.slice(0, 5);
   const proximityQuestion = QUESTION_BANKS[state.purpose].find((question) => question.kind === 'proximity');
   const proximityRequested = !!(proximityQuestion && Number(state.answers[proximityQuestion.id]) > 0);
   const proximityUsed = top5.some((item) => item.distanceKm !== undefined);
@@ -128,7 +146,19 @@ export function Results() {
           ))}
         </div>
 
-        <NationalitySelect />
+        {/* Item #12E — passport-specific entry requirements for the top
+            pick, with provider and check date, or an honest statement of
+            why there are none. The passport question itself now lives in
+            the questionnaire, before these results exist. */}
+        <div className="detail-card visa-card">
+          <VisaRequirementNote
+            requirement={requirements.get(first.dest.countryCode)}
+            providerConfigured={providerConfigured}
+            strings={t.visa}
+          />
+          {!state.passportCode ? <p className="city-data-note">{t.visa.noPassport}</p> : null}
+          {visaChangedOrder ? <p className="city-data-note">{t.visa.reorderNote}</p> : null}
+        </div>
         <ResultRating results={top5} lang={lang} strings={r} />
 
         <div className="results-actions">

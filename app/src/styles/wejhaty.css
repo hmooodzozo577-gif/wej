@@ -336,6 +336,51 @@ html[dir='rtl'] .hero-nav-icon svg {
    affordance), and a clear keyboard focus ring. Used by the theme switch,
    every Explore filter, and the feedback type field, so a dropdown looks
    and behaves the same everywhere in the app. */
+/* Item #12E — entry-requirement display. Provenance and the standing
+   caveat are always visible, never hidden behind a disclosure. */
+.visa-note h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.visa-category {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.visa-details {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.visa-provenance,
+.visa-caveat {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.visa-note-empty {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.quiz-passport .passport-field {
+  margin: 18px 0 4px;
+  max-width: 420px;
+}
+
 /* Item #5 — per-city sourced facts, replacing the two template paragraphs
    every city used to share. A definition list keeps label/value pairing
    semantic, and the grid keeps labels aligned without a table. */

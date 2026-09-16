@@ -605,17 +605,51 @@ export interface LocationIntroStrings {
   retryCta: string;
 }
 
-/** Item #13 — optional nationality selection strings. Never sourced from
- *  the original wejhaty.html copy (this feature didn't exist there). */
-export interface NationalityStrings {
+/** Item #12D — the optional PASSPORT question, asked inside the
+ *  questionnaire before results. Deliberately not called "nationality":
+ *  entry-requirement providers key on the travel document, and a traveller
+ *  may hold a passport of a country they are not in. */
+export interface PassportStrings {
   title: string;
-  sub: string;
+  /** Says in one line WHY it is asked, before it is asked. */
+  body: string;
   label: string;
   placeholder: string;
+  searchPlaceholder: string;
+  noMatches: string;
   clear: string;
-  /** Explains, up front, why this is asked and what it is NOT used for —
-   *  no sensitive inference, not shared beyond this session's own state. */
+  skip: string;
+  continueCta: string;
+  /** What is and is not done with the answer. */
   privacyNote: string;
+}
+
+/** Item #12E — how an entry requirement is presented. Every string here is
+ *  written to avoid promising entry, approval, an open border, or legal
+ *  eligibility beyond what the provider actually said. */
+export interface VisaStrings {
+  title: string;
+  categories: {
+    visaFree: string;
+    visaOnArrival: string;
+    eVisa: string;
+    authorizationRequired: string;
+    embassyVisaRequired: string;
+    unknown: string;
+  };
+  providerLabel: string;
+  checkedAtLabel: string;
+  /** The standing caveat: requirements change and must be re-checked. */
+  changeNote: string;
+  /** Shown when a provider answered but had no usable answer. */
+  unavailable: string;
+  /** Shown when no provider is configured at all — a different fact from a
+   *  failed lookup, and the traveller is told which it is. */
+  noProvider: string;
+  /** Shown only when the passport choice actually changed the order. */
+  reorderNote: string;
+  /** Shown on the results page when no passport was given. */
+  noPassport: string;
 }
 
 /** Phase 13.6 — Full Travel Integration strings. Like LocationStrings,
@@ -873,7 +907,8 @@ export interface I18nDict {
   feedback: FeedbackStrings;
   location: LocationStrings;
   locationIntro: LocationIntroStrings;
-  nationality: NationalityStrings;
+  passport: PassportStrings;
+  visa: VisaStrings;
   travel: TravelStrings;
   accommodation: AccommodationStrings;
   travelCost: TravelCostStrings;

@@ -174,14 +174,36 @@ export const EN: I18nDict = {
     retryCta: 'Try again',
   },
   // Item #13 — optional nationality selection. Not part of the original
-  // wejhaty.html copy.
-  nationality: {
-    title: 'Nationality (optional)',
-    sub: 'Skippable — this never changes your recommendations or your location, and is only used to be clear about what visa information is and isn\'t personalized to you.',
-    label: 'Your nationality',
-    placeholder: 'Start typing a country…',
-    clear: 'Clear',
-    privacyNote: 'Never inferred from your location, never sent anywhere beyond this session, and never used to score or rank destinations.',
+  // Item #12 — the optional passport question inside the questionnaire.
+  passport: {
+    title: 'Passport (optional)',
+    body: 'Telling us which passport you would travel with lets us show its entry requirements where a reliable data source is available. You can skip this, and skipping never marks any destination down.',
+    label: 'Which passport will you travel with?',
+    placeholder: 'Choose a passport country…',
+    searchPlaceholder: 'Search for a country…',
+    noMatches: 'No matching country.',
+    clear: 'Clear selection',
+    skip: 'Skip',
+    continueCta: 'Show my results',
+    privacyNote: 'Only the passport country is kept, for this session — we never ask for or store a passport number. It is never inferred from your location: location and passport are different things.',
+  },
+  visa: {
+    title: 'Entry requirements',
+    categories: {
+      visaFree: 'No visa required in advance',
+      visaOnArrival: 'Visa on arrival',
+      eVisa: 'eVisa',
+      authorizationRequired: 'Electronic travel authorization required',
+      embassyVisaRequired: 'Visa required in advance from an embassy or consulate',
+      unknown: 'Not available',
+    },
+    providerLabel: 'Source',
+    checkedAtLabel: 'Checked',
+    changeNote: 'Entry requirements change. This is a reference, not a guarantee of entry or of visa approval — check the official source before booking or travelling.',
+    unavailable: 'No entry-requirement data is available for this destination with this passport.',
+    noProvider: 'The visa data service is not enabled yet, so no passport-specific entry requirements are shown.',
+    reorderNote: 'Your passport only reordered results whose match scores were already close; no match percentage changed.',
+    noPassport: 'You did not choose a passport, so entry requirements did not affect these results.',
   },
   // Phase 13.6 — Full Travel Integration. Like location above, not part
   // of the original wejhaty.html copy.

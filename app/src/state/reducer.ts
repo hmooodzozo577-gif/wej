@@ -12,7 +12,7 @@ export const initialAppState: AppState = {
   results: null,
   explore: { q: '', region: '', purpose: '', cost: '', sort: 'default' },
   location: { status: 'idle', coords: null, diagnostic: null },
-  nationalityCode: null,
+  passportCode: null,
 };
 
 function initialPath(purpose: AppState['purpose'], hasLocation: boolean): string[] {
@@ -124,8 +124,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, location: { ...state.location, diagnostic: action.diagnostic } };
     case 'LOCATION_RESET':
       return withoutLocationQuestions({ ...state, location: { status: 'idle', coords: null, diagnostic: null } });
-    case 'SET_NATIONALITY':
-      return { ...state, nationalityCode: action.countryCode };
+    case 'SET_PASSPORT':
+      return { ...state, passportCode: action.countryCode };
     default:
       return state;
   }

@@ -9,6 +9,7 @@ import type { PurposeId } from '../data/types';
 import { rankDestinations } from '../engine';
 import { useAppState, useI18n } from '../state/hooks';
 import { trackEvent } from '../telemetry/productDataClient';
+import { PassportSelect } from '../components/PassportSelect';
 
 const OPTIONAL_RESULTS_AFTER = 5;
 const ANSWER_TRANSITION_MS = 140;
@@ -23,6 +24,10 @@ export function Quiz() {
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
   const [advancing, setAdvancing] = useState(false);
+  // Item #12D — the passport question is the LAST step of the questionnaire,
+  // not a card below the results. It has to be answerable while the ranking
+  // is still being decided; below the results it could not affect anything.
+  const [passportStep, setPassportStep] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const validPurpose = isPurposeId(purposeParam);
@@ -60,6 +65,12 @@ export function Quiz() {
     hasMoreQuestions;
   const progressPct = Math.max(2, Math.round((answeredCount / Math.max(reachableQuestionCount, 1)) * 100));
 
+  /** Ends the questionnaire and shows the passport step. Ranking happens
+   *  after it, so a passport chosen there is available to the visa layer. */
+  const requestResults = () => {
+    setPassportStep(true);
+  };
+
   const finish = (answers = state.answers) => {
     const results = rankDestinations(purposeParam, answers, state.location.coords);
     trackEvent('quiz_results_generated', {
@@ -88,7 +99,7 @@ export function Quiz() {
     setAdvancing(true);
     timer.current = setTimeout(() => {
       if (nextAfterAnswer) dispatch({ type: 'NEXT_QUESTION' });
-      else finish(answers);
+      else requestResults();
       setAdvancing(false);
       timer.current = null;
     }, ANSWER_TRANSITION_MS);
@@ -111,7 +122,40 @@ export function Quiz() {
       </div>
       <ProgressBar percent={progressPct} />
 
-      {showCheckpoint ? (
+      {passportStep ? (
+        <div className="q-card quiz-passport">
+          <div className="q-eyebrow">{purposeName}</div>
+          <h2 className="q-text">{t.passport.title}</h2>
+          <p>{t.passport.body}</p>
+          <PassportSelect />
+          <p className="city-data-note">{t.passport.privacyNote}</p>
+          <div className="quiz-checkpoint-actions">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                trackEvent('quiz_passport_choice', { chosen: state.passportCode !== null }, { path: `/quiz/${purposeParam}`, locale: lang });
+                finish();
+              }}
+            >
+              {t.passport.continueCta} <Icon name="arrowEnd" size={16} />
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                // Skipping clears any earlier choice: "skip" must mean the
+                // passport plays no part, not "keep whatever was set before".
+                dispatch({ type: 'SET_PASSPORT', countryCode: null });
+                trackEvent('quiz_passport_choice', { chosen: false }, { path: `/quiz/${purposeParam}`, locale: lang });
+                finish();
+              }}
+            >
+              {t.passport.skip}
+            </button>
+          </div>
+        </div>
+      ) : showCheckpoint ? (
         <div className="q-card quiz-checkpoint">
           <div className="q-eyebrow">{purposeName}</div>
           <h2 className="q-text">{t.quiz.checkpointTitle}</h2>
@@ -119,7 +163,7 @@ export function Quiz() {
           <div className="quiz-checkpoint-actions">
             <button type="button" className="btn btn-primary" onClick={() => {
               trackEvent('quiz_checkpoint_choice', { choice: 'results', answerCount: answeredCount }, { path: `/quiz/${purposeParam}`, locale: lang });
-              finish();
+              requestResults();
             }}>
               {t.quiz.showResultsNow} <Icon name="arrowEnd" size={16} />
             </button>

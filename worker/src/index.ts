@@ -7,8 +7,9 @@ import {
   type Env as AmadeusEnv,
 } from './amadeus';
 import { handleProductRequest, runProductRetention, type ProductEnv } from './product';
+import { handleVisaRequest, type VisaEnv } from './visa';
 
-export type Env = AmadeusEnv & ProductEnv;
+export type Env = AmadeusEnv & ProductEnv & VisaEnv;
 
 const ALLOWED_ORIGIN = 'https://hmooodzozo577-gif.github.io';
 
@@ -116,6 +117,11 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
   const productResponse = await handleProductRequest(request, env, origin);
   if (productResponse) return productResponse;
+  // Item #12 — passport/visa entry requirements. Returns 200 with
+  // category 'unknown' when no provider is configured, which is the honest
+  // answer and the state this deployment is actually in (see visa.ts).
+  const visaResponse = await handleVisaRequest(request, env, (body, status) => json(body, status, origin));
+  if (visaResponse) return visaResponse;
   if (url.pathname !== '/api/travel/flights') {
     return json({ error: 'not_found', message: 'Unknown endpoint.' }, 404, origin);
   }
