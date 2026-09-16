@@ -37,7 +37,7 @@
 // independent call sites racing each other. Everything below this
 // component's own concern (country/city resolution, nearby list, the
 // debug panel) is unchanged.
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { useLocationRequest } from '../state/useLocationRequest';
@@ -89,25 +89,19 @@ export function LocationPersonalize() {
   const [resolving, setResolving] = useState(false);
   const [debugInfo, setDebugInfo] = useState<LocationDebugInfo | null>(null);
 
-  const handleRequest = useCallback(() => {
-    setResolution(undefined);
-    setCityResolution(undefined);
-    setDebugInfo(null);
-    request().then(async (geoResult) => {
-      if (!geoResult.ok) return;
-      const browserCoords = geoResult.coords;
-      if (debugEnabled) {
-        setDebugInfo({
-          browserLat: browserCoords.lat,
-          browserLng: browserCoords.lng,
-          accuracy: geoResult.accuracy,
-          timestamp: geoResult.timestamp,
-          // Same object passed straight through below with no copy — this
-          // is literally the resolver's input, not a re-derivation of it.
-          resolverLat: browserCoords.lat,
-          resolverLng: browserCoords.lng,
-        });
-      }
+  /** Resolves already-available coordinates to a country (and, on a real
+   *  boundary match, a nearby city). Separated from the click handler
+   *  because the coordinates do not have to come from THIS card.
+   *
+   *  Self-review finding: location can be granted from the app-wide
+   *  LocationIntro prompt, which sets the shared coordinates but knows
+   *  nothing about country resolution. This card only resolved inside its
+   *  own click handler, so in that (very ordinary) path it rendered its
+   *  heading and nothing else — no resolved location, no nearby countries,
+   *  no reset. It now resolves from the shared coordinates however they
+   *  arrived. */
+  const resolveFrom = useCallback(
+    async (browserCoords: { lat: number; lng: number }) => {
       setResolving(true);
       // Item #6, phase B: time the app's OWN resolution separately from the
       // browser's fix, so "this took too long" can be attributed to the
@@ -139,8 +133,48 @@ export function LocationPersonalize() {
         },
       });
       setResolving(false);
+    },
+    [dispatch],
+  );
+
+  // Whenever there are coordinates and nothing resolved from them yet,
+  // resolve. Covers this card's own button, the app-wide prompt, and
+  // arriving on Explore with a grant already in app state.
+  const resolvedKey = useRef<string | null>(null);
+  useEffect(() => {
+    if (!coords) {
+      resolvedKey.current = null;
+      return;
+    }
+    const key = `${coords.lat},${coords.lng}`;
+    if (resolvedKey.current === key) return;
+    resolvedKey.current = key;
+    void resolveFrom(coords);
+  }, [coords, resolveFrom]);
+
+  const handleRequest = useCallback(() => {
+    setResolution(undefined);
+    setCityResolution(undefined);
+    setDebugInfo(null);
+    resolvedKey.current = null;
+    request().then((geoResult) => {
+      if (!geoResult.ok) return;
+      if (debugEnabled) {
+        setDebugInfo({
+          browserLat: geoResult.coords.lat,
+          browserLng: geoResult.coords.lng,
+          accuracy: geoResult.accuracy,
+          timestamp: geoResult.timestamp,
+          // Same object the resolver receives below with no copy — this is
+          // literally the resolver's input, not a re-derivation of it.
+          resolverLat: geoResult.coords.lat,
+          resolverLng: geoResult.coords.lng,
+        });
+      }
+      // Resolution itself is driven by the effect above, from the shared
+      // coordinates this request just produced.
     });
-  }, [request, debugEnabled, dispatch]);
+  }, [request, debugEnabled]);
 
   const handleReset = useCallback(() => {
     dispatch({ type: 'LOCATION_RESET' });
