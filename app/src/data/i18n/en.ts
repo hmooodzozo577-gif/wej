@@ -26,6 +26,8 @@ export const EN: I18nDict = {
     ratingThanks: 'Thank you — your rating was saved.',
     ratingFailed: 'We could not save your rating just now.',
     ratingRetry: 'Try again',
+    ratingVerificationFailed: 'Verification could not load. Check your connection and try again.',
+    ratingVerificationRetry: 'Retry verification',
   },
   quiz: {
     ...base.quiz,
@@ -87,6 +89,8 @@ export const EN: I18nDict = {
     thanks: 'Your message has been received. Thank you.',
     reference: 'Reference',
     failed: 'The message could not be sent. Please try again later.',
+    verificationFailed: 'Verification could not load. Check your connection and try again.',
+    retryVerification: 'Retry verification',
   },
   regionLabels: {
     ...base.regionLabels,
@@ -196,6 +200,8 @@ export const EN: I18nDict = {
     thanks: 'Thank you — your rating was saved.',
     failed: 'We could not save your rating just now.',
     retry: 'Try again',
+    verificationFailed: 'Verification could not load. Check your connection and try again.',
+    verificationRetry: 'Retry verification',
   },
   passport: {
     title: 'Passport (optional)',

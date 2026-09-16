@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FeedbackStrings, Lang } from '../data/types';
 import { submitFeedback } from '../telemetry/productDataClient';
-import { TURNSTILE_SITE_KEY, loadTurnstile } from '../telemetry/turnstile';
+import { useTurnstile } from '../telemetry/turnstile';
 import { Select } from './Select';
 
 export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; strings: FeedbackStrings; countryCode?: string }) {
@@ -10,13 +10,20 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
   const [screenshot, setScreenshot] = useState<string | undefined>();
-  const [turnstileToken, setTurnstileToken] = useState<string | undefined>();
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
   const [reference, setReference] = useState<string | null>(null);
   const [fileError, setFileError] = useState(false);
   const challenge = useRef<HTMLDivElement | null>(null);
   const opener = useRef<HTMLButtonElement | null>(null);
   const dialog = useRef<HTMLElement | null>(null);
+  // Shared with ResultRating/DestinationRating rather than reimplemented:
+  // the previous ad hoc version here had no handling for a script that
+  // fails to load, which left Submit disabled forever with no explanation
+  // whenever Turnstile was configured but its challenge could not load
+  // (blocked by an ad blocker, a firewall, or any network policy that
+  // refuses challenges.cloudflare.com) — the root cause of the reported
+  // "cannot be pressed or completed" bug.
+  const turnstile = useTurnstile(challenge, open);
 
   useEffect(() => {
     if (!open) return;
@@ -35,25 +42,6 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
     };
   }, [open]);
 
-  useEffect(() => {
-    if (!open || !TURNSTILE_SITE_KEY || !challenge.current) return;
-    let widgetId: string | undefined;
-    let cancelled = false;
-    loadTurnstile().then((api) => {
-      if (!api || cancelled || !challenge.current) return;
-      widgetId = api.render(challenge.current, {
-        sitekey: TURNSTILE_SITE_KEY,
-        language: lang,
-        callback: (token: string) => setTurnstileToken(token),
-        'expired-callback': () => setTurnstileToken(undefined),
-      });
-    });
-    return () => {
-      cancelled = true;
-      if (widgetId) window.turnstile?.remove(widgetId);
-    };
-  }, [lang, open]);
-
   const chooseScreenshot = (file?: File) => {
     setFileError(false);
     setScreenshot(undefined);
@@ -69,9 +57,15 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
   };
 
   const save = async () => {
-    if (message.trim().length < 10 || status === 'saving' || (TURNSTILE_SITE_KEY && !turnstileToken)) return;
+    if (message.trim().length < 10 || status === 'saving' || turnstile.blocking) return;
     setStatus('saving');
-    const result = await submitFeedback({ type, message: message.trim(), email: email.trim() || undefined, screenshotDataUrl: screenshot, turnstileToken }, {
+    const result = await submitFeedback({
+      type,
+      message: message.trim(),
+      email: email.trim() || undefined,
+      screenshotDataUrl: screenshot,
+      ...(turnstile.token ? { turnstileToken: turnstile.token } : {}),
+    }, {
       path: window.location.pathname.replace(/^\/wej/, '') || '/',
       locale: lang,
       countryCode,
@@ -133,9 +127,15 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
                   <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => chooseScreenshot(event.target.files?.[0])} />
                 </label>
                 {fileError ? <p className="form-error">{strings.screenshotError}</p> : null}
-                {TURNSTILE_SITE_KEY ? <div ref={challenge} className="turnstile-slot" /> : null}
-                {status === 'failed' ? <p className="form-error">{strings.failed}</p> : null}
-                <button type="submit" className="btn btn-primary" disabled={message.trim().length < 10 || status === 'saving' || !!(TURNSTILE_SITE_KEY && !turnstileToken)}>
+                {turnstile.required ? <div ref={challenge} className="turnstile-slot" /> : null}
+                {turnstile.failed ? (
+                  <p className="form-error" role="alert">
+                    {strings.verificationFailed}{' '}
+                    <button type="button" className="btn btn-ghost btn-sm" onClick={turnstile.retry}>{strings.retryVerification}</button>
+                  </p>
+                ) : null}
+                {status === 'failed' ? <p className="form-error" role="alert">{strings.failed}</p> : null}
+                <button type="submit" className="btn btn-primary" disabled={message.trim().length < 10 || status === 'saving' || turnstile.blocking}>
                   {status === 'saving' ? strings.saving : strings.submit}
                 </button>
               </form>

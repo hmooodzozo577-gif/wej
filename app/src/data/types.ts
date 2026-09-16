@@ -399,6 +399,10 @@ export interface ResultsStrings {
   ratingThanks: string;
   ratingFailed: string;
   ratingRetry: string;
+  /** Same distinction as FeedbackStrings.verificationFailed — the
+   *  challenge itself failed to load, not the submission. */
+  ratingVerificationFailed: string;
+  ratingVerificationRetry: string;
 }
 
 export interface DetailStrings {
@@ -545,6 +549,12 @@ export interface FeedbackStrings {
   thanks: string;
   reference: string;
   failed: string;
+  /** Shown when the anti-abuse challenge itself could not load or render
+   *  (blocked script, network policy, timeout) — distinct from `failed`,
+   *  which is a failed SEND attempt. Submit stays disabled either way;
+   *  this only explains why, with a way to retry loading the challenge. */
+  verificationFailed: string;
+  retryVerification: string;
 }
 
 /** Phase 12 — Location Personalization strings. Not part of the original
@@ -632,6 +642,10 @@ export interface DestinationRatingStrings {
   thanks: string;
   failed: string;
   retry: string;
+  /** Same distinction as FeedbackStrings.verificationFailed — the
+   *  challenge itself failed to load, not the submission. */
+  verificationFailed: string;
+  verificationRetry: string;
 }
 
 export interface PassportStrings {

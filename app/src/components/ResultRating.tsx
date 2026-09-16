@@ -68,6 +68,15 @@ export function ResultRating({ results, lang, strings }: { results: RankedResult
       </div>
 
       {turnstile.required ? <div ref={turnstileSlot} className="turnstile-slot" /> : null}
+      {/* Distinct from a failed SEND below: this is the challenge itself
+          failing to load (blocked script, network policy), which used to
+          leave Submit disabled forever with no explanation. */}
+      {turnstile.failed ? (
+        <p className="form-error" role="alert">
+          {strings.ratingVerificationFailed}{' '}
+          <button type="button" className="btn btn-ghost btn-sm" onClick={turnstile.retry}>{strings.ratingVerificationRetry}</button>
+        </p>
+      ) : null}
 
       {/* Said up front, not discovered by clicking a dead button. */}
       {!score ? <p className="rating-required">{strings.ratingRequiredNote}</p> : null}

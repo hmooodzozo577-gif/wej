@@ -35,6 +35,8 @@ export const AR: I18nDict = {
     ratingThanks: 'شكرًا، تم حفظ تقييمك.',
     ratingFailed: 'تعذر حفظ التقييم الآن.',
     ratingRetry: 'إعادة المحاولة',
+    ratingVerificationFailed: 'تعذر تحميل التحقق. تحقق من اتصالك وحاول مرة أخرى.',
+    ratingVerificationRetry: 'إعادة محاولة التحقق',
   },
   quiz: {
     ...base.quiz,
@@ -96,6 +98,8 @@ export const AR: I18nDict = {
     thanks: 'وصلت رسالتك، شكرًا لك.',
     reference: 'رقم المتابعة',
     failed: 'تعذر إرسال الرسالة الآن. حاول مرة أخرى لاحقًا.',
+    verificationFailed: 'تعذر تحميل التحقق. تحقق من اتصالك وحاول مرة أخرى.',
+    retryVerification: 'إعادة محاولة التحقق',
   },
   regionLabels: {
     ...base.regionLabels,
@@ -205,6 +209,8 @@ export const AR: I18nDict = {
     thanks: 'شكرًا، تم حفظ تقييمك.',
     failed: 'تعذر حفظ التقييم الآن.',
     retry: 'إعادة المحاولة',
+    verificationFailed: 'تعذر تحميل التحقق. تحقق من اتصالك وحاول مرة أخرى.',
+    verificationRetry: 'إعادة محاولة التحقق',
   },
   passport: {
     title: 'جواز السفر (اختياري)',

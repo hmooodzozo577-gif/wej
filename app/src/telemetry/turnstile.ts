@@ -31,6 +31,15 @@ declare global {
   interface Window { turnstile?: TurnstileApi }
 }
 
+// Root cause of "the submit button stays disabled forever": this used to
+// listen for the script's `load` event only. A blocked or failed load (an
+// ad blocker, a corporate/regional firewall, or any network policy that
+// refuses challenges.cloudflare.com — all common in the real world, not
+// hypothetical) never fires `load`, so the returned promise never settled
+// and every caller waiting on it hung indefinitely with no token, no
+// error, and no way out. Listening for `error` too, and resolving
+// `undefined` on it, turns that silent hang into a state callers can
+// actually detect and surface (see useTurnstile's `failed`).
 export function loadTurnstile(): Promise<TurnstileApi | undefined> {
   if (!TURNSTILE_SITE_KEY) return Promise.resolve(undefined);
   if (typeof window === 'undefined') return Promise.resolve(undefined);
@@ -39,7 +48,9 @@ export function loadTurnstile(): Promise<TurnstileApi | undefined> {
     const existing = document.querySelector<HTMLScriptElement>('script[data-wejhaty-turnstile]');
     const script = existing ?? document.createElement('script');
     const done = () => resolve(window.turnstile);
+    const failed = () => resolve(undefined);
     script.addEventListener('load', done, { once: true });
+    script.addEventListener('error', failed, { once: true });
     if (!existing) {
       script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
       script.async = true;
@@ -49,6 +60,12 @@ export function loadTurnstile(): Promise<TurnstileApi | undefined> {
     }
   });
 }
+
+/** Belt-and-braces backstop behind the `error` listener above: some
+ *  network policies drop the request without ever firing a DOM `error`
+ *  event (a silently stalled connection, some proxy behaviours). Without
+ *  this, that specific failure mode would still hang forever. */
+const TURNSTILE_LOAD_TIMEOUT_MS = 8000;
 
 /** Renders a challenge into `container` while `active`, and reports the
  *  current token. Returns `required: false` when no site key is configured,
@@ -63,31 +80,68 @@ export function useTurnstile(
   theme: 'auto' | 'light' | 'dark' = 'auto',
 ) {
   const [token, setToken] = useState<string | undefined>();
+  // True once the challenge is known NOT to be coming — the script failed
+  // to load, timed out, or the widget itself reported an error. Distinct
+  // from "still loading": a caller uses this to show an honest message and
+  // a retry instead of a submit button that is disabled with no
+  // explanation forever. Submission stays blocked either way — a Turnstile
+  // failure must never silently waive the challenge, or blocking the
+  // script client-side would be a trivial way to bypass it entirely.
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!TURNSTILE_SITE_KEY || !active) return;
     let widgetId: string | undefined;
     let cancelled = false;
+    // Deliberate, not derivable at render time: this effect can re-run
+    // with a stale `failed`/`token` left over from a PREVIOUS attempt (a
+    // retry, or the challenge becoming active again after being inactive)
+    // and must clear them before starting a new one, or a past failure
+    // would keep showing after this attempt has already succeeded.
+    // oxlint-disable-next-line react/set-state-in-effect
+    setFailed(false);
+    setToken(undefined);
+    const timer = window.setTimeout(() => {
+      if (!cancelled) setFailed(true);
+    }, TURNSTILE_LOAD_TIMEOUT_MS);
     void loadTurnstile().then((api) => {
-      if (cancelled || !api || !container.current) return;
-      widgetId = api.render(container.current, {
-        sitekey: TURNSTILE_SITE_KEY,
-        theme,
-        callback: (value: string) => setToken(value),
-        'expired-callback': () => setToken(undefined),
-        'error-callback': () => setToken(undefined),
-      });
+      if (cancelled) return;
+      if (!api || !container.current) {
+        window.clearTimeout(timer);
+        setFailed(true);
+        return;
+      }
+      try {
+        widgetId = api.render(container.current, {
+          sitekey: TURNSTILE_SITE_KEY,
+          theme,
+          callback: (value: string) => { window.clearTimeout(timer); setToken(value); },
+          'expired-callback': () => setToken(undefined),
+          'error-callback': () => { window.clearTimeout(timer); setFailed(true); },
+        });
+        window.clearTimeout(timer);
+      } catch {
+        window.clearTimeout(timer);
+        setFailed(true);
+      }
     });
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
       if (widgetId) window.turnstile?.remove(widgetId);
     };
-  }, [active, theme, container]);
+  }, [active, theme, container, attempt]);
 
   return {
     token,
     required: !!TURNSTILE_SITE_KEY,
     /** True when a challenge is required and has not been solved yet. */
     blocking: !!TURNSTILE_SITE_KEY && active && !token,
+    /** True when the challenge is required but could not load or render. */
+    failed,
+    /** Reloads the widget from scratch — offered to the traveller next to
+     *  the failure message rather than leaving them stuck. */
+    retry: () => setAttempt((value) => value + 1),
   };
 }

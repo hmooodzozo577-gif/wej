@@ -85,6 +85,12 @@ export function DestinationRating({
       </div>
 
       {turnstile.required ? <div ref={turnstileSlot} className="turnstile-slot" /> : null}
+      {turnstile.failed ? (
+        <p className="form-error" role="alert">
+          {strings.verificationFailed}{' '}
+          <button type="button" className="btn btn-ghost btn-sm" onClick={turnstile.retry}>{strings.verificationRetry}</button>
+        </p>
+      ) : null}
 
       {!score ? <p className="rating-required">{strings.requiredNote}</p> : null}
       {status === 'failed' ? <p className="form-error" role="alert">{strings.failed}</p> : null}
