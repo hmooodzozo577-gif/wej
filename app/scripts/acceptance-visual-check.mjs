@@ -49,6 +49,19 @@ async function audit(page, name) {
     // A native <select> surviving anywhere is the exact item #1 regression.
     if (document.querySelector('select')) problems.push('a native <select> is still in the DOM');
 
+    // Acceptance item #4 — the compass must be gone and the reel present
+    // once Surprise Me has been used.
+    if (document.querySelector('.surprise-stage')) {
+      if (!document.querySelector('.surprise-reel')) problems.push('Surprise Me has a stage but no flag reel');
+      for (const leftover of ['.surprise-compass', '.compass-needle', '.compass-ticks', '.compass-window']) {
+        if (document.querySelector(leftover)) problems.push('the rejected compass survived: ' + leftover);
+      }
+      const live = document.querySelectorAll('.surprise-card [aria-live]');
+      if (live.length !== 1) problems.push('Surprise Me should have exactly one live region, found ' + live.length);
+      const reel = document.querySelector('.surprise-reel');
+      if (reel && reel.getAttribute('aria-hidden') !== 'true') problems.push('the reel is not hidden from the accessibility tree');
+    }
+
     // Touch targets on the controls this round added.
     for (const selector of ['.hero-nav', '.wj-select-trigger', '.rating-stars button']) {
       for (const element of document.querySelectorAll(selector)) {
@@ -226,6 +239,29 @@ async function run() {
         await context.close();
         console.log(`captured ${tag}`);
       }
+    }
+  }
+
+  // --- Acceptance item #4: the reel under a reduced-motion preference ----
+  // A separate pass because the preference is a context-level setting: the
+  // reel must resolve to the real winner with no cycling at all.
+  for (const [device, viewport] of Object.entries(VIEWPORTS)) {
+    for (const lang of ['ar', 'en']) {
+      const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
+      const page = await context.newPage();
+      const tag = `${device}-${lang}-reduced`;
+      await visit(page, '/explore', lang, 600);
+      const spin = page.locator('.surprise-card button.btn-gold');
+      if (await spin.count()) {
+        await spin.click();
+        await page.waitForTimeout(900);
+        await shot(page, `20-surprise-reduced-${tag}`);
+        await audit(page, `surprise reduced motion ${tag}`);
+        const landed = await page.locator('.surprise-result strong').count();
+        if (!landed) findings.push(`${tag}: reduced motion never landed on a destination`);
+      }
+      await context.close();
+      console.log(`captured ${tag}`);
     }
   }
 

@@ -4,7 +4,7 @@
 //   * an unverified Access JWT being trusted
 //   * a filter value reaching SQL as anything other than a bound parameter
 //   * any coordinate, IP or fingerprint appearing anywhere in analytics
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { authenticateAdmin, handleAdminRequest, verifyAccessJwt, type AdminEnv } from './admin';
 import { FEEDBACK_STATUSES, parseFeedbackQuery, parseFilters } from './analytics';
 

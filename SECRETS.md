@@ -107,3 +107,79 @@ performs the OAuth2 client-credentials flow and Flight Offers Search call.
 No value is stored in this repository. The Worker has previously been deployed,
 but current Cloudflare secret values are external state and must be checked in
 the account before claiming that live Amadeus offers are configured.
+
+---
+
+# Every secret and setting this project reads, 2026-09-16
+
+The rules above apply to all of them: Worker secrets only, never a `VITE_*`
+variable, never committed, never printed. A `VITE_*` value is inlined into
+the public bundle by Vite and is readable by every visitor — so anything in
+that column below is, by definition, not a secret and must never be one.
+
+| Name | Where | Kind | Effect when unset |
+|---|---|---|---|
+| `AMADEUS_API_KEY` / `AMADEUS_API_SECRET` | Worker secret | **secret** | Flight offers are unavailable; the app says so |
+| `AMADEUS_ENV` | Worker `[vars]` | mode switch, not a secret | Sandbox API is used |
+| `SHERPA_API_KEY` | Worker secret | **secret** | No visa provider; every lookup answers `unknown` and the passport step says live data is not switched on |
+| `SHERPA_BASE_URL` | Worker `[vars]` | host override for the sandbox | Production Sherpa host is used |
+| `TURNSTILE_SECRET_KEY` | Worker secret | **secret** | Reports and ratings are accepted without a challenge (today's state) |
+| `ADMIN_TOKEN` | Worker secret | **secret** | With no `ADMIN_ACCESS_AUD` either, `/api/admin/*` returns 503 and serves nothing |
+| `ADMIN_ACCESS_AUD` | Worker `[vars]` | Cloudflare Access application audience tag | Access enforcement is off; `ADMIN_TOKEN` is used instead |
+| `ADMIN_ACCESS_TEAM_DOMAIN` | Worker `[vars]` | e.g. `example.cloudflareaccess.com` | As above |
+| `CITY_DESCRIPTIONS` | Worker `[vars]` | set to `off` to stop outbound description fetching | Descriptions are fetched and cached normally |
+| `VITE_TRAVEL_WORKER_URL` | Pages build | **public** — the Worker's public origin | The app runs with no Worker at all and degrades honestly |
+| `VITE_TURNSTILE_SITE_KEY` | Pages build | **public** — Turnstile site keys are public by design | No challenge widget is rendered anywhere |
+
+## Admin access, in order of preference
+
+**Cloudflare Access (preferred).** Put an Access application in front of the
+Worker's `/admin` and `/api/admin/*` paths, then set `ADMIN_ACCESS_AUD` to
+that application's Audience (AUD) tag and `ADMIN_ACCESS_TEAM_DOMAIN` to the
+Zero Trust team domain. The Worker then verifies the Access JWT itself —
+RS256 signature against the team's published keys, plus audience and expiry —
+so a request that merely *reaches* the Worker is not trusted on that basis
+alone.
+
+Once Access is configured, **`ADMIN_TOKEN` stops working**. That is
+deliberate: a bearer token that could bypass Access would make adding Access
+a downgrade.
+
+**`ADMIN_TOKEN` (fallback).** For an account without Cloudflare Zero Trust:
+
+```
+npx wrangler secret put ADMIN_TOKEN
+```
+
+Use a long random value (`openssl rand -base64 32`). It is compared in
+constant time and is never echoed in any response.
+
+**Neither configured:** every admin data path returns 503. The surface never
+falls open.
+
+## Turnstile
+
+Both halves are independent, so they can be switched on in either order
+without a window where submissions are rejected:
+
+- Worker: `npx wrangler secret put TURNSTILE_SECRET_KEY`. Until it is set,
+  verification is skipped.
+- Pages: `VITE_TURNSTILE_SITE_KEY` in the build environment. Until it is set,
+  no widget is rendered and no token is sent.
+
+Challenged: the report dialog, the results rating, the destination rating —
+the three places a stranger can write text into the database. **Not
+challenged:** analytics events, which carry no free text and are automatic.
+
+## Cloudflare API token (CI only)
+
+`CLOUDFLARE_API_TOKEN` is a GitHub Actions secret, not a Worker secret. It
+needs, at the account level:
+
+- Workers Scripts: **Edit**
+- D1: **Edit**
+- Workers R2 Storage: **Edit**
+
+The deploy workflow prints a per-capability diagnostic before provisioning,
+so a failure names the missing permission rather than leaving it to be
+guessed. It never prints the token.

@@ -40,7 +40,12 @@ button.primary{background:var(--gold);color:#1a1205;border-color:var(--gold);fon
 button.ghost{background:transparent}
 button.small{padding:5px 9px;font-size:0.82rem}
 .filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;align-items:end}
-.filters .actions{display:flex;gap:8px}
+/* A date input carries a wide intrinsic size in Chrome and pushes the grid
+   past the viewport at 390px unless both the track and the control are told
+   they may shrink. Found by measuring, not by guessing. */
+.filters>div{min-width:0}
+.filters input,.filters select{width:100%;min-width:0}
+.filters .actions{display:flex;gap:8px;flex-wrap:wrap}
 nav.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px}
 nav.tabs button{background:transparent;border-color:transparent;color:var(--muted);border-radius:100px;padding:7px 14px}
 nav.tabs button[aria-current="true"]{background:var(--panel-2);border-color:var(--line-2);color:var(--ink);font-weight:700}
@@ -133,7 +138,9 @@ function rankTable(rowsData, columns, valueKey) {
     head.append(th);
   });
   head.append(node('th', '', ''));
-  table.append(node('thead')).firstChild.append(head);
+  var thead = node('thead');
+  thead.append(head);
+  table.append(thead);
   var body = node('tbody');
   rowsData.forEach(function (row) {
     var tr = node('tr');
@@ -289,7 +296,9 @@ function renderQuality(root, data) {
     var table = node('table');
     var head = node('tr');
     ['When', 'Kind', 'Score', 'Country', 'Arrived via', 'Comment'].forEach(function (label) { head.append(node('th', '', label)); });
-    table.append(node('thead')).firstChild.append(head);
+    var thead = node('thead');
+    thead.append(head);
+    table.append(thead);
     var body = node('tbody');
     quality.negativeComments.forEach(function (row) {
       var tr = node('tr');
@@ -313,7 +322,9 @@ function renderQuality(root, data) {
     var setTable = node('table');
     var setHead = node('tr');
     ['When', 'Score', 'Recommended set'].forEach(function (label) { setHead.append(node('th', '', label)); });
-    setTable.append(node('thead')).firstChild.append(setHead);
+    var setThead = node('thead');
+    setThead.append(setHead);
+    setTable.append(setThead);
     var setBody = node('tbody');
     quality.poorResultSets.forEach(function (row) {
       var tr = node('tr');
@@ -517,7 +528,9 @@ function renderFeedbackList() {
   var table = node('table');
   var head = node('tr');
   ['Reference', 'When', 'Type', 'Country', 'Message', 'Status', ''].forEach(function (label) { head.append(node('th', '', label)); });
-  table.append(node('thead')).firstChild.append(head);
+  var thead = node('thead');
+  thead.append(head);
+  table.append(thead);
   var body = node('tbody');
   state.feedback.items.forEach(function (row) {
     var tr = node('tr');
@@ -634,7 +647,7 @@ function load() {
   renderBody();
   return api('/api/admin/analytics', filters()).then(function (data) {
     state.data = data;
-    el('login').hidden = true;
+    el('loginForm').hidden = true;
     el('dashboard').hidden = false;
     el('authVia').textContent = data.authenticatedVia === 'access' ? 'Signed in through Cloudflare Access' : 'Signed in with an admin token';
     renderTabs();
@@ -643,7 +656,7 @@ function load() {
   }).catch(function (error) {
     el('error').textContent = error.message;
     el('dashboard').hidden = true;
-    el('login').hidden = false;
+    el('loginForm').hidden = false;
   });
 }
 

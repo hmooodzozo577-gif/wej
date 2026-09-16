@@ -44,6 +44,35 @@ jobs:
         working-directory: worker
         run: npm test
 
+      # Reports exactly WHICH Cloudflare capability the token has, so a
+      # provisioning failure names the missing permission instead of leaving
+      # it to be guessed. Read-only, never fails the run, and prints no
+      # secret — only whether each call succeeded.
+      - name: Diagnose Cloudflare token capability
+        id: cloudflare_capability
+        continue-on-error: true
+        working-directory: worker
+        shell: bash
+        run: |
+          check () {
+            if output="$(eval "$2" 2>&1)"; then
+              echo "OK        $1"
+            else
+              echo "FAILED    $1"
+              echo "$output" | grep -iE 'authentication|authorization|permission|code: *[0-9]+|error' | head -3 | sed 's/^/          /'
+            fi
+          }
+          echo "--- Cloudflare token capability ---"
+          check "identity (whoami)"      "npx wrangler whoami"
+          check "Workers: list"          "npx wrangler deployments list --name wejhaty-travel-worker"
+          check "D1: list"               "npx wrangler d1 list --json"
+          check "R2: list buckets"       "npx wrangler r2 bucket list"
+          echo "-----------------------------------"
+          echo "A FAILED line above is the permission to add in the Cloudflare"
+          echo "dashboard: My Profile -> API Tokens -> edit the token used by"
+          echo "CLOUDFLARE_API_TOKEN. Required: Account / Workers Scripts:Edit,"
+          echo "Account / D1:Edit, Account / Workers R2 Storage:Edit."
+
       - name: Provision product-data resources
         id: product_resources
         continue-on-error: true
@@ -91,5 +120,13 @@ jobs:
         if: steps.product_resources.outcome == 'failure'
         run: |
           echo "Worker code was deployed, but D1/R2 provisioning failed."
-          echo "Update CLOUDFLARE_API_TOKEN with D1, R2, and Workers edit permissions, then re-run this workflow."
+          echo "See the 'Diagnose Cloudflare token capability' step above: each"
+          echo "FAILED line names a permission the token is missing."
+          echo "Cloudflare dashboard -> My Profile -> API Tokens -> edit the token"
+          echo "behind the CLOUDFLARE_API_TOKEN secret, and grant:"
+          echo "  Account / Workers Scripts    : Edit"
+          echo "  Account / D1                 : Edit"
+          echo "  Account / Workers R2 Storage : Edit"
+          echo "Then re-run this workflow. Ratings and reports cannot persist until"
+          echo "D1 is bound, and the app reports that failure rather than hiding it."
           exit 1

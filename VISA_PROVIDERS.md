@@ -130,3 +130,75 @@ field for one. The passport choice is optional and skippable, is never
 inferred from location, and is not used for any purpose other than this
 lookup. Provider credentials live in Worker secrets only — never in the
 frontend, never in a `VITE_*` variable, never committed.
+
+---
+
+## Re-check, 2026-09-16
+
+Re-tested rather than assumed. Every probe below is a real request made
+during this round.
+
+| Host | Result |
+|---|---|
+| `api.joinsherpa.com` | **403 at the egress proxy** (`connect_rejected`) |
+| `developers.joinsherpa.com` | **403 at the egress proxy** |
+| `joinsherpa.com` | **403 at the egress proxy** |
+| `api.visahq.com` | **403 at the egress proxy** |
+| `www.iata.org` | **403 at the egress proxy** |
+| `timaticweb2.iata.org` | **403 at the egress proxy** |
+
+So none of the four things the brief asks to confirm before activation can
+be confirmed from here, and none of them is being guessed:
+
+1. the current API contract and its field names;
+2. the account and access requirements;
+3. the semantics — passport-country input, destination input, requirement
+   vocabulary, whether purpose is expressible, freshness guarantees;
+4. the terms — attribution, caching and storage duration, and **whether the
+   data may inform ranking as well as display**.
+
+### What was done instead
+
+The adapter's mapping is now under a **contract harness** rather than a
+claim. `worker/src/visa.contract.test.ts` asserts today what is actually
+verifiable — with no credentials the app answers `unknown` on every path, an
+unrecognised provider value maps to `unknown`, and a drifted response shape
+neither throws nor invents — and states in a test that the mapping itself is
+UNVERIFIED. Drop one real sandbox response per category into
+`worker/fixtures/sherpa/` (see its README) and that same file turns into a
+real mapping test; a wrong mapping then fails the build.
+
+### Status
+
+`READY — PROVIDER ACCOUNT/CREDENTIALS REQUIRED`
+
+### The exact next account action
+
+This is the user's to take; it cannot be done from here.
+
+1. Request sandbox access at Sherpa's developer portal (or the provider you
+   prefer — the adapter interface is the only thing another provider has to
+   satisfy, see `resolveVisaProvider`).
+2. In the contract or the developer terms, get an answer in writing to each
+   of the four questions above. The fourth matters most: if the terms do not
+   permit the data to inform ordering, Wejhaty shows entry requirements and
+   the bounded tie-breaker stays switched off.
+3. Capture one sandbox response per requirement category and commit them to
+   `worker/fixtures/sherpa/` after stripping anything sensitive.
+4. `npx wrangler secret put SHERPA_API_KEY`, and `SHERPA_BASE_URL` while on
+   the sandbox host.
+
+The moment the key exists, `/api/visa/status` starts reporting
+`providerConfigured: true`, the passport step's copy switches from "not
+switched on yet" to the active wording by itself, and the bounded tie-break
+begins to apply. Nothing else needs changing.
+
+### What still must NOT happen
+
+- No Phase 14 weight change. The 8–11 visa weight remains a proposal the
+  user has not approved, and is not implemented.
+- No visa influence on ordering without verified provider data. This is
+  enforced in code, not by intention: `applyVisaRanking` returns the input
+  untouched when there is no passport or no requirement, and the client never
+  stores an `unknown` requirement — so with no provider the map is empty and
+  the reorder is a strict no-op.

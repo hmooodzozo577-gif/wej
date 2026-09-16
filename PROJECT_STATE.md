@@ -5,7 +5,7 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 13
+- State document version: 14
 - Last verified date: 2026-09-16
 - Working branch: `claude/modest-cray-34bvoa`
 - Previous production frontend commit: `f60efd93`
@@ -25,19 +25,53 @@ configuration, and current Git state outrank this document when they differ.
 - Git state re-verified directly before writing this: working tree clean, no
   merge/rebase in progress; `origin/claude/modest-cray-34bvoa` and
   `origin/claude/marhaba-kxry8l` are both at `e3f8e4a8`.
-- 2026-09-16 USER ACCEPTANCE ROUND. The user personally tested the deployed
-  build and reported 14 findings. All 14 are implemented and verified
-  locally (718/718 frontend tests, 90/90 worker tests, TypeScript, oxlint,
-  the production build, a Wrangler dry-run, a Playwright visual sweep across
-  Arabic RTL / English LTR x 390px / 1280px x light / dark, and 26
-  delivery-critical behaviour checks driven against the production build
-  with the Worker stubbed to return exactly what production returns today).
-  The WORKER and the FRONTEND are both deployed. Nothing in this round is
-  user-accepted — the user's own production test is still outstanding.
+- ACCEPTANCE STATE, 2026-09-16 (second round). The user re-tested the
+  deployed build and said "the rest is fine" apart from six findings.
+
+  USER ACCEPTED (the user's own words, on the build they tested — everything
+  outside the six findings below):
+    * the deterministic questionnaire and its per-purpose dimensions
+    * the custom listbox replacing native selects, and the theme control
+    * Latin digits throughout
+    * two-stage geolocation, nearest/farthest, and location-gated questions
+    * "Why this suits you" in the traveller's own language
+    * hero previous/next controls living inside the hero image
+    * the structured per-city facts
+    * the results and per-destination rating FORMS (their submission is a
+      separate matter — see below)
+  NOT accepted, because it has not been retested: all six findings of this
+  round. NOT accepted, because it is external-state blocked: visa
+  personalization. NOT accepted, because it has never succeeded: feedback
+  persistence.
+
+- THE SIX FINDINGS, and what happened to each:
+  1. Arabic sort label. The reported string "الأقرب إلى موقعى" does NOT exist
+     in this repository and never has — `sortNearest` has read "الأقرب إلى
+     موقعي" since 1cec937, in every deployed commit. A real inconsistency in
+     the same pair was found and fixed, and a test now guards the whole
+     ya/alef-maqsura class across every Arabic string.
+  2. Hero previous/next labels: SHIPPED at >=900px as a floating caption
+     above the arrow, after measurement showed an expanding pill collides
+     with the country title at every width. Below 900px the label is not
+     rendered. See the Hero navigation section.
+  3. City descriptions: IMPLEMENTED as a Worker service against Wikipedia's
+     REST API with a coordinate-match guard, cached in D1. Coverage in
+     production is unknown until deployed and is reported by the dashboard,
+     not estimated. See /CITY_DESCRIPTIONS.md.
+  4. Surprise Me: RESTORED to the pre-compass flag reel, recovered from Git.
+  5. Passport explanation: REWRITTEN, and now driven by a real provider-status
+     endpoint so it cannot claim an effect it does not have.
+  6. Rating persistence: still blocked on D1. The error the user saw is
+     correct and is NOT hidden.
+
 - TWO external dependencies remain. Neither is a code defect and neither may
   be worked around unofficially:
-  1. Cloudflare D1/R2 (`Authentication error [code: 10000]`).
-  2. A visa-data provider account.
+  1. Cloudflare D1/R2 (`Authentication error [code: 10000]` as of the last
+     deploy). The workflow now prints a per-capability diagnostic so a repeat
+     failure names the missing permission — see SECRETS.md.
+  2. A visa-data provider account. Re-checked 2026-09-16: every provider host
+     is refused at the agent egress proxy, so the API contract could not be
+     re-read and is not being guessed. See /VISA_PROVIDERS.md.
   The third (GitHub Pages environment protection) was cleared on 2026-09-16.
 
 Always recover with `git branch --show-current`, `git status --short`,
@@ -200,6 +234,24 @@ enumeration of the questionnaire's combinatorial answer space.
   `unknown`, the UI says the visa service is not enabled, and ranking is
   unaffected. Provider failure, timeout, non-2xx and malformed JSON all
   resolve to `unknown`. There is no fabricated fallback anywhere in the path.
+- `GET /api/visa/status` reports only whether a provider is configured, so
+  the PASSPORT STEP can tell the traveller the truth before they answer —
+  it has no destination yet and so cannot learn it from a lookup. It fails
+  closed: any error, any missing Worker, any non-200 means "not active". The
+  step's copy switches by itself the moment a provider key exists.
+- The passport explanation (acceptance item #5) says, in this order: what the
+  answer is FOR (entry and visa requirements), that it is NOT the traveller's
+  location and neither is inferred from the other, what it does to the results
+  TODAY (nothing, because no provider is live), and that no passport number is
+  ever asked for. A test asserts all five points survive in both languages and
+  that nothing shown today claims an effect on ordering.
+- PROVIDER MAPPING IS UNVERIFIED and is not claimed otherwise. Every provider
+  host is refused at the agent egress proxy, so the adapter has never run
+  against a real response. `worker/src/visa.contract.test.ts` asserts what IS
+  verifiable (no credentials -> `unknown` everywhere; an unrecognised value ->
+  `unknown`; a drifted shape neither throws nor invents) and states the
+  unverified status as an assertion. Dropping one real sandbox response per
+  category into `worker/fixtures/sherpa/` turns it into a real mapping test.
 - RANKING BOUNDARY, deliberately narrow: the visa layer is outside the engine.
   It changes no Phase 14 weight, dimension or semantic, and no match score —
   the percentage shown is identical with and without a passport. It may only
@@ -242,12 +294,23 @@ enumeration of the questionnaire's combinatorial answer space.
   The previous build printed one of two fixed sentences chosen by whether the
   city was the capital, so five cities in a country differed only by name and
   population — the user reported exactly that.
-  What is deliberately NOT generated: "known for", notable attractions, or
-  character descriptions. There is no licensed offline source covering those
-  for ~830 cities, and inventing them is ruled out. The card says so in both
-  languages rather than implying the facts are hand-written editorial, and
-  region and airport names are disclosed as appearing in their source
-  language. Its toggle label reads "Show more"/"Show less" (Arabic: "إظهار
+  ABOVE those facts, each city now also shows a GENERAL DESCRIPTION where one
+  could be verified (acceptance item #3). It is fetched by the WORKER from
+  Wikipedia's public REST summary API — the build sandbox cannot reach
+  Wikipedia, the deployed Worker can — cached in D1, and rendered with its
+  source, a link to the article, and its CC BY-SA 4.0 licence.
+  A namesake city can never be described in place of the real one: an article
+  is accepted only when it is not a disambiguation page AND carries its own
+  coordinates AND those coordinates sit within 45km of the city asked about.
+  The reference coordinates live in the Worker
+  (`worker/src/generated/cityCoordinates.json`, 810 cities); the browser
+  never sends a coordinate of any kind. A city with no verified article shows
+  its structured facts alone — there is no fallback text, because a fallback
+  would be invented text. Real coverage is reported by the admin dashboard
+  from the cache table, never estimated. Full provenance, licensing and the
+  egress evidence are in /CITY_DESCRIPTIONS.md.
+  Region and airport names are disclosed as appearing in their source
+  language. The toggle label reads "Show more"/"Show less" (Arabic: "إظهار
   المزيد"/"إظهار أقل"), reflecting real open/closed state.
 - The auto-generated overview paragraph for the 164 non-editorial countries no
   longer restates facts already shown in the adjacent Country Information
@@ -286,23 +349,50 @@ enumeration of the questionnaire's combinatorial answer space.
   be told apart from app-side country/city resolution, which is timed
   separately. A recoverable failure no longer poisons app-wide location
   state: the app-wide prompt offers a retry instead of disappearing.
-- "Surprise me" is a TRAVEL COMPASS: a dial with real tick marks, localized
-  cardinal letters, and a gold needle that sweeps while real candidate flags
-  cycle in its centre window. When the traveller has shared their location the
-  needle settles on the destination's real great-circle bearing from them and
-  the result is captioned with that direction; with no location it settles due
-  north and no direction is claimed. Selection is unchanged: equal chance from
+- "Surprise me" is a FLAG REEL: a gold-ringed badge that cycles real
+  candidate flags and settles with one restrained pop. The travel-compass
+  redesign that briefly replaced it was REJECTED by the user in the second
+  acceptance round, and the reel was restored from commit 5838723 — recovered
+  from Git history rather than rewritten. Do not reintroduce the compass dial,
+  its ticks or its needle without an explicit instruction; a test asserts none
+  of them is in the DOM.
+  Kept from the compass round because they are fixes rather than design: the
+  anti-repeat list survives a blocked sessionStorage, exactly ONE live region
+  announces the outcome (so a screen reader hears "choosing…" then the
+  destination, not eight flags), the reel itself stays out of the
+  accessibility tree, and the result still carries the real great-circle
+  direction from the traveller when a location has been shared — and claims
+  no direction at all when one has not. Selection is unchanged: equal chance from
   the current filtered catalog, crypto random, and no repeat during the
   browser session until candidates are exhausted. A reduced-motion preference
-  skips the sweep while still moving the needle to its real bearing.
+  lands directly on the winner with no cycling.
 - Destination pages preserve the list context from Explore or Results. The
   previous/next controls live INSIDE the hero image, at its inline start and
   end edges, as translucent blurred 44px circles; the hero's own text reserves
-  those gutters so the country title never runs underneath them. The
-  destination name is the control's accessible name and native tooltip — an
-  inline expanding label cannot fit this hero without covering the title.
-  Direct links use localized alphabetical order; surprise entries keep their
-  single return link below the hero.
+  those gutters so the country title never runs underneath them. Direct links
+  use localized alphabetical order; surprise entries keep their single return
+  link below the hero.
+- HERO NAVIGATION LABELS (acceptance item #2), decided by measurement.
+  `app/scripts/hero-label-qa.mjs` measures the real geometry across 12 widths
+  x 2 languages x 2 themes x rest/hover/focus.
+    * REJECTED: expanding the control itself into a labelled pill. It
+      overlapped the country title at every width wide enough to justify a
+      label — 26 findings. The control's row is y=118..165 inside the 280px
+      hero and the title block starts at y=147..160 on desktop.
+    * SHIPPED: a compact floating caption ("Previous country" / "الدولة
+      السابقة" plus the destination name) in the clear photo band directly
+      ABOVE the arrow, revealed on hover or keyboard focus. Measured at
+      y=67..110, clearing the title by 37-52px. 0 findings, both languages,
+      both themes, no overflow, no escape from the hero.
+    * The collapsed control keeps the accepted 44px geometry EXACTLY. The
+      caption is aria-hidden because the link's accessible name already
+      carries the same words.
+    * Below 900px the caption is not rendered at all: the hero's inner block
+      wraps there and climbs into the caption's band, and a touch device has
+      no hover to reveal it with. The accessible name and the native tooltip
+      carry the name, as before.
+  If this hero's height or title layout ever changes, re-run that script
+  before assuming the caption still fits.
 - Every dropdown in the app is a custom listbox, not a native `<select>`. The
   previous build styled only the closed control, so the OPEN menu was still
   drawn by the browser/OS with no Wejhaty identity and no dark-theme
@@ -355,33 +445,67 @@ enumeration of the questionnaire's combinatorial answer space.
   kind 'results'. A scheduled job retains aggregates, deletes raw events and
   ratings after 90 days, and removes feedback contact/device/screenshot links
   after 90 days while preserving the issue record.
-- `/admin` is a separate developer dashboard shell. Its data endpoint requires
-  `ADMIN_TOKEN` and uses constant-time bearer validation. The secret is not
-  configured in Git. Cloudflare Access is recommended as an additional account
-  layer before operational use.
-- D1 REALITY — none of this persists in production. Worker verification:
-  90/90 tests, TypeScript, and a Wrangler dry-run pass. Product-data requests
+- `/admin` is a real private developer dashboard, not a JSON dump: KPI cards,
+  an inline SVG daily-trend chart, ranked tables with proportion bars, a
+  searchable report queue, a report detail view, and a status workflow
+  (new / triaged / in_progress / resolved / declined) with an internal note.
+  One self-contained document with no external request of any kind.
+  Panels: Overview, Funnel, Recommendation quality, Countries, Discovery,
+  Location, Reports, Technical, Content. Every panel obeys one filter bar —
+  date range, language, device, purpose, country, and min/max rating.
+- ADMIN AUTHENTICATION, two independent mechanisms (see SECRETS.md):
+    * Cloudflare Access (preferred). Setting `ADMIN_ACCESS_AUD` and
+      `ADMIN_ACCESS_TEAM_DOMAIN` makes the Worker verify the Access JWT
+      itself — RS256 signature against the team's published keys, plus
+      audience and expiry. Once Access is configured a bearer token can no
+      longer get in, deliberately: a token that could bypass Access would
+      make adding Access a downgrade.
+    * `ADMIN_TOKEN`, compared in constant time, for an account without Zero
+      Trust. The Bearer scheme is required, not stripped-if-present.
+  With NEITHER configured every admin data path returns 503 and serves
+  nothing. The surface never falls open. No secret is in Git or the bundle.
+- ADMIN PRIVACY, enforced rather than promised. No analytics query reads or
+  returns a coordinate, an IP or a fingerprint — a test asserts that no SQL
+  in the analytics layer can even mention one. Every caller-supplied filter
+  value is whitelist-parsed and then passed as a bound parameter; a test
+  asserts an injected string reaches SQL only as a bound value. The only
+  geography anywhere in the dashboard is the country Cloudflare attaches at
+  the edge, at country granularity.
+- TURNSTILE covers the three surfaces where a stranger can write text into
+  the database: the report dialog, the results rating, and the destination
+  rating. Analytics events are deliberately NOT challenged — they carry no
+  free text and challenging them would mean challenging every page view. Both
+  halves (`TURNSTILE_SECRET_KEY` on the Worker, `VITE_TURNSTILE_SITE_KEY` on
+  the build) are independently inert when unset, so they can be switched on
+  in either order without a window where submissions are rejected.
+- D1 REALITY — nothing persists in production yet. Product-data requests
   return `503 product_data_unavailable` because D1/R2 provisioning was
   rejected by Cloudflare with authentication error `10000`; the rating UI
-  therefore shows its error-and-retry state honestly. Last verified from the
-  "Deploy Cloudflare Worker" GitHub Actions run logs on 2026-09-15 (run for
-  commit `a2ecc2f1`): `Authentication error [code: 10000]` on
-  `/accounts/*/d1/database`; the worker itself still deploys without the
-  D1/R2 bindings via the workflow's documented fallback path. This is an
-  external Cloudflare account/token permission gap (`CLOUDFLARE_API_TOKEN`
-  lacks D1/R2/Workers edit access), not a code defect —
-  `READY — USER/ACCOUNT CONFIGURATION REQUIRED`. Do not describe rating or
-  feedback persistence as working until this is resolved.
+  therefore shows its error-and-retry state honestly, which is exactly the
+  message the user reported and is NOT hidden. This is an external Cloudflare
+  account/token permission gap (`CLOUDFLARE_API_TOKEN` lacking D1 / R2 /
+  Workers edit access), not a code defect —
+  `READY — USER/ACCOUNT CONFIGURATION REQUIRED`.
+  The deploy workflow now runs a read-only capability diagnostic BEFORE
+  provisioning (`wrangler whoami`, `deployments list`, `d1 list`,
+  `r2 bucket list`) and prints one OK/FAILED line each, so a repeat failure
+  names the exact missing permission instead of leaving it to be guessed. It
+  prints no token. The required grants are in SECRETS.md.
+  Do not describe rating or feedback persistence as working until a deploy
+  run shows the provisioning step succeeding AND a row is confirmed in D1.
 
-### Next-stage analytics plan (kept, not started)
+### Analytics plan — now BUILT, awaiting D1
 
-Explicitly preserved so it is not lost: Cloudflare D1 + R2, migrations,
-`ADMIN_TOKEN`, Turnstile, Cloudflare Access, real production telemetry
-persistence, and an analytics dashboard covering overview, traffic,
-questionnaire funnel, recommendation quality, country performance, feedback,
-reports, and errors, with date/device/language/purpose filters and export
-support later. The full admin dashboard is deliberately NOT implemented in
-this round and must not be started without an explicit instruction.
+What was previously "kept, not started" is implemented: migrations, the
+dashboard, the filters, Turnstile, Cloudflare Access support and the full
+panel set above. Two things are deliberately still open:
+
+- **Export.** Not built. Nothing depends on it and no one has asked for it.
+- **Real data.** Every panel is verified against realistic stubbed shapes
+  (`app/scripts/admin-visual-check.mjs`, desktop and mobile, 0 findings) but
+  has never run against a populated D1, because D1 does not exist yet. The
+  queries are covered by tests; their OUTPUT is unverified until the account
+  gap above is closed.
 
 ## Destination images
 
@@ -422,6 +546,12 @@ this round and must not be started without an explicit instruction.
 | Custom listbox | `app/src/components/Select.tsx` |
 | Digit/number formatting layer | `app/src/data/format.ts` |
 | Hero edge navigation | `app/src/components/DestinationHeroNav.tsx` |
+| City descriptions (Worker) | `worker/src/cityDescriptions.ts` |
+| City descriptions (browser) | `app/src/cities/cityDescriptionClient.ts` |
+| Admin auth and routing | `worker/src/admin.ts` |
+| Analytics queries | `worker/src/analytics.ts` |
+| Admin dashboard UI | `worker/src/adminPage.ts` |
+| Turnstile (shared) | `app/src/telemetry/turnstile.ts` |
 | Rating forms | `app/src/components/ResultRating.tsx`, `DestinationRating.tsx` |
 | Travel Worker | `worker/` |
 | Amadeus adapter | `worker/src/amadeus.ts` |
@@ -442,11 +572,16 @@ this round and must not be started without an explicit instruction.
 - Data-refresh workflow code is ready. Automatic PR creation was last reported
   to require the external GitHub setting allowing Actions to create and approve
   pull requests; re-check before relying on that report.
-- Product-data code is ready. The Worker deployment workflow creates D1/R2 and
-  applies migrations when its Cloudflare token has D1, R2, and Workers edit
-  permissions. The current repository token is verified to lack D1 access.
-  `ADMIN_TOKEN`, Turnstile keys, and optional Cloudflare Access are external
-  account configuration and are not yet verified.
+- Product-data code is ready, including migrations 0003 (city description
+  cache) and 0004 (report workflow). The Worker deployment workflow creates
+  D1/R2 and applies migrations when its Cloudflare token has D1, R2 and
+  Workers edit permissions; it now prints a read-only per-capability
+  diagnostic first, so a failure names the missing permission. The last
+  observed state of the repository token is that it lacks D1 access.
+  `ADMIN_TOKEN` (or `ADMIN_ACCESS_AUD` + `ADMIN_ACCESS_TEAM_DOMAIN`),
+  `TURNSTILE_SECRET_KEY` and `VITE_TURNSTILE_SITE_KEY` are external account
+  configuration and are not yet set. SECRETS.md lists every one of them, what
+  it does, and what happens while it is unset.
 - Visa data: no provider is configured. The abstraction, the canonical
   vocabulary, request validation (including the IL exclusion), the Sherpa
   adapter and its category mapping, failure behaviour, the Worker endpoint,
@@ -495,15 +630,23 @@ Do not resurrect without an explicit user decision:
 
 Phase 17 has not started. Current order:
 
-1. AWAITING THE USER'S OWN PRODUCTION TEST. The Worker is live from
-   `08ebdcb5` and the frontend is live from `e3f8e4a8`, so the full
-   acceptance round is now reachable at
-   `https://hmooodzozo577-gif.github.io/wej/`. Nothing from that round is
-   user-accepted yet. Note the live app cannot be reached from the agent
-   sandbox (egress proxy returns 403 for `github.io` and `workers.dev`), so
-   no claim in this document is live-UI-verified; the deploy facts above come
-   from the GitHub Actions run itself.
-2. AWAITING A PRODUCT DECISION — visa scoring. The current visa layer only
+1. **UPDATE `CLOUDFLARE_API_TOKEN`.** This is now the single blocker holding
+   back the most product value. Until it has Workers Scripts:Edit, D1:Edit and
+   Workers R2 Storage:Edit at the account level:
+     * no rating or report can persist — the user's "تعذر حفظ التقييم الآن"
+       is correct and will keep appearing;
+     * no city description can be cached, so every card re-fetches (it still
+       works, just without a cache);
+     * the admin dashboard has nothing to show;
+     * R2 report screenshots cannot be stored.
+   The deploy workflow prints a per-capability diagnostic, so the next run's
+   log names exactly what is missing. Exact grants: SECRETS.md.
+2. AWAITING THE USER'S OWN PRODUCTION TEST of the six acceptance findings.
+   Nothing in this round is user-accepted. The live app cannot be reached
+   from the agent sandbox (403 at the egress proxy for `github.io` and
+   `workers.dev`), so NO claim in this document is live-UI-verified; the
+   deploy facts come from the GitHub Actions runs themselves.
+3. AWAITING A PRODUCT DECISION — visa scoring. The current visa layer only
    reorders destinations already within 3 Phase 14 points of each other. The
    alternative, NOT implemented, is to blend visa convenience into the
    weighted score itself. That would be a Phase 14 weight/semantic change,
@@ -521,20 +664,22 @@ Phase 17 has not started. Current order:
      - it needs re-running the per-country reachability and the 40,000-path
        coverage tests, because adding a dimension changes both.
    Accept, reject, or amend before it is built.
-3. Obtain a visa-data provider account (Sherpa first — see
+4. Obtain a visa-data provider account (Sherpa first — see
    `/VISA_PROVIDERS.md`), verify the category mapping against a real sandbox
    response, confirm in writing what the terms permit (caching, storage,
    attribution, and whether the data may inform ranking as well as display),
    then set `SHERPA_API_KEY` as a Worker secret.
-4. Update the repository `CLOUDFLARE_API_TOKEN` with D1, R2, and Workers edit
-   permissions, rerun the Worker workflow, and production-verify event, rating,
-   feedback, retention, and admin-summary persistence.
-5. Configure `ADMIN_TOKEN`, Turnstile keys, and preferably Cloudflare Access for
-   operational feedback and dashboard use.
-6. Decide whether sourced rich editorial descriptions, strengths, and
-   weaknesses — and city "known for" narrative, which no licensed offline
-   source currently covers — are required for the remaining 164 countries.
-7. Reassess the roadmap with the user before Phase 17.
+5. Once D1 exists: production-verify event, rating, feedback, retention, city
+   description caching and the admin panels against real rows — and confirm
+   the failure path still fails honestly by a controlled safe test.
+6. Configure admin access (`ADMIN_ACCESS_AUD` + `ADMIN_ACCESS_TEAM_DOMAIN`
+   preferred, else `ADMIN_TOKEN`) and, if abuse appears, the two Turnstile
+   keys. All are documented in SECRETS.md and all are inert until set.
+7. Decide whether sourced rich editorial descriptions, strengths and
+   weaknesses are required for the remaining 164 countries. Note that city
+   "known for" narrative is now covered by the Wikipedia description layer,
+   so that part of this item is done.
+8. Reassess the roadmap with the user before Phase 17.
 
 ## Handoff rule
 

@@ -12,6 +12,7 @@
     "deploy": "echo 'Not run automatically — see ../README.md and ../SECRETS.md. Requires wrangler login or CLOUDFLARE_API_TOKEN before running: npx wrangler deploy'"
   },
   "devDependencies": {
+    "@types/node": "^22.20.3",
     "typescript": "~6.0.2",
     "vitest": "^5.0.0",
     "wrangler": "^4.131.0"
