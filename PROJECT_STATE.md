@@ -9,20 +9,32 @@ configuration, and current Git state outrank this document when they differ.
 - Last verified date: 2026-09-16
 - Working branch: `claude/modest-cray-34bvoa`
 - Previous production frontend commit: `f60efd93`
-- Production Worker source commit: `a2ecc2f1` (the Worker has NOT been
-  redeployed since this round's changes — see Provider and external state)
+- Production Worker source commit: `08ebdcb5` — DEPLOYED 2026-09-16 from run
+  35094594557 (Version ID `54c3994c-2298-4b17-af62-2a3e29b784d2`). The run's
+  overall conclusion is `failure`, and that is by design: the workflow
+  deploys the Worker without the D1/R2 bindings and then exits 1 so the
+  provisioning failure is not concealed. The visa endpoint and the extended
+  ratings endpoint are live; D1 is still unavailable.
+- Production FRONTEND commit: still `f60efd93`. This round is NOT deployed —
+  see the Pages blocker in Provider and external state.
 - Git state re-verified directly before writing this: working tree clean, no
   merge/rebase in progress, branch pushed to
   `origin/claude/modest-cray-34bvoa`.
 - 2026-09-16 USER ACCEPTANCE ROUND. The user personally tested the deployed
   build and reported 14 findings. All 14 are implemented and verified
   locally (718/718 frontend tests, 90/90 worker tests, TypeScript, oxlint,
-  the production build, a Wrangler dry-run, and a Playwright visual sweep
-  across Arabic RTL / English LTR x 390px / 1280px x light / dark). NOT yet
-  deployed and NOT yet user-accepted.
-- Two external dependencies remain and are unchanged by this round:
-  Cloudflare D1/R2 (`Authentication error [code: 10000]`) and, new this
-  round, a visa-data provider account. Neither is a code defect.
+  the production build, a Wrangler dry-run, a Playwright visual sweep across
+  Arabic RTL / English LTR x 390px / 1280px x light / dark, and 26
+  delivery-critical behaviour checks driven against the production build
+  with the Worker stubbed to return exactly what production returns today).
+  The WORKER is deployed. The FRONTEND is not, and nothing in this round is
+  user-accepted.
+- THREE external dependencies now block delivery. None is a code defect and
+  none may be worked around unofficially:
+  1. GitHub Pages environment protection (NEW, 2026-09-16) — blocks the
+     frontend deploy. See Provider and external state.
+  2. Cloudflare D1/R2 (`Authentication error [code: 10000]`).
+  3. A visa-data provider account.
 
 Always recover with `git branch --show-current`, `git status --short`,
 `git fetch origin`, and `git log --oneline -30`.
@@ -439,9 +451,30 @@ this round and must not be started without an explicit instruction.
   secrets, never committed and never in the frontend.
   `READY — PROVIDER ACCOUNT/CREDENTIALS REQUIRED` — see `/VISA_PROVIDERS.md`
   for the comparison, the decision, and the exact switch-on steps.
-- The Worker has NOT been redeployed since the 2026-09-16 round. The visa
-  endpoint and the extended ratings endpoint exist in source and pass a
-  Wrangler dry-run, but are not live.
+- The Worker IS deployed from `08ebdcb5` (2026-09-16, run 35094594557,
+  Version ID `54c3994c-2298-4b17-af62-2a3e29b784d2`). The visa endpoint and
+  the extended ratings endpoint are live. That run's conclusion is `failure`
+  purely because the workflow deliberately exits 1 after reporting the D1/R2
+  provisioning failure — the Worker upload itself succeeded in the same run.
+- GITHUB PAGES DEPLOY IS BLOCKED (2026-09-16). Run 35094587702 on
+  `claude/modest-cray-34bvoa`: the `build` job succeeded and uploaded the
+  Pages artifact; the `deploy` job was rejected outright with
+  `Branch "claude/modest-cray-34bvoa" is not allowed to deploy to
+  github-pages due to environment protection rules.` Every previous
+  successful Pages deploy came from `claude/marhaba-kxry8l`, which is the
+  branch the environment permits. The production frontend therefore remains
+  `f60efd93`.
+  This is a repository-settings gate the repo owner controls, in the same
+  class as the Cloudflare token, and was deliberately NOT worked around.
+  Two legitimate remedies, either of which is the owner's call:
+    (a) add `claude/modest-cray-34bvoa` to the `github-pages` environment's
+        deployment branch policy (Settings -> Environments -> github-pages),
+        then re-run workflow `deploy-pages.yml` on this branch; or
+    (b) fast-forward `claude/marhaba-kxry8l` to `08ebdcb5` — a clean
+        fast-forward, since that branch is still at `4f3d419` and `4f3d419`
+        is an ancestor of `08ebdcb5` — whose `app/**` push trigger then
+        deploys Pages normally.
+  `READY — USER/ACCOUNT CONFIGURATION REQUIRED`.
 
 ## Cancelled/out-of-scope features
 
@@ -455,8 +488,12 @@ Do not resurrect without an explicit user decision:
 
 Phase 17 has not started. Current order:
 
-1. Deploy the 2026-09-16 acceptance round and obtain the user's own
-   production test. Nothing from that round is user-accepted yet.
+1. UNBLOCK THE FRONTEND DEPLOY. The Worker is live from `08ebdcb5`; the
+   frontend is not, because the `github-pages` environment does not permit
+   `claude/modest-cray-34bvoa`. Either widen that environment's deployment
+   branch policy and re-run `deploy-pages.yml`, or fast-forward
+   `claude/marhaba-kxry8l` to `08ebdcb5`. Then obtain the user's own
+   production test — nothing from that round is user-accepted yet.
 2. AWAITING A PRODUCT DECISION — visa scoring. The current visa layer only
    reorders destinations already within 3 Phase 14 points of each other. The
    alternative, NOT implemented, is to blend visa convenience into the
