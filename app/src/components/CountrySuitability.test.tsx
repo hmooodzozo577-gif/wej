@@ -16,6 +16,15 @@ import * as detailClient from '../countryIntelligence/detailClient';
 
 const saudiArabia = WORLD_CATALOG.find((entry) => entry.countryCode === 'SA')!;
 const unknownCountry = { ...saudiArabia, countryCode: 'ZZ', id: 'zz-does-not-exist' };
+// Real committed-data cases for "Best suited for" (task workstream C),
+// chosen by actually querying the snapshot (see the module comment in
+// bestSuitedFor.test.ts for the synthetic/unit-level coverage — these
+// prove the real generated data renders correctly through the component):
+// Afghanistan has one isolated top purpose; Saudi Arabia has several
+// purposes within the grouping margin of each other; Vatican City has
+// insufficient data for every purpose.
+const afghanistan = WORLD_CATALOG.find((entry) => entry.countryCode === 'AF')!;
+const vaticanCity = WORLD_CATALOG.find((entry) => entry.countryCode === 'VA')!;
 
 function renderWith(destination: (typeof WORLD_CATALOG)[number], lang: Lang = 'en') {
   function Providers({ children }: { children: ReactNode }) {
@@ -61,6 +70,47 @@ describe('CountrySuitability against the real committed snapshot', () => {
   it('the intro line discloses this is a general estimate, not personalized to the viewer', () => {
     renderWith(saudiArabia, 'en');
     expect(screen.getByText(/not personalized to you/)).toBeInTheDocument();
+  });
+});
+
+describe('CountrySuitability — "Best suited for" (Country -> Best Purposes)', () => {
+  it('shows a single prominent purpose when the top score is isolated (real data: Afghanistan)', () => {
+    const suitability = getCountrySuitability('AF');
+    const eligible = suitability.filter((entry) => !entry.insufficientData && entry.confidence !== 'low');
+    const top = Math.max(...eligible.map((entry) => entry.score!));
+    const group = eligible.filter((entry) => entry.score! >= top - 5);
+    expect(group.length).toBe(1); // sanity-check the fixture assumption against live data
+
+    const { container } = renderWith(afghanistan, 'en');
+    expect(screen.getByText('Best suited for')).toBeInTheDocument();
+    const headline = container.querySelector('.best-suited-headline');
+    expect(headline?.textContent).toContain(`${top}%`);
+  });
+
+  it('groups several close purposes into "Strong for X, Y, and Z" instead of picking one arbitrarily (real data: Saudi Arabia)', () => {
+    const suitability = getCountrySuitability('SA');
+    const eligible = suitability.filter((entry) => !entry.insufficientData && entry.confidence !== 'low');
+    const top = Math.max(...eligible.map((entry) => entry.score!));
+    const group = eligible.filter((entry) => entry.score! >= top - 5);
+    expect(group.length).toBeGreaterThan(1); // sanity-check the fixture assumption against live data
+
+    renderWith(saudiArabia, 'en');
+    expect(screen.getByText(/^Strong for /)).toBeInTheDocument();
+  });
+
+  it('shows an honest insufficient-data state rather than forcing a winner (real data: Vatican City)', () => {
+    const suitability = getCountrySuitability('VA');
+    expect(suitability.every((entry) => entry.insufficientData)).toBe(true);
+
+    renderWith(vaticanCity, 'en');
+    expect(screen.getByText('Not enough reliable data yet to name a best-suited purpose for this country.')).toBeInTheDocument();
+    expect(screen.queryByText(/^Strong for /)).not.toBeInTheDocument();
+  });
+
+  it('renders the Arabic title and grouped phrasing correctly, RTL-safe', () => {
+    renderWith(saudiArabia, 'ar');
+    expect(screen.getByText('الأنسب لـ')).toBeInTheDocument();
+    expect(screen.getByText(/^قوية في /)).toBeInTheDocument();
   });
 });
 

@@ -36,6 +36,7 @@ export const EN: I18nDict = {
     showResultsNow: 'Show results now',
     continueQuestions: 'Continue questions to improve results',
     preparingNext: 'Preparing the next question…',
+    waitingForLocation: 'Getting your location…',
   },
   explore: {
     ...base.explore,
@@ -326,5 +327,10 @@ export const EN: I18nDict = {
     updatedLabel: 'Updated {date}',
     missingFactorLabel: 'No data',
     modelVersionLabel: 'Methodology: {version}',
+    bestSuitedForTitle: 'Best suited for',
+    bestSuitedForSingle: '{purpose}',
+    bestSuitedForGroup: 'Strong for {purposes}',
+    bestSuitedForInsufficient: 'Not enough reliable data yet to name a best-suited purpose for this country.',
+    otherPurposesLabel: 'Other purposes',
   },
 };

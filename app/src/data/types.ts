@@ -361,6 +361,11 @@ export interface QuizStrings {
   showResultsNow: string;
   continueQuestions: string;
   preparingNext: string;
+  /** Shown ONLY in the narrow window where the quiz would otherwise finish
+   *  while a geolocation request is still `requesting` — see
+   *  waitForLocationSettle.ts. Must never claim location is unavailable
+   *  while it is still pending. */
+  waitingForLocation: string;
 }
 
 export interface ResultsStrings {
@@ -960,6 +965,22 @@ export interface CountrySuitabilityStrings {
   missingFactorLabel: string;
   /** e.g. "Methodology: {version}" */
   modelVersionLabel: string;
+  /** Phase 16 workstream C — Country -> Best Purposes, built on top of the
+   *  same suitability scores above (see intelligence/bestSuitedFor.ts).
+   *  This section title is fixed regardless of single/grouped outcome. */
+  bestSuitedForTitle: string;
+  /** e.g. "{purpose}" — shown large/prominent when exactly one purpose
+   *  leads and no other purpose is within the grouping margin of it. */
+  bestSuitedForSingle: string;
+  /** e.g. "Strong for {purposes}" — shown when 2+ purposes are tied
+   *  within the grouping margin, so a tiny numeric gap is never presented
+   *  as a meaningful categorical difference. {purposes} is a locale-
+   *  formatted list (Intl.ListFormat), not manually joined. */
+  bestSuitedForGroup: string;
+  /** Shown when no purpose has enough data/confidence to name a best-
+   *  suited purpose at all — never a forced winner. */
+  bestSuitedForInsufficient: string;
+  otherPurposesLabel: string;
 }
 
 export interface I18nDict {

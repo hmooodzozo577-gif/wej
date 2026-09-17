@@ -1562,6 +1562,46 @@ button.meta-chip.selected {
   font-size: 0.92rem;
 }
 
+/* Phase 16 workstream C — Country -> Best Purposes, a distinguished lead
+   block above the full per-purpose list (kept deliberately compact per
+   the task's own "do not overwhelm the page" instruction: a title, one
+   headline sentence, one confidence line — no extra paragraphs). */
+.best-suited-for {
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper-3);
+}
+
+.best-suited-title {
+  margin: 0 0 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.best-suited-headline {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.best-suited-confidence,
+.best-suited-insufficient {
+  margin: 4px 0 0 !important;
+  font-size: 0.85rem;
+  color: var(--muted) !important;
+}
+
+.other-purposes-label {
+  margin: 0 0 8px !important;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted) !important;
+}
+
 .suitability-list {
   list-style: none;
   margin: 0;

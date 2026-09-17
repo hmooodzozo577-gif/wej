@@ -45,6 +45,7 @@ export const AR: I18nDict = {
     showResultsNow: 'عرض النتيجة الآن',
     continueQuestions: 'إكمال الأسئلة لتحسين النتيجة',
     preparingNext: 'جارٍ تجهيز السؤال التالي…',
+    waitingForLocation: 'جارٍ تحديد موقعك…',
   },
   explore: {
     ...base.explore,
@@ -333,5 +334,10 @@ export const AR: I18nDict = {
     updatedLabel: 'آخر تحديث {date}',
     missingFactorLabel: 'لا تتوفر بيانات',
     modelVersionLabel: 'المنهجية: {version}',
+    bestSuitedForTitle: 'الأنسب لـ',
+    bestSuitedForSingle: '{purpose}',
+    bestSuitedForGroup: 'قوية في {purposes}',
+    bestSuitedForInsufficient: 'لا تتوفر بيانات موثوقة كافية بعد لتحديد الغرض الأنسب لهذه الدولة.',
+    otherPurposesLabel: 'أغراض أخرى',
   },
 };

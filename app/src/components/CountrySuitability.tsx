@@ -17,6 +17,7 @@ import { getCountrySuitability, type CountryIntelligenceEntry } from '../data/co
 import { PURPOSES } from '../data/purposes';
 import { lookupSuitabilityDetail, type SuitabilityComponent, type SuitabilityDetail } from '../countryIntelligence/detailClient';
 import { deriveLimitations, deriveStrengths } from '../countryIntelligence/insights';
+import { bestSuitedFor } from '../intelligence/bestSuitedFor';
 import type { CatalogEntry } from '../data/types';
 import { Icon } from './Icon';
 
@@ -137,6 +138,43 @@ function PurposeRow({ countryCode, entry }: { countryCode: string; entry: Countr
   );
 }
 
+/** Country -> Best Purposes (Phase 16 workstream C). A pure interpretation
+ *  of the SAME suitability entries the list below renders — no second
+ *  scoring system, no extra fetch. See intelligence/bestSuitedFor.ts for
+ *  the documented, deterministic grouping rule this displays. */
+function BestSuitedFor({ entries }: { entries: CountryIntelligenceEntry[] }) {
+  const { t, lang } = useI18n();
+  const cs = t.countrySuitability;
+  const result = bestSuitedFor(entries);
+  const confidenceLabel = (level: CountryIntelligenceEntry['confidence']) =>
+    level === 'high' ? cs.confidenceHigh : level === 'medium' ? cs.confidenceMedium : cs.confidenceLow;
+  const purposeName = (purpose: CountryIntelligenceEntry['purpose']) => t.purposes[purpose]?.n ?? purpose;
+
+  return (
+    <div className="best-suited-for">
+      <h4 className="best-suited-title">{cs.bestSuitedForTitle}</h4>
+      {!result.eligible ? (
+        <p className="best-suited-insufficient">{cs.bestSuitedForInsufficient}</p>
+      ) : (
+        <>
+          <p className="best-suited-headline">
+            {result.topGroup!.length === 1
+              ? formatTemplate(cs.bestSuitedForSingle, { purpose: purposeName(result.topGroup![0]!) })
+              : formatTemplate(cs.bestSuitedForGroup, {
+                  purposes: new Intl.ListFormat(lang === 'ar' ? 'ar' : 'en', { style: 'long', type: 'conjunction' }).format(
+                    result.topGroup!.map((purpose) => purposeName(purpose)),
+                  ),
+                })}
+            {' — '}
+            {result.topScore}%
+          </p>
+          <p className="best-suited-confidence">{confidenceLabel(result.topConfidence)}</p>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function CountrySuitability({ destination }: { destination: CatalogEntry }) {
   const { t } = useI18n();
   const cs = t.countrySuitability;
@@ -149,6 +187,8 @@ export function CountrySuitability({ destination }: { destination: CatalogEntry 
         <Icon name="trending" size={18} /> {cs.title}
       </h3>
       <p className="suitability-intro">{cs.intro}</p>
+      <BestSuitedFor entries={entries} />
+      <p className="other-purposes-label">{cs.otherPurposesLabel}</p>
       <ul className="suitability-list">
         {entries.map((entry) => (
           <PurposeRow key={entry.purpose} countryCode={destination.countryCode} entry={entry} />

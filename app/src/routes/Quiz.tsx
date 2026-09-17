@@ -11,6 +11,7 @@ import { useAppState, useI18n } from '../state/hooks';
 import { trackEvent } from '../telemetry/productDataClient';
 import { PassportSelect } from '../components/PassportSelect';
 import { useVisaProviderActive } from '../visa/useVisaRequirements';
+import { waitForLocationSettle } from '../state/waitForLocationSettle';
 
 const OPTIONAL_RESULTS_AFTER = 5;
 const ANSWER_TRANSITION_MS = 140;
@@ -25,6 +26,20 @@ export function Quiz() {
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
   const [advancing, setAdvancing] = useState(false);
+  // Phase 16 workstream A — the geolocation/quiz race condition. See
+  // waitForLocationSettle.ts for the full root-cause explanation: this is
+  // shown only in the narrow window where the quiz would otherwise finish
+  // while a geolocation request that was actually granted is still
+  // resolving, so that moment gets a bounded chance to complete instead of
+  // silently never asking the location-dependent question.
+  const [waitingForLocation, setWaitingForLocation] = useState(false);
+  // Always-current mirror of `state`, readable from inside the async gap
+  // in onSelect() below (after an `await`, the closed-over `state` from
+  // the render that started the handler is stale — this ref is not).
+  const stateRef = useRef(state);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
   // Item #12D — the passport question is the LAST step of the questionnaire,
   // not a card below the results. It has to be answerable while the ranking
   // is still being decided; below the results it could not affect anything.
@@ -87,11 +102,11 @@ export function Quiz() {
     navigate('/results');
   };
 
-  const onSelect = (value: string | number) => {
+  const onSelect = async (value: string | number) => {
     if (advancing) return;
     const answers = { ...state.answers, [question.id]: value };
     const answeredAfter = questions.filter((item) => answers[item.id] !== undefined).length;
-    const nextAfterAnswer = hasCachedNext
+    let nextAfterAnswer = hasCachedNext
       ? computedNext
       : selectNextQuestion(questions, answers, state.path);
 
@@ -99,6 +114,21 @@ export function Quiz() {
     trackEvent('quiz_answer', { purpose: purposeParam, questionId: question.id, value, questionNumber: qIndex + 1 }, { path: `/quiz/${purposeParam}`, locale: lang });
     if (answeredAfter >= OPTIONAL_RESULTS_AFTER && !state.questionnaireCheckpointPassed && nextAfterAnswer) {
       return;
+    }
+
+    // The one genuinely irreversible decision: about to declare "no more
+    // questions" and move to results while a geolocation request that was
+    // actually granted permission is still resolving. Every other point in
+    // the flow already re-derives eligibility fresh from live location
+    // state on its own (effectiveQuestionBank() is recomputed on every
+    // render and inside the reducer's own advance()), so only this one
+    // spot needs to hold briefly rather than finalize immediately.
+    if (!nextAfterAnswer && stateRef.current.location.status === 'requesting') {
+      setWaitingForLocation(true);
+      await waitForLocationSettle(() => stateRef.current.location.status);
+      setWaitingForLocation(false);
+      const freshQuestions = effectiveQuestionBank(purposeParam, !!stateRef.current.location.coords);
+      nextAfterAnswer = selectNextQuestion(freshQuestions, answers, state.path);
     }
 
     setAdvancing(true);
@@ -211,7 +241,11 @@ export function Quiz() {
               ))}
             </div>
             <div className="quiz-next-status" aria-live="polite">
-              {advancing ? <><span className="quiz-spinner" aria-hidden="true" /> {t.quiz.preparingNext}</> : null}
+              {waitingForLocation ? (
+                <><span className="quiz-spinner" aria-hidden="true" /> {t.quiz.waitingForLocation}</>
+              ) : advancing ? (
+                <><span className="quiz-spinner" aria-hidden="true" /> {t.quiz.preparingNext}</>
+              ) : null}
             </div>
           </div>
           <div className="quiz-nav">
