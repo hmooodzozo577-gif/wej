@@ -333,16 +333,4 @@ export const EN: I18nDict = {
     bestSuitedForInsufficient: 'Not enough reliable data yet to name a best-suited purpose for this country.',
     otherPurposesLabel: 'Other purposes',
   },
-  ai: {
-    badge: 'AI',
-    explainButton: 'Explain this fit with AI',
-    explainButtonCountry: 'Summarize with AI',
-    loading: 'Generating an explanation…',
-    unavailable: 'An AI explanation is not available right now — the estimate above is unaffected.',
-    disclaimer: 'AI-generated summary of the data above. It can be imprecise — verify anything important.',
-    whyItFitsLabel: 'Why it fits',
-    tradeoffsLabel: 'Trade-offs',
-    confidenceNotesLabel: 'Confidence',
-    missingDataLabel: 'What is not yet known',
-  },
 };

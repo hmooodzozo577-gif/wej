@@ -5,36 +5,38 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 17
-- Last verified date: 2026-09-17 (Phase 16 — AI API Integration, plus the
-  five carry-over items: geolocation race fix, Nearest-to-me exclusion
-  test coverage, "Best suited for" country-purpose interpretation, an
-  honestly-blocked Country Intelligence source-expansion attempt, and the
-  grounded AI explanation layer itself): 230 worker tests, 882 frontend
-  tests, TypeScript and oxlint clean on both, frontend production build,
-  worker `wrangler deploy --dry-run`, the admin Playwright sweep
-  (including the new AI observability panel) at 0 findings, and a
-  24-combination AI-explanation-panel Playwright sweep (Results top pick
-  + a country page's "Best suited for" section x desktop/mobile x AR/EN
-  x light/dark x success/failure/unavailable) also at 0 findings. NOT
-  done this round: production deployment — see "Deployment status" below.
-- Working branch: `claude/modest-cray-34bvoa` — HEAD as of this round:
-  `b345aea` (Phase 16 commits: `cbba860`, `8c5d7d1`, `d2eded2`, `2dc8c6d`,
-  `b345aea`, on top of `fad7218`).
-- DEPLOYMENT STATUS, 2026-09-17: NOT deployed. Both `deploy-worker.yml`
-  and `deploy-pages.yml` trigger only on push to `claude/marhaba-kxry8l`
-  (or manual dispatch, which Pages' own environment protection also
-  restricts to that branch — see the 2026-09-16 entry below for the exact
-  rejection). This round's branch instructions require developing on
-  `claude/modest-cray-34bvoa` and never pushing elsewhere without explicit
-  permission, so nothing was fast-forwarded. Production still serves the
-  commits recorded below from 2026-09-16; none of Phase 16's work
-  (geolocation fix, Best-suited-for, the AI layer, admin AI observability)
-  is live. To deploy: fast-forward `claude/marhaba-kxry8l` to this
-  branch's HEAD (the same remedy chosen last round — see "GITHUB PAGES
-  DEPLOY IS UNBLOCKED" below), then push, or widen the environment's
-  branch policy. This is a decision for the repository owner, not
-  something to do unilaterally.
+- State document version: 18
+- Last verified date: 2026-09-17. This entry covers TWO rounds on the same
+  day: (1) a Phase 16 round that mistakenly implemented a full AI
+  explanation layer because the roadmap still carried Phase 16 under the
+  name "AI API Integration", against the standing "no AI" product
+  decision; (2) an immediate CLEANUP round, this one, that removed every
+  line of that AI work, corrected every document it had touched, and
+  re-verified everything that remains. What actually ships after this
+  round: the geolocation race fix, Nearest-to-me exclusion test coverage,
+  "Best suited for" country-purpose interpretation, and the honestly-
+  blocked Country Intelligence source-expansion attempt — no AI code, no
+  AI document, no AI credential, anywhere. Verified: 180 worker tests, 855
+  frontend tests, TypeScript and oxlint clean on both, frontend production
+  build, worker `wrangler deploy --dry-run`, a fresh admin Playwright
+  sweep (confirming zero AI panel remnants) at 0 findings, and a targeted
+  Playwright sweep of the retained features (Best-suited-for with zero AI
+  remnants across desktop/mobile x AR/EN x light/dark, Nearest-to-me
+  exclusion with a real granted location, and a geolocation-quiz smoke
+  run in both languages) also at 0 findings. The Phase 14 weights baseline
+  guard (9/9) is unchanged.
+- Working branch: `claude/modest-cray-34bvoa`. See Git log for the exact
+  HEAD — this document does not hardcode a commit it is itself part of.
+- DEPLOYMENT STATUS, 2026-09-17: pending this cleanup round's own
+  deployment. Both `deploy-worker.yml` and `deploy-pages.yml` trigger only
+  on push to `claude/marhaba-kxry8l` (or manual dispatch, which Pages' own
+  environment protection also restricts to that branch — see the
+  2026-09-16 entry below for the exact rejection). The plan for this
+  round: fast-forward `claude/marhaba-kxry8l` to this branch's cleaned
+  HEAD (the same remedy chosen last round — see "GITHUB PAGES DEPLOY IS
+  UNBLOCKED" below), push, and verify both workflows succeed before
+  calling this round production-verified — see "Roadmap gate and
+  immediate backlog" item 0.
 - Previous production frontend commit: `f60efd93`
 - Production Worker source commit: `077d76a5` — DEPLOYED 2026-09-16 from run
   35154518086 (Version ID `365c337c-7327-4559-baf6-e3f293a3349a`).
@@ -170,31 +172,33 @@ server-side travel-provider integrations.
   When it conflicts with current Git/code, current repository evidence wins
   and this file must be corrected, not the other way around.
 
-## Current product decision: AI as a grounded explanation layer only (Phase 16 — reverses the prior "no AI" decision)
+## Current product decision: no AI
 
-HISTORY: the user previously rejected an AI INTERVIEW and AI-GENERATED
-QUESTIONNAIRE TURNS because their questions and results were not practical
-or convincing. That earlier build let AI orchestrate the questionnaire
-itself, generate turns, and produce explanations with no deterministic
-grounding underneath them.
+The user rejected the AI interview and AI explanations because their questions
+and results were not practical or convincing. The current local implementation
+removes natural-language interpretation, AI-generated turns, AI explanations,
+frontend AI/profile orchestration, Worker `/api/ai/*` routes and provider
+code, the `env.AI`/`ANTHROPIC_API_KEY` binding, and AI deployment
+variables/smoke tests.
 
-REVERSED, 2026-09-17, by explicit user request (Phase 16 — "AI API
-Integration"): a materially different feature — never an interview, never
-a question-flow AI, never a ranking AI. AI is now a strictly ADDITIVE,
-non-authoritative EXPLANATION layer on top of the unchanged deterministic
-system: Phase 14 ranks, Country Intelligence scores, the AI only narrates
-numbers it is handed after both already ran. It cannot invent a country
-fact, a score, a visa status, a cost, or a ranking; with no
-`ANTHROPIC_API_KEY` configured it is fully absent (every AI panel simply
-does not render) and the deterministic experience is provably unaffected.
-Full architecture, exact data flow, grounding strategy, privacy controls,
-and this round's own unverified-against-a-live-account status are in
-`/AI_INTEGRATION.md`.
+Do not restore an AI or Hybrid interview unless the user explicitly reverses
+this decision.
 
-Do not restore an AI-DRIVEN INTERVIEW or AI-GENERATED QUESTIONNAIRE TURNS
-unless the user explicitly reverses THAT decision again — this reversal
-covers only the explanation layer described above and in
-`/AI_INTEGRATION.md`, not a return to AI-orchestrated questioning.
+CORRECTED, 2026-09-17: an earlier round of this document briefly recorded
+Phase 16 ("AI API Integration") as an active feature — a grounded AI
+explanation layer was implemented (Worker provider, endpoint, frontend
+panel, admin observability) because the roadmap still carried Phase 16
+under that name. This was a mistake: the standing "no AI" decision above
+was never reversed. The user has since clarified the product decision:
+
+**Phase 16 — AI API Integration: CANCELLED / SKIPPED by product decision.**
+Every AI/Anthropic code path, document, translation string, admin panel,
+and test added for that attempt has been removed in the same round this
+correction was written. No AI provider is configured, no AI API credential
+(`ANTHROPIC_API_KEY` or otherwise) is required by anything in this
+repository, and no AI functionality ships anywhere in the product. See
+"Phase 16 — AI API Integration" below for the roadmap record, and
+"Roadmap gate and immediate backlog" for what comes next (Phase 17).
 
 ## Questionnaire and ranking
 
@@ -474,9 +478,14 @@ this is the summary.
   Admin system." Shows countries covered, purposes scored, last generated
   date, and per-purpose sufficient-data count/avg coverage/high-confidence
   count. Reads the same bundled Worker JSON, not D1.
-- Traveler Budget stays `CANCELLED / OUT OF SCOPE` (no new source
-  discovered or invented this round). Visa stays `unknown` unless a real
-  provider is configured, never used as a scoring input here.
+- Traveler Budget (Phase 13.5c) stays `BLOCKED / DEFERRED` — a
+  sufficiently current, trustworthy, reusable source for generic traveler
+  daily-cost values has not yet been verified; no such source was
+  discovered or invented this round, and none may be until one actually
+  is (see `app/scripts/TRAVEL_COST_INDEX.md`). This is not the same as
+  cancelled: it remains a real candidate for a future pass. Visa stays
+  `unknown` unless a real provider is configured, never used as a scoring
+  input here.
 - Tests: `app/src/intelligence/{normalize,methodology,score}.test.ts` (32
   tests — normalization boundaries/outliers/degenerate populations,
   structural methodology invariants, score bounds/insufficient-
@@ -494,7 +503,7 @@ this is the summary.
   findings.
 - Full doc: `/COUNTRY_INTELLIGENCE.md`.
 
-### Phase 16 additions on top of this layer (2026-09-17)
+### Carry-over hardening additions on top of this layer (2026-09-17)
 
 - **"Best suited for" / "الأنسب لـ"** (`app/src/intelligence/bestSuitedFor.ts`)
   — a deterministic Country -> Best Purposes interpretation built ONLY from
@@ -519,76 +528,57 @@ this is the summary.
   visa providers, and the same host (`api.worldbank.org`) the 11 indicators
   above were already fetched from. No new indicator was added, no source
   claimed verified, and no `excluded[]` limitation was removed. See
-  `/COUNTRY_INTELLIGENCE.md`'s "Phase 16 source expansion attempt" section
-  for the full evidence and what running the existing generator script from
-  an environment with real egress would need.
+  `/COUNTRY_INTELLIGENCE.md`'s "Source expansion attempt" section for the
+  full evidence and what running the existing generator script from an
+  environment with real egress would need.
 
-## Phase 16 — AI API Integration (2026-09-17)
+## Phase 16 — AI API Integration
 
-Full architecture, exact data flow, privacy controls, grounding strategy,
-and known limitations: `/AI_INTEGRATION.md`. This is the summary.
+**STATUS: CANCELLED / SKIPPED by product decision.**
 
-- AI is a strictly ADDITIVE, non-authoritative EXPLANATION layer over the
-  unchanged Phase 14 engine and Country Intelligence data — it never
-  chooses a ranking, invents a fact, a score, or a visa status, and it
-  reverses (see "Current product decision" above) only the prior
-  AI-INTERVIEW rejection, not a general ban on AI. Provider: Anthropic's
-  Messages API, behind the same `isConfigured()`/adapter-list shape as the
-  Sherpa visa provider (`worker/src/ai.ts`). With no `ANTHROPIC_API_KEY`
-  configured — today's state — every AI panel on the site is simply absent
-  and the deterministic experience is unaffected; this is verified by
-  tests, not just claimed.
-- Two entry points, matching the task's two user journeys: the Results
-  page's top pick ("I want to study" -> Phase 14 ranks -> AI explains why)
-  and a country page's "Best suited for" section ("I like Japan, what is
-  it best for?" -> the SAME `bestSuitedFor()` grouping -> AI summarizes
-  it). Both are on-demand (a button click, never automatic) and hidden
-  entirely until an availability check confirms a provider is configured.
-- Grounding is two-layered: a system prompt instructing the model to use
-  only the supplied JSON and say so honestly when a fact is
-  unknown/insufficient/low-confidence, PLUS an independent code-level
-  check (`groundingViolation()`) that discards any response turning an
-  `unknown` visa status into a confident claim, or an insufficient-
-  data/low-confidence suitability into "definitely"/"the best country for
-  you" — the task's own two worked examples, tested bilingually.
-- Input is minimal and canonical only (ISO country/purpose codes,
-  already-computed scores/confidence/coverage, up to 4 plain-language
-  match reasons) — never coordinates, a passport number, a token, an IP,
-  or a session id, enforced by both an allowlist and an explicit denylist
-  server-side.
-- Output is a validated `{summary, whyItFits, tradeoffs, confidenceNotes,
-  missingDataNotes}` object; invalid JSON, a missing `summary`, a
-  timeout, a provider error, a rate limit, or a grounding violation all
-  resolve to an honest "unavailable" answer, never a thrown error and
-  never content shown to the traveller.
-- Cost/rate control: an isolate-local response cache (6h TTL, 200-entry
-  cap) and an isolate-local rate limiter (30/60s) — both explicitly
-  documented as best-effort, not a durable fleet-wide guarantee — plus an
-  8s request timeout.
-- Admin observability extends the EXISTING Content tab (not a new tab)
-  with configured/success-rate/fallback-rate/cache-hit-rate KPIs and a
-  timeout/provider-error/invalid-response/rate-limited breakdown, all
-  isolate-local counts, disclosed as such in both languages.
-- Privacy: no AI prompt or response is ever persisted; the admin panel
-  reports only aggregate counts, never prompt content, a destination, or
-  a user answer; analytics collection is not expanded because of this
-  feature.
-- NOT VERIFIED against a live Anthropic account this round: no API key
-  exists in this environment, and the coding sandbox's own network egress
-  policy blocks arbitrary external hosts (confirmed with a control test —
-  see `/COUNTRY_INTELLIGENCE.md`'s source-expansion section for the same
-  finding). The adapter is written against the published API shape with
-  every failure mode tested defensively; verify one real round-trip
-  before relying on it in production.
-- Tests: 47 in `worker/src/ai.test.ts`, +3 in `worker/src/analytics.test.ts`,
-  10 in `app/src/ai/aiExplanationClient.test.ts`, 13 in `app/src/ai/
-  buildExplanationRequest.test.ts` (against real Country Intelligence
-  data), 7 in `app/src/components/AIExplanation.test.tsx`. Manual
-  Playwright sweep (ephemeral, not committed): both entry points x
-  desktop/mobile x AR/EN x light/dark x success/failure/unavailable — 24
-  combinations, 0 findings.
-- Phase 14 weights are untouched by this work — the existing
-  `phase14WeightsBaseline.test.ts` guard (9 tests) still passes unchanged.
+An earlier round of this document briefly described Phase 16 as an active
+AI explanation layer (a Worker-side Anthropic provider, an
+`/api/ai/explain` endpoint, a frontend explanation panel on Results and
+country pages, and an admin observability panel) — built because the
+roadmap still carried this phase under the name "AI API Integration".
+That was a mistake against the standing "no AI" product decision (see
+"Current product decision" above), which was never actually reversed.
+
+The user has since made the product decision explicit: **AI integration
+is cancelled/skipped for this phase.** Every piece of that implementation
+has been removed in the same round this correction was written:
+
+- `worker/src/ai.ts` and its tests (the provider abstraction, the
+  Anthropic Messages API adapter, grounding checks, caching, rate
+  limiting, the `/api/ai/explain` and `/api/ai/status` endpoints).
+- `app/src/ai/` in full (the browser client, request builders, types)
+  and `app/src/components/AIExplanation.tsx` plus its tests.
+- The AI wiring inside `worker/src/index.ts`, `worker/src/admin.ts`,
+  `worker/src/analytics.ts` (`buildAIHealth`), `worker/src/adminPage.ts`
+  (`renderAIHealth`), and `worker/src/adminI18n.ts` (`ai.*` strings).
+- The AI panel wiring inside `Results.tsx` and `CountrySuitability.tsx`,
+  the `ai.*` i18n dictionary entries in `en.ts`/`ar.ts`, the `AIStrings`
+  type, and the `.ai-explanation*`/`.ai-badge` CSS rules.
+- `/AI_INTEGRATION.md`, and every AI-specific row/section in
+  `/SECRETS.md`.
+
+**No AI provider is configured. No AI API credential (`ANTHROPIC_API_KEY`
+or otherwise) is required by anything in this repository. No AI
+functionality ships anywhere in the product.** Do not replace Anthropic
+with another provider, and do not keep any dormant AI infrastructure "for
+later" — none remains.
+
+The non-AI carry-over hardening that was correctly part of this stage —
+and is KEPT — is documented in its own place: the geolocation race fix
+and "Best suited for" additions are recorded under "Destination
+discovery, navigation, and theme" and "Country Intelligence + Purpose
+Suitability Scoring" above; Nearest-to-me's regression coverage is under
+"Destination discovery, navigation, and theme" as well.
+
+Phase 16 stays in the roadmap under this name and status — it is not
+renumbered or deleted — and the next official phase, once this cleanup
+round is itself deployed and verified, is **Phase 17 — UI/UX Evolution**
+(not started).
 
 ## Destination discovery, navigation, and theme
 
@@ -944,10 +934,6 @@ language switcher, and the full panel set above. Two things are still open:
 | Relative price-level data | `app/src/data/travelCostIndex.ts` |
 | Country -> Best Purposes grouping | `app/src/intelligence/bestSuitedFor.ts` |
 | Geolocation quiz-race bounded wait | `app/src/state/waitForLocationSettle.ts` |
-| AI provider/grounding/safety/endpoint (Worker) | `worker/src/ai.ts` |
-| AI browser client/request builders/types | `app/src/ai/` |
-| AI explanation panel (UI) | `app/src/components/AIExplanation.tsx` |
-| AI integration doc | `/AI_INTEGRATION.md` |
 
 ## Provider and external state
 
@@ -1015,21 +1001,28 @@ language switcher, and the full panel set above. Two things are still open:
 Do not resurrect without an explicit user decision:
 
 - numeric accommodation cost without legitimate live provider data;
-- numeric traveler budget / fabricated SAR-per-day;
 - cultural compatibility ranking.
+
+(Numeric traveler budget / SAR-per-day is NOT in this list — see "Country
+Intelligence + Purpose Suitability Scoring" above: Phase 13.5c Traveler
+Budget is `BLOCKED / DEFERRED`, not cancelled, pending a verified source.
+The non-negotiable rule against ever fabricating one stands regardless —
+see "Non-negotiable product rules" above.)
 
 ## Roadmap gate and immediate backlog
 
-Phase 17 has not started. Current order:
+Phase 16 (AI API Integration) is CANCELLED/SKIPPED by product decision —
+see "Phase 16 — AI API Integration" above. Phase 17 (UI/UX Evolution) has
+not started and does not begin until this cleanup round (the retained
+non-AI hardening: the geolocation race fix, Nearest-to-me regression
+coverage, and "Best suited for") is itself deployed and production-
+verified. Current order:
 
-0. **NEW, 2026-09-17 — deploy Phase 16.** Fast-forward
-   `claude/marhaba-kxry8l` to this branch's HEAD (or widen the Pages/Worker
-   deploy workflows' branch policy) so the geolocation fix, Best-suited-for,
-   the AI explanation layer, and admin AI observability actually reach
-   production; then set `ANTHROPIC_API_KEY` (see `/SECRETS.md`,
-   `/AI_INTEGRATION.md`) and verify one real AI request/response round-trip
-   before relying on it live. See "DEPLOYMENT STATUS" above for why this
-   did not happen automatically this round.
+0. **Deploy this cleanup round.** Fast-forward `claude/marhaba-kxry8l` to
+   this branch's HEAD (or widen the Pages/Worker deploy workflows' branch
+   policy) so the geolocation fix, Nearest-to-me test coverage, and
+   Best-suited-for actually reach production. No AI credential is
+   involved — there is no AI code left to configure.
 1. **RESOLVED 2026-09-16 — `CLOUDFLARE_API_TOKEN` now has D1/R2/Workers
    access; the bindings are live** (see D1 REALITY above). What used to
    block here is closed. The one remaining step in this item, NOT yet

@@ -18,7 +18,6 @@
 //     operator because they asked for it; it is never mined or classified.
 import type { D1DatabaseLike } from './product';
 import countryIntelligenceSnapshot from './generated/countryIntelligenceDetail.json';
-import { getAIMetrics, resolveAIProvider, type AIEnv } from './ai';
 
 export interface AnalyticsFilters {
   from: string | null;
@@ -448,40 +447,6 @@ export async function buildIntelligenceHealth() {
   };
 }
 
-// ------------------------------------------------------------------------ ai
-
-/** Phase 16 workstream H — AI operational metrics, alongside Country
- *  Intelligence health in the same Content tab (this round's own scope
- *  instruction: extend existing observability, do not add a new tab).
- *  Like buildIntelligenceHealth() this takes no `db` — the metrics live in
- *  ai.ts's isolate-local counters (see getAIMetrics()'s own doc comment for
- *  why this is a recent-sample view, not a durable fleet-wide total, and
- *  why that limitation is disclosed to the operator rather than hidden). No
- *  prompt content, no user answer, and no destination is ever in this
- *  summary — only counts. */
-export async function buildAIHealth(env: AIEnv) {
-  const provider = resolveAIProvider(env);
-  const metrics = getAIMetrics();
-  const attempted = metrics.requestCount + metrics.cacheHitCount;
-  const pct = (numerator: number) => (attempted > 0 ? Math.round((numerator / attempted) * 100) : 0);
-  return {
-    configured: provider.isConfigured(),
-    provider: provider.name,
-    requestCount: metrics.requestCount,
-    successCount: metrics.successCount,
-    fallbackCount: metrics.fallbackCount,
-    timeoutCount: metrics.timeoutCount,
-    providerErrorCount: metrics.providerErrorCount,
-    invalidResponseCount: metrics.invalidResponseCount,
-    rateLimitedCount: metrics.rateLimitedCount,
-    cacheHitCount: metrics.cacheHitCount,
-    successRatePct: pct(metrics.successCount),
-    fallbackRatePct: pct(metrics.fallbackCount),
-    cacheHitRatePct: pct(metrics.cacheHitCount),
-    averageDurationMs: metrics.requestCount > 0 ? Math.round(metrics.totalDurationMs / metrics.requestCount) : 0,
-  };
-}
-
 // ----------------------------------------------------------------- content
 
 /** Acceptance item #3 — real city-description coverage, straight from the
@@ -587,8 +552,8 @@ export async function buildTrend(db: D1DatabaseLike, filters: AnalyticsFilters) 
   return { sessionsPerDay, completionsPerDay, ratingsPerDay };
 }
 
-export async function buildAnalytics(db: D1DatabaseLike, filters: AnalyticsFilters, env: AIEnv = {}) {
-  const [overview, trend, funnel, quality, countries, discovery, location, technical, content, intelligence, ai] = await Promise.all([
+export async function buildAnalytics(db: D1DatabaseLike, filters: AnalyticsFilters) {
+  const [overview, trend, funnel, quality, countries, discovery, location, technical, content, intelligence] = await Promise.all([
     buildOverview(db, filters),
     buildTrend(db, filters),
     buildFunnel(db, filters),
@@ -599,7 +564,6 @@ export async function buildAnalytics(db: D1DatabaseLike, filters: AnalyticsFilte
     buildTechnical(db, filters),
     buildContent(db),
     buildIntelligenceHealth(),
-    buildAIHealth(env),
   ]);
-  return { filters, overview, trend, funnel, quality, countries, discovery, location, technical, content, intelligence, ai };
+  return { filters, overview, trend, funnel, quality, countries, discovery, location, technical, content, intelligence };
 }

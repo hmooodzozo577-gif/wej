@@ -248,9 +248,11 @@ snapshots are refreshed" — see "Automation" below.
 
 Unaffected by this work, both deliberately:
 
-- **Traveler Budget** stays `CANCELLED / OUT OF SCOPE`
-  (`app/scripts/TRAVEL_COST_INDEX.md`) — this round did not discover a
-  new legitimate SAR/day source, and did not invent one.
+- **Traveler Budget** (Phase 13.5c) stays `BLOCKED / DEFERRED`
+  (`app/scripts/TRAVEL_COST_INDEX.md`) — a sufficiently current,
+  trustworthy, reusable source for generic traveler daily-cost values has
+  not yet been verified; this round did not discover one, and did not
+  invent a SAR/day figure.
 - **Visa** stays `unknown` unless a real provider is configured
   (`worker/src/visa.ts`) — never used as a scoring input here, and never
   penalized/rewarded when `unknown`.
@@ -284,14 +286,14 @@ editorial-only coverage on the 30 original destinations rather than all
 per-purpose numbers, including which specific countries fall short and
 why (small/data-poor economies, not an implementation gap).
 
-## Phase 16 source expansion attempt (2026-09-17) — network-blocked, honestly documented
+## Source expansion attempt (2026-09-17) — network-blocked, honestly documented
 
-Phase 16 (AI API Integration) carried over an instruction to expand this
-layer's depth using additional official/authoritative sources (WHO, ILO,
-UNESCO UIS, IMF, OECD, UN Tourism, national statistics bodies) beyond the
-11 sources already catalogued above, with an explicit rule: never claim a
-source was verified if network access prevented verification, and leave
-an indicator unverified/missing rather than fabricate it.
+A carry-over hardening item asked for this layer's depth to be expanded
+using additional official/authoritative sources (WHO, ILO, UNESCO UIS,
+IMF, OECD, UN Tourism, national statistics bodies) beyond the 11 sources
+already catalogued above, with an explicit rule: never claim a source
+was verified if network access prevented verification, and leave an
+indicator unverified/missing rather than fabricate it.
 
 This round's agent sandbox was directly tested against candidate source
 hosts before attempting to add anything:
@@ -309,9 +311,9 @@ hosts before attempting to add anything:
 
 The control result matters: `example.com` failing identically to every
 statistical-agency host proves this is a blanket egress allowlist policy
-for this interactive session (only a short list of package registries and
-Anthropic's own API are reachable — see the session's agent-proxy status),
-not a targeted block on these particular sources. It is the same
+for this interactive session (only a short list of package registries is
+reachable — see the session's agent-proxy status), not a targeted block
+on these particular sources. It is the same
 constraint already recorded for the visa providers (`/VISA_PROVIDERS.md`)
 and for Wikipedia access from this sandbox specifically (`/CITY_DESCRIPTIONS.md`
 notes the deployed Worker can reach Wikipedia while this sandbox cannot).

@@ -105,25 +105,6 @@ const ANALYTICS = {
       { purpose: 'wellness', modelVersion: 'wellness-v1', totalCountries: 194, sufficientDataCount: 192, insufficientDataCount: 2, averageCoverage: 92, confidenceHighCount: 128 },
     ],
   },
-  // Phase 16 workstream H — AI operational metrics stub. Kept realistic
-  // (a mix of success/fallback/timeout, not all-zero) so the sweep actually
-  // renders the breakdown table, not just the empty/not-configured state.
-  ai: {
-    configured: true,
-    provider: 'anthropic',
-    requestCount: 412,
-    successCount: 358,
-    fallbackCount: 54,
-    timeoutCount: 12,
-    providerErrorCount: 9,
-    invalidResponseCount: 24,
-    rateLimitedCount: 9,
-    cacheHitCount: 96,
-    successRatePct: 87,
-    fallbackRatePct: 13,
-    cacheHitRatePct: 19,
-    averageDurationMs: 1180,
-  },
 };
 
 const FEEDBACK = {

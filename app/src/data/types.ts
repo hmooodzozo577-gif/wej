@@ -983,28 +983,6 @@ export interface CountrySuitabilityStrings {
   otherPurposesLabel: string;
 }
 
-/** Phase 16 workstream E/F — the AI explanation panel. Deliberately small:
- *  this is an on-demand, additive summary of facts the deterministic
- *  systems already computed, never a chat interface and never the only
- *  copy of an explanation on the page (see app/src/ai/). */
-export interface AIStrings {
-  /** Small tag shown on the panel so AI-generated text is never confused
-   *  with the hard facts around it (E.6). */
-  badge: string;
-  explainButton: string;
-  explainButtonCountry: string;
-  loading: string;
-  /** Generic honest failure copy — shown for ANY unavailable reason, since
-   *  the traveller does not need the internal cause, only that the
-   *  deterministic content above is unaffected. */
-  unavailable: string;
-  disclaimer: string;
-  whyItFitsLabel: string;
-  tradeoffsLabel: string;
-  confidenceNotesLabel: string;
-  missingDataLabel: string;
-}
-
 export interface I18nDict {
   dir: 'rtl' | 'ltr';
   htmlLang: 'ar' | 'en';
@@ -1030,7 +1008,6 @@ export interface I18nDict {
   travelCost: TravelCostStrings;
   tourismInsights: TourismInsightsStrings;
   countrySuitability: CountrySuitabilityStrings;
-  ai: AIStrings;
   costLevels: [string, string, string, string];
   climateLabels: Record<ClimateKind, string>;
   visaLabels: Record<VisaDifficulty, string>;

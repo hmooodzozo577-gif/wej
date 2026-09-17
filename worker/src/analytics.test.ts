@@ -2,9 +2,8 @@
 // Intelligence layer (task 3.23). Tested against the REAL committed
 // bundled snapshot, the same one intelligence.ts serves from, since this
 // function reads no D1 (see its own doc comment for why).
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { buildAIHealth, buildIntelligenceHealth } from './analytics';
-import { _resetAIStateForTests } from './ai';
+import { describe, expect, it } from 'vitest';
+import { buildIntelligenceHealth } from './analytics';
 
 // Duplicated here rather than imported from app/src/intelligence/types —
 // worker/ and app/ are separate TypeScript projects/packages, and this
@@ -51,47 +50,5 @@ describe('buildIntelligenceHealth', () => {
     const first = await buildIntelligenceHealth();
     const second = await buildIntelligenceHealth();
     expect(second).toEqual(first);
-  });
-});
-
-// buildAIHealth() — Phase 16 workstream H. The metrics themselves are
-// exercised in depth in ai.test.ts; this only proves the admin summary
-// shape (percentages, configured flag, no leaked secret) is correct.
-describe('buildAIHealth', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-    _resetAIStateForTests();
-  });
-
-  it('reports not configured with all-zero counts when no key is set', async () => {
-    const health = await buildAIHealth({});
-    expect(health.configured).toBe(false);
-    expect(health.provider).toBe('none');
-    expect(health.requestCount).toBe(0);
-    expect(health.successRatePct).toBe(0);
-  });
-
-  it('never leaks the API key into the summary', async () => {
-    const health = await buildAIHealth({ ANTHROPIC_API_KEY: 'super-secret-key' });
-    expect(JSON.stringify(health)).not.toContain('super-secret-key');
-    expect(health.configured).toBe(true);
-    expect(health.provider).toBe('anthropic');
-  });
-
-  it('computes success/fallback/cache-hit rates from real recorded metrics', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () =>
-      new Response(JSON.stringify({ content: [{ type: 'text', text: JSON.stringify({ summary: 'ok' }) }] }), { status: 200 }),
-    ));
-    const { createAnthropicProvider } = await import('./ai');
-    const provider = createAnthropicProvider({ ANTHROPIC_API_KEY: 'key' });
-    await provider.explain({ kind: 'recommendation', lang: 'en', countryCode: 'JP', purpose: 'tourism' });
-    await provider.explain({ kind: 'recommendation', lang: 'en', countryCode: 'JP', purpose: 'tourism' }); // cache hit
-
-    const health = await buildAIHealth({ ANTHROPIC_API_KEY: 'key' });
-    expect(health.requestCount).toBe(1);
-    expect(health.successCount).toBe(1);
-    expect(health.cacheHitCount).toBe(1);
-    expect(health.successRatePct).toBe(50);
-    expect(health.cacheHitRatePct).toBe(50);
   });
 });

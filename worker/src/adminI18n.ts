@@ -112,13 +112,6 @@ export interface AdminDictionary {
     totalCountries: string; purposesScored: string; generatedAt: string;
     purpose: string; modelVersion: string; sufficientCount: string; averageCoverage: string; highConfidenceCount: string;
   };
-  ai: {
-    title: string; hint: string;
-    configuredTrue: string; configuredFalse: string;
-    requests: string; successRate: string; fallbackRate: string; cacheHitRate: string;
-    timeouts: string; providerErrors: string; invalidResponses: string; rateLimited: string; avgDurationMs: string;
-    resetHint: string;
-  };
   reports: {
     title: string; hint: string; search: string; searchPlaceholder: string;
     status: string; type: string; searchAction: string;
@@ -249,13 +242,6 @@ export const ADMIN_EN: AdminDictionary = {
     totalCountries: 'Countries covered', purposesScored: 'Purposes scored', generatedAt: 'Last generated',
     purpose: 'Purpose', modelVersion: 'Model version', sufficientCount: 'Sufficient data', averageCoverage: 'Avg. coverage', highConfidenceCount: 'High confidence',
   },
-  ai: {
-    title: 'AI explanation layer', hint: 'An explanation layer over the deterministic engine and Country Intelligence — it never chooses a ranking or a fact. Counts are isolate-local (reset on cold start), not a durable fleet-wide total.',
-    configuredTrue: 'Configured', configuredFalse: 'Not configured — every explanation request falls back and the site is unaffected',
-    requests: 'Requests (this isolate)', successRate: 'Success rate', fallbackRate: 'Fallback rate', cacheHitRate: 'Cache hit rate',
-    timeouts: 'Timeouts', providerErrors: 'Provider errors', invalidResponses: 'Invalid/ungrounded responses', rateLimited: 'Rate-limited', avgDurationMs: 'Avg. duration',
-    resetHint: 'Counts reset whenever the Worker starts a new isolate — treat this as a recent sample, not a lifetime total.',
-  },
   reports: {
     title: 'Reports and feedback', hint: 'Everything a traveller sent, with a status you can move.',
     search: 'Search', searchPlaceholder: 'message, reference, country', status: 'Status', type: 'Type', searchAction: 'Search',
@@ -382,13 +368,6 @@ export const ADMIN_AR: AdminDictionary = {
     title: 'سلامة معلومات الدول', hint: 'مجموعة بيانات ثابتة وذات إصدار — راجع COUNTRY_INTELLIGENCE.md. تُولَّد بواسطة خط أنابيب البيانات، وليست حية لكل طلب.',
     totalCountries: 'الدول المشمولة', purposesScored: 'الأغراض المقيَّمة', generatedAt: 'آخر توليد',
     purpose: 'الغرض', modelVersion: 'إصدار المنهجية', sufficientCount: 'بيانات كافية', averageCoverage: 'متوسط التغطية', highConfidenceCount: 'ثقة عالية',
-  },
-  ai: {
-    title: 'طبقة شرح الذكاء الاصطناعي', hint: 'طبقة شرح فوق المحرك الحتمي ومعلومات الدول — لا تختار أبدًا ترتيبًا أو حقيقة. الأعداد محلية لهذه النسخة (تُصفَّر عند بدء نسخة جديدة)، وليست إجماليًا دائمًا لكل الأسطول.',
-    configuredTrue: 'مُفعّل', configuredFalse: 'غير مُفعّل — كل طلب شرح يعود إلى البديل الاحتياطي والموقع غير متأثر',
-    requests: 'الطلبات (هذه النسخة)', successRate: 'معدل النجاح', fallbackRate: 'معدل الرجوع للبديل', cacheHitRate: 'معدل إصابة التخزين المؤقت',
-    timeouts: 'انتهاء المهلة', providerErrors: 'أخطاء المزوّد', invalidResponses: 'ردود غير صالحة/غير مؤسَّسة', rateLimited: 'محدود المعدل', avgDurationMs: 'متوسط المدة',
-    resetHint: 'تُصفَّر الأعداد عند بدء الـ Worker نسخة جديدة — اعتبرها عينة حديثة لا رقمًا تراكميًا دائمًا.',
   },
   reports: {
     title: 'البلاغات والتغذية الراجعة', hint: 'كل ما أرسله مسافر، مع حالة يمكنك تحريكها.',

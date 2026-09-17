@@ -14,9 +14,6 @@ import { ResultRating } from '../components/ResultRating';
 import { VisaRequirementNote } from '../components/VisaRequirementNote';
 import { useVisaRequirements } from '../visa/useVisaRequirements';
 import { applyVisaRanking, visaRankingChangedOrder } from '../visa/visaRanking';
-import { AIExplanation } from '../components/AIExplanation';
-import { buildRecommendationExplanationRequest } from '../ai/buildExplanationRequest';
-import { getCountrySuitability } from '../data/countryIntelligence';
 
 /** Ports the original's setInterval-based count-up for `.matchNum`:
  *  step = max(1, round(target/30)), tick every 16ms. */
@@ -79,21 +76,6 @@ export function Results() {
   // so they have to be passed in; without them it could only name engine
   // dimensions, which is exactly the problem being fixed.
   const whyFirst = buildWhyText(lang, state.purpose, first.reasons, first.dest, first.score, state.answers);
-  // Phase 16 workstream E/F — an OPTIONAL, on-demand AI explanation of this
-  // same top pick. 'other' has no Country Intelligence suitability
-  // methodology (see intelligence/types.ts), so no suitability context is
-  // sent for it — the panel still works, just without that one field.
-  const firstRequirement = requirements.get(first.dest.countryCode);
-  const aiRequest = buildRecommendationExplanationRequest({
-    lang,
-    purpose: state.purpose,
-    dest: first.dest,
-    score: first.score,
-    reasons: first.reasons,
-    suitability: state.purpose === 'other' ? undefined : getCountrySuitability(first.dest.countryCode).find((entry) => entry.purpose === state.purpose),
-    visaStatus: firstRequirement?.category,
-    visaConfigured: providerConfigured,
-  });
 
   return (
     <div className="results-wrap">
@@ -148,8 +130,6 @@ export function Results() {
             <span>{r.match}</span>
           </div>
         </Link>
-
-        <AIExplanation request={aiRequest} />
 
         <div className="results-grid">
           {rest.map((item, index) => (

@@ -340,16 +340,4 @@ export const AR: I18nDict = {
     bestSuitedForInsufficient: 'لا تتوفر بيانات موثوقة كافية بعد لتحديد الغرض الأنسب لهذه الدولة.',
     otherPurposesLabel: 'أغراض أخرى',
   },
-  ai: {
-    badge: 'ذكاء اصطناعي',
-    explainButton: 'اشرح لي هذا التوافق بالذكاء الاصطناعي',
-    explainButtonCountry: 'لخّص بالذكاء الاصطناعي',
-    loading: 'جارٍ إنشاء الشرح…',
-    unavailable: 'شرح الذكاء الاصطناعي غير متاح حاليًا — التقدير أعلاه غير متأثر بذلك.',
-    disclaimer: 'ملخص من الذكاء الاصطناعي للبيانات أعلاه. قد يكون غير دقيق تمامًا — تحقق من أي معلومة مهمة.',
-    whyItFitsLabel: 'لماذا تناسبك',
-    tradeoffsLabel: 'نقاط الموازنة',
-    confidenceNotesLabel: 'مستوى الثقة',
-    missingDataLabel: 'ما لا يزال غير معروف',
-  },
 };
