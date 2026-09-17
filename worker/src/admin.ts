@@ -29,8 +29,9 @@ import {
   FEEDBACK_STATUSES,
 } from './analytics';
 import { adminPage } from './adminPage';
+import type { AIEnv } from './ai';
 
-export interface AdminEnv {
+export interface AdminEnv extends AIEnv {
   PRODUCT_DB?: D1DatabaseLike;
   ADMIN_TOKEN?: string;
   /** Cloudflare Access application audience (AUD) tag. Setting it turns on
@@ -217,6 +218,6 @@ export async function handleAdminRequest(
 
   // '/api/admin/summary' is kept as an alias of '/api/admin/analytics' so an
   // older bookmark or script does not break.
-  const analytics = await buildAnalytics(db, filters);
+  const analytics = await buildAnalytics(db, filters, env);
   return json({ ...analytics, authenticatedVia: auth.via }, 200);
 }

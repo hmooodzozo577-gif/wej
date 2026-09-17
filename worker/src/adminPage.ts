@@ -637,7 +637,29 @@ function renderIntelligenceHealth(root, data) {
   ], 'highConfidence')));
 }
 
+function renderAIHealth(root, data) {
+  var ai = data.ai;
+  var cards = node('div', 'kpis');
+  kpi(cards, t('ai.title'), ai.configured ? t('ai.configuredTrue') : t('ai.configuredFalse'));
+  kpi(cards, t('ai.requests'), num(ai.requestCount));
+  kpi(cards, t('ai.successRate'), ai.successRatePct + '%');
+  kpi(cards, t('ai.fallbackRate'), ai.fallbackRatePct + '%');
+  kpi(cards, t('ai.cacheHitRate'), ai.cacheHitRatePct + '%');
+  root.append(panel(t('ai.title'), t('ai.hint'), cards));
+  var breakdown = [
+    { label: t('ai.timeouts'), count: ai.timeoutCount },
+    { label: t('ai.providerErrors'), count: ai.providerErrorCount },
+    { label: t('ai.invalidResponses'), count: ai.invalidResponseCount },
+    { label: t('ai.rateLimited'), count: ai.rateLimitedCount },
+  ];
+  root.append(panel(t('ai.title'), t('ai.resetHint'), rankTable(breakdown, [
+    { key: 'label', label: t('ai.title') },
+    { key: 'count', label: t('ai.requests'), numeric: true },
+  ], 'count')));
+}
+
 function renderContent(root, data) {
+  renderAIHealth(root, data);
   renderIntelligenceHealth(root, data);
   var content = data.content;
   if (!content.available) {
