@@ -123,6 +123,8 @@ that column below is, by definition, not a secret and must never be one.
 | `AMADEUS_ENV` | Worker `[vars]` | mode switch, not a secret | Sandbox API is used |
 | `SHERPA_API_KEY` | Worker secret | **secret** | No visa provider; every lookup answers `unknown` and the passport step says live data is not switched on |
 | `SHERPA_BASE_URL` | Worker `[vars]` | host override for the sandbox | Production Sherpa host is used |
+| `ANTHROPIC_API_KEY` | Worker secret | **secret** | No AI provider; `/api/ai/explain` always answers `{available:false, reason:'not_configured'}` and every AI explanation panel on the site stays hidden — nothing else is affected (see AI_INTEGRATION.md) |
+| `AI_MODEL` | Worker `[vars]` | non-secret model id override | The code default (`claude-haiku-4-5-20251001` at the time of writing) is used |
 | `TURNSTILE_SECRET_KEY` | Worker secret | **secret** | Reports and ratings are accepted without a challenge (today's state) |
 | `ADMIN_TOKEN` | Worker secret | **secret** | With no `ADMIN_ACCESS_AUD` either, `/api/admin/*` returns 503 and serves nothing |
 | `ADMIN_ACCESS_AUD` | Worker `[vars]` | Cloudflare Access application audience tag | Access enforcement is off; `ADMIN_TOKEN` is used instead |
@@ -170,6 +172,36 @@ without a window where submissions are rejected:
 Challenged: the report dialog, the results rating, the destination rating —
 the three places a stranger can write text into the database. **Not
 challenged:** analytics events, which carry no free text and are automatic.
+
+## AI explanation layer (Phase 16)
+
+`worker/src/ai.ts` implements a provider abstraction the same shape as
+`visa.ts`'s `VisaRequirementsProvider` — `isConfigured()`/`explain()`, a
+default `unavailableAIProvider` that answers `{available:false}` for
+everything, and `resolveAIProvider(env)` picking the first configured real
+provider. Today there is exactly one adapter, Anthropic's Messages API.
+
+```
+cd worker
+npx wrangler secret put ANTHROPIC_API_KEY
+```
+
+`AI_MODEL` is an OPTIONAL non-secret override in `worker/wrangler.toml`'s
+`[vars]` (the same "mode switch, not a credential" convention as
+`AMADEUS_ENV`/`SHERPA_BASE_URL`) — leave it unset to use the code default.
+
+**Until `ANTHROPIC_API_KEY` is set**, every `/api/ai/explain` call answers
+`{available:false, reason:'not_configured'}`, `/api/ai/status` answers
+`{available:false}`, and every AI explanation button on the site (the
+Results top pick, a country page's "Best suited for" section) stays
+hidden — this is by design, not a bug: AI is an additive explanation layer
+over the deterministic engine and Country Intelligence, never a
+dependency of either. See `/AI_INTEGRATION.md` for the full architecture,
+exactly what data is and is not sent to the model, the grounding and
+fallback strategy, and this round's own unverified-against-a-live-account
+status (no key exists in this environment, and the agent sandbox's egress
+policy blocks arbitrary external hosts — the same constraint already
+documented for the visa providers).
 
 ## Cloudflare API token (CI only)
 

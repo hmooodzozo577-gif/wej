@@ -5,15 +5,36 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 16
-- Last verified date: 2026-09-16 (theme-icon fix + Contact/Suggestion fix +
-  Country Intelligence round: 180 worker tests, 813 frontend tests,
-  TypeScript and oxlint clean on both, frontend production build, worker
-  `wrangler deploy --dry-run`, the admin Playwright sweep at 0 findings,
-  and a 32-combination Country Suitability Playwright sweep — 4
-  representative countries x desktop/mobile x AR/EN x light/dark — also
-  at 0 findings)
-- Working branch: `claude/modest-cray-34bvoa`
+- State document version: 17
+- Last verified date: 2026-09-17 (Phase 16 — AI API Integration, plus the
+  five carry-over items: geolocation race fix, Nearest-to-me exclusion
+  test coverage, "Best suited for" country-purpose interpretation, an
+  honestly-blocked Country Intelligence source-expansion attempt, and the
+  grounded AI explanation layer itself): 230 worker tests, 882 frontend
+  tests, TypeScript and oxlint clean on both, frontend production build,
+  worker `wrangler deploy --dry-run`, the admin Playwright sweep
+  (including the new AI observability panel) at 0 findings, and a
+  24-combination AI-explanation-panel Playwright sweep (Results top pick
+  + a country page's "Best suited for" section x desktop/mobile x AR/EN
+  x light/dark x success/failure/unavailable) also at 0 findings. NOT
+  done this round: production deployment — see "Deployment status" below.
+- Working branch: `claude/modest-cray-34bvoa` — HEAD as of this round:
+  `b345aea` (Phase 16 commits: `cbba860`, `8c5d7d1`, `d2eded2`, `2dc8c6d`,
+  `b345aea`, on top of `fad7218`).
+- DEPLOYMENT STATUS, 2026-09-17: NOT deployed. Both `deploy-worker.yml`
+  and `deploy-pages.yml` trigger only on push to `claude/marhaba-kxry8l`
+  (or manual dispatch, which Pages' own environment protection also
+  restricts to that branch — see the 2026-09-16 entry below for the exact
+  rejection). This round's branch instructions require developing on
+  `claude/modest-cray-34bvoa` and never pushing elsewhere without explicit
+  permission, so nothing was fast-forwarded. Production still serves the
+  commits recorded below from 2026-09-16; none of Phase 16's work
+  (geolocation fix, Best-suited-for, the AI layer, admin AI observability)
+  is live. To deploy: fast-forward `claude/marhaba-kxry8l` to this
+  branch's HEAD (the same remedy chosen last round — see "GITHUB PAGES
+  DEPLOY IS UNBLOCKED" below), then push, or widen the environment's
+  branch policy. This is a decision for the repository owner, not
+  something to do unilaterally.
 - Previous production frontend commit: `f60efd93`
 - Production Worker source commit: `077d76a5` — DEPLOYED 2026-09-16 from run
   35154518086 (Version ID `365c337c-7327-4559-baf6-e3f293a3349a`).
@@ -149,16 +170,31 @@ server-side travel-provider integrations.
   When it conflicts with current Git/code, current repository evidence wins
   and this file must be corrected, not the other way around.
 
-## Current product decision: no AI
+## Current product decision: AI as a grounded explanation layer only (Phase 16 — reverses the prior "no AI" decision)
 
-The user rejected the AI interview and AI explanations because their questions
-and results were not practical or convincing. The current local implementation
-removes natural-language interpretation, AI-generated turns, AI explanations,
-frontend AI/profile orchestration, Worker `/api/ai/*` routes and provider
-code, the `env.AI` binding, and AI deployment variables/smoke tests.
+HISTORY: the user previously rejected an AI INTERVIEW and AI-GENERATED
+QUESTIONNAIRE TURNS because their questions and results were not practical
+or convincing. That earlier build let AI orchestrate the questionnaire
+itself, generate turns, and produce explanations with no deterministic
+grounding underneath them.
 
-Do not restore an AI or Hybrid interview unless the user explicitly reverses
-this decision.
+REVERSED, 2026-09-17, by explicit user request (Phase 16 — "AI API
+Integration"): a materially different feature — never an interview, never
+a question-flow AI, never a ranking AI. AI is now a strictly ADDITIVE,
+non-authoritative EXPLANATION layer on top of the unchanged deterministic
+system: Phase 14 ranks, Country Intelligence scores, the AI only narrates
+numbers it is handed after both already ran. It cannot invent a country
+fact, a score, a visa status, a cost, or a ranking; with no
+`ANTHROPIC_API_KEY` configured it is fully absent (every AI panel simply
+does not render) and the deterministic experience is provably unaffected.
+Full architecture, exact data flow, grounding strategy, privacy controls,
+and this round's own unverified-against-a-live-account status are in
+`/AI_INTEGRATION.md`.
+
+Do not restore an AI-DRIVEN INTERVIEW or AI-GENERATED QUESTIONNAIRE TURNS
+unless the user explicitly reverses THAT decision again — this reversal
+covers only the explanation layer described above and in
+`/AI_INTEGRATION.md`, not a return to AI-orchestrated questioning.
 
 ## Questionnaire and ranking
 
@@ -458,6 +494,102 @@ this is the summary.
   findings.
 - Full doc: `/COUNTRY_INTELLIGENCE.md`.
 
+### Phase 16 additions on top of this layer (2026-09-17)
+
+- **"Best suited for" / "الأنسب لـ"** (`app/src/intelligence/bestSuitedFor.ts`)
+  — a deterministic Country -> Best Purposes interpretation built ONLY from
+  the suitability scores above (no second scoring system). Eligibility
+  requires a real score AND `high`/`medium` confidence (an `insufficientData`
+  or low-confidence purpose can never become "best suited", though it still
+  shows in the ranked list below). Ties within a fixed 5-point
+  (`GROUPING_MARGIN_POINTS`) margin of the top eligible score group together
+  ("Strong for Tourism, Work, and Investment") rather than picking an
+  arbitrary winner; when no purpose is eligible, an honest insufficient-data
+  message shows instead of a forced winner. Rendered as its own lead section
+  in `CountrySuitability.tsx`, above the existing per-purpose list. 14 tests
+  in `bestSuitedFor.test.ts` (including the task's own worked example) plus
+  4 in `CountrySuitability.test.tsx` against real committed data (an
+  isolated single winner — Afghanistan; a multi-purpose group — Saudi
+  Arabia; an honest insufficient state — Vatican City; Arabic/RTL).
+- **Source expansion attempted, network-blocked, honestly documented.**
+  This round's own agent sandbox cannot reach ANY external host outside a
+  short package-registry allowlist (confirmed with a control test against
+  `example.com`, which failed identically to World Bank/WHO/ILO/UNESCO/
+  IMF/OECD/UN-stats hosts) — the same constraint already recorded for the
+  visa providers, and the same host (`api.worldbank.org`) the 11 indicators
+  above were already fetched from. No new indicator was added, no source
+  claimed verified, and no `excluded[]` limitation was removed. See
+  `/COUNTRY_INTELLIGENCE.md`'s "Phase 16 source expansion attempt" section
+  for the full evidence and what running the existing generator script from
+  an environment with real egress would need.
+
+## Phase 16 — AI API Integration (2026-09-17)
+
+Full architecture, exact data flow, privacy controls, grounding strategy,
+and known limitations: `/AI_INTEGRATION.md`. This is the summary.
+
+- AI is a strictly ADDITIVE, non-authoritative EXPLANATION layer over the
+  unchanged Phase 14 engine and Country Intelligence data — it never
+  chooses a ranking, invents a fact, a score, or a visa status, and it
+  reverses (see "Current product decision" above) only the prior
+  AI-INTERVIEW rejection, not a general ban on AI. Provider: Anthropic's
+  Messages API, behind the same `isConfigured()`/adapter-list shape as the
+  Sherpa visa provider (`worker/src/ai.ts`). With no `ANTHROPIC_API_KEY`
+  configured — today's state — every AI panel on the site is simply absent
+  and the deterministic experience is unaffected; this is verified by
+  tests, not just claimed.
+- Two entry points, matching the task's two user journeys: the Results
+  page's top pick ("I want to study" -> Phase 14 ranks -> AI explains why)
+  and a country page's "Best suited for" section ("I like Japan, what is
+  it best for?" -> the SAME `bestSuitedFor()` grouping -> AI summarizes
+  it). Both are on-demand (a button click, never automatic) and hidden
+  entirely until an availability check confirms a provider is configured.
+- Grounding is two-layered: a system prompt instructing the model to use
+  only the supplied JSON and say so honestly when a fact is
+  unknown/insufficient/low-confidence, PLUS an independent code-level
+  check (`groundingViolation()`) that discards any response turning an
+  `unknown` visa status into a confident claim, or an insufficient-
+  data/low-confidence suitability into "definitely"/"the best country for
+  you" — the task's own two worked examples, tested bilingually.
+- Input is minimal and canonical only (ISO country/purpose codes,
+  already-computed scores/confidence/coverage, up to 4 plain-language
+  match reasons) — never coordinates, a passport number, a token, an IP,
+  or a session id, enforced by both an allowlist and an explicit denylist
+  server-side.
+- Output is a validated `{summary, whyItFits, tradeoffs, confidenceNotes,
+  missingDataNotes}` object; invalid JSON, a missing `summary`, a
+  timeout, a provider error, a rate limit, or a grounding violation all
+  resolve to an honest "unavailable" answer, never a thrown error and
+  never content shown to the traveller.
+- Cost/rate control: an isolate-local response cache (6h TTL, 200-entry
+  cap) and an isolate-local rate limiter (30/60s) — both explicitly
+  documented as best-effort, not a durable fleet-wide guarantee — plus an
+  8s request timeout.
+- Admin observability extends the EXISTING Content tab (not a new tab)
+  with configured/success-rate/fallback-rate/cache-hit-rate KPIs and a
+  timeout/provider-error/invalid-response/rate-limited breakdown, all
+  isolate-local counts, disclosed as such in both languages.
+- Privacy: no AI prompt or response is ever persisted; the admin panel
+  reports only aggregate counts, never prompt content, a destination, or
+  a user answer; analytics collection is not expanded because of this
+  feature.
+- NOT VERIFIED against a live Anthropic account this round: no API key
+  exists in this environment, and the coding sandbox's own network egress
+  policy blocks arbitrary external hosts (confirmed with a control test —
+  see `/COUNTRY_INTELLIGENCE.md`'s source-expansion section for the same
+  finding). The adapter is written against the published API shape with
+  every failure mode tested defensively; verify one real round-trip
+  before relying on it in production.
+- Tests: 47 in `worker/src/ai.test.ts`, +3 in `worker/src/analytics.test.ts`,
+  10 in `app/src/ai/aiExplanationClient.test.ts`, 13 in `app/src/ai/
+  buildExplanationRequest.test.ts` (against real Country Intelligence
+  data), 7 in `app/src/components/AIExplanation.test.tsx`. Manual
+  Playwright sweep (ephemeral, not committed): both entry points x
+  desktop/mobile x AR/EN x light/dark x success/failure/unavailable — 24
+  combinations, 0 findings.
+- Phase 14 weights are untouched by this work — the existing
+  `phase14WeightsBaseline.test.ts` guard (9 tests) still passes unchanged.
+
 ## Destination discovery, navigation, and theme
 
 - Explore sorting supports default order, localized A–Z/Z–A, largest/smallest
@@ -467,7 +599,13 @@ this is the summary.
   offered, and a short note says why rather than silently omitting them; a
   distance sort saved before location was lost falls back to default order
   instead of claiming to sort by distance. Missing/imputed price observations
-  do not outrank direct sourced values.
+  do not outrank direct sourced values. VERIFIED 2026-09-17 (Phase 16
+  carry-over item #2): this exclusion was already implemented and correct
+  (`app/src/data/exploreCatalog.ts`, labeled "Item #10" in its own comment)
+  — not a bug, just missing regression coverage, now added in
+  `exploreCatalog.test.ts` (10 tests: exclusion from both nearest and
+  farthest, neighbor ordering, no global removal from the catalog or other
+  sorts, accessibility via search/direct link, AR/EN parity).
 - Location resolution runs from the shared coordinates HOWEVER they were
   granted — the app-wide first-visit prompt, Explore's own card, or a grant
   already in app state. (A previous build resolved only inside Explore's own
@@ -481,6 +619,22 @@ this is the summary.
   be told apart from app-side country/city resolution, which is timed
   separately. A recoverable failure no longer poisons app-wide location
   state: the app-wide prompt offers a retry instead of disappearing.
+  FIXED 2026-09-17 (Phase 16 carry-over item #1 — the geolocation race
+  condition): the real, narrow race was not "location is treated as
+  permanently unavailable" (the reducer and `effectiveQuestionBank()` both
+  re-derive live on every dispatch, so a later grant is never ignored) but
+  a single decision point — the quiz finishing while location is still
+  `requesting` — where the moment location would have mattered could pass
+  before it settled. `app/src/state/waitForLocationSettle.ts` adds a bounded
+  wait (2.5s timeout) at exactly that point in `Quiz.tsx`'s `onSelect`,
+  showing "جارٍ تحديد موقعك…"/"Getting your location…" only in that narrow
+  window, never claiming unavailability while still pending, and falling
+  back to the unfiltered flow after the timeout. Denied/unavailable/error
+  states proceed immediately with no wait. 14 new tests (6 for the wait
+  helper's own timing/polling behavior, 8 driving the real `Quiz` component
+  through fast/slow/denied/unavailable/mid-flow-resolution/timeout/AR
+  scenarios with fake timers) — no duplicate `LOCATION_REQUEST` dispatch in
+  any of them.
 - "Surprise me" is a FLAG REEL: a gold-ringed badge that cycles real
   candidate flags and settles with one restrained pop. The travel-compass
   redesign that briefly replaced it was REJECTED by the user in the second
@@ -788,6 +942,12 @@ language switcher, and the full panel set above. Two things are still open:
 | Country Intelligence detail API (Worker) | `worker/src/intelligence.ts` |
 | Country Intelligence doc | `/COUNTRY_INTELLIGENCE.md` |
 | Relative price-level data | `app/src/data/travelCostIndex.ts` |
+| Country -> Best Purposes grouping | `app/src/intelligence/bestSuitedFor.ts` |
+| Geolocation quiz-race bounded wait | `app/src/state/waitForLocationSettle.ts` |
+| AI provider/grounding/safety/endpoint (Worker) | `worker/src/ai.ts` |
+| AI browser client/request builders/types | `app/src/ai/` |
+| AI explanation panel (UI) | `app/src/components/AIExplanation.tsx` |
+| AI integration doc | `/AI_INTEGRATION.md` |
 
 ## Provider and external state
 
@@ -862,6 +1022,14 @@ Do not resurrect without an explicit user decision:
 
 Phase 17 has not started. Current order:
 
+0. **NEW, 2026-09-17 — deploy Phase 16.** Fast-forward
+   `claude/marhaba-kxry8l` to this branch's HEAD (or widen the Pages/Worker
+   deploy workflows' branch policy) so the geolocation fix, Best-suited-for,
+   the AI explanation layer, and admin AI observability actually reach
+   production; then set `ANTHROPIC_API_KEY` (see `/SECRETS.md`,
+   `/AI_INTEGRATION.md`) and verify one real AI request/response round-trip
+   before relying on it live. See "DEPLOYMENT STATUS" above for why this
+   did not happen automatically this round.
 1. **RESOLVED 2026-09-16 — `CLOUDFLARE_API_TOKEN` now has D1/R2/Workers
    access; the bindings are live** (see D1 REALITY above). What used to
    block here is closed. The one remaining step in this item, NOT yet
