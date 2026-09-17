@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(.34, 1.56, .64, 1)",
+        "createdAt": "2026-09-17T12:09:29.601Z",
+        "reason": "Pre-existing Surprise Me flag-reel landing animation, unrelated to Phase 16 work; PROJECT_STATE.md documents this reel as restored-from-git-history, accepted behavior ('settles with one restrained pop') and explicitly protects it from redesign without explicit user instruction."
+      }
+    ]
+  }
+}
