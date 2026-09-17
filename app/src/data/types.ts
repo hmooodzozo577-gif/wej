@@ -564,6 +564,10 @@ export interface FeedbackStrings {
    *  this only explains why, with a way to retry loading the challenge. */
   verificationFailed: string;
   retryVerification: string;
+  /** Acceptance fix — shown while the challenge is required and still
+   *  loading/rendering (neither solved nor failed yet), so Submit being
+   *  disabled during that window is never unexplained. */
+  verifyingChallenge: string;
 }
 
 /** Phase 12 — Location Personalization strings. Not part of the original
@@ -969,21 +973,6 @@ export interface CountrySuitabilityStrings {
   missingFactorLabel: string;
   /** e.g. "Methodology: {version}" */
   modelVersionLabel: string;
-  /** Phase 16 workstream C — Country -> Best Purposes, built on top of the
-   *  same suitability scores above (see intelligence/bestSuitedFor.ts).
-   *  This section title is fixed regardless of single/grouped outcome. */
-  bestSuitedForTitle: string;
-  /** e.g. "{purpose}" — shown large/prominent when exactly one purpose
-   *  leads and no other purpose is within the grouping margin of it. */
-  bestSuitedForSingle: string;
-  /** e.g. "Strong for {purposes}" — shown when 2+ purposes are tied
-   *  within the grouping margin, so a tiny numeric gap is never presented
-   *  as a meaningful categorical difference. {purposes} is a locale-
-   *  formatted list (Intl.ListFormat), not manually joined. */
-  bestSuitedForGroup: string;
-  /** Shown when no purpose has enough data/confidence to name a best-
-   *  suited purpose at all — never a forced winner. */
-  bestSuitedForInsufficient: string;
   otherPurposesLabel: string;
   /** Acceptance fix — "Why this score?" factor names ("Safety",
    *  "Affordability", …) previously came straight from the Worker's

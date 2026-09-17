@@ -118,6 +118,28 @@ describe('requestBrowserLocation', () => {
     expect(getCurrentPosition).toHaveBeenCalledTimes(1);
   });
 
+  // Acceptance fix (Issue 1) — required behavior: "if approximate location
+  // is enough, do not unnecessarily force precise GPS" and "if precise GPS
+  // fails, preserve any valid approximate country result when appropriate".
+  // A stage-1 (coarse) success is returned as-is and never upgraded to or
+  // overwritten by a stage-2 (GPS) attempt — there is no code path that
+  // discards a valid approximate fix in favor of a later precise one.
+  it('approximate (stage 1) success is returned directly — precise/GPS stage is never attempted when coarse already succeeded', async () => {
+    let capturedOptions: PositionOptions | undefined;
+    const getCurrentPosition = vi.fn((success: PositionCallback, _error?: PositionErrorCallback, options?: PositionOptions) => {
+      capturedOptions = options;
+      success(position(24.7136, 46.6753));
+    });
+    mockGeolocation({ getCurrentPosition });
+    const result = await requestBrowserLocation();
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.coords).toEqual({ lat: 24.7136, lng: 46.6753 });
+    }
+    expect(getCurrentPosition).toHaveBeenCalledTimes(1);
+    expect(capturedOptions?.enableHighAccuracy).toBe(false);
+  });
+
   it('escalates to a high-accuracy second attempt after a stage-1 TIMEOUT, and succeeds on it', async () => {
     const seen: PositionOptions[] = [];
     let call = 0;

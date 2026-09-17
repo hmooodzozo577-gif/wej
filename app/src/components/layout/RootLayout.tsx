@@ -24,8 +24,13 @@ export function RootLayout() {
           here (not per-route) so the first-visit intro is reachable
           from anywhere, renders nothing once dismissed/granted/
           in-flight. Explore's own, separate LocationPersonalize control
-          is untouched and still lives only on /explore. */}
-      <LocationIntro />
+          is untouched and still lives only on /explore.
+          Acceptance fix — Explore already owns a full location surface
+          (LocationPersonalize: resolution, nearby countries, retry), so
+          showing this SECOND "why we're asking" ask on top of it asked
+          for the same permission twice on one page. Explore is excluded
+          here; every other route is unaffected. */}
+      {location.pathname !== '/explore' ? <LocationIntro /> : null}
       <main id="app" className="view-enter" key={location.pathname}>
         <Outlet />
       </main>

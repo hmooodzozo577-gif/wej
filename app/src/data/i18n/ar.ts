@@ -101,6 +101,7 @@ export const AR: I18nDict = {
     failed: 'تعذر إرسال الرسالة الآن. حاول مرة أخرى لاحقًا.',
     verificationFailed: 'تعذر تحميل التحقق. تحقق من اتصالك وحاول مرة أخرى.',
     retryVerification: 'إعادة محاولة التحقق',
+    verifyingChallenge: 'جارٍ التحقق من أنك لست روبوتًا…',
   },
   regionLabels: {
     ...base.regionLabels,
@@ -335,10 +336,6 @@ export const AR: I18nDict = {
     updatedLabel: 'آخر تحديث {date}',
     missingFactorLabel: 'لا تتوفر بيانات',
     modelVersionLabel: 'المنهجية: {version}',
-    bestSuitedForTitle: 'الأنسب لـ',
-    bestSuitedForSingle: '{purpose}',
-    bestSuitedForGroup: 'قوية في {purposes}',
-    bestSuitedForInsufficient: 'لا تتوفر بيانات موثوقة كافية بعد لتحديد الغرض الأنسب لهذه الدولة.',
     otherPurposesLabel: 'أغراض أخرى',
     // Keyed "{purpose}:{factorKey}" — must mirror the English dictionary's
     // keys exactly (see en.ts's own comment); a regression test checks

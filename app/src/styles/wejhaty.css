@@ -982,6 +982,13 @@ button.meta-chip.selected {
   color: #f08a72;
 }
 
+/* Acceptance fix — a neutral (non-error) status line: Turnstile still
+   loading is not a problem, so it must not read like one. */
+.form-hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .footer-actions {
   display: flex;
   align-items: center;
@@ -1560,29 +1567,6 @@ button.meta-chip.selected {
 .country-suitability-card .suitability-intro {
   margin-bottom: 14px;
   font-size: 0.92rem;
-}
-
-/* Phase 16 workstream C — Country -> Best Purposes. Acceptance-fix round:
-   promoted to its own top-level .detail-card (see CountryBestSuitedFor in
-   CountrySuitability.tsx) rather than a highlighted box nested inside the
-   "Suitable for" card, so it now uses the page's standard card
-   heading/spacing — only the typography of the headline/confidence text
-   below is unchanged from the original, approved treatment. Kept
-   deliberately compact per the task's own "do not overwhelm the page"
-   instruction: a title, one headline sentence, one confidence line — no
-   extra paragraphs. */
-.best-suited-headline {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--teal);
-}
-
-.best-suited-confidence,
-.best-suited-insufficient {
-  margin: 4px 0 0 !important;
-  font-size: 0.85rem;
-  color: var(--muted) !important;
 }
 
 .other-purposes-label {

@@ -8,7 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { useReducer, type ReactNode } from 'react';
 import { AppStateContext } from '../state/context';
 import { appReducer, initialAppState } from '../state/reducer';
-import { CountryBestSuitedFor, CountrySuitability } from './CountrySuitability';
+import { CountrySuitability } from './CountrySuitability';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { getCountrySuitability } from '../data/countryIntelligence';
 import { bestSuitedFor } from '../intelligence/bestSuitedFor';
@@ -18,15 +18,6 @@ import enPurposeLabels from '../data/generated/i18n.en.json';
 
 const saudiArabia = WORLD_CATALOG.find((entry) => entry.countryCode === 'SA')!;
 const unknownCountry = { ...saudiArabia, countryCode: 'ZZ', id: 'zz-does-not-exist' };
-// Real committed-data cases for "Best suited for" (task workstream C),
-// chosen by actually querying the snapshot (see the module comment in
-// bestSuitedFor.test.ts for the synthetic/unit-level coverage — these
-// prove the real generated data renders correctly through the component):
-// Afghanistan has one isolated top purpose; Saudi Arabia has several
-// purposes within the grouping margin of each other; Vatican City has
-// insufficient data for every purpose.
-const afghanistan = WORLD_CATALOG.find((entry) => entry.countryCode === 'AF')!;
-const vaticanCity = WORLD_CATALOG.find((entry) => entry.countryCode === 'VA')!;
 
 function renderWith(destination: (typeof WORLD_CATALOG)[number], lang: Lang = 'en') {
   function Providers({ children }: { children: ReactNode }) {
@@ -37,24 +28,6 @@ function renderWith(destination: (typeof WORLD_CATALOG)[number], lang: Lang = 'e
     <Providers>
       <MemoryRouter>
         <CountrySuitability destination={destination} />
-      </MemoryRouter>
-    </Providers>,
-  );
-}
-
-// Acceptance fix — CountryBestSuitedFor is now its own top-level component,
-// rendered separately from CountrySuitability (see CountrySuitability.tsx's
-// own comment for why: primary decision-support information above the
-// collapsed "Additional information" toggle, secondary detail below it).
-function renderBestSuitedFor(destination: (typeof WORLD_CATALOG)[number], lang: Lang = 'en') {
-  function Providers({ children }: { children: ReactNode }) {
-    const [state, dispatch] = useReducer(appReducer, { ...initialAppState, lang });
-    return <AppStateContext.Provider value={{ state, dispatch }}>{children}</AppStateContext.Provider>;
-  }
-  return render(
-    <Providers>
-      <MemoryRouter>
-        <CountryBestSuitedFor destination={destination} />
       </MemoryRouter>
     </Providers>,
   );
@@ -134,61 +107,28 @@ describe('CountrySuitability — full per-purpose list is sorted by score, not m
   });
 });
 
-describe('CountryBestSuitedFor — "Best suited for" (Country -> Best Purposes), now its own top-level card', () => {
-  it('shows a single prominent purpose when the top score is isolated (real data: Afghanistan)', () => {
-    const suitability = getCountrySuitability('AF');
-    const eligible = suitability.filter((entry) => !entry.insufficientData && entry.confidence !== 'low');
-    const top = Math.max(...eligible.map((entry) => entry.score!));
-    const group = eligible.filter((entry) => entry.score! >= top - 5);
-    expect(group.length).toBe(1); // sanity-check the fixture assumption against live data
-
-    const { container } = renderBestSuitedFor(afghanistan, 'en');
-    expect(screen.getByText('Best suited for')).toBeInTheDocument();
-    const headline = container.querySelector('.best-suited-headline');
-    expect(headline?.textContent).toContain(`${top}%`);
-  });
-
-  it('groups several close purposes into "Strong for X, Y, and Z" instead of picking one arbitrarily (real data: Saudi Arabia)', () => {
-    const suitability = getCountrySuitability('SA');
-    const eligible = suitability.filter((entry) => !entry.insufficientData && entry.confidence !== 'low');
-    const top = Math.max(...eligible.map((entry) => entry.score!));
-    const group = eligible.filter((entry) => entry.score! >= top - 5);
-    expect(group.length).toBeGreaterThan(1); // sanity-check the fixture assumption against live data
-
-    renderBestSuitedFor(saudiArabia, 'en');
-    expect(screen.getByText(/^Strong for /)).toBeInTheDocument();
-  });
-
-  it('shows an honest insufficient-data state rather than forcing a winner (real data: Vatican City)', () => {
-    const suitability = getCountrySuitability('VA');
-    expect(suitability.every((entry) => entry.insufficientData)).toBe(true);
-
-    renderBestSuitedFor(vaticanCity, 'en');
-    expect(screen.getByText('Not enough reliable data yet to name a best-suited purpose for this country.')).toBeInTheDocument();
+// Acceptance fix — a prior round misread "move the suitability card above
+// Additional information" as "add a NEW standalone Best-suited-for summary
+// card". That new card (CountryBestSuitedFor / "الأنسب لـ") is deleted, not
+// hidden: exactly one suitability section must exist, and it is the
+// original "Suitable for" / "مناسب لـ" card with the full per-purpose list.
+describe('CountrySuitability — no separate "Best suited for" summary card exists', () => {
+  it('does not render an "الأنسب لـ" / "Best suited for" summary heading', () => {
+    renderWith(saudiArabia, 'en');
+    expect(screen.queryByText('Best suited for')).not.toBeInTheDocument();
     expect(screen.queryByText(/^Strong for /)).not.toBeInTheDocument();
   });
 
-  it('renders the Arabic title and grouped phrasing correctly, RTL-safe', () => {
-    renderBestSuitedFor(saudiArabia, 'ar');
-    expect(screen.getByText('الأنسب لـ')).toBeInTheDocument();
-    expect(screen.getByText(/^قوية في /)).toBeInTheDocument();
-  });
-
-  it('renders nothing for a country with no suitability data at all, exactly like CountrySuitability itself', () => {
-    const { container } = renderBestSuitedFor(unknownCountry, 'en');
-    expect(container).toBeEmptyDOMElement();
-  });
-});
-
-describe('CountrySuitability no longer duplicates "Best suited for" — it is a separate top-level component now', () => {
-  it('does not render the "Best suited for" heading itself (avoids a duplicated section when both are on the page)', () => {
-    renderWith(saudiArabia, 'en');
-    expect(screen.queryByText('Best suited for')).not.toBeInTheDocument();
-  });
-
-  it('AR: does not render "الأنسب لـ" either', () => {
+  it('AR: does not render "الأنسب لـ" or its grouped "قوية في" phrasing', () => {
     renderWith(saudiArabia, 'ar');
     expect(screen.queryByText('الأنسب لـ')).not.toBeInTheDocument();
+    expect(screen.queryByText(/^قوية في /)).not.toBeInTheDocument();
+  });
+
+  it('renders exactly one suitability card/section for a country', () => {
+    const { container } = renderWith(saudiArabia, 'en');
+    expect(container.querySelectorAll('.detail-card').length).toBe(1);
+    expect(container.querySelectorAll('.best-suited-for-card').length).toBe(0);
   });
 });
 
