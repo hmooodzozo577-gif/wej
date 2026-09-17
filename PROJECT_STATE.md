@@ -91,14 +91,15 @@ configuration, and current Git state outrank this document when they differ.
   render, not a live browser fetch.
 - Working branch: `claude/modest-cray-34bvoa`. See Git log for the exact
   HEAD — this document does not hardcode a commit it is itself part of.
-- DEPLOYMENT STATUS, 2026-09-17: pending this acceptance-fix round's own
-  deployment. Both `deploy-worker.yml` and `deploy-pages.yml` trigger only
-  on push to `claude/marhaba-kxry8l` (or manual dispatch, which Pages' own
-  environment protection also restricts to that branch). The plan for this
-  round: fast-forward `claude/marhaba-kxry8l` to this branch's HEAD (the
-  same remedy used every prior round — see "GITHUB PAGES DEPLOY IS
-  UNBLOCKED" below), push, and verify both workflows succeed before
-  calling this round production-verified.
+- DEPLOYMENT STATUS, 2026-09-17: this acceptance-fix round IS DEPLOYED.
+  `claude/marhaba-kxry8l` merged `claude/modest-cray-34bvoa` at commit
+  `7732ac0` via merge commit `1bbb719` (a real merge, not a history
+  rewrite — verified first that `marhaba-kxry8l`'s only commit beyond the
+  common ancestor was content-identical to one already on
+  `modest-cray-34bvoa`, so nothing was lost) and pushed. Both workflows
+  ran on that push and both concluded `success`:
+  `deploy-worker.yml` run 35277692370 and `deploy-pages.yml` run
+  35277692256, both on commit `1bbb719f82cac38cfbbb8fcc78752595de1a082f`.
 - Previous production frontend commit: `f60efd93`
 - Production Worker source commit: `077d76a5` — DEPLOYED 2026-09-16 from run
   35154518086 (Version ID `365c337c-7327-4559-baf6-e3f293a3349a`).
