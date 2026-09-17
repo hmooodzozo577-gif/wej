@@ -20,6 +20,8 @@ import { deriveLimitations, deriveStrengths } from '../countryIntelligence/insig
 import { bestSuitedFor } from '../intelligence/bestSuitedFor';
 import type { CatalogEntry } from '../data/types';
 import { Icon } from './Icon';
+import { AIExplanation } from './AIExplanation';
+import { buildCountryFitExplanationRequest } from '../ai/buildExplanationRequest';
 
 function formatTemplate(template: string, values: Record<string, string | number>): string {
   return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, String(value)), template);
@@ -142,10 +144,11 @@ function PurposeRow({ countryCode, entry }: { countryCode: string; entry: Countr
  *  of the SAME suitability entries the list below renders — no second
  *  scoring system, no extra fetch. See intelligence/bestSuitedFor.ts for
  *  the documented, deterministic grouping rule this displays. */
-function BestSuitedFor({ entries }: { entries: CountryIntelligenceEntry[] }) {
+function BestSuitedFor({ countryCode, entries }: { countryCode: string; entries: CountryIntelligenceEntry[] }) {
   const { t, lang } = useI18n();
   const cs = t.countrySuitability;
   const result = bestSuitedFor(entries);
+  const aiRequest = buildCountryFitExplanationRequest({ lang, countryCode, entries });
   const confidenceLabel = (level: CountryIntelligenceEntry['confidence']) =>
     level === 'high' ? cs.confidenceHigh : level === 'medium' ? cs.confidenceMedium : cs.confidenceLow;
   const purposeName = (purpose: CountryIntelligenceEntry['purpose']) => t.purposes[purpose]?.n ?? purpose;
@@ -171,6 +174,7 @@ function BestSuitedFor({ entries }: { entries: CountryIntelligenceEntry[] }) {
           <p className="best-suited-confidence">{confidenceLabel(result.topConfidence)}</p>
         </>
       )}
+      <AIExplanation request={aiRequest} buttonLabel={t.ai.explainButtonCountry} />
     </div>
   );
 }
@@ -187,7 +191,7 @@ export function CountrySuitability({ destination }: { destination: CatalogEntry 
         <Icon name="trending" size={18} /> {cs.title}
       </h3>
       <p className="suitability-intro">{cs.intro}</p>
-      <BestSuitedFor entries={entries} />
+      <BestSuitedFor countryCode={destination.countryCode} entries={entries} />
       <p className="other-purposes-label">{cs.otherPurposesLabel}</p>
       <ul className="suitability-list">
         {entries.map((entry) => (

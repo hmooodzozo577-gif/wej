@@ -1602,6 +1602,92 @@ button.meta-chip.selected {
   color: var(--muted) !important;
 }
 
+/* Phase 16 workstream E.6 — the AI explanation panel. Visually distinct
+   from the surrounding hard facts (a dashed accent border + a small "AI"
+   badge on every piece of generated text), never the loudest thing on the
+   page: it starts as a single quiet text button and only expands after the
+   traveller asks for it. */
+.ai-explanation {
+  margin-top: 12px;
+}
+
+.ai-explanation-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--teal-2);
+  cursor: pointer;
+}
+
+.ai-explanation-button:hover,
+.ai-explanation-button:focus-visible {
+  border-color: var(--teal-2);
+}
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--white);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.ai-explanation-loading,
+.ai-explanation-unavailable {
+  margin: 8px 0 0 !important;
+  font-size: 0.85rem;
+  color: var(--muted) !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-explanation-body {
+  margin-top: 10px;
+  padding: 14px 16px;
+  border: 1px dashed var(--teal-2);
+  border-radius: var(--radius-md);
+  background: var(--paper-3);
+}
+
+.ai-explanation-summary {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+}
+
+.ai-explanation-group {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+.ai-explanation-group ul {
+  margin: 4px 0 0;
+  padding-inline-start: 18px;
+}
+
+.ai-explanation-confidence {
+  margin: 8px 0 0 !important;
+  font-size: 0.82rem;
+  color: var(--muted) !important;
+}
+
+.ai-explanation-disclaimer {
+  margin: 10px 0 0 !important;
+  font-size: 0.72rem;
+  color: var(--muted) !important;
+  font-style: italic;
+}
+
 .suitability-list {
   list-style: none;
   margin: 0;
