@@ -155,9 +155,11 @@ configuration, and current Git state outrank this document when they differ.
 - Working branch: `claude/modest-cray-34bvoa`. See Git log for the exact
   HEAD — this document does not hardcode a commit it is itself part of.
 - DEPLOYMENT STATUS, 2026-09-17 (second acceptance round, this entry):
-  pending this round's own deployment — see "Roadmap gate and immediate
-  backlog" / the round's own report for exact commit and run IDs once
-  pushed.
+  DEPLOYED. `claude/marhaba-kxry8l` merged `claude/modest-cray-34bvoa` at
+  commit `da7ca51` via merge commit `6a34805` (a real merge, not a history
+  rewrite). Both workflows ran on that push and both concluded `success`:
+  `deploy-worker.yml` run 35283234024 and `deploy-pages.yml` run
+  35283234027, both on commit `6a34805a08da976c72bd2c7ef92267b5a472972f`.
 - DEPLOYMENT STATUS, 2026-09-17 (first acceptance round, prior entry):
   DEPLOYED.
   `claude/marhaba-kxry8l` merged `claude/modest-cray-34bvoa` at commit
