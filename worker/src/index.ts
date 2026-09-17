@@ -11,8 +11,9 @@ import { handleVisaRequest, type VisaEnv } from './visa';
 import { handleCityDescriptionRequest, type CityDescriptionEnv } from './cityDescriptions';
 import { handleIntelligenceRequest } from './intelligence';
 import { handleAdminRequest, type AdminEnv } from './admin';
+import { handleAIRequest, type AIEnv } from './ai';
 
-export type Env = AmadeusEnv & ProductEnv & VisaEnv & CityDescriptionEnv & AdminEnv;
+export type Env = AmadeusEnv & ProductEnv & VisaEnv & CityDescriptionEnv & AdminEnv & AIEnv;
 
 const ALLOWED_ORIGIN = 'https://hmooodzozo577-gif.github.io';
 
@@ -144,6 +145,13 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   // and never dependent on D1, so it is safe to check unconditionally.
   const intelligenceResponse = await handleIntelligenceRequest(request, (body, status) => json(body, status, origin));
   if (intelligenceResponse) return intelligenceResponse;
+
+  // Phase 16 workstream E — AI explanation layer. Server-side only, never
+  // a single point of failure: with no ANTHROPIC_API_KEY this always
+  // answers `{ available: false }` and the frontend keeps showing the
+  // deterministic explanations it already has (see ai.ts).
+  const aiResponse = await handleAIRequest(request, env, (body, status) => json(body, status, origin));
+  if (aiResponse) return aiResponse;
 
   if (url.pathname !== '/api/travel/flights') {
     return json({ error: 'not_found', message: 'Unknown endpoint.' }, 404, origin);
