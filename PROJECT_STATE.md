@@ -5,11 +5,74 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 19
-- Last verified date: 2026-09-17. This entry covers a PRE-PHASE-17
-  ACCEPTANCE-FIX round, run against direct production user reports, on top
-  of the AI-cleanup round recorded further down this file. Phase 17 is NOT
-  started. Seven issues were fixed:
+- State document version: 20
+- Last verified date: 2026-09-17. This entry adds a SECOND PRE-PHASE-17
+  ACCEPTANCE round, against a fresh batch of production reports found
+  after deploying the round below. Phase 17 is still NOT started.
+  1. A prior round MISREAD "move the suitability card above Additional
+     information" as "add a new standalone summary card" — that new
+     `CountryBestSuitedFor` / "الأنسب لـ" card is DELETED (component, i18n
+     keys, CSS, tests), not hidden. The ORIGINAL `CountrySuitability` /
+     "مناسب لـ" full per-purpose card (descending order, "لماذا هذه
+     النسبة؟" localization all preserved unchanged) is what now renders
+     above "Additional information" instead. Exactly one suitability
+     section exists on the page again.
+  2. Explore showed TWO location-request surfaces stacked on one page:
+     the app-wide `LocationIntro` (mounted for every route in
+     `RootLayout`) and Explore's own `LocationPersonalize`. `RootLayout`
+     now excludes `LocationIntro` specifically on `/explore`, since
+     Explore already owns a full location surface; every other route is
+     unaffected. Regression test renders the real route tree and counts
+     CTAs across idle/requesting/granted/denied/unavailable.
+  3. Tablet location failure: reviewed the full platform-independent
+     geolocation state machine (`geo/geolocation.ts`,
+     `geo/permissionsApi.ts`, `LocationPersonalize.tsx`) — no device-based
+     branching exists anywhere, and denied/timeout/unavailable/unsupported
+     are already distinctly messaged with retry where retry can help.
+     Added explicit tests for "approximate succeeds, precise never
+     attempted" and viewport-independence. A real Android tablet
+     permission prompt could not be reproduced in this environment; the
+     divergence from phone behavior is most likely real device
+     hardware/OS GPS-assist differences, not a code defect — unverified
+     either way from here.
+  4. City descriptions still only showed the honest fallback in
+     production despite the prior round's coordinate-key fix (which
+     remains correct and deployed). Full path re-diagnosed
+     (frontend -> Worker -> Wikipedia REST -> D1 cache -> render); no
+     further structural bug found, but `FETCH_TIMEOUT_MS` in
+     `worker/src/cityDescriptions.ts` was the shortest timeout of any
+     outbound call in the whole system (6000ms vs. 9000ms everywhere
+     else) for the ONE call that's a real third-party network request —
+     raised to 9000ms to match. This sandbox cannot reach either the
+     deployed Worker or Wikipedia directly (egress policy blocks both, as
+     it did for the prior round's diagnosis), so production reachability
+     is still NOT independently verified — this is NOT reported as fixed;
+     see the round's own report for the exact next step.
+  5. Contact/Suggestion Submit: reviewed `useTurnstile`/`FeedbackDialog`
+     end to end; the previously-fixed "disabled forever" bug is still
+     correctly fixed. Found and closed one real gap against the required
+     state table: while the challenge is loading (required, not yet
+     solved, not yet failed), NOTHING was shown at all — the empty
+     `.turnstile-slot` has zero height until the widget renders, so Submit
+     being disabled during that window had no explanation. Added a
+     neutral "verifying" hint, distinct from the existing failed/retry
+     message, which is unchanged. External Cloudflare Turnstile
+     configuration (site key/secret pairing, allowed hostnames) could not
+     be verified from here — if Submit still fails after this deploy, that
+     is the next thing to check.
+  Re-verified unaffected by any of the above: Nearest-to-me exclusion,
+  Arabic "لماذا هذه النسبة؟" localization, descending purpose ordering,
+  the geolocation/quiz race bounded wait, Phase 14 weights baseline (9/9),
+  AI absence, visa `unknown` status, Traveler Budget BLOCKED/DEFERRED.
+  921 frontend tests (was 909), 197 worker tests (unchanged), typecheck/
+  lint clean on both, production build clean, wrangler dry-run clean, a
+  Playwright sweep of the Japan country page (AR/EN x desktop/mobile),
+  Explore (idle location state, exactly one CTA), and the Contact form
+  (preserves text + shows an accessible error on a failed local submit)
+  all at 0 findings.
+- PRIOR ROUND, same day: a first PRE-PHASE-17 ACCEPTANCE-FIX round, run
+  against direct production user reports, on top of the AI-cleanup round
+  recorded further down this file. Seven issues were fixed:
   1. Nearest-to-me still showed the traveller's own current country in
      production. Root cause: `exploreCatalog.ts`'s `sortCatalog()` derived
      "current country" via `approximateCountryOf()` (nearest-CENTROID-only —
@@ -91,7 +154,12 @@ configuration, and current Git state outrank this document when they differ.
   render, not a live browser fetch.
 - Working branch: `claude/modest-cray-34bvoa`. See Git log for the exact
   HEAD — this document does not hardcode a commit it is itself part of.
-- DEPLOYMENT STATUS, 2026-09-17: this acceptance-fix round IS DEPLOYED.
+- DEPLOYMENT STATUS, 2026-09-17 (second acceptance round, this entry):
+  pending this round's own deployment — see "Roadmap gate and immediate
+  backlog" / the round's own report for exact commit and run IDs once
+  pushed.
+- DEPLOYMENT STATUS, 2026-09-17 (first acceptance round, prior entry):
+  DEPLOYED.
   `claude/marhaba-kxry8l` merged `claude/modest-cray-34bvoa` at commit
   `7732ac0` via merge commit `1bbb719` (a real merge, not a history
   rewrite — verified first that `marhaba-kxry8l`'s only commit beyond the

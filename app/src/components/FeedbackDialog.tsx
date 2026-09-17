@@ -128,6 +128,16 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
                 </label>
                 {fileError ? <p className="form-error">{strings.screenshotError}</p> : null}
                 {turnstile.required ? <div ref={challenge} className="turnstile-slot" /> : null}
+                {/* Acceptance fix — Send being disabled while the challenge
+                    is still loading/rendering (turnstile.blocking, before
+                    either a token or a failure) previously had NO visible
+                    explanation at all: the empty .turnstile-slot has no
+                    height until the widget renders, so a user who finished
+                    typing could stare at a disabled button with no
+                    indication anything was happening. */}
+                {turnstile.required && turnstile.blocking && !turnstile.failed ? (
+                  <p className="form-hint">{strings.verifyingChallenge}</p>
+                ) : null}
                 {turnstile.failed ? (
                   <p className="form-error" role="alert">
                     {strings.verificationFailed}{' '}

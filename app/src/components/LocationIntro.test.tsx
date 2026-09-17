@@ -100,7 +100,14 @@ describe('Phase 12/Workstream C — LocationIntro', () => {
     expect(screen.getByText('Improve your destination suggestions')).toBeInTheDocument();
   });
 
-  it('shares one request/state with Explore\'s LocationPersonalize (as they would side-by-side via RootLayout + /explore): "Allow" here updates the same global status Explore reads, with only ONE browser call total', async () => {
+  // Acceptance fix — LocationIntro and LocationPersonalize no longer ever
+  // render together on /explore (RootLayout excludes LocationIntro there;
+  // see RootLayout.explore.test.tsx). This test still renders them
+  // together deliberately, purely to prove the underlying claim that both
+  // read/dispatch the SAME shared location state through one hook — never
+  // two independent requestBrowserLocation() callers racing each other —
+  // which remains true regardless of which surface a given page shows.
+  it('shares one request/state with Explore\'s LocationPersonalize: "Allow" updates the same global status Explore reads, with only ONE browser call total', async () => {
     const spy = vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue(GRANTED_RESULT);
 
     function Providers({ children }: { children: ReactNode }) {

@@ -111,6 +111,30 @@ describe('Phase 12 — LocationPersonalize', () => {
     expect(screen.queryByText(/Share your approximate location/)).not.toBeInTheDocument();
   });
 
+  // Acceptance fix (Issue 1) — production report: location worked on phone
+  // but failed on tablet. This component has NO device/viewport-based
+  // branching anywhere in its source (confirmed by reading it — the CTA,
+  // status handling, and requestBrowserLocation() call are identical
+  // regardless of window size); this test locks that contract so a future
+  // change cannot silently introduce one. A real tablet permission prompt
+  // cannot be reproduced in this environment — see the round's report for
+  // what that means for this diagnosis.
+  it.each([
+    ['phone', 390],
+    ['tablet', 820],
+  ])('renders the same single call-to-action at a %s-sized viewport (width=%ipx)', async (_label, width) => {
+    const originalWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
+    try {
+      renderWith('en');
+      const button = screen.getByRole('button', { name: /Use My Location/ });
+      expect(button).toBeInTheDocument();
+      expect(button).not.toBeDisabled();
+    } finally {
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalWidth });
+    }
+  });
+
   it('never shows raw coordinates anywhere in the rendered output when debug mode is off', async () => {
     vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue(RIYADH_GEO_RESULT);
     renderWith('en'); // no ?debugLocation=1

@@ -54,7 +54,16 @@ export const MATCH_RADIUS_KM = 45;
 const MIN_SUMMARY_LENGTH = 80;
 /** Descriptions are trimmed to whole sentences within this budget. */
 const MAX_SUMMARY_LENGTH = 420;
-const FETCH_TIMEOUT_MS = 6000;
+// Acceptance fix (Issue 3 diagnosis) — this is the ONLY outbound
+// third-party network call in the Worker (every other endpoint reads its
+// own bundled/D1 data), yet it had the SHORTEST timeout in the whole
+// system: every other cross-network lookup (detailClient.ts,
+// cityDescriptionClient.ts on the frontend) already uses 9000ms. A cold
+// Workers-to-Wikimedia round trip (DNS + TLS + response) plausibly exceeds
+// 6s under real production latency even when the article exists, which
+// would surface as the honest "unavailable" fallback for a request that
+// would have succeeded given a fair timeout. Raised to match.
+const FETCH_TIMEOUT_MS = 9000;
 /** A verified description is re-checked monthly; a miss is retried weekly,
  *  because articles do get written. */
 const OK_TTL_DAYS = 30;

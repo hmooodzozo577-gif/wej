@@ -39,7 +39,7 @@ import { FeedbackDialog } from '../components/FeedbackDialog';
 import { TravelCostIndexInfo } from '../components/TravelCostIndexInfo';
 import { TourismInsights } from '../components/TourismInsights';
 import { TravelInfo } from '../components/TravelInfo';
-import { CountryBestSuitedFor, CountrySuitability } from '../components/CountrySuitability';
+import { CountrySuitability } from '../components/CountrySuitability';
 import { regionGradientCss } from '../components/regionGradient';
 import { buildWhyText } from '../engine';
 import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
@@ -154,15 +154,6 @@ function OptionalPlanningInfo({
             <TravelCostIndexInfo destination={destination} />
             <TourismInsights destination={destination} />
           </div>
-          {/* Deliberately OUTSIDE .info-cards-grid: that 4-card layout is a
-              hand-tuned named CSS grid (grid-template-areas) with its own
-              history of rejected/corrected compositions (see
-              Destination.infoCardsLayout.test.tsx) — adding a 5th item
-              without an assigned grid-area would auto-place awkwardly and
-              risk exactly the kind of accepted-layout regression that file
-              guards against. Country Suitability gets its own full-width
-              row below it instead. */}
-          <CountrySuitability destination={destination} />
         </section>
       ) : null}
     </div>
@@ -330,11 +321,11 @@ export function Destination() {
                 </div>
               ) : null}
 
-              {/* Acceptance fix — "Best suited for" is primary
-                  decision-support information; "Additional information"
-                  below is secondary detail, so it renders ABOVE that
-                  collapsed toggle instead of inside it. */}
-              <CountryBestSuitedFor destination={d} />
+              {/* Acceptance fix — "Suitable for" is primary decision-support
+                  information; "Additional information" below is secondary
+                  detail, so it renders ABOVE that collapsed toggle instead
+                  of inside it. */}
+              <CountrySuitability destination={d} />
 
               <OptionalPlanningInfo destination={d} dt={dt} />
 
@@ -520,11 +511,11 @@ export function Destination() {
               </div>
             </div>
 
-            {/* Acceptance fix — "Best suited for" is primary
-                decision-support information; "Additional information"
-                below is secondary detail, so it renders ABOVE that
-                collapsed toggle instead of inside it. */}
-            <CountryBestSuitedFor destination={d} />
+            {/* Acceptance fix — "Suitable for" is primary decision-support
+                information; "Additional information" below is secondary
+                detail, so it renders ABOVE that collapsed toggle instead
+                of inside it. */}
+            <CountrySuitability destination={d} />
 
             <OptionalPlanningInfo destination={d} dt={dt} />
 
