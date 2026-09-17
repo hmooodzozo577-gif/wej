@@ -32,6 +32,27 @@ describe('optional destination planning information', () => {
     expect(screen.getByRole('button', { name: 'عرض معلومات إضافية' })).toBeInTheDocument();
   });
 
+  // Acceptance fix — "Best suited for" must be visible WITHOUT opening
+  // "Additional information", and must appear ABOVE it in document order,
+  // since it is primary decision-support information and "Additional
+  // information" is secondary detail.
+  it('shows "Best suited for" without opening Additional information, positioned above the toggle', () => {
+    renderDestination();
+    const bestSuitedForCard = document.querySelector('.best-suited-for-card');
+    expect(bestSuitedForCard).toBeInTheDocument();
+    const toggleButton = screen.getByRole('button', { name: 'عرض معلومات إضافية' });
+    // DOCUMENT_POSITION_FOLLOWING means the toggle comes AFTER (below) the
+    // best-suited-for card in the DOM, i.e. the card is above it.
+    // eslint-disable-next-line no-bitwise
+    expect(bestSuitedForCard!.compareDocumentPosition(toggleButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('"Best suited for" is not duplicated once Additional information is opened', () => {
+    renderDestination();
+    fireEvent.click(screen.getByRole('button', { name: 'عرض معلومات إضافية' }));
+    expect(document.querySelectorAll('.best-suited-for-card').length).toBe(1);
+  });
+
   it('mounts the optional sections only after the traveler opens them', () => {
     renderDestination();
     fireEvent.click(screen.getByRole('button', { name: 'عرض معلومات إضافية' }));

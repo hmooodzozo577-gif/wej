@@ -12,6 +12,7 @@ import {
   evaluateSummary,
   handleCityDescriptionRequest,
   haversineKm,
+  normalizeCityKey,
   referenceCoordinates,
   resolveCityDescription,
   trimToSentences,
@@ -46,6 +47,51 @@ describe('the coordinate index', () => {
   it('matches regardless of case, spacing and accents', () => {
     expect(referenceCoordinates('JP', 'tokyo')).toEqual(referenceCoordinates('JP', 'Tokyo'));
     expect(referenceCoordinates('MY', 'Kuala  Lumpur')).toEqual(referenceCoordinates('MY', 'kualalumpur'));
+  });
+
+  // Acceptance fix — the generator (app/scripts/generate-featured-cities
+  // .mjs) used to build this index with a DIFFERENT, diacritic-dropping
+  // normalize() than this file's own normalizeCityKey, so any accented
+  // city name produced a key this lookup would never compute: Zürich's
+  // entry was written under "zrich" while a real request for "Zürich"
+  // looks up "zurich" — a permanent miss, no Wikipedia call ever made, no
+  // description ever shown, even though the city IS one of the app's
+  // featured cities with real facts. The generator now imports and uses
+  // this exact function (see app/scripts/lib/cityKey.mjs) so the two can
+  // never drift apart again; this proves it against the real, regenerated
+  // committed index, not a synthetic fixture.
+  it('resolves real diacritic-bearing featured cities — regression for the generator/Worker key mismatch', () => {
+    expect(referenceCoordinates('CH', 'Zürich')).not.toBeNull();
+    expect(referenceCoordinates('SE', 'Malmö')).not.toBeNull();
+    expect(referenceCoordinates('SE', 'Göteborg')).not.toBeNull();
+    expect(referenceCoordinates('PL', 'Kraków')).not.toBeNull();
+    expect(referenceCoordinates('AR', 'Córdoba')).not.toBeNull();
+    expect(referenceCoordinates('CA', 'Montréal')).not.toBeNull();
+    expect(referenceCoordinates('IS', 'Reykjavík')).not.toBeNull();
+    expect(referenceCoordinates('CO', 'Bogota')).not.toBeNull();
+  });
+});
+
+describe('normalizeCityKey — diacritic transliteration (not deletion)', () => {
+  it.each([
+    ['Zürich', 'zurich'],
+    ['Bogotá', 'bogota'],
+    ['Malmö', 'malmo'],
+    ['Kraków', 'krakow'],
+    ['Córdoba', 'cordoba'],
+    ['Montréal', 'montreal'],
+    ['Göteborg', 'goteborg'],
+    ['Västerås', 'vasteras'],
+    ['Reykjavík', 'reykjavik'],
+    ['São Tomé', 'saotome'],
+    ['Malé', 'male'],
+    ['Chișinău', 'chisinau'],
+    ['Asunción', 'asuncion'],
+    ['Yaoundé', 'yaounde'],
+    ['Brasília', 'brasilia'],
+    ['San José', 'sanjose'],
+  ])('%s -> %s', (input, expected) => {
+    expect(normalizeCityKey(input)).toBe(expected);
   });
 });
 

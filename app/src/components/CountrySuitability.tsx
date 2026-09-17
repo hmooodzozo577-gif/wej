@@ -18,18 +18,38 @@ import { PURPOSES } from '../data/purposes';
 import { lookupSuitabilityDetail, type SuitabilityComponent, type SuitabilityDetail } from '../countryIntelligence/detailClient';
 import { deriveLimitations, deriveStrengths } from '../countryIntelligence/insights';
 import { bestSuitedFor } from '../intelligence/bestSuitedFor';
-import type { CatalogEntry } from '../data/types';
+import type { CatalogEntry, CountrySuitabilityStrings } from '../data/types';
+import type { SuitablePurposeId } from '../intelligence/types';
 import { Icon } from './Icon';
+
+/** Acceptance fix — "Why this score?" factor names must be localized, not
+ *  taken verbatim from the Worker's English-only component.label (see
+ *  CountrySuitabilityStrings.factorLabels' own comment in data/types.ts).
+ *  Falls back to the server-supplied English label only for a factor the
+ *  dictionary has no entry for, which should never happen for the closed,
+ *  deterministic factor set in intelligence/methodology.ts (guarded by a
+ *  regression test) — never silently blank. */
+function factorLabel(cs: CountrySuitabilityStrings, purpose: SuitablePurposeId, component: SuitabilityComponent): string {
+  return cs.factorLabels[`${purpose}:${component.factor}`] ?? component.label;
+}
 
 function formatTemplate(template: string, values: Record<string, string | number>): string {
   return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, String(value)), template);
 }
 
-function ComponentRow({ component, missingLabel }: { component: SuitabilityComponent; missingLabel: string }) {
+function ComponentRow({
+  component,
+  label,
+  missingLabel,
+}: {
+  component: SuitabilityComponent;
+  label: string;
+  missingLabel: string;
+}) {
   const width = component.normalizedValue ?? 0;
   return (
     <li className="suitability-component-row">
-      <span className="suitability-component-label">{component.label}</span>
+      <span className="suitability-component-label">{label}</span>
       {component.status === 'observed' ? (
         <>
           <span className="suitability-component-bar" aria-hidden="true">
@@ -72,18 +92,23 @@ function PurposeDetail({ countryCode, entry }: { countryCode: string; entry: Cou
             {strengths.length > 0 ? (
               <div className="suitability-insight-group">
                 <strong>{cs.strengthsLabel}</strong>
-                <ul>{strengths.map((component) => <li key={component.factor}>{component.label}</li>)}</ul>
+                <ul>{strengths.map((component) => <li key={component.factor}>{factorLabel(cs, entry.purpose, component)}</li>)}</ul>
               </div>
             ) : null}
             {limitations.length > 0 ? (
               <div className="suitability-insight-group">
                 <strong>{cs.limitationsLabel}</strong>
-                <ul>{limitations.map((component) => <li key={component.factor}>{component.label}</li>)}</ul>
+                <ul>{limitations.map((component) => <li key={component.factor}>{factorLabel(cs, entry.purpose, component)}</li>)}</ul>
               </div>
             ) : null}
             <ul className="suitability-component-list">
               {detail.components.map((component) => (
-                <ComponentRow key={component.factor} component={component} missingLabel={cs.missingFactorLabel} />
+                <ComponentRow
+                  key={component.factor}
+                  component={component}
+                  label={factorLabel(cs, entry.purpose, component)}
+                  missingLabel={cs.missingFactorLabel}
+                />
               ))}
             </ul>
             <p className="suitability-sources">
@@ -139,10 +164,18 @@ function PurposeRow({ countryCode, entry }: { countryCode: string; entry: Countr
 }
 
 /** Country -> Best Purposes (Phase 16 workstream C). A pure interpretation
- *  of the SAME suitability entries the list below renders — no second
+ *  of the SAME suitability entries the per-purpose list renders — no second
  *  scoring system, no extra fetch. See intelligence/bestSuitedFor.ts for
- *  the documented, deterministic grouping rule this displays. */
-function BestSuitedFor({ entries }: { entries: CountryIntelligenceEntry[] }) {
+ *  the documented, deterministic grouping rule this displays.
+ *
+ *  Acceptance-fix round: promoted to its own top-level, always-visible
+ *  page section (see CountryBestSuitedFor below) — it used to be rendered
+ *  INSIDE the collapsed "Additional information" toggle, alongside
+ *  CountrySuitability's full per-purpose breakdown. Best-suited-for is
+ *  primary decision-support information and additional information is
+ *  secondary detail, so it now appears above that toggle instead; nothing
+ *  about its own content or the underlying data changed. */
+function BestSuitedForBody({ entries }: { entries: CountryIntelligenceEntry[] }) {
   const { t, lang } = useI18n();
   const cs = t.countrySuitability;
   const result = bestSuitedFor(entries);
@@ -150,27 +183,47 @@ function BestSuitedFor({ entries }: { entries: CountryIntelligenceEntry[] }) {
     level === 'high' ? cs.confidenceHigh : level === 'medium' ? cs.confidenceMedium : cs.confidenceLow;
   const purposeName = (purpose: CountryIntelligenceEntry['purpose']) => t.purposes[purpose]?.n ?? purpose;
 
+  if (!result.eligible) {
+    return <p className="best-suited-insufficient">{cs.bestSuitedForInsufficient}</p>;
+  }
   return (
-    <div className="best-suited-for">
-      <h4 className="best-suited-title">{cs.bestSuitedForTitle}</h4>
-      {!result.eligible ? (
-        <p className="best-suited-insufficient">{cs.bestSuitedForInsufficient}</p>
-      ) : (
-        <>
-          <p className="best-suited-headline">
-            {result.topGroup!.length === 1
-              ? formatTemplate(cs.bestSuitedForSingle, { purpose: purposeName(result.topGroup![0]!) })
-              : formatTemplate(cs.bestSuitedForGroup, {
-                  purposes: new Intl.ListFormat(lang === 'ar' ? 'ar' : 'en', { style: 'long', type: 'conjunction' }).format(
-                    result.topGroup!.map((purpose) => purposeName(purpose)),
-                  ),
-                })}
-            {' — '}
-            {result.topScore}%
-          </p>
-          <p className="best-suited-confidence">{confidenceLabel(result.topConfidence)}</p>
-        </>
-      )}
+    <>
+      <p className="best-suited-headline">
+        {result.topGroup!.length === 1
+          ? formatTemplate(cs.bestSuitedForSingle, { purpose: purposeName(result.topGroup![0]!) })
+          : formatTemplate(cs.bestSuitedForGroup, {
+              purposes: new Intl.ListFormat(lang === 'ar' ? 'ar' : 'en', { style: 'long', type: 'conjunction' }).format(
+                result.topGroup!.map((purpose) => purposeName(purpose)),
+              ),
+            })}
+        {' — '}
+        {result.topScore}%
+      </p>
+      <p className="best-suited-confidence">{confidenceLabel(result.topConfidence)}</p>
+    </>
+  );
+}
+
+/** Standalone top-level card — rendered by Destination.tsx ABOVE the
+ *  "Show additional information" toggle, using the exact same `.detail-card`
+ *  wrapper/heading convention as every other top-level section on the page
+ *  (Overview, Why, Country info, …) so no new visual language is
+ *  introduced. Reads the same bundled Country Intelligence summary as
+ *  CountrySuitability below (no second fetch, no second scoring system);
+ *  renders nothing when there is no suitability data for this country at
+ *  all, exactly like CountrySuitability itself does. */
+export function CountryBestSuitedFor({ destination }: { destination: CatalogEntry }) {
+  const { t } = useI18n();
+  const cs = t.countrySuitability;
+  const entries = getCountrySuitability(destination.countryCode);
+  if (entries.length === 0) return null;
+
+  return (
+    <div className="detail-card best-suited-for-card">
+      <h3>
+        <Icon name="sparkle" size={18} /> {cs.bestSuitedForTitle}
+      </h3>
+      <BestSuitedForBody entries={entries} />
     </div>
   );
 }
@@ -181,16 +234,27 @@ export function CountrySuitability({ destination }: { destination: CatalogEntry 
   const entries = getCountrySuitability(destination.countryCode);
   if (entries.length === 0) return null;
 
+  // Acceptance fix — the raw `entries` array is in fixed METHODOLOGY order
+  // (see getCountrySuitability's own doc comment), not score order. The
+  // list must display in descending suitability-score order instead
+  // (insufficient-data purposes last, ties broken deterministically) — so
+  // this reuses bestSuitedFor()'s own `ranked` ordering (same documented
+  // sort/tie-break rule as the "Best suited for" card above) purely to
+  // order these SAME entries; it introduces no second scoring system and
+  // no new fetch.
+  const rankedOrder = bestSuitedFor(entries).ranked;
+  const entryByPurpose = new Map(entries.map((entry) => [entry.purpose, entry]));
+  const orderedEntries = rankedOrder.map((ranked) => entryByPurpose.get(ranked.purpose)!);
+
   return (
     <div className="detail-card country-suitability-card">
       <h3>
         <Icon name="trending" size={18} /> {cs.title}
       </h3>
       <p className="suitability-intro">{cs.intro}</p>
-      <BestSuitedFor entries={entries} />
       <p className="other-purposes-label">{cs.otherPurposesLabel}</p>
       <ul className="suitability-list">
-        {entries.map((entry) => (
+        {orderedEntries.map((entry) => (
           <PurposeRow key={entry.purpose} countryCode={destination.countryCode} entry={entry} />
         ))}
       </ul>

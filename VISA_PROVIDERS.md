@@ -87,7 +87,21 @@ Timatic later is a new adapter in one list, with no caller or engine change.
 
 ## Status
 
-**READY — PROVIDER ACCOUNT/CREDENTIALS REQUIRED.**
+**PROVIDER ACCESS REQUESTED — AWAITING VERIFIED TRAVEL REQUIREMENTS API
+CREDENTIALS.**
+
+The user has requested Sherpa API access and created a VisaHQ Business
+Portal account, and is pursuing real Travel Requirements API access with
+both. Neither has yet produced a working credential this Worker can use,
+and NO integration with either provider exists in this codebase today —
+`worker/src/visa.ts` has a Sherpa adapter written against Sherpa's
+*published* API documentation, never run against a real response (see the
+re-check below), and nothing for VisaHQ beyond the evaluation in this file.
+Until a real API contract is confirmed and a working credential is
+verified end-to-end, visa status stays `unknown` for every lookup,
+passport-number collection stays prohibited, `unknown` gets no ranking
+reward or penalty, and nothing here claims a "live" status it does not
+have.
 
 All software-side work that can be done without credentials is done and
 tested: the abstraction, the canonical vocabulary, request validation
@@ -97,17 +111,24 @@ ranking layer.
 
 To switch it on:
 
-1. Request Sherpa API access and obtain sandbox credentials.
+1. Obtain a working credential from whichever request above is approved
+   first (Sherpa sandbox access, or a VisaHQ Business Portal API key) and
+   confirm the account can actually authenticate against the provider's
+   live API — a created portal account is not the same as an issued,
+   working credential.
 2. Verify `SHERPA_CATEGORY_BY_VALUE` and `extractSherpaRequirement()` in
-   `worker/src/visa.ts` against a real sandbox response. They are written
-   against the published shape, and anything unrecognised maps to
-   `unknown` — so an unverified table fails safe, but it fails to
-   `unknown` for everything, which is not useful. **This verification is a
-   prerequisite, not an optimisation.**
+   `worker/src/visa.ts` against a real sandbox response (or write the
+   equivalent adapter for VisaHQ if that is the provider that comes
+   through first — `resolveVisaProvider` is the only contract a new
+   adapter has to satisfy). They are written against the published shape,
+   and anything unrecognised maps to `unknown` — so an unverified table
+   fails safe, but it fails to `unknown` for everything, which is not
+   useful. **This verification is a prerequisite, not an optimisation.**
 3. Confirm in writing what the terms permit: caching duration, storage,
    attribution, and whether the data may inform ranking as well as display.
 4. `npx wrangler secret put SHERPA_API_KEY` (and `SHERPA_BASE_URL` for the
-   sandbox). The key is never committed and never reaches the frontend.
+   sandbox) — or the equivalent secret for whichever provider is actually
+   verified. The key is never committed and never reaches the frontend.
 
 Until then the endpoint answers `category: "unknown"` with
 `providerConfigured: false`, the UI says visa information is unavailable,
@@ -170,23 +191,36 @@ real mapping test; a wrong mapping then fails the build.
 
 ### Status
 
-`READY — PROVIDER ACCOUNT/CREDENTIALS REQUIRED`
+`PROVIDER ACCESS REQUESTED — AWAITING VERIFIED TRAVEL REQUIREMENTS API
+CREDENTIALS`
+
+The user has since requested Sherpa API access and separately created a
+VisaHQ Business Portal account, pursuing real Travel Requirements API
+access through both. As of this note, neither request has produced a
+verified, working credential — an account or portal existing is not the
+same as an issued API key that has been confirmed to authenticate and
+return real data. Nothing in this codebase claims a VisaHQ (or Sherpa)
+integration exists; `worker/src/visa.ts`'s Sherpa adapter remains written
+against published documentation only, per the contract-harness note below.
 
 ### The exact next account action
 
 This is the user's to take; it cannot be done from here.
 
-1. Request sandbox access at Sherpa's developer portal (or the provider you
-   prefer — the adapter interface is the only thing another provider has to
-   satisfy, see `resolveVisaProvider`).
+1. Follow up on the pending Sherpa API access request and the VisaHQ
+   Business Portal application until one of them issues a real, working
+   credential — not just portal/account creation, but a credential
+   confirmed to authenticate against the provider's live API.
 2. In the contract or the developer terms, get an answer in writing to each
    of the four questions above. The fourth matters most: if the terms do not
    permit the data to inform ordering, Wejhaty shows entry requirements and
    the bounded tie-breaker stays switched off.
 3. Capture one sandbox response per requirement category and commit them to
-   `worker/fixtures/sherpa/` after stripping anything sensitive.
+   `worker/fixtures/sherpa/` (or the equivalent VisaHQ fixture location, if
+   VisaHQ is the one that comes through) after stripping anything sensitive.
 4. `npx wrangler secret put SHERPA_API_KEY`, and `SHERPA_BASE_URL` while on
-   the sandbox host.
+   the sandbox host — or the equivalent secret for whichever provider is
+   actually verified first.
 
 The moment the key exists, `/api/visa/status` starts reporting
 `providerConfigured: true`, the passport step's copy switches from "not

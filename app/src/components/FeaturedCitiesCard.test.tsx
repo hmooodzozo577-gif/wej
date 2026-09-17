@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { I18N } from '../data/i18n';
 import { WORLD_CATALOG } from '../data/worldCatalog';
@@ -71,8 +71,12 @@ describe('FeaturedCitiesCard', () => {
       }
       // The old implementation put an identical <p> in every city body. The
       // new one renders only label/value pairs, so no city body may be a
-      // prefix-identical copy of another.
-      const paragraphs = [...container.querySelectorAll('.featured-city-body p')].map((node) => node.textContent);
+      // prefix-identical copy of another. Scoped to `.city-description` —
+      // an honest status note (e.g. the "no verified description" fallback,
+      // or CityFacts' "no data" note) is legitimately identical text across
+      // cities; it is chrome, not city-specific descriptive prose, which is
+      // exactly what this guard exists to catch.
+      const paragraphs = [...container.querySelectorAll('.city-description p')].map((node) => node.textContent);
       const duplicated = paragraphs.filter((text, index) => text && paragraphs.indexOf(text) !== index);
       expect(duplicated).toEqual([]);
     });
@@ -235,9 +239,13 @@ describe('item #3 — a general description above the structured facts', () => {
     expect(screen.getByRole('link', { name: /Read the full article/ })).toHaveAttribute(
       'href', 'https://en.wikipedia.org/wiki/Tokyo',
     );
+    // Acceptance fix — the honest "unavailable" fallback must never show
+    // alongside a real, verified description. Scoped to Tokyo's own body:
+    // the fallback legitimately shows for the OTHER (unstubbed) cities.
+    expect(within(container.querySelector<HTMLElement>('.featured-city-body')!).queryByText(I18N.en.detail.cityDescriptionUnavailable)).not.toBeInTheDocument();
   });
 
-  it('shows the structured facts and NO description text when nothing was verified', async () => {
+  it('shows the structured facts, the honest "unavailable" fallback, and NO invented description text when nothing was verified', async () => {
     stubWorker([{ ...verified, status: 'wrong_place', summary: null, source: null, sourceUrl: null, license: null }]);
     const { container } = renderCard('en');
     await openCardAndFirstCity(container);
@@ -245,9 +253,14 @@ describe('item #3 — a general description above the structured facts', () => {
     await waitFor(() => expect(container.querySelector('.city-facts')).not.toBeNull());
     expect(container.querySelector('.city-description')).toBeNull();
     expect(screen.queryByText(/Description from/)).not.toBeInTheDocument();
+    // Acceptance fix — previously this state rendered NOTHING at all above
+    // the facts; the task requires an honest fallback state, never silence
+    // and never invented prose. Scoped to Tokyo's own opened body.
+    const tokyoBody = container.querySelector<HTMLElement>('.featured-city-body')!;
+    await waitFor(() => expect(within(tokyoBody).getByText(I18N.en.detail.cityDescriptionUnavailable)).toBeInTheDocument());
   });
 
-  it('shows the facts alone when the lookup fails outright', async () => {
+  it('shows the facts alone, plus the honest fallback (never invented prose), when the lookup fails outright', async () => {
     vi.stubEnv('VITE_TRAVEL_WORKER_URL', 'https://worker.test');
     globalThis.fetch = vi.fn(async () => { throw new Error('offline'); }) as typeof fetch;
     const { container } = renderCard('en');
@@ -255,6 +268,29 @@ describe('item #3 — a general description above the structured facts', () => {
 
     await waitFor(() => expect(container.querySelector('.city-facts')).not.toBeNull());
     expect(container.querySelector('.city-description')).toBeNull();
+    const tokyoBody = container.querySelector<HTMLElement>('.featured-city-body')!;
+    await waitFor(() => expect(within(tokyoBody).getByText(I18N.en.detail.cityDescriptionUnavailable)).toBeInTheDocument());
+  });
+
+  it('never shows the "unavailable" fallback before the lookup has actually finished', () => {
+    stubWorker([verified]);
+    const { container } = renderCard('en');
+    fireEvent.click(screen.getByText(I18N.en.detail.prominentCities).closest('summary')!);
+    // Synchronous assertion, before any awaited microtask: the fetch is
+    // necessarily still in flight at this point.
+    expect(container.textContent).not.toContain(I18N.en.detail.cityDescriptionUnavailable);
+  });
+
+  it('renders the fallback in Arabic when the app language is Arabic', async () => {
+    stubWorker([{ ...verified, lang: 'ar', status: 'wrong_place', summary: null, source: null, sourceUrl: null, license: null }]);
+    const japan = WORLD_CATALOG.find((country) => country.id === 'japan')!;
+    const { container } = render(<FeaturedCitiesCard destination={japan} lang="ar" strings={I18N.ar.detail} />);
+    fireEvent.click(screen.getByText(I18N.ar.detail.prominentCities).closest('summary')!);
+    await waitFor(() => expect(container.querySelectorAll('.featured-city').length).toBeGreaterThan(0));
+    fireEvent.click(container.querySelector('.featured-city > summary')!);
+
+    const firstBody = container.querySelector<HTMLElement>('.featured-city-body')!;
+    await waitFor(() => expect(within(firstBody).getByText(I18N.ar.detail.cityDescriptionUnavailable)).toBeInTheDocument());
   });
 
   it('never asks for a description before the card is opened', async () => {

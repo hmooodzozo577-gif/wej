@@ -16,7 +16,12 @@ describe('Explore sorting', () => {
     expect(countryInfoOf(byArea[0]!.id)!.areaKm2).toBeGreaterThanOrEqual(countryInfoOf(byArea[1]!.id)!.areaKm2);
 
     const origin = countryInfoOf('ksa')!.latlng;
-    const nearest = sortCatalog(WORLD_CATALOG, 'nearest', 'en', origin);
+    // sortCatalog no longer resolves "current country" itself (see
+    // exploreCatalog.test.ts for why — the old internal nearest-centroid
+    // resolution was the actual production bug); the caller supplies an
+    // already-resolved code, which here is simply Saudi Arabia's own code
+    // since `origin` IS Saudi Arabia's own centroid.
+    const nearest = sortCatalog(WORLD_CATALOG, 'nearest', 'en', origin, 'SA');
     // Item #10: "nearest" excludes the user's own country — it is not a
     // travel recommendation for someone already there.
     expect(nearest.some((item) => item.id === 'ksa')).toBe(false);

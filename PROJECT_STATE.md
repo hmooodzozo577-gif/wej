@@ -5,38 +5,100 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-- State document version: 18
-- Last verified date: 2026-09-17. This entry covers TWO rounds on the same
-  day: (1) a Phase 16 round that mistakenly implemented a full AI
-  explanation layer because the roadmap still carried Phase 16 under the
-  name "AI API Integration", against the standing "no AI" product
-  decision; (2) an immediate CLEANUP round, this one, that removed every
-  line of that AI work, corrected every document it had touched, and
-  re-verified everything that remains. What actually ships after this
-  round: the geolocation race fix, Nearest-to-me exclusion test coverage,
-  "Best suited for" country-purpose interpretation, and the honestly-
-  blocked Country Intelligence source-expansion attempt — no AI code, no
-  AI document, no AI credential, anywhere. Verified: 180 worker tests, 855
-  frontend tests, TypeScript and oxlint clean on both, frontend production
-  build, worker `wrangler deploy --dry-run`, a fresh admin Playwright
-  sweep (confirming zero AI panel remnants) at 0 findings, and a targeted
-  Playwright sweep of the retained features (Best-suited-for with zero AI
-  remnants across desktop/mobile x AR/EN x light/dark, Nearest-to-me
-  exclusion with a real granted location, and a geolocation-quiz smoke
-  run in both languages) also at 0 findings. The Phase 14 weights baseline
-  guard (9/9) is unchanged.
+- State document version: 19
+- Last verified date: 2026-09-17. This entry covers a PRE-PHASE-17
+  ACCEPTANCE-FIX round, run against direct production user reports, on top
+  of the AI-cleanup round recorded further down this file. Phase 17 is NOT
+  started. Seven issues were fixed:
+  1. Nearest-to-me still showed the traveller's own current country in
+     production. Root cause: `exploreCatalog.ts`'s `sortCatalog()` derived
+     "current country" via `approximateCountryOf()` (nearest-CENTROID-only —
+     the same technique already proven unreliable elsewhere in this
+     codebase, e.g. Abha resolving to Eritrea), instead of the accurate
+     boundary-polygon `resolveCurrentCountry()` already used by
+     LocationPersonalize/TravelInfo/resolveTravelRequest. Proven with real
+     coordinates: Dammam, Saudi Arabia resolved via centroid to Bahrain
+     (66km), so Saudi Arabia was never excluded. Fixed by having
+     `sortCatalog()` accept an already-resolved country code from its
+     caller instead of deriving one itself; `Explore.tsx` resolves it via a
+     new `useResolvedCountryCode()` hook wrapping the SAME accurate
+     resolver. Unresolved/uncertain status means no exclusion, never a
+     guess. Excludes from Nearest-to-me only; Search/Explorer/direct page
+     unaffected.
+  2. "Best suited for" is now its own top-level `.detail-card`
+     (`CountryBestSuitedFor`), rendered immediately above the "Additional
+     information" toggle on both the basic-country and editorial branches
+     of `Destination.tsx`, instead of living inside that collapsed toggle
+     alongside `CountrySuitability`'s full per-purpose list. No page
+     redesign; same `.detail-card` visual convention every other section
+     already uses.
+  3. The full per-purpose "Suitable for" list was in fixed methodology
+     order, not score order. `CountrySuitability.tsx` now renders it via
+     `bestSuitedFor(entries).ranked` (already descending, insufficient-data
+     last); `bestSuitedFor.ts` gained an explicit, documented tie-break for
+     equal scores (higher confidence, then alphabetical purpose id).
+  4. "Why this score?" leaked English factor names ("Safety",
+     "Affordability", …) in Arabic mode — they came from the Worker's
+     English-only `component.label`, which has no lang parameter at all.
+     Fixed with a deterministic `factorLabels` EN/AR dictionary in
+     `data/i18n/{en,ar}.ts`, keyed `purpose:factorKey` (the same factor key
+     carries a different English label depending on which purpose
+     methodology defines it), with full-coverage and no-cross-language-leak
+     regression tests. No AI-generated text.
+  5. City description paragraphs were missing for real cities. Root cause
+     (found and fixed, not rebuilt): `generate-featured-cities.mjs`'s own
+     `normalize()` dropped diacritics ("Zürich" -> "zrich") instead of
+     transliterating them like the Worker's `normalizeCityKey()` does
+     ("Zürich" -> "zurich"), so the coordinate-index key the generator
+     wrote for any accented city name never matched what the Worker looked
+     up — the description silently never fetched, and the same mismatch
+     also broke same-city dedup (e.g. "Bogotá" and "Bogota" both listed)
+     and capital-row matching. Fixed with one shared `cityKey.mjs` algorithm
+     the generator now uses, matching the Worker's; both artifacts
+     regenerated. Also added an honest "no verified description yet"
+     fallback state (previously: nothing rendered at all when a
+     description was unavailable) — never invented prose.
+  6. Visa/passport documentation corrected from "PROVIDER ACCOUNT/
+     CREDENTIALS REQUIRED" to "PROVIDER ACCESS REQUESTED — AWAITING
+     VERIFIED TRAVEL REQUIREMENTS API CREDENTIALS", reflecting that the
+     user has requested Sherpa API access and created a VisaHQ Business
+     Portal account, with neither yet producing a verified working
+     credential. No VisaHQ or Sherpa integration exists in this codebase;
+     visa status stays `unknown` everywhere until one does.
+  7. Geolocation race hardening (bounded wait in Quiz.tsx) was re-verified,
+     not redesigned — no real defect found. All scenarios (immediate
+     bounded wait, slow-but-successful resolution, timeout fallback, fast
+     grant, denied, unavailable, no duplicate request, AR+EN copy) still
+     pass.
+  Also audited: no AI code/config/UI/secret has returned; Phase 14 weights
+  baseline (9/9) unchanged; Admin auth unchanged; analytics privacy guard
+  (forbidding lat/lng/coordinates/ip/fingerprint) unchanged; no passport
+  number collected anywhere. Known deferred items (Admin manual acceptance
+  checks, Traveler Budget 13.5c BLOCKED/DEFERRED, visa provider awaiting
+  credentials, Country Intelligence source-expansion honestly incomplete)
+  were left as-is, not reopened. Verified: 909 frontend tests (up from
+  855), 197 worker tests (up from 180), TypeScript and oxlint clean on
+  both, frontend production build, worker `wrangler deploy --dry-run`, and
+  a Playwright sweep of the Japan country page (AR/EN x desktop/mobile,
+  language switch verified via `document.documentElement.lang`,
+  Best-suited-for placement, real descending scores, no horizontal
+  overflow), the Arabic "Why this score?" panel, Explorer's nearest-to-me
+  flow, and the Quiz entry path with geolocation left pending — all at 0
+  findings. The city-description Wikipedia fetch itself cannot be
+  exercised from this sandbox (egress to Wikipedia is blocked here, same
+  constraint as previous rounds), so that layer's live behavior is proven
+  by the Worker-side unit/contract tests plus the local honest-fallback
+  render, not a live browser fetch.
 - Working branch: `claude/modest-cray-34bvoa`. See Git log for the exact
   HEAD — this document does not hardcode a commit it is itself part of.
-- DEPLOYMENT STATUS, 2026-09-17: pending this cleanup round's own
+- DEPLOYMENT STATUS, 2026-09-17: pending this acceptance-fix round's own
   deployment. Both `deploy-worker.yml` and `deploy-pages.yml` trigger only
   on push to `claude/marhaba-kxry8l` (or manual dispatch, which Pages' own
-  environment protection also restricts to that branch — see the
-  2026-09-16 entry below for the exact rejection). The plan for this
-  round: fast-forward `claude/marhaba-kxry8l` to this branch's cleaned
-  HEAD (the same remedy chosen last round — see "GITHUB PAGES DEPLOY IS
+  environment protection also restricts to that branch). The plan for this
+  round: fast-forward `claude/marhaba-kxry8l` to this branch's HEAD (the
+  same remedy used every prior round — see "GITHUB PAGES DEPLOY IS
   UNBLOCKED" below), push, and verify both workflows succeed before
-  calling this round production-verified — see "Roadmap gate and
-  immediate backlog" item 0.
+  calling this round production-verified.
 - Previous production frontend commit: `f60efd93`
 - Production Worker source commit: `077d76a5` — DEPLOYED 2026-09-16 from run
   35154518086 (Version ID `365c337c-7327-4559-baf6-e3f293a3349a`).
@@ -116,7 +178,11 @@ configuration, and current Git state outrank this document when they differ.
      failure names the missing permission — see SECRETS.md.
   2. A visa-data provider account. Re-checked 2026-09-16: every provider host
      is refused at the agent egress proxy, so the API contract could not be
-     re-read and is not being guessed. See /VISA_PROVIDERS.md.
+     re-read and is not being guessed. The user has since requested Sherpa
+     API access and created a VisaHQ Business Portal account, pursuing real
+     Travel Requirements API access through both — neither has yet produced
+     a verified, working credential, and no VisaHQ (or Sherpa) integration
+     exists in this codebase. See /VISA_PROVIDERS.md.
   The third (GitHub Pages environment protection) was cleared on 2026-09-16.
 
 Always recover with `git branch --show-current`, `git status --short`,
@@ -328,7 +394,11 @@ enumeration of the questionnaire's combinatorial answer space.
   caveat that requirements change and must be re-checked before booking.
   Nothing promises entry, visa approval, an open border, or legal eligibility
   beyond what the provider returned.
-- Status: `READY — PROVIDER ACCOUNT/CREDENTIALS REQUIRED`.
+- Status: `PROVIDER ACCESS REQUESTED — AWAITING VERIFIED TRAVEL REQUIREMENTS
+  API CREDENTIALS`. The user has requested Sherpa API access and created a
+  VisaHQ Business Portal account; neither has yet produced a verified,
+  working credential. No VisaHQ or Sherpa integration exists yet — see
+  /VISA_PROVIDERS.md.
 
 ## Country pages and optional information
 
@@ -966,8 +1036,12 @@ language switcher, and the full panel set above. Two things are still open:
   the passport UX and the bounded ranking layer are all implemented and
   tested. `SHERPA_API_KEY` (and `SHERPA_BASE_URL` for the sandbox) are Worker
   secrets, never committed and never in the frontend.
-  `READY — PROVIDER ACCOUNT/CREDENTIALS REQUIRED` — see `/VISA_PROVIDERS.md`
-  for the comparison, the decision, and the exact switch-on steps.
+  `PROVIDER ACCESS REQUESTED — AWAITING VERIFIED TRAVEL REQUIREMENTS API
+  CREDENTIALS` — the user has requested Sherpa API access and created a
+  VisaHQ Business Portal account, but neither has yet produced a verified,
+  working credential, so no integration exists yet — see
+  `/VISA_PROVIDERS.md` for the comparison, the decision, and the exact
+  switch-on steps.
 - The Worker IS deployed from `08ebdcb5` (2026-09-16, run 35094594557,
   Version ID `54c3994c-2298-4b17-af62-2a3e29b784d2`). The visa endpoint and
   the extended ratings endpoint are live. That run's conclusion is `failure`
