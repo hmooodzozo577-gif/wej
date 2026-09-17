@@ -284,6 +284,60 @@ editorial-only coverage on the 30 original destinations rather than all
 per-purpose numbers, including which specific countries fall short and
 why (small/data-poor economies, not an implementation gap).
 
+## Phase 16 source expansion attempt (2026-09-17) — network-blocked, honestly documented
+
+Phase 16 (AI API Integration) carried over an instruction to expand this
+layer's depth using additional official/authoritative sources (WHO, ILO,
+UNESCO UIS, IMF, OECD, UN Tourism, national statistics bodies) beyond the
+11 sources already catalogued above, with an explicit rule: never claim a
+source was verified if network access prevented verification, and leave
+an indicator unverified/missing rather than fabricate it.
+
+This round's agent sandbox was directly tested against candidate source
+hosts before attempting to add anything:
+
+| Host | Result |
+|---|---|
+| `api.worldbank.org` (the SAME host the 11 existing indicators above already use) | blocked — egress proxy returns 403 on CONNECT |
+| `ghoapi.azureedge.net` (WHO Global Health Observatory) | blocked — same |
+| `www.ilo.org` (ILOSTAT) | blocked — same |
+| `api.uis.unesco.org` (UNESCO Institute for Statistics) | blocked — same |
+| `www.imf.org` (IMF DataMapper) | blocked — same |
+| `sdmx.oecd.org` (OECD) | blocked — same |
+| `unstats.un.org` | blocked — same |
+| `example.com` (control — an arbitrary non-statistical domain) | ALSO blocked |
+
+The control result matters: `example.com` failing identically to every
+statistical-agency host proves this is a blanket egress allowlist policy
+for this interactive session (only a short list of package registries and
+Anthropic's own API are reachable — see the session's agent-proxy status),
+not a targeted block on these particular sources. It is the same
+constraint already recorded for the visa providers (`/VISA_PROVIDERS.md`)
+and for Wikipedia access from this sandbox specifically (`/CITY_DESCRIPTIONS.md`
+notes the deployed Worker can reach Wikipedia while this sandbox cannot).
+The 11 indicators already in the table above were originally fetched by
+`app/scripts/generate-recommendation-indicators.mjs`, which needs the same
+`api.worldbank.org` host this session cannot reach either — so this is not
+a new or unusual limitation, just one that had not been hit again until an
+expansion was attempted.
+
+Outcome, per the task's own explicit rule: no new indicator was added this
+round. Nothing was fabricated, no source is claimed as verified, and no
+existing `excluded[]` entry was removed (removing one requires a
+trustworthy source to actually back it, which could not be confirmed
+either). The source catalog, the per-purpose factor sets, and the
+`excluded[]` lists in `methodology.ts` are UNCHANGED from the prior round.
+
+To actually expand this layer, `generate-recommendation-indicators.mjs`
+(or a sibling script following the same pattern) needs to run somewhere
+with real egress to the target official API — a GitHub Actions workflow
+runner, a maintainer's own machine, or a future session with a wider
+network allowlist — not this interactive sandbox. The script pattern to
+extend is already established: add the new indicator id to the `INDICATORS`
+map, let `fetchLatest()` pull it, add its full provenance row to
+`app/src/intelligence/sources.ts`, and wire it into the relevant
+purpose(s) in `methodology.ts` with a real weight — never invented.
+
 ## Testing
 
 - `app/src/intelligence/normalize.test.ts` — normalization boundaries,
