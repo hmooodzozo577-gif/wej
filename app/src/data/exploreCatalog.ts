@@ -1,5 +1,5 @@
 import { nameOf } from './destinationText';
-import { approximateCountryOf, haversineKm } from './geo';
+import { haversineKm } from './geo';
 import type { CatalogEntry } from './types';
 import { RECOMMENDATION_PROFILE_BY_CODE } from './worldRecommendation';
 import { WORLD_CATALOG, continentOf, countryInfoOf } from './worldCatalog';
@@ -28,7 +28,13 @@ export function filteredCatalog(filters: ExploreFilters): CatalogEntry[] {
   });
 }
 
-export function sortCatalog(list: CatalogEntry[], sort: ExploreSort, lang: 'ar' | 'en', origin?: LocationCoords | null): CatalogEntry[] {
+export function sortCatalog(
+  list: CatalogEntry[],
+  sort: ExploreSort,
+  lang: 'ar' | 'en',
+  origin?: LocationCoords | null,
+  currentCountryCode?: string | null,
+): CatalogEntry[] {
   const sorted = [...list];
   const byName = (a: CatalogEntry, b: CatalogEntry) => nameOf(a, lang).localeCompare(nameOf(b, lang), lang === 'ar' ? 'ar' : 'en');
   const missingLast = (missingA: boolean, missingB: boolean) => Number(missingA) - Number(missingB);
@@ -54,19 +60,37 @@ export function sortCatalog(list: CatalogEntry[], sort: ExploreSort, lang: 'ar' 
       // Explore.tsx additionally never OFFERS them without coordinates, so
       // this branch is the defensive half of the same gate.
       if (!origin) return sorted;
-      // Item #10: "nearest" means nearest OTHER destination — the user's own
-      // country isn't a travel recommendation. Nearest-centroid is the same
-      // approximate technique LocationPersonalize already uses to identify
-      // "current country" for its own nearby-country exclusion; sortCatalog
-      // is synchronous so it can't await the more precise boundary-polygon
-      // resolver here, but a country whose centroid is nearest to the user's
-      // own coordinates is, in practice, virtually always that user's country.
-      const currentCode = approximateCountryOf(origin)?.entry.countryCode;
-      // The user's own country is excluded from BOTH distance sorts: it is
-      // not a travel recommendation in either direction, and leaving it in
-      // "farthest" would only bury it at the bottom while still inflating
-      // the count.
-      const candidates = currentCode ? sorted.filter((entry) => entry.countryCode !== currentCode) : sorted;
+      // BUG FIX (production report): this used to derive the excluded
+      // country ITSELF via approximateCountryOf() (nearest-centroid). That
+      // is the exact technique already proven unreliable for "which country
+      // is the user actually in" — geo.ts's own module comment documents a
+      // real prior bug where a user in Abha, Saudi Arabia resolved to
+      // Eritrea, because Eritrea's centroid was arithmetically closer than
+      // Saudi Arabia's own. The same failure mode reproduces here with real
+      // coordinates: a traveller in Dammam, Saudi Arabia (26.4207, 50.0888)
+      // resolves via nearest-centroid to Bahrain (66km away) — Saudi
+      // Arabia's own centroid is not even in the nearest three — so Saudi
+      // Arabia was never excluded and kept appearing in "Nearest to me",
+      // which is exactly the production report this fixes.
+      //
+      // `sortCatalog` stays synchronous and pure (it always has been, and
+      // its own test suite depends on that), so it no longer resolves the
+      // current country itself at all — the caller (Explore.tsx, via
+      // useResolvedCountryCode) must resolve it ONCE, asynchronously,
+      // through geo.ts's resolveCurrentCountry() (real point-in-polygon,
+      // falling back to nearest-centroid only when no boundary matches —
+      // the same resolver LocationPersonalize.tsx and TravelInfo.tsx
+      // already use for "current country"), and pass the result in here.
+      //
+      // `currentCountryCode` undefined/null means "not resolved yet" and
+      // must NEVER be treated as "no current country to exclude" by
+      // guessing — nothing is filtered until a real resolved code arrives,
+      // so an uncertain resolution can never cause the WRONG country to be
+      // hidden. The user's own country is excluded from BOTH distance
+      // sorts once resolved: it is not a travel recommendation in either
+      // direction, and leaving it in "farthest" would only bury it at the
+      // bottom while still inflating the count.
+      const candidates = currentCountryCode ? sorted.filter((entry) => entry.countryCode !== currentCountryCode) : sorted;
       const distanceOf = (entry: CatalogEntry) => {
         const info = countryInfoOf(entry.id);
         return info ? haversineKm(origin, info.latlng) : undefined;

@@ -26,6 +26,22 @@
 //      data or only low confidence), this returns `eligible: false` — the
 //      UI must show an honest insufficient-data state, never force a
 //      winner.
+//
+// FULL-LIST SORT + TIE-BREAK RULE (documented, deterministic, tested in
+// bestSuitedFor.test.ts) — this governs `ranked`, the ordering the entire
+// "Suitable for" list (not just the top group) renders in:
+//   1. Primary key: score descending. insufficientData/null-score purposes
+//      always sort after every scored purpose, regardless of any other
+//      field — a missing score must never outrank a real one.
+//   2. Tie-break for two purposes with the EXACT SAME non-null score:
+//      higher confidence ('high' > 'medium' > 'low' > null) sorts first —
+//      a tied score backed by stronger evidence is the more useful one to
+//      show first.
+//   3. Final tie-break, for two purposes with the same score AND the same
+//      confidence: ascending alphabetical order of the purpose id (stable,
+//      independent of the input array's own order or of translation/
+//      display-label text, so the order never changes with the current
+//      language).
 import type { CountryIntelligenceSummary, SuitablePurposeId } from './types';
 
 /** Purposes within this many points of the top eligible score join the
@@ -78,6 +94,13 @@ function weakestConfidence(
   return real.reduce((weakest, level) => (CONFIDENCE_RANK[level] < CONFIDENCE_RANK[weakest] ? level : weakest));
 }
 
+/** Null confidence ranks below 'low' — only used for the tie-break below,
+ *  never for weakestConfidence's own reduction (which only ever sees real
+ *  entries filtered by isEligible upstream). */
+function confidenceRank(level: CountryIntelligenceSummary['confidence']): number {
+  return level === null ? -1 : CONFIDENCE_RANK[level];
+}
+
 /** Builds the deterministic "Best suited for" interpretation for one
  *  country from its already-computed purpose suitability summaries.
  *  `summaries` should contain one entry per purpose that has been scored
@@ -91,7 +114,10 @@ export function bestSuitedFor(summaries: CountryIntelligenceSummary[]): BestSuit
     if (a.score === null && b.score === null) return 0;
     if (a.score === null) return 1;
     if (b.score === null) return -1;
-    return b.score - a.score;
+    if (a.score !== b.score) return b.score - a.score;
+    const confidenceDiff = confidenceRank(b.confidence) - confidenceRank(a.confidence);
+    if (confidenceDiff !== 0) return confidenceDiff;
+    return a.purpose.localeCompare(b.purpose);
   });
 
   const eligibleSorted = sorted.filter(isEligible);

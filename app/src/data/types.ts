@@ -487,6 +487,10 @@ export interface DetailStrings {
    *  '{source}' is replaced with the source's own name. */
   cityDescriptionSource: string;
   cityDescriptionReadMore: string;
+  /** Acceptance fix — shown once the description lookup has finished and
+   *  this specific city has no verified article (never shown mid-fetch,
+   *  and never replaced with invented prose). */
+  cityDescriptionUnavailable: string;
   cityNoFacts: string;
   loadingCities: string;
 }
@@ -981,6 +985,19 @@ export interface CountrySuitabilityStrings {
    *  suited purpose at all — never a forced winner. */
   bestSuitedForInsufficient: string;
   otherPurposesLabel: string;
+  /** Acceptance fix — "Why this score?" factor names ("Safety",
+   *  "Affordability", …) previously came straight from the Worker's
+   *  component.label field, which is English-only and has no lang
+   *  parameter, so it always rendered in English even in Arabic mode.
+   *  Deterministic i18n instead of a second (AI-generated) prose source:
+   *  keyed "{purpose}:{factorKey}" — the same factor key can carry a
+   *  different English label depending on which purpose methodology
+   *  defines it (see intelligence/methodology.ts, e.g. work/education's
+   *  "health" factor vs. immigration/wellness's "health" factor), so the
+   *  purpose is part of the key to keep each meaning distinct. Every
+   *  purpose:factor pair emitted by intelligence/methodology.ts must have
+   *  an entry here — enforced by a regression test. */
+  factorLabels: Record<string, string>;
 }
 
 export interface I18nDict {

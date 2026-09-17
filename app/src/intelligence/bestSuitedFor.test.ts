@@ -130,6 +130,49 @@ describe('bestSuitedFor — the full ranked list', () => {
   });
 });
 
+describe('bestSuitedFor — the full ranked list, tie-break rule', () => {
+  it('never lets an insufficient-data purpose outrank a scored purpose, even a low one', () => {
+    const result = bestSuitedFor([
+      summary('tourism', { score: 5, confidence: 'low' }),
+      summary('work', { score: null, insufficientData: true, confidence: null }),
+    ]);
+    expect(result.ranked.map((row) => row.purpose)).toEqual(['tourism', 'work']);
+  });
+
+  it('tie-break step 2: equal non-null scores are ordered by higher confidence first', () => {
+    const result = bestSuitedFor([
+      summary('work', { score: 80, confidence: 'medium' }),
+      summary('tourism', { score: 80, confidence: 'high' }),
+      summary('education', { score: 80, confidence: 'low' }),
+    ]);
+    expect(result.ranked.map((row) => row.purpose)).toEqual(['tourism', 'work', 'education']);
+  });
+
+  it('tie-break step 3: equal score AND equal confidence falls back to alphabetical purpose id, independent of input order', () => {
+    const a = bestSuitedFor([
+      summary('wellness', { score: 80, confidence: 'high' }),
+      summary('education', { score: 80, confidence: 'high' }),
+      summary('medical', { score: 80, confidence: 'high' }),
+    ]);
+    const b = bestSuitedFor([
+      summary('medical', { score: 80, confidence: 'high' }),
+      summary('wellness', { score: 80, confidence: 'high' }),
+      summary('education', { score: 80, confidence: 'high' }),
+    ]);
+    expect(a.ranked.map((row) => row.purpose)).toEqual(['education', 'medical', 'wellness']);
+    expect(b.ranked.map((row) => row.purpose)).toEqual(['education', 'medical', 'wellness']);
+  });
+
+  it('two insufficient-data purposes among each other keep a stable relative order (score-null tie, no crash)', () => {
+    const result = bestSuitedFor([
+      summary('tourism', { score: 90 }),
+      summary('work', { score: null, insufficientData: true, confidence: null }),
+      summary('education', { score: null, insufficientData: true, confidence: null }),
+    ]);
+    expect(result.ranked.map((row) => row.purpose)).toEqual(['tourism', 'work', 'education']);
+  });
+});
+
 describe('bestSuitedFor — determinism and purity', () => {
   it('is deterministic — same input, same output, regardless of input order', () => {
     const a = [summary('tourism', { score: 90 }), summary('work', { score: 70 })];

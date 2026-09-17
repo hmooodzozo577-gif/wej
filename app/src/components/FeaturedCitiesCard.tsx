@@ -116,6 +116,11 @@ export function FeaturedCitiesCard({ destination, lang, strings }: { destination
   const [cities, setCities] = useState<FeaturedCity[] | null>(null);
   const [open, setOpen] = useState(false);
   const [descriptions, setDescriptions] = useState<Map<string, CityDescription>>(new Map());
+  // Acceptance fix — distinguishes "still fetching" from "fetched, and
+  // this city genuinely has no verified article": the fallback message
+  // below must only ever show the honest latter state, never flash while
+  // the lookup is still in flight.
+  const [descriptionsLoaded, setDescriptionsLoaded] = useState(false);
 
   // Asked for once the card is open and its city list is known — never on
   // page load, so a traveller who does not open the card costs nothing.
@@ -130,7 +135,10 @@ export function FeaturedCitiesCard({ destination, lang, strings }: { destination
       cities.map((city) => ({ name: city.nameEn, title: lang === 'ar' && city.nameAr !== city.nameEn ? city.nameAr : city.nameEn })),
       lang,
     ).then((result) => {
-      if (!cancelled) setDescriptions(result);
+      if (!cancelled) {
+        setDescriptions(result);
+        setDescriptionsLoaded(true);
+      }
     });
     return () => {
       cancelled = true;
@@ -160,9 +168,11 @@ export function FeaturedCitiesCard({ destination, lang, strings }: { destination
               <span className="meta-chip">{roleLabel(city, strings)}</span>
             </summary>
             <div className="featured-city-body">
-              {descriptions.get(city.nameEn)
-                ? <CityDescriptionBlock description={descriptions.get(city.nameEn)!} strings={strings} />
-                : null}
+              {descriptions.get(city.nameEn) ? (
+                <CityDescriptionBlock description={descriptions.get(city.nameEn)!} strings={strings} />
+              ) : descriptionsLoaded ? (
+                <p className="city-data-note">{strings.cityDescriptionUnavailable}</p>
+              ) : null}
               <CityFacts city={city} strings={strings} />
               <a href={sourceUrl(city)} target="_blank" rel="noreferrer">{strings.cityDataSource}</a>
             </div>

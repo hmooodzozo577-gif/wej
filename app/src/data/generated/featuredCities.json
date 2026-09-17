@@ -2934,7 +2934,7 @@
       "population": 132233,
       "capital": false,
       "populationRank": 3,
-      "region": "Durrës",
+      "region": null,
       "timezone": "Europe/Tirane",
       "fromCapital": {
         "distanceKm": 31,
@@ -2954,7 +2954,7 @@
       "population": 122006,
       "capital": false,
       "populationRank": 4,
-      "region": "Shkodër",
+      "region": null,
       "timezone": "Europe/Tirane",
       "fromCapital": {
         "distanceKm": 86,
@@ -2974,7 +2974,7 @@
       "population": 89509,
       "capital": false,
       "populationRank": 5,
-      "region": "Vlorë",
+      "region": null,
       "timezone": "Europe/Tirane",
       "fromCapital": {
         "distanceKm": 98,
@@ -3492,7 +3492,7 @@
       "population": 79771,
       "capital": false,
       "populationRank": 4,
-      "region": "Naxçivan",
+      "region": null,
       "timezone": "Asia/Baku",
       "fromCapital": {
         "distanceKm": 402,
@@ -4450,17 +4450,21 @@
   ],
   "BR": [
     {
-      "nameEn": "Brasília",
-      "nameAr": "Brasília",
+      "nameEn": "Brasilia",
+      "nameAr": "Brasilia",
       "countryCode": "BR",
-      "population": null,
+      "population": 3139980,
       "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
+      "populationRank": 4,
+      "region": "Distrito Federal",
+      "timezone": "America/Sao_Paulo",
       "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
+      "airport": {
+        "iata": "BSB",
+        "name": "Presidente Juscelino Kubitschek International Airport",
+        "distanceKm": 10
+      },
+      "source": "city-timezones"
     },
     {
       "nameEn": "Sao Paulo",
@@ -4469,9 +4473,12 @@
       "population": 14433148,
       "capital": false,
       "populationRank": 1,
-      "region": "São Paulo",
+      "region": null,
       "timezone": "America/Sao_Paulo",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 875,
+        "bearing": "s"
+      },
       "airport": {
         "iata": "CGH",
         "name": "Congonhas Airport",
@@ -4488,7 +4495,10 @@
       "populationRank": 2,
       "region": null,
       "timezone": "America/Sao_Paulo",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 934,
+        "bearing": "se"
+      },
       "airport": {
         "iata": "SDU",
         "name": "Santos Dumont Airport",
@@ -4505,7 +4515,10 @@
       "populationRank": 3,
       "region": "Minas Gerais",
       "timezone": "America/Sao_Paulo",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 625,
+        "bearing": "se"
+      },
       "airport": {
         "iata": "CNF",
         "name": "Tancredo Neves International Airport",
@@ -4514,19 +4527,22 @@
       "source": "city-timezones"
     },
     {
-      "nameEn": "Brasilia",
-      "nameAr": "Brasilia",
+      "nameEn": "Salvador",
+      "nameAr": "Salvador",
       "countryCode": "BR",
-      "population": 3139980,
+      "population": 3081423,
       "capital": false,
-      "populationRank": 4,
-      "region": "Distrito Federal",
-      "timezone": "America/Sao_Paulo",
-      "fromCapital": null,
+      "populationRank": 5,
+      "region": "Bahia",
+      "timezone": "America/Bahia",
+      "fromCapital": {
+        "distanceKm": 1063,
+        "bearing": "e"
+      },
       "airport": {
-        "iata": "BSB",
-        "name": "Presidente Juscelino Kubitschek International Airport",
-        "distanceKm": 10
+        "iata": "SSA",
+        "name": "Deputado Luiz Eduardo Magalhães International Airport",
+        "distanceKm": 18
       },
       "source": "city-timezones"
     }
@@ -4900,7 +4916,7 @@
       "population": 74000,
       "capital": false,
       "populationRank": 4,
-      "region": "Prey Vêng",
+      "region": null,
       "timezone": "Asia/Phnom_Penh",
       "fromCapital": {
         "distanceKm": 45,
@@ -4920,7 +4936,7 @@
       "population": 72492,
       "capital": false,
       "populationRank": 5,
-      "region": "Kâmpóng Cham",
+      "region": null,
       "timezone": "Asia/Phnom_Penh",
       "fromCapital": {
         "distanceKm": 77,
@@ -4936,41 +4952,11 @@
   ],
   "CM": [
     {
-      "nameEn": "Yaoundé",
-      "nameAr": "Yaoundé",
-      "countryCode": "CM",
-      "population": null,
-      "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
-      "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
-    },
-    {
-      "nameEn": "Douala",
-      "nameAr": "Douala",
-      "countryCode": "CM",
-      "population": 1622041,
-      "capital": false,
-      "populationRank": 1,
-      "region": "Littoral",
-      "timezone": "Africa/Douala",
-      "fromCapital": null,
-      "airport": {
-        "iata": "DLA",
-        "name": "Douala International Airport",
-        "distanceKm": 6
-      },
-      "source": "city-timezones"
-    },
-    {
       "nameEn": "Yaounde",
       "nameAr": "Yaounde",
       "countryCode": "CM",
       "population": 1335794,
-      "capital": false,
+      "capital": true,
       "populationRank": 2,
       "region": "Centre",
       "timezone": "Africa/Douala",
@@ -4983,6 +4969,26 @@
       "source": "city-timezones"
     },
     {
+      "nameEn": "Douala",
+      "nameAr": "Douala",
+      "countryCode": "CM",
+      "population": 1622041,
+      "capital": false,
+      "populationRank": 1,
+      "region": "Littoral",
+      "timezone": "Africa/Douala",
+      "fromCapital": {
+        "distanceKm": 202,
+        "bearing": "w"
+      },
+      "airport": {
+        "iata": "DLA",
+        "name": "Douala International Airport",
+        "distanceKm": 6
+      },
+      "source": "city-timezones"
+    },
+    {
       "nameEn": "Bamenda",
       "nameAr": "Bamenda",
       "countryCode": "CM",
@@ -4991,7 +4997,10 @@
       "populationRank": 3,
       "region": "Nord-Ouest",
       "timezone": "Africa/Douala",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 278,
+        "bearing": "nw"
+      },
       "airport": null,
       "source": "city-timezones"
     },
@@ -5004,12 +5013,31 @@
       "populationRank": 4,
       "region": "Nord",
       "timezone": "Africa/Douala",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 639,
+        "bearing": "n"
+      },
       "airport": {
         "iata": "GOU",
         "name": "Garoua International Airport",
         "distanceKm": 5
       },
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bafoussam",
+      "nameAr": "Bafoussam",
+      "countryCode": "CM",
+      "population": 290768,
+      "capital": false,
+      "populationRank": 5,
+      "region": "Ouest",
+      "timezone": "Africa/Douala",
+      "fromCapital": {
+        "distanceKm": 218,
+        "bearing": "nw"
+      },
+      "airport": null,
       "source": "city-timezones"
     }
   ],
@@ -5271,7 +5299,7 @@
       "population": 434969,
       "capital": false,
       "populationRank": 3,
-      "region": "Valparaíso",
+      "region": null,
       "timezone": "America/Santiago",
       "fromCapital": {
         "distanceKm": 99,
@@ -5426,24 +5454,11 @@
   ],
   "CO": [
     {
-      "nameEn": "Bogotá",
-      "nameAr": "Bogotá",
-      "countryCode": "CO",
-      "population": null,
-      "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
-      "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
-    },
-    {
       "nameEn": "Bogota",
       "nameAr": "Bogota",
       "countryCode": "CO",
       "population": 7052831,
-      "capital": false,
+      "capital": true,
       "populationRank": 1,
       "region": null,
       "timezone": "America/Bogota",
@@ -5464,7 +5479,10 @@
       "populationRank": 2,
       "region": "Antioquia",
       "timezone": "America/Bogota",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 249,
+        "bearing": "nw"
+      },
       "airport": {
         "iata": "EOH",
         "name": "Enrique Olaya Herrera Airport",
@@ -5481,7 +5499,10 @@
       "populationRank": 3,
       "region": "Valle del Cauca",
       "timezone": "America/Bogota",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 299,
+        "bearing": "sw"
+      },
       "airport": {
         "iata": "CLO",
         "name": "Alfonso Bonilla Aragon International Airport",
@@ -5498,11 +5519,34 @@
       "populationRank": 4,
       "region": "Atlántico",
       "timezone": "America/Bogota",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 712,
+        "bearing": "n"
+      },
       "airport": {
         "iata": "BAQ",
         "name": "Ernesto Cortissoz International Airport",
         "distanceKm": 8
+      },
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Cartagena",
+      "nameAr": "Cartagena",
+      "countryCode": "CO",
+      "population": 887000,
+      "capital": false,
+      "populationRank": 5,
+      "region": "Bolívar",
+      "timezone": "America/Bogota",
+      "fromCapital": {
+        "distanceKm": 664,
+        "bearing": "n"
+      },
+      "airport": {
+        "iata": "CTG",
+        "name": "Rafael Nuñez International Airport",
+        "distanceKm": 5
       },
       "source": "city-timezones"
     }
@@ -5528,26 +5572,13 @@
   ],
   "CR": [
     {
-      "nameEn": "San José",
-      "nameAr": "San José",
-      "countryCode": "CR",
-      "population": null,
-      "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
-      "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
-    },
-    {
       "nameEn": "San Jose",
       "nameAr": "San Jose",
       "countryCode": "CR",
       "population": 642862,
-      "capital": false,
+      "capital": true,
       "populationRank": 1,
-      "region": "San José",
+      "region": null,
       "timezone": "America/Costa_Rica",
       "fromCapital": null,
       "airport": {
@@ -5600,11 +5631,34 @@
       "populationRank": 4,
       "region": "Limón",
       "timezone": "America/Costa_Rica",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 115,
+        "bearing": "e"
+      },
       "airport": {
         "iata": "LIO",
         "name": "Limon International Airport",
         "distanceKm": 5
+      },
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Puntarenas",
+      "nameAr": "Puntarenas",
+      "countryCode": "CR",
+      "population": 46376,
+      "capital": false,
+      "populationRank": 5,
+      "region": null,
+      "timezone": "America/Costa_Rica",
+      "fromCapital": {
+        "distanceKm": 82,
+        "bearing": "w"
+      },
+      "airport": {
+        "iata": "SJO",
+        "name": "Juan Santamaría International Airport",
+        "distanceKm": 68
       },
       "source": "city-timezones"
     }
@@ -5753,7 +5807,7 @@
       "population": 321584,
       "capital": false,
       "populationRank": 3,
-      "region": "Camagüey",
+      "region": null,
       "timezone": "America/Havana",
       "fromCapital": {
         "distanceKm": 497,
@@ -5773,7 +5827,7 @@
       "population": 309640,
       "capital": false,
       "populationRank": 4,
-      "region": "Holguín",
+      "region": null,
       "timezone": "America/Havana",
       "fromCapital": {
         "distanceKm": 677,
@@ -5793,7 +5847,7 @@
       "population": 245070,
       "capital": false,
       "populationRank": 5,
-      "region": "Guantánamo",
+      "region": null,
       "timezone": "America/Havana",
       "fromCapital": {
         "distanceKm": 811,
@@ -6165,7 +6219,7 @@
       "population": 211020,
       "capital": false,
       "populationRank": 3,
-      "region": "San Pedro de Macorís",
+      "region": null,
       "timezone": "America/Santo_Domingo",
       "fromCapital": {
         "distanceKm": 63,
@@ -6205,7 +6259,7 @@
       "population": 154040,
       "capital": false,
       "populationRank": 5,
-      "region": "San Cristóbal",
+      "region": null,
       "timezone": "America/Santo_Domingo",
       "fromCapital": null,
       "airport": {
@@ -6857,7 +6911,7 @@
       "population": 40256,
       "capital": false,
       "populationRank": 4,
-      "region": "Pärnu",
+      "region": null,
       "timezone": "Europe/Tallinn",
       "fromCapital": {
         "distanceKm": 118,
@@ -7766,7 +7820,7 @@
       "population": 26113,
       "capital": false,
       "populationRank": 2,
-      "region": "Bafatá",
+      "region": null,
       "timezone": "Africa/Bissau",
       "fromCapital": {
         "distanceKm": 107,
@@ -7786,7 +7840,7 @@
       "population": 14430,
       "capital": false,
       "populationRank": 3,
-      "region": "Gabú",
+      "region": null,
       "timezone": "Africa/Bissau",
       "fromCapital": {
         "distanceKm": 155,
@@ -8226,24 +8280,11 @@
   ],
   "IS": [
     {
-      "nameEn": "Reykjavik",
-      "nameAr": "Reykjavik",
-      "countryCode": "IS",
-      "population": null,
-      "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
-      "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
-    },
-    {
       "nameEn": "Reykjavík",
       "nameAr": "Reykjavík",
       "countryCode": "IS",
       "population": 140059,
-      "capital": false,
+      "capital": true,
       "populationRank": 1,
       "region": "Suðurnes",
       "timezone": "Atlantic/Reykjavik",
@@ -8264,7 +8305,10 @@
       "populationRank": 2,
       "region": "Akureyri",
       "timezone": "Atlantic/Reykjavik",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 248,
+        "bearing": "ne"
+      },
       "airport": {
         "iata": "AEY",
         "name": "Akureyri Airport",
@@ -8281,7 +8325,10 @@
       "populationRank": 3,
       "region": "Suðurnes",
       "timezone": "Atlantic/Reykjavik",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 33,
+        "bearing": "sw"
+      },
       "airport": {
         "iata": "KEF",
         "name": "Keflavik International Airport",
@@ -8298,11 +8345,34 @@
       "populationRank": 4,
       "region": "Biskupstungnahreppur",
       "timezone": "Atlantic/Reykjavik",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 52,
+        "bearing": "se"
+      },
       "airport": {
         "iata": "RKV",
         "name": "Reykjavik Airport",
         "distanceKm": 51
+      },
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Sauðárkrókur",
+      "nameAr": "Sauðárkrókur",
+      "countryCode": "IS",
+      "population": 2191,
+      "capital": false,
+      "populationRank": 5,
+      "region": "Akrahreppur",
+      "timezone": "Atlantic/Reykjavik",
+      "fromCapital": {
+        "distanceKm": 208,
+        "bearing": "ne"
+      },
+      "airport": {
+        "iata": "AEY",
+        "name": "Akureyri Airport",
+        "distanceKm": 72
       },
       "source": "city-timezones"
     }
@@ -9355,7 +9425,7 @@
       "population": 75726,
       "capital": false,
       "populationRank": 4,
-      "region": "Savannakhét",
+      "region": null,
       "timezone": "Asia/Vientiane",
       "fromCapital": {
         "distanceKm": 280,
@@ -9932,7 +10002,7 @@
       "population": 132058,
       "capital": false,
       "populationRank": 4,
-      "region": "Šiauliai",
+      "region": null,
       "timezone": "Europe/Vilnius",
       "fromCapital": {
         "distanceKm": 188,
@@ -10206,24 +10276,11 @@
   ],
   "MV": [
     {
-      "nameEn": "Malé",
-      "nameAr": "Malé",
-      "countryCode": "MV",
-      "population": null,
-      "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
-      "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
-    },
-    {
       "nameEn": "Male",
       "nameAr": "Male",
       "countryCode": "MV",
       "population": 108310,
-      "capital": false,
+      "capital": true,
       "populationRank": 1,
       "region": null,
       "timezone": "Indian/Maldives",
@@ -10277,7 +10334,7 @@
       "population": 107752,
       "capital": false,
       "populationRank": 3,
-      "region": "Ségou",
+      "region": null,
       "timezone": "Africa/Bamako",
       "fromCapital": {
         "distanceKm": 208,
@@ -10604,24 +10661,11 @@
   ],
   "MD": [
     {
-      "nameEn": "Chișinău",
-      "nameAr": "Chișinău",
-      "countryCode": "MD",
-      "population": null,
-      "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
-      "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
-    },
-    {
       "nameEn": "Chisinau",
       "nameAr": "Chisinau",
       "countryCode": "MD",
       "population": 662064,
-      "capital": false,
+      "capital": true,
       "populationRank": 1,
       "region": null,
       "timezone": "Europe/Chisinau",
@@ -10642,7 +10686,10 @@
       "populationRank": 2,
       "region": "Bender",
       "timezone": "Europe/Chisinau",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 62,
+        "bearing": "e"
+      },
       "airport": {
         "iata": "RMO",
         "name": "Chişinău International Airport",
@@ -10659,7 +10706,10 @@
       "populationRank": 3,
       "region": null,
       "timezone": "Europe/Chisinau",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 110,
+        "bearing": "nw"
+      },
       "airport": null,
       "source": "city-timezones"
     },
@@ -10672,8 +10722,31 @@
       "populationRank": 4,
       "region": null,
       "timezone": "Europe/Chisinau",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 132,
+        "bearing": "sw"
+      },
       "airport": null,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Dubasari",
+      "nameAr": "Dubasari",
+      "countryCode": "MD",
+      "population": 23254,
+      "capital": false,
+      "populationRank": 5,
+      "region": "Transnistria",
+      "timezone": "Europe/Chisinau",
+      "fromCapital": {
+        "distanceKm": 37,
+        "bearing": "ne"
+      },
+      "airport": {
+        "iata": "RMO",
+        "name": "Chişinău International Airport",
+        "distanceKm": 41
+      },
       "source": "city-timezones"
     }
   ],
@@ -11311,7 +11384,7 @@
       "population": 154490,
       "capital": false,
       "populationRank": 2,
-      "region": "León",
+      "region": null,
       "timezone": "America/Managua",
       "fromCapital": {
         "distanceKm": 73,
@@ -12060,7 +12133,7 @@
       "population": 170488,
       "capital": false,
       "populationRank": 2,
-      "region": "Colón",
+      "region": null,
       "timezone": "America/Panama",
       "fromCapital": {
         "distanceKm": 58,
@@ -12228,26 +12301,13 @@
   ],
   "PY": [
     {
-      "nameEn": "Asunción",
-      "nameAr": "Asunción",
-      "countryCode": "PY",
-      "population": null,
-      "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
-      "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
-    },
-    {
       "nameEn": "Asuncion",
       "nameAr": "Asuncion",
       "countryCode": "PY",
       "population": 940847,
-      "capital": false,
+      "capital": true,
       "populationRank": 1,
-      "region": "Asunción",
+      "region": null,
       "timezone": "America/Asuncion",
       "fromCapital": null,
       "airport": {
@@ -12283,7 +12343,10 @@
       "populationRank": 3,
       "region": "Alto Paraná",
       "timezone": "America/Asuncion",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 305,
+        "bearing": "e"
+      },
       "airport": {
         "iata": "AGT",
         "name": "Guaraní International Airport",
@@ -12300,11 +12363,34 @@
       "populationRank": 4,
       "region": "Itapúa",
       "timezone": "America/Asuncion",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 288,
+        "bearing": "se"
+      },
       "airport": {
         "iata": "ENO",
         "name": "Lieutenant Amin Ayub González International Airport",
         "distanceKm": 14
+      },
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Coronel Oviedo",
+      "nameAr": "Coronel Oviedo",
+      "countryCode": "PY",
+      "population": 69694,
+      "capital": false,
+      "populationRank": 5,
+      "region": "Caaguazú",
+      "timezone": "America/Asuncion",
+      "fromCapital": {
+        "distanceKm": 122,
+        "bearing": "e"
+      },
+      "airport": {
+        "iata": "ASU",
+        "name": "Silvio Pettirossi International Airport",
+        "distanceKm": 111
       },
       "source": "city-timezones"
     }
@@ -12995,24 +13081,11 @@
   ],
   "ST": [
     {
-      "nameEn": "São Tomé",
-      "nameAr": "São Tomé",
-      "countryCode": "ST",
-      "population": null,
-      "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
-      "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
-    },
-    {
       "nameEn": "Sao Tome",
       "nameAr": "Sao Tome",
       "countryCode": "ST",
       "population": 72193,
-      "capital": false,
+      "capital": true,
       "populationRank": 1,
       "region": null,
       "timezone": "Africa/Sao_Tome",
@@ -13033,7 +13106,10 @@
       "populationRank": 2,
       "region": null,
       "timezone": "Africa/Sao_Tome",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 164,
+        "bearing": "ne"
+      },
       "airport": {
         "iata": "PCP",
         "name": "Principe Airport",
@@ -13067,7 +13143,7 @@
       "population": 293001,
       "capital": false,
       "populationRank": 2,
-      "region": "Thiès",
+      "region": null,
       "timezone": "Africa/Dakar",
       "fromCapital": {
         "distanceKm": 59,
@@ -13407,7 +13483,7 @@
       "population": 85369,
       "capital": false,
       "populationRank": 4,
-      "region": "Prešov",
+      "region": null,
       "timezone": "Europe/Bratislava",
       "fromCapital": {
         "distanceKm": 318,
@@ -14402,24 +14478,11 @@
   ],
   "TG": [
     {
-      "nameEn": "Lomé",
-      "nameAr": "Lomé",
-      "countryCode": "TG",
-      "population": null,
-      "capital": true,
-      "populationRank": null,
-      "region": null,
-      "timezone": null,
-      "fromCapital": null,
-      "airport": null,
-      "source": "world-countries"
-    },
-    {
       "nameEn": "Lome",
       "nameAr": "Lome",
       "countryCode": "TG",
       "population": 1100850,
-      "capital": false,
+      "capital": true,
       "populationRank": 1,
       "region": "Maritime",
       "timezone": "Africa/Lome",
@@ -14440,7 +14503,10 @@
       "populationRank": 2,
       "region": "Centre",
       "timezone": "Africa/Lome",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 318,
+        "bearing": "n"
+      },
       "airport": null,
       "source": "city-timezones"
     },
@@ -14453,7 +14519,10 @@
       "populationRank": 3,
       "region": "Plateaux",
       "timezone": "Africa/Lome",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 108,
+        "bearing": "nw"
+      },
       "airport": {
         "iata": "LFW",
         "name": "Lomé–Tokoin International Airport",
@@ -14470,7 +14539,26 @@
       "populationRank": 4,
       "region": "Plateaux",
       "timezone": "Africa/Lome",
-      "fromCapital": null,
+      "fromCapital": {
+        "distanceKm": 156,
+        "bearing": "n"
+      },
+      "airport": null,
+      "source": "city-timezones"
+    },
+    {
+      "nameEn": "Bassar",
+      "nameAr": "Bassar",
+      "countryCode": "TG",
+      "population": 61845,
+      "capital": false,
+      "populationRank": 5,
+      "region": "Kara",
+      "timezone": "Africa/Lome",
+      "fromCapital": {
+        "distanceKm": 351,
+        "bearing": "n"
+      },
       "airport": null,
       "source": "city-timezones"
     }
@@ -14618,7 +14706,7 @@
       "population": 164796,
       "capital": false,
       "populationRank": 4,
-      "region": "Gabès",
+      "region": null,
       "timezone": "Africa/Tunis",
       "fromCapital": {
         "distanceKm": 323,
@@ -15041,7 +15129,7 @@
       "population": 76133,
       "capital": false,
       "populationRank": 5,
-      "region": "Paysandú",
+      "region": null,
       "timezone": "America/Montevideo",
       "fromCapital": {
         "distanceKm": 332,

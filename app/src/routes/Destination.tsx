@@ -39,7 +39,7 @@ import { FeedbackDialog } from '../components/FeedbackDialog';
 import { TravelCostIndexInfo } from '../components/TravelCostIndexInfo';
 import { TourismInsights } from '../components/TourismInsights';
 import { TravelInfo } from '../components/TravelInfo';
-import { CountrySuitability } from '../components/CountrySuitability';
+import { CountryBestSuitedFor, CountrySuitability } from '../components/CountrySuitability';
 import { regionGradientCss } from '../components/regionGradient';
 import { buildWhyText } from '../engine';
 import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
@@ -330,6 +330,12 @@ export function Destination() {
                 </div>
               ) : null}
 
+              {/* Acceptance fix — "Best suited for" is primary
+                  decision-support information; "Additional information"
+                  below is secondary detail, so it renders ABOVE that
+                  collapsed toggle instead of inside it. */}
+              <CountryBestSuitedFor destination={d} />
+
               <OptionalPlanningInfo destination={d} dt={dt} />
 
               {/* Item #13B — usable from every entry path (recommendations,
@@ -513,6 +519,12 @@ export function Destination() {
                 </div>
               </div>
             </div>
+
+            {/* Acceptance fix — "Best suited for" is primary
+                decision-support information; "Additional information"
+                below is secondary detail, so it renders ABOVE that
+                collapsed toggle instead of inside it. */}
+            <CountryBestSuitedFor destination={d} />
 
             <OptionalPlanningInfo destination={d} dt={dt} />
 

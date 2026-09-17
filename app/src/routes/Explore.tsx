@@ -19,6 +19,7 @@ import { LOCATION_DEPENDENT_SORTS, type ExploreFilters } from '../state/types';
 import { SurpriseDestination } from '../components/SurpriseDestination';
 import { filteredCatalog, sortCatalog } from '../data/exploreCatalog';
 import { trackEvent } from '../telemetry/productDataClient';
+import { useResolvedCountryCode } from '../geo/useResolvedCountryCode';
 
 const CONTINENTS: Continent[] = ['Africa', 'Asia', 'Europe', 'MiddleEast', 'NAmerica', 'SouthAmerica', 'Oceania'];
 
@@ -28,11 +29,18 @@ export function Explore() {
   const ex = t.explore;
   const purposeOpts = PURPOSES.filter((p) => p.id !== 'other');
   const hasLocation = !!state.location.coords;
+  // Acceptance fix — the traveller's own current country, resolved through
+  // the real point-in-polygon resolver (see geo/useResolvedCountryCode.ts
+  // for exactly why the old nearest-centroid approach is unreliable here).
+  // undefined while unresolved: sortCatalog treats that as "don't exclude
+  // anything yet" rather than guessing, so an uncertain resolution never
+  // hides the wrong country.
+  const currentCountryCode = useResolvedCountryCode(state.location.coords);
   const filtered = filteredCatalog(state.explore);
   // Item #7 — a distance sort saved in state before location was lost must
   // not keep claiming to sort by distance. Fall back to the default order.
   const effectiveSort = !hasLocation && LOCATION_DEPENDENT_SORTS.includes(state.explore.sort) ? 'default' : state.explore.sort;
-  const list = sortCatalog(filtered, effectiveSort, lang, state.location.coords);
+  const list = sortCatalog(filtered, effectiveSort, lang, state.location.coords, currentCountryCode);
   const navigationIds = list.map((item) => item.id);
 
   const sortOptions = [

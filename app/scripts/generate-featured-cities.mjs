@@ -33,6 +33,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import cityTimezones from 'city-timezones';
 import countries from 'world-countries';
+import { normalizeCityKey } from './lib/cityKey.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = path.join(scriptDir, '..', 'src', 'data', 'generated');
@@ -93,7 +94,14 @@ function nearestAirport(countryCode, coords) {
   return { ...best, distanceKm: Math.round(best.distanceKm) };
 }
 
-const normalize = (value) => value.toLocaleLowerCase('en').replace(/[^a-z0-9]/g, '');
+// Acceptance fix — was `value.toLocaleLowerCase('en').replace(/[^a-z0-9]/g,
+// '')` with no diacritic handling, so an accented city name ("Zürich",
+// "Bogotá") produced a coordinate-index key the Worker's own
+// normalizeCityKey (worker/src/cityDescriptions.ts) would never compute —
+// see lib/cityKey.mjs's own comment for the full failure chain this caused
+// (missing descriptions, missed capital-row matches, undetected duplicate
+// city entries for the same real place spelled with/without its accent).
+const normalize = normalizeCityKey;
 const round4 = (value) => Math.round(value * 1e4) / 1e4;
 const output = {};
 const coordinateIndex = {};

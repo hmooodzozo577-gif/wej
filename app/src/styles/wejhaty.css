@@ -1562,25 +1562,15 @@ button.meta-chip.selected {
   font-size: 0.92rem;
 }
 
-/* Phase 16 workstream C — Country -> Best Purposes, a distinguished lead
-   block above the full per-purpose list (kept deliberately compact per
-   the task's own "do not overwhelm the page" instruction: a title, one
-   headline sentence, one confidence line — no extra paragraphs). */
-.best-suited-for {
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--paper-3);
-}
-
-.best-suited-title {
-  margin: 0 0 6px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--muted);
-}
-
+/* Phase 16 workstream C — Country -> Best Purposes. Acceptance-fix round:
+   promoted to its own top-level .detail-card (see CountryBestSuitedFor in
+   CountrySuitability.tsx) rather than a highlighted box nested inside the
+   "Suitable for" card, so it now uses the page's standard card
+   heading/spacing — only the typography of the headline/confidence text
+   below is unchanged from the original, approved treatment. Kept
+   deliberately compact per the task's own "do not overwhelm the page"
+   instruction: a title, one headline sentence, one confidence line — no
+   extra paragraphs. */
 .best-suited-headline {
   margin: 0;
   font-size: 1.05rem;
