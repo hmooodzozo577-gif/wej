@@ -16,7 +16,7 @@ function applyTheme(preference: ThemePreference, systemDark: boolean) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
   document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
-    ?.setAttribute('content', theme === 'dark' ? '#101722' : '#EBE7DC');
+    ?.setAttribute('content', theme === 'dark' ? '#111925' : '#F2EEE5');
 }
 
 export function ThemeSwitch({ lang }: { lang: Lang }) {

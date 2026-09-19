@@ -7,58 +7,51 @@ configuration, and current Git state outrank this document when they differ.
 
 ### Current verified state — 2026-09-19
 
-- State document version: 21.
+- State document version: 22.
 - Working/deployment branch: `claude/marhaba-kxry8l`. The pre-resume local
   work was preserved separately at local branch
   `codex/pre-resume-backup-20260919` before this branch was fast-forwarded to
   the current remote history.
-- Phase 16 (AI) remains CANCELLED/SKIPPED. Phase 17 has NOT started.
-- The current blocker round covers only: public feedback submission, real
-  city descriptions, and tablet geolocation recovery/diagnostics.
-- Public feedback is now PRODUCTION-VERIFIED on the currently deployed build:
-  Contact/Other, Suggestion, and Site Bug each enabled Send after valid input,
-  returned HTTP 201 from `/api/feedback`, and produced real reference IDs.
-  D1 feedback persistence is therefore verified through the public contract;
-  the Worker returns 201 only after the D1 insert succeeds. Turnstile is not
-  configured in the current Pages build, so no challenge is rendered and it
-  is not the present cause of a disabled button. Rating persistence and R2
-  screenshot persistence remain separate production checks.
-- City descriptions: the production endpoint previously returned verified
-  English descriptions, but Arabic requests were cached as `wrong_place`. Root cause
-  is VERIFIED: Arabic Wikipedia REST summaries commonly omit coordinates,
-  while the Worker required inline coordinates. The current fix fetches the
-  Arabic and English companion summaries in parallel, borrows coordinates
-  only when both have the exact same Wikidata entity, then still applies the
-  existing 45 km guard. Legacy Arabic `wrong_place` cache rows are refreshed
-  once. A transient companion failure returns `unavailable` and is not cached
-  as a false rejection. Real local Worker calls returned verified Arabic
-  descriptions for Riyadh, Tokyo, and Zürich. DEPLOYED and
-  PRODUCTION-VERIFIED: Worker run `35456017713` succeeded; fresh production
-  requests returned `ok` for those three Arabic cities, and the deployed
-  Arabic Japan page rendered Tokyo's description, attribution and licence
-  without the unavailable fallback or horizontal overflow.
-- Tablet geolocation: the two-stage browser request remains unchanged. A
-  verified UI defect was fixed: the global prompt marked itself dismissed
-  before the browser answered, so a recoverable timeout/unavailable result
-  could not show retry on the same page. Retry now appears immediately with a
-  cause-specific message. `?debugLocation=1` exposes only stage, accuracy
-  mode, outcome, and duration — never coordinates. Browser QA passed for
-  AR/mobile, EN/tablet, and a successful tablet-sized grant. Pages run
-  `35456017721` succeeded, and the same failure/retry/diagnostic path was
-  verified on the deployed build. The original
-  physical-tablet provider failure still requires USER ACCEPTANCE on that
-  device and must not be called fixed before that retest.
-- Verification for this local round: frontend 924/924, Worker 201/201,
-  TypeScript clean for both, frontend oxlint clean, production build clean,
-  Wrangler dry-run clean, live-source Worker integration pass, and responsive
-  browser QA with zero overflow. Phase 14, country exclusion, visa unknown,
-  no-AI, privacy, and deferred traveler-budget behavior remain unchanged.
-- Delivery commit: `4fae3d720522a3d80a133fc2227547e301e430f3` on
-  `claude/marhaba-kxry8l`; Worker and Pages workflows both concluded success.
-- Confirmed Phase 17 backlog after this blocker round is accepted:
-  collapse “مناسب لـ / Suitable for” to the highest score by default with
-  Show more/less, and make the destination rating card more compact without
-  removing its behavior or accessibility.
+- Phase 16 (AI) remains CANCELLED/SKIPPED. Phase 17 — UI/UX Evolution is now
+  IMPLEMENTED and TEST-VERIFIED locally, with Pages deployment and final user
+  acceptance still pending. Phase 18 and Phase 21 remain NOT STARTED.
+- The selected identity is **Travel Briefing Folio / ملف الرحلة التحريري**:
+  warm ruled paper and deep ink surfaces, restrained terracotta/teal accents,
+  strong catalog-backed destination imagery, low-radius folio geometry, and
+  compact evidence-first layouts. `PRODUCT.md` records product truth and
+  `DESIGN.md` is the current design-system reference.
+- Phase 17 covers the shared shell and visual system plus Home, Purpose/Quiz,
+  Results, Explore, Destination, forms, async states, light/dark/system themes,
+  and responsive AR/EN layouts. The Home hero now uses a real destination
+  image with eager priority; repeated catalog imagery remains lazy-loaded.
+- The page contains exactly one `مناسب لـ / Suitable for` section above
+  Additional information. It shows only the highest-rated eligible purpose by
+  default; an accessible 44px Show more/less control exposes the remaining
+  purposes in the existing deterministic descending order. Percentages,
+  confidence, insufficient-data behavior, methodology details, and sources are
+  preserved. Results and destination rating surfaces are compact without
+  removing validation, submission, success, or failure behavior.
+- Final local verification: frontend 926/926 and Worker 201/201 tests pass;
+  frontend and Worker TypeScript are clean; frontend and Worker oxlint are
+  clean; the production frontend build and Worker Wrangler dry-run pass. No
+  runtime dependency was added; the current build reports 10.53 kB gzip CSS
+  and 622.45 kB gzip for the primary JS chunk. Playwright browser QA covered
+  16 representative AR/EN,
+  RTL/LTR, phone/tablet/desktop, light/dark combinations with zero horizontal
+  overflow or alert errors; system mode followed both dark and light OS
+  preferences. Keyboard disclosure, form enablement, 44px touch targets, and
+  corrected contrast were verified in the browser.
+- No recommendation scoring, question branching, geolocation behavior,
+  privacy rules, country exclusion, provider logic, or Worker code changed.
+  Turnstile remains intentionally inactive. AI remains absent; visa claims,
+  Traveler Budget, and fabricated prices remain prohibited/deferred as before.
+- The pre-Phase-17 acceptance baseline is USER-VERIFIED: the same physical
+  tablet location retest succeeded; Contact, Suggestion, and Report persist to
+  D1 in production; verified Arabic city descriptions render with attribution.
+- Delivery commit and Pages workflow run: PENDING. Worker deployment is not
+  required because `worker/**` is unchanged. After Pages production
+  verification, Phase 17 may be labelled READY FOR FINAL USER ACCEPTANCE, not
+  complete or accepted.
 
 ### Historical implementation notes
 
@@ -1212,25 +1205,18 @@ see "Non-negotiable product rules" above.)
 ## Roadmap gate and immediate backlog
 
 Phase 16 (AI API Integration) is CANCELLED/SKIPPED by product decision —
-see "Phase 16 — AI API Integration" above. Phase 17 (UI/UX Evolution) has
-not started and does not begin until this cleanup round (the retained
-non-AI hardening: the geolocation race fix, Nearest-to-me regression
-coverage, and "Best suited for") is itself deployed and production-
+see "Phase 16 — AI API Integration" above. Phase 17 is implemented and locally
 verified. Current order:
 
-0. **Deploy the 2026-09-19 blocker round.** Both deployment workflows run
-   from `claude/marhaba-kxry8l`; production-verify Arabic city descriptions
-   after the Worker deploy and the retry UI after the Pages deploy.
-1. **PUBLIC FEEDBACK RESOLVED / PRODUCTION-VERIFIED 2026-09-19.** Contact,
-   Suggestion, and Site Bug all completed real browser submissions and
-   returned D1-backed reference IDs. This verifies ordinary feedback rows;
-   rating rows and R2 screenshot storage remain separate checks.
-2. **USER ACCEPTANCE REQUIRED.** Re-test the same physical tablet after this
-   deploy. The app now shows retry on the same page and can expose safe stage
-   outcomes via `?debugLocation=1`, but only that device can establish whether
-   its OS/browser provider now supplies a position. Also confirm that Arabic
-   city cards now show the deployed verified descriptions rather than the old
-   cached fallback.
+0. Deploy the Phase 17 frontend through the existing Pages workflow and
+   production-verify the real build in Arabic and English on phone, tablet,
+   and desktop. Worker deployment is unnecessary because Worker code did not
+   change.
+1. Obtain final user acceptance for Phase 17. Do not call the phase complete
+   and do not begin Phase 18 before that acceptance.
+2. Production-check rating persistence and optional R2 screenshot storage;
+   ordinary Contact, Suggestion, and Site Bug D1 writes are already
+   production-verified.
 3. AWAITING A PRODUCT DECISION — visa scoring. The current visa layer only
    reorders destinations already within 3 Phase 14 points of each other. The
    alternative, NOT implemented, is to blend visa convenience into the
@@ -1264,7 +1250,7 @@ verified. Current order:
    weaknesses are required for the remaining 164 countries. Note that city
    "known for" narrative is now covered by the Wikipedia description layer,
    so that part of this item is done.
-8. Reassess the roadmap with the user before Phase 17.
+8. Reassess the roadmap with the user before Phase 18.
 
 ## Handoff rule
 

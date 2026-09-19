@@ -978,6 +978,8 @@ export interface CountrySuitabilityStrings {
   /** e.g. "Methodology: {version}" */
   modelVersionLabel: string;
   otherPurposesLabel: string;
+  showMore: string;
+  showLess: string;
   /** Acceptance fix — "Why this score?" factor names ("Safety",
    *  "Affordability", …) previously came straight from the Worker's
    *  component.label field, which is English-only and has no lang

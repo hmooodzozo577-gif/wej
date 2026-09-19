@@ -332,6 +332,8 @@ export const EN: I18nDict = {
     missingFactorLabel: 'No data',
     modelVersionLabel: 'Methodology: {version}',
     otherPurposesLabel: 'Other purposes',
+    showMore: 'Show more',
+    showLess: 'Show less',
     // Keyed "{purpose}:{factorKey}" — see intelligence/methodology.ts for
     // the source of truth these mirror (this is the English side; the
     // labels below match the FactorDefinition.label values there exactly).

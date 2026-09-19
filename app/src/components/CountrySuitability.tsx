@@ -166,6 +166,7 @@ function PurposeRow({ countryCode, entry }: { countryCode: string; entry: Countr
 export function CountrySuitability({ destination }: { destination: CatalogEntry }) {
   const { t } = useI18n();
   const cs = t.countrySuitability;
+  const [expanded, setExpanded] = useState(false);
   const entries = getCountrySuitability(destination.countryCode);
   if (entries.length === 0) return null;
 
@@ -180,6 +181,7 @@ export function CountrySuitability({ destination }: { destination: CatalogEntry 
   const rankedOrder = bestSuitedFor(entries).ranked;
   const entryByPurpose = new Map(entries.map((entry) => [entry.purpose, entry]));
   const orderedEntries = rankedOrder.map((ranked) => entryByPurpose.get(ranked.purpose)!);
+  const visibleEntries = expanded ? orderedEntries : orderedEntries.slice(0, 1);
 
   return (
     <div className="detail-card country-suitability-card">
@@ -187,12 +189,21 @@ export function CountrySuitability({ destination }: { destination: CatalogEntry 
         <Icon name="trending" size={18} /> {cs.title}
       </h3>
       <p className="suitability-intro">{cs.intro}</p>
-      <p className="other-purposes-label">{cs.otherPurposesLabel}</p>
       <ul className="suitability-list">
-        {orderedEntries.map((entry) => (
+        {visibleEntries.map((entry) => (
           <PurposeRow key={entry.purpose} countryCode={destination.countryCode} entry={entry} />
         ))}
       </ul>
+      {orderedEntries.length > 1 ? (
+        <button
+          type="button"
+          className="suitability-disclosure"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((current) => !current)}
+        >
+          {expanded ? cs.showLess : cs.showMore}
+        </button>
+      ) : null}
     </div>
   );
 }

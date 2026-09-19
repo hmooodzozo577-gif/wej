@@ -2,12 +2,11 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
-import { DESTINATIONS } from '../data/destinations';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { nameOf } from '../data/destinationText';
 import { PURPOSES } from '../data/purposes';
 import { Icon } from '../components/Icon';
-import { FlagChip } from '../components/flags/FlagIcon';
+import { DestinationImage } from '../components/DestinationImage';
 
 export function Home() {
   const navigate = useNavigate();
@@ -17,6 +16,7 @@ export function Home() {
   const h = t.hero;
   const how = t.how;
   const pu = t.purposes;
+  const featuredDestination = WORLD_CATALOG.find((destination) => destination.countryCode === 'JP') ?? WORLD_CATALOG[0];
 
   // Ports the header's `go('how')` special case: land on Home, then smooth
   // -scroll to #howSection.
@@ -37,10 +37,7 @@ export function Home() {
     <>
       <section className="hero">
         <div className="container hero-grid">
-          <div>
-            <span className="eyebrow-pill">
-              <Icon name="sparkle" size={15} stroke={2.2} /> {h.eyebrow}
-            </span>
+          <div className="hero-copy">
             <h1 className="display">{h.h1}</h1>
             <p className="lead">{h.lead}</p>
             <div className="hero-cta-row">
@@ -68,21 +65,13 @@ export function Home() {
               </div>
             </div>
           </div>
-          <div className="hero-visual">
-            <div className="compass-wrap">
-              <svg className="compass-ring" width="300" height="300" viewBox="0 0 300 300" fill="none">
-                <circle cx="150" cy="150" r="128" stroke="#B3813C" strokeWidth="1.4" strokeDasharray="2 8" />
-                <circle cx="150" cy="150" r="98" stroke="#101C2C" strokeWidth="1" opacity="0.25" />
-                <path d="M150 60L165 150L150 240L135 150Z" fill="#101C2C" opacity="0.85" />
-                <path d="M60 150L150 135L240 150L150 165Z" fill="#D9A85C" opacity="0.9" />
-                <circle cx="150" cy="150" r="10" fill="#EBE7DC" stroke="#101C2C" strokeWidth="2" />
-              </svg>
+          <div className="hero-visual hero-folio">
+            <DestinationImage destination={featuredDestination} lang={lang} className="hero-folio-image" priority />
+            <div className="hero-folio-caption">
+              <span>{h.eyebrow}</span>
+              <strong>{nameOf(featuredDestination, lang)}</strong>
             </div>
-            {[0, 5, 3, 17].map((idx, i) => (
-              <div className={`float-card fc${i + 1}`} key={idx}>
-                <FlagChip dest={DESTINATIONS[idx]} width={34} height={34} /> {nameOf(DESTINATIONS[idx], lang)}
-              </div>
-            ))}
+            <div className="hero-folio-index" aria-hidden="true">01</div>
           </div>
         </div>
       </section>
@@ -90,7 +79,6 @@ export function Home() {
       <section className="section" id="howSection">
         <div className="container">
           <div className="section-head center">
-            <span className="eyebrow-pill">{how.eyebrow}</span>
             <h2 className="display">{how.title}</h2>
             <p>{how.sub}</p>
           </div>

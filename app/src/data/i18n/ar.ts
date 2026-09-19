@@ -339,6 +339,8 @@ export const AR: I18nDict = {
     missingFactorLabel: 'لا تتوفر بيانات',
     modelVersionLabel: 'المنهجية: {version}',
     otherPurposesLabel: 'أغراض أخرى',
+    showMore: 'إظهار المزيد',
+    showLess: 'إظهار أقل',
     // Keyed "{purpose}:{factorKey}" — must mirror the English dictionary's
     // keys exactly (see en.ts's own comment); a regression test checks
     // both dictionaries carry the same key set as intelligence/methodology.ts.

@@ -34,11 +34,12 @@ function renderWith(destination: (typeof WORLD_CATALOG)[number], lang: Lang = 'e
 }
 
 describe('CountrySuitability against the real committed snapshot', () => {
-  it('renders a row for every suitable purpose, with a percentage score for one known to have sufficient data', () => {
+  it('renders every suitable purpose after expanding, with a percentage score for one known to have sufficient data', () => {
     const suitability = getCountrySuitability('SA');
     const tourism = suitability.find((entry) => entry.purpose === 'tourism')!;
     expect(tourism.insufficientData).toBe(false);
     renderWith(saudiArabia, 'en');
+    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     expect(screen.getByText(`${tourism.score}%`)).toBeInTheDocument();
     expect(screen.getByText('Tourism & Vacation')).toBeInTheDocument();
   });
@@ -51,6 +52,7 @@ describe('CountrySuitability against the real committed snapshot', () => {
   it('renders the Arabic purpose label and title in Arabic', () => {
     renderWith(saudiArabia, 'ar');
     expect(screen.getByText('مناسبة لـ')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'إظهار المزيد' }));
     expect(screen.getByText('سياحة وإجازة')).toBeInTheDocument();
   });
 
@@ -66,7 +68,7 @@ describe('CountrySuitability against the real committed snapshot', () => {
   });
 });
 
-describe('CountrySuitability — full per-purpose list is sorted by score, not methodology order', () => {
+describe('CountrySuitability — highest purpose first with progressive disclosure', () => {
   it('sanity-check: the raw snapshot entries are NOT already in score order for Saudi Arabia (otherwise this fix would not change anything)', () => {
     const suitability = getCountrySuitability('SA');
     const alreadyDescending = suitability.every(
@@ -75,8 +77,22 @@ describe('CountrySuitability — full per-purpose list is sorted by score, not m
     expect(alreadyDescending).toBe(false);
   });
 
-  it('renders every row in descending score order with insufficient-data rows last (real data: Saudi Arabia)', () => {
+  it('shows only the highest-rated eligible purpose by default', () => {
+    const suitability = getCountrySuitability('SA');
+    const expectedFirst = bestSuitedFor(suitability).ranked[0]!;
     const { container } = renderWith(saudiArabia, 'en');
+    const rows = Array.from(container.querySelectorAll('.suitability-row'));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.querySelector('.suitability-purpose-label')).toHaveTextContent(
+      enPurposeLabels.purposes[expectedFirst.purpose]!.n,
+    );
+    expect(screen.getByRole('button', { name: 'Show more' })).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('reveals every remaining purpose in descending score order, then collapses them again', () => {
+    const { container } = renderWith(saudiArabia, 'en');
+    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+
     const rows = Array.from(container.querySelectorAll('.suitability-row'));
     expect(rows.length).toBeGreaterThan(1);
 
@@ -94,16 +110,29 @@ describe('CountrySuitability — full per-purpose list is sorted by score, not m
       expect(score).toBeLessThanOrEqual(lastScore);
       lastScore = score;
     }
+
+    const collapse = screen.getByRole('button', { name: 'Show less' });
+    expect(collapse).toHaveAttribute('aria-expanded', 'true');
+    fireEvent.click(collapse);
+    expect(container.querySelectorAll('.suitability-row')).toHaveLength(1);
   });
 
-  it('matches bestSuitedFor().ranked exactly, purpose-for-purpose, for the real Saudi Arabia fixture', () => {
+  it('matches bestSuitedFor().ranked exactly after expansion, purpose-for-purpose, for the real Saudi Arabia fixture', () => {
     const suitability = getCountrySuitability('SA');
     const expectedOrder = bestSuitedFor(suitability).ranked.map((row) => row.purpose);
     const expectedLabels = expectedOrder.map((purpose) => enPurposeLabels.purposes[purpose]!.n);
 
     const { container } = renderWith(saudiArabia, 'en');
+    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     const renderedPurposeLabels = Array.from(container.querySelectorAll('.suitability-purpose-label')).map((el) => el.textContent);
     expect(renderedPurposeLabels).toEqual(expectedLabels);
+  });
+
+  it('localizes the disclosure control in Arabic', () => {
+    renderWith(saudiArabia, 'ar');
+    const expand = screen.getByRole('button', { name: 'إظهار المزيد' });
+    fireEvent.click(expand);
+    expect(screen.getByRole('button', { name: 'إظهار أقل' })).toBeInTheDocument();
   });
 });
 
@@ -213,6 +242,7 @@ describe('CountrySuitability — "Why this score?" is fully localized in Arabic,
   }
 
   function openTourismDetail() {
+    fireEvent.click(screen.getByRole('button', { name: 'إظهار المزيد' }));
     const tourismRow = screen.getByText('سياحة وإجازة').closest('li.suitability-row')!;
     fireEvent.click(tourismRow.querySelector('summary')!);
   }
