@@ -7,14 +7,14 @@ configuration, and current Git state outrank this document when they differ.
 
 ### Current verified state — 2026-09-19
 
-- State document version: 22.
+- State document version: 23.
 - Working/deployment branch: `claude/marhaba-kxry8l`. The pre-resume local
   work was preserved separately at local branch
   `codex/pre-resume-backup-20260919` before this branch was fast-forwarded to
   the current remote history.
 - Phase 16 (AI) remains CANCELLED/SKIPPED. Phase 17 — UI/UX Evolution is now
-  IMPLEMENTED and TEST-VERIFIED locally, with Pages deployment and final user
-  acceptance still pending. Phase 18 and Phase 21 remain NOT STARTED.
+  IMPLEMENTED, TEST-VERIFIED, DEPLOYED, and PRODUCTION-VERIFIED; it is READY
+  FOR FINAL USER ACCEPTANCE. Phase 18 and Phase 21 remain NOT STARTED.
 - The selected identity is **Travel Briefing Folio / ملف الرحلة التحريري**:
   warm ruled paper and deep ink surfaces, restrained terracotta/teal accents,
   strong catalog-backed destination imagery, low-radius folio geometry, and
@@ -37,8 +37,9 @@ configuration, and current Git state outrank this document when they differ.
   runtime dependency was added; the current build reports 10.53 kB gzip CSS
   and 622.45 kB gzip for the primary JS chunk. Playwright browser QA covered
   16 representative AR/EN,
-  RTL/LTR, phone/tablet/desktop, light/dark combinations with zero horizontal
-  overflow or alert errors; system mode followed both dark and light OS
+  RTL/LTR, phone/tablet/desktop, light/dark combinations locally and the same
+  16-case matrix against production, both with zero horizontal overflow or
+  alert errors; system mode followed both dark and light OS
   preferences. Keyboard disclosure, form enablement, 44px touch targets, and
   corrected contrast were verified in the browser.
 - No recommendation scoring, question branching, geolocation behavior,
@@ -48,10 +49,13 @@ configuration, and current Git state outrank this document when they differ.
 - The pre-Phase-17 acceptance baseline is USER-VERIFIED: the same physical
   tablet location retest succeeded; Contact, Suggestion, and Report persist to
   D1 in production; verified Arabic city descriptions render with attribution.
-- Delivery commit and Pages workflow run: PENDING. Worker deployment is not
-  required because `worker/**` is unchanged. After Pages production
-  verification, Phase 17 may be labelled READY FOR FINAL USER ACCEPTANCE, not
-  complete or accepted.
+- Delivery commit: `f7807c4a15e7fc0d49460f446c550a4387b8928c` on
+  `claude/marhaba-kxry8l`. Pages workflow run `35468405011` concluded success
+  and deployed the matching Phase 17 CSS/JS. Fresh production browser checks
+  verified Home, Purpose, Quiz, Results, Explore, Destination, bilingual theme
+  behavior, suitability expansion, 44px interaction targets, and feedback
+  enablement. Worker deployment was not required because `worker/**` is
+  unchanged. Final USER ACCEPTANCE is still pending; the phase is not closed.
 
 ### Historical implementation notes
 
@@ -1205,13 +1209,13 @@ see "Non-negotiable product rules" above.)
 ## Roadmap gate and immediate backlog
 
 Phase 16 (AI API Integration) is CANCELLED/SKIPPED by product decision —
-see "Phase 16 — AI API Integration" above. Phase 17 is implemented and locally
-verified. Current order:
+see "Phase 16 — AI API Integration" above. Phase 17 is implemented, deployed,
+and production-verified. Current order:
 
-0. Deploy the Phase 17 frontend through the existing Pages workflow and
-   production-verify the real build in Arabic and English on phone, tablet,
-   and desktop. Worker deployment is unnecessary because Worker code did not
-   change.
+0. **PHASE 17 DEPLOYMENT RESOLVED / PRODUCTION-VERIFIED.** Pages run
+   `35468405011` deployed commit `f7807c4`; the production 16-case browser
+   matrix and interaction checks passed. Worker deployment was unnecessary
+   because Worker code did not change.
 1. Obtain final user acceptance for Phase 17. Do not call the phase complete
    and do not begin Phase 18 before that acceptance.
 2. Production-check rating persistence and optional R2 screenshot storage;
