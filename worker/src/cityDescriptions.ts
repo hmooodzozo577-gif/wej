@@ -129,8 +129,30 @@ interface WikipediaSummary {
   type?: unknown;
   title?: unknown;
   extract?: unknown;
+  wikibase_item?: unknown;
   coordinates?: { lat?: unknown; lon?: unknown };
   content_urls?: { desktop?: { page?: unknown } };
+}
+
+function hasCoordinates(payload: unknown): boolean {
+  if (!payload || typeof payload !== 'object') return false;
+  const coordinates = (payload as WikipediaSummary).coordinates;
+  return typeof coordinates?.lat === 'number' && typeof coordinates?.lon === 'number';
+}
+
+/** Arabic Wikipedia's REST summary payload commonly omits `coordinates`
+ * even when the article is the correct city. The equivalent English page
+ * does include them. We only borrow those coordinates when both summaries
+ * identify the exact same Wikidata entity; the normal 45 km guard still
+ * runs afterwards. The Arabic extract and source URL remain untouched. */
+export function addVerifiedCoordinateFallback(primary: unknown, companion: unknown): unknown {
+  if (!primary || typeof primary !== 'object' || !companion || typeof companion !== 'object') return primary;
+  const article = primary as WikipediaSummary;
+  const other = companion as WikipediaSummary;
+  if (hasCoordinates(article)) return primary;
+  if (typeof article.wikibase_item !== 'string' || article.wikibase_item !== other.wikibase_item) return primary;
+  if (typeof other.coordinates?.lat !== 'number' || typeof other.coordinates?.lon !== 'number') return primary;
+  return { ...article, coordinates: { lat: other.coordinates.lat, lon: other.coordinates.lon } };
 }
 
 /** Turns one Wikipedia summary payload into a verdict. Pure, so the whole
@@ -232,9 +254,17 @@ function rowToDescription(row: Record<string, unknown>, cityName: string, countr
   };
 }
 
-function isFresh(fetchedAt: unknown, status: unknown): boolean {
+// Before this policy date Arabic summaries without an inline coordinate were
+// cached as `wrong_place`, even when the article was correct. Treat those
+// legacy rows as stale once so the corrected verifier can replace them. A
+// fresh legitimate namesake rejection still keeps the normal seven-day TTL.
+const AR_COORDINATE_POLICY_CUTOFF = Date.parse('2026-09-19T00:00:00.000Z');
+
+function isFresh(fetchedAt: unknown, status: unknown, lang: 'ar' | 'en'): boolean {
   if (typeof fetchedAt !== 'string') return false;
-  const age = Date.now() - Date.parse(fetchedAt);
+  const fetchedAtMs = Date.parse(fetchedAt);
+  if (lang === 'ar' && status === 'wrong_place' && fetchedAtMs < AR_COORDINATE_POLICY_CUTOFF) return false;
+  const age = Date.now() - fetchedAtMs;
   if (!Number.isFinite(age) || age < 0) return false;
   const ttl = (status === 'ok' ? OK_TTL_DAYS : MISS_TTL_DAYS) * 24 * 60 * 60 * 1000;
   return age < ttl;
@@ -261,7 +291,7 @@ export async function resolveCityDescription(
       const cached = await db.prepare(
         'SELECT status, summary, source_url, fetched_at FROM city_descriptions WHERE city_key = ?',
       ).bind(key).first();
-      if (cached && isFresh(cached.fetched_at, cached.status)) {
+      if (cached && isFresh(cached.fetched_at, cached.status, lang)) {
         return rowToDescription(cached, cityName, countryCode, lang);
       }
     } catch {
@@ -272,9 +302,23 @@ export async function resolveCityDescription(
 
   if (env.CITY_DESCRIPTIONS === 'off') return emptyDescription(cityName, countryCode, lang, 'unavailable');
 
-  const payload = await fetchSummary(lang, title);
+  // Arabic REST summaries generally omit coordinates. Fetch the English
+  // companion in parallel so this adds no second serial network wait. Its
+  // prose is never displayed; it can contribute coordinates only after an
+  // exact Wikidata-entity match in addVerifiedCoordinateFallback().
+  const [payload, coordinateCompanion] = await Promise.all([
+    fetchSummary(lang, title),
+    lang === 'ar' ? fetchSummary('en', cityName) : Promise.resolve(null),
+  ]);
   if (payload === null) return emptyDescription(cityName, countryCode, lang, 'unavailable');
-  const verdict = evaluateSummary(payload, reference);
+  // Missing inline coordinates is normal for Arabic summaries. If the
+  // independent coordinate companion failed at the network layer, this is
+  // an unavailable verification attempt, not evidence of a wrong city. Do
+  // not persist a seven-day negative verdict for a transient outage.
+  if (lang === 'ar' && !hasCoordinates(payload) && coordinateCompanion === null) {
+    return emptyDescription(cityName, countryCode, lang, 'unavailable');
+  }
+  const verdict = evaluateSummary(addVerifiedCoordinateFallback(payload, coordinateCompanion), reference);
   const fetchedAt = new Date().toISOString();
 
   if (db) {

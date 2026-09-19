@@ -245,6 +245,18 @@ describe('item #3 — a general description above the structured facts', () => {
     expect(within(container.querySelector<HTMLElement>('.featured-city-body')!).queryByText(I18N.en.detail.cityDescriptionUnavailable)).not.toBeInTheDocument();
   });
 
+  it('normalizes Arabic-Indic digits in a live city description before rendering', async () => {
+    stubWorker([{ ...verified, lang: 'ar', summary: 'بلغ عدد سكان طوكيو ١٤ مليون نسمة في عام ٢٠٢٣.' }]);
+    const japan = WORLD_CATALOG.find((country) => country.id === 'japan')!;
+    const { container } = render(<FeaturedCitiesCard destination={japan} lang="ar" strings={I18N.ar.detail} />);
+    fireEvent.click(screen.getByText(I18N.ar.detail.prominentCities).closest('summary')!);
+    await waitFor(() => expect(container.querySelectorAll('.featured-city').length).toBeGreaterThan(0));
+    fireEvent.click(container.querySelector('.featured-city > summary')!);
+
+    expect(await screen.findByText(/14 مليون نسمة في عام 2023/)).toBeInTheDocument();
+    expect(container.textContent).not.toMatch(/[٠-٩۰-۹]/);
+  });
+
   it('shows the structured facts, the honest "unavailable" fallback, and NO invented description text when nothing was verified', async () => {
     stubWorker([{ ...verified, status: 'wrong_place', summary: null, source: null, sourceUrl: null, license: null }]);
     const { container } = renderCard('en');

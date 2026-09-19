@@ -5,6 +5,56 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-19
+
+- State document version: 21.
+- Working/deployment branch: `claude/marhaba-kxry8l`. The pre-resume local
+  work was preserved separately at local branch
+  `codex/pre-resume-backup-20260919` before this branch was fast-forwarded to
+  the current remote history.
+- Phase 16 (AI) remains CANCELLED/SKIPPED. Phase 17 has NOT started.
+- The current blocker round covers only: public feedback submission, real
+  city descriptions, and tablet geolocation recovery/diagnostics.
+- Public feedback is now PRODUCTION-VERIFIED on the currently deployed build:
+  Contact/Other, Suggestion, and Site Bug each enabled Send after valid input,
+  returned HTTP 201 from `/api/feedback`, and produced real reference IDs.
+  D1 feedback persistence is therefore verified through the public contract;
+  the Worker returns 201 only after the D1 insert succeeds. Turnstile is not
+  configured in the current Pages build, so no challenge is rendered and it
+  is not the present cause of a disabled button. Rating persistence and R2
+  screenshot persistence remain separate production checks.
+- City descriptions: the production endpoint returns verified English
+  descriptions, but Arabic requests were cached as `wrong_place`. Root cause
+  is VERIFIED: Arabic Wikipedia REST summaries commonly omit coordinates,
+  while the Worker required inline coordinates. The current fix fetches the
+  Arabic and English companion summaries in parallel, borrows coordinates
+  only when both have the exact same Wikidata entity, then still applies the
+  existing 45 km guard. Legacy Arabic `wrong_place` cache rows are refreshed
+  once. A transient companion failure returns `unavailable` and is not cached
+  as a false rejection. Real local Worker calls returned verified Arabic
+  descriptions for Riyadh, Tokyo, and Zürich. DEPLOYMENT/PRODUCTION
+  VERIFICATION is pending this round's push.
+- Tablet geolocation: the two-stage browser request remains unchanged. A
+  verified UI defect was fixed: the global prompt marked itself dismissed
+  before the browser answered, so a recoverable timeout/unavailable result
+  could not show retry on the same page. Retry now appears immediately with a
+  cause-specific message. `?debugLocation=1` exposes only stage, accuracy
+  mode, outcome, and duration — never coordinates. Browser QA passed for
+  AR/mobile, EN/tablet, and a successful tablet-sized grant. The original
+  physical-tablet provider failure still requires USER ACCEPTANCE on that
+  device and must not be called fixed before that retest.
+- Verification for this local round: frontend 924/924, Worker 201/201,
+  TypeScript clean for both, frontend oxlint clean, production build clean,
+  Wrangler dry-run clean, live-source Worker integration pass, and responsive
+  browser QA with zero overflow. Phase 14, country exclusion, visa unknown,
+  no-AI, privacy, and deferred traveler-budget behavior remain unchanged.
+- Confirmed Phase 17 backlog after this blocker round is accepted:
+  collapse “مناسب لـ / Suitable for” to the highest score by default with
+  Show more/less, and make the destination rating card more compact without
+  removing its behavior or accessibility.
+
+### Historical implementation notes
+
 - State document version: 20
 - Last verified date: 2026-09-17. This entry adds a SECOND PRE-PHASE-17
   ACCEPTANCE round, against a fresh batch of production reports found
@@ -1161,22 +1211,19 @@ non-AI hardening: the geolocation race fix, Nearest-to-me regression
 coverage, and "Best suited for") is itself deployed and production-
 verified. Current order:
 
-0. **Deploy this cleanup round.** Fast-forward `claude/marhaba-kxry8l` to
-   this branch's HEAD (or widen the Pages/Worker deploy workflows' branch
-   policy) so the geolocation fix, Nearest-to-me test coverage, and
-   Best-suited-for actually reach production. No AI credential is
-   involved — there is no AI code left to configure.
-1. **RESOLVED 2026-09-16 — `CLOUDFLARE_API_TOKEN` now has D1/R2/Workers
-   access; the bindings are live** (see D1 REALITY above). What used to
-   block here is closed. The one remaining step in this item, NOT yet
-   done: production-verify an actual end-to-end write (submit a real
-   rating/report and confirm a row in D1) before calling rating/feedback
-   persistence, admin real-data, or R2 screenshot storage accepted.
-2. AWAITING THE USER'S OWN PRODUCTION TEST of the six acceptance findings.
-   Nothing in this round is user-accepted. The live app cannot be reached
-   from the agent sandbox (403 at the egress proxy for `github.io` and
-   `workers.dev`), so NO claim in this document is live-UI-verified; the
-   deploy facts come from the GitHub Actions runs themselves.
+0. **Deploy the 2026-09-19 blocker round.** Both deployment workflows run
+   from `claude/marhaba-kxry8l`; production-verify Arabic city descriptions
+   after the Worker deploy and the retry UI after the Pages deploy.
+1. **PUBLIC FEEDBACK RESOLVED / PRODUCTION-VERIFIED 2026-09-19.** Contact,
+   Suggestion, and Site Bug all completed real browser submissions and
+   returned D1-backed reference IDs. This verifies ordinary feedback rows;
+   rating rows and R2 screenshot storage remain separate checks.
+2. **USER ACCEPTANCE REQUIRED.** Re-test the same physical tablet after this
+   deploy. The app now shows retry on the same page and can expose safe stage
+   outcomes via `?debugLocation=1`, but only that device can establish whether
+   its OS/browser provider now supplies a position. Also confirm that Arabic
+   city cards now show the deployed verified descriptions rather than the old
+   cached fallback.
 3. AWAITING A PRODUCT DECISION — visa scoring. The current visa layer only
    reorders destinations already within 3 Phase 14 points of each other. The
    alternative, NOT implemented, is to blend visa convenience into the
@@ -1200,11 +1247,9 @@ verified. Current order:
    response, confirm in writing what the terms permit (caching, storage,
    attribution, and whether the data may inform ranking as well as display),
    then set `SHERPA_API_KEY` as a Worker secret.
-5. D1 IS now bound (2026-09-16) — this item moves from "once D1 exists" to
-   ready-to-do: production-verify event, rating, feedback, retention, city
-   description caching and the admin panels against real rows — and confirm
-   the failure path still fails honestly by a controlled safe test. Not yet
-   done; the bindings existing is not the same as a verified write.
+5. D1 IS bound and ordinary feedback/event writes are production-verified.
+   Remaining checks are rating persistence, optional R2 screenshot storage,
+   retention, and authenticated Admin panels against real rows.
 6. Configure admin access (`ADMIN_ACCESS_AUD` + `ADMIN_ACCESS_TEAM_DOMAIN`
    preferred, else `ADMIN_TOKEN`) and, if abuse appears, the two Turnstile
    keys. All are documented in SECRETS.md and all are inert until set.

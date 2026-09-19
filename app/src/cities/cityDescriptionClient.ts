@@ -12,6 +12,8 @@
 // Every failure resolves to "no description": the card then renders its
 // structured facts alone, exactly as it does today. There is no fallback
 // text, because a fallback would be invented text.
+import { toLatinDigits } from '../data/format';
+
 export interface CityDescription {
   cityName: string;
   countryCode: string;
@@ -75,7 +77,7 @@ export async function lookupCityDescriptions(
       // Only a verified description is kept. Every other status means the
       // card shows facts alone, so there is nothing to store.
       if (description && description.status === 'ok' && description.summary) {
-        result.set(description.cityName, description);
+        result.set(description.cityName, { ...description, summary: toLatinDigits(description.summary) });
       }
     }
     memo.set(memoKey, result);

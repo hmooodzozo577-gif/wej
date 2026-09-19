@@ -58,6 +58,7 @@ export function LocationIntro() {
   // 'prompt' and 'unsupported' fall through to the EXACT existing
   // ask/copy below, unchanged.
   const permission = useGeolocationPermission();
+  const debugEnabled = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debugLocation') === '1';
 
   // Item #6 — a recoverable failure (the browser never produced a fix) must
   // not permanently remove the only app-wide way to ask again. Before this,
@@ -69,8 +70,10 @@ export function LocationIntro() {
   if (dismissed || (state.location.status !== 'idle' && !isRecoverableFailure)) return null;
 
   const handleAllow = () => {
-    setDismissed(true);
-    request();
+    // The shared status hides this prompt while requesting or after a
+    // grant. Keeping `dismissed` false lets a recoverable device failure
+    // bring the retry surface back immediately on this same page.
+    void request();
   };
 
   const handleNotNow = () => {
@@ -86,6 +89,22 @@ export function LocationIntro() {
         <div className="location-intro detail-card" role="region" aria-label={li.retryTitle}>
           <strong>{li.retryTitle}</strong>
           <p style={{ marginTop: 6 }}>{li.retryBody}</p>
+          <p style={{ marginTop: 6 }}>
+            {state.location.status === 'timeout' ? t.location.timeout : t.location.unavailable} {li.retryHelp}
+          </p>
+          {debugEnabled && state.location.diagnostic?.phase === 'browser' ? (
+            <details style={{ marginTop: 8 }}>
+              <summary>{li.diagnosticTitle}</summary>
+              <div dir="ltr" style={{ marginTop: 6, fontFamily: 'monospace', fontSize: '0.78rem' }}>
+                {state.location.diagnostic.attempts.map((attempt) => (
+                  <div key={`${attempt.stage}-${attempt.outcome}`}>
+                    stage={attempt.stage}; highAccuracy={String(attempt.highAccuracy)}; outcome={attempt.outcome}; durationMs={attempt.durationMs}
+                  </div>
+                ))}
+                <div>totalMs={state.location.diagnostic.totalMs}</div>
+              </div>
+            </details>
+          ) : null}
           <div style={{ marginTop: 10, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <button type="button" className="btn btn-gold btn-sm" onClick={handleAllow}>
               {li.retryCta}

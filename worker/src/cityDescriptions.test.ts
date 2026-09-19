@@ -9,6 +9,7 @@ import {
   DESCRIPTION_SOURCE,
   MATCH_RADIUS_KM,
   MAX_CITIES_PER_REQUEST,
+  addVerifiedCoordinateFallback,
   evaluateSummary,
   handleCityDescriptionRequest,
   haversineKm,
@@ -119,6 +120,20 @@ describe('accepting or rejecting an article', () => {
     expect(evaluateSummary(summaryPayload({ coordinates: undefined }), TOKYO).status).toBe('wrong_place');
   });
 
+  it('borrows coordinates only from the exact same Wikidata entity', () => {
+    const arabic = summaryPayload({
+      extract: 'طوكيو هي عاصمة اليابان وأكبر مدنها، وهي مركز البلاد السياسي والاقتصادي والثقافي ومن أكبر المناطق الحضرية في العالم.',
+      coordinates: undefined,
+      wikibase_item: 'Q1490',
+    });
+    const matchingEnglish = summaryPayload({ wikibase_item: 'Q1490' });
+    const enriched = addVerifiedCoordinateFallback(arabic, matchingEnglish);
+    expect(evaluateSummary(enriched, TOKYO).status).toBe('ok');
+
+    const namesake = summaryPayload({ wikibase_item: 'Q999999' });
+    expect(evaluateSummary(addVerifiedCoordinateFallback(arabic, namesake), TOKYO).status).toBe('wrong_place');
+  });
+
   it('refuses a stub that is too short to be a description', () => {
     expect(evaluateSummary(summaryPayload({ extract: 'A city.' }), TOKYO).status).toBe('too_short');
   });
@@ -185,6 +200,61 @@ describe('resolving a description end to end', () => {
     expect(result.source).toBe(DESCRIPTION_SOURCE);
     expect(result.license).toBe(DESCRIPTION_LICENSE);
     expect(result.sourceUrl).toContain('wikipedia.org');
+  });
+
+  it('returns Arabic prose when its matching English entity supplies the omitted coordinates', async () => {
+    const arabicExtract = 'طوكيو هي عاصمة اليابان وأكبر مدنها، وهي مركز البلاد السياسي والاقتصادي والثقافي ومن أكبر المناطق الحضرية في العالم.';
+    globalThis.fetch = vi.fn(async (request: RequestInfo | URL) => {
+      const url = String(request instanceof Request ? request.url : request);
+      const body = url.includes('ar.wikipedia.org')
+        ? summaryPayload({ extract: arabicExtract, coordinates: undefined, wikibase_item: 'Q1490', content_urls: { desktop: { page: 'https://ar.wikipedia.org/wiki/Tokyo' } } })
+        : summaryPayload({ wikibase_item: 'Q1490' });
+      return new Response(JSON.stringify(body), { status: 200 });
+    }) as typeof fetch;
+
+    const result = await resolveCityDescription({}, 'JP', 'Tokyo', 'ar', 'طوكيو');
+    expect(result.status).toBe('ok');
+    expect(result.summary).toContain('عاصمة اليابان');
+    expect(result.sourceUrl).toContain('ar.wikipedia.org');
+    expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not cache a false wrong-place verdict when the coordinate companion is temporarily unavailable', async () => {
+    globalThis.fetch = vi.fn(async (request: RequestInfo | URL) => {
+      const url = String(request instanceof Request ? request.url : request);
+      if (url.includes('en.wikipedia.org')) throw new Error('temporary companion failure');
+      return new Response(JSON.stringify(summaryPayload({ coordinates: undefined, wikibase_item: 'Q1490' })), { status: 200 });
+    }) as typeof fetch;
+
+    const result = await resolveCityDescription({}, 'JP', 'Tokyo', 'ar', 'طوكيو');
+    expect(result.status).toBe('unavailable');
+    expect(result.summary).toBeNull();
+  });
+
+  it('rechecks a legacy cached Arabic wrong-place verdict after the coordinate policy fix', async () => {
+    const db = {
+      prepare: () => ({
+        bind: () => ({
+          first: async () => ({ status: 'wrong_place', summary: null, source_url: null, fetched_at: '2026-09-17T00:00:00.000Z' }),
+          run: async () => undefined,
+          all: async () => ({ results: [] }),
+        }),
+        first: async () => null,
+        run: async () => undefined,
+        all: async () => ({ results: [] }),
+      }),
+    };
+    globalThis.fetch = vi.fn(async (request: RequestInfo | URL) => {
+      const url = String(request instanceof Request ? request.url : request);
+      const body = url.includes('ar.wikipedia.org')
+        ? summaryPayload({ coordinates: undefined, wikibase_item: 'Q1490' })
+        : summaryPayload({ wikibase_item: 'Q1490' });
+      return new Response(JSON.stringify(body), { status: 200 });
+    }) as typeof fetch;
+
+    const result = await resolveCityDescription({ PRODUCT_DB: db as never }, 'JP', 'Tokyo', 'ar', 'طوكيو');
+    expect(result.status).toBe('ok');
+    expect(globalThis.fetch).toHaveBeenCalledTimes(2);
   });
 
   it('never invents anything for a city it cannot verify', async () => {

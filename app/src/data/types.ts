@@ -634,7 +634,11 @@ export interface LocationIntroStrings {
    *  offering a retry. */
   retryTitle: string;
   retryBody: string;
+  /** Practical device-side checks after a recoverable provider failure. */
+  retryHelp: string;
   retryCta: string;
+  /** Hidden technical detail shown only with ?debugLocation=1. */
+  diagnosticTitle: string;
 }
 
 /** Item #12D — the optional PASSPORT question, asked inside the

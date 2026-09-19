@@ -187,7 +187,9 @@ export const EN: I18nDict = {
     deniedNote: 'Location for this site is turned off in your browser settings. You can keep using Wejhaty normally without it.',
     retryTitle: 'We could not find your location',
     retryBody: 'Your browser could not determine your location on the last attempt. You can try again, or keep using Wejhaty without it.',
+    retryHelp: 'On a tablet, turn on device location and Wi-Fi, allow location for this browser, then try again.',
     retryCta: 'Try again',
+    diagnosticTitle: 'Safe location diagnostic details',
   },
   // Item #12 — the optional passport question inside the questionnaire.
   // Item #13B — the destination-page rating.

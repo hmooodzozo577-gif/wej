@@ -30,6 +30,18 @@ function renderWith(lang: Lang = 'en') {
 }
 
 const GRANTED_RESULT = { ok: true as const, coords: { lat: 24.7136, lng: 46.6753 }, accuracy: 20, timestamp: 0 };
+const TABLET_TIMEOUT = {
+  ok: false as const,
+  status: 'timeout' as const,
+  diagnostic: {
+    phase: 'browser' as const,
+    attempts: [
+      { stage: 1, highAccuracy: false, timeoutMs: 8000, durationMs: 8000, outcome: 'timeout' as const },
+      { stage: 2, highAccuracy: true, timeoutMs: 20000, durationMs: 20000, outcome: 'timeout' as const },
+    ],
+    totalMs: 28000,
+  },
+};
 
 describe('Phase 12/Workstream C — LocationIntro', () => {
   beforeEach(() => {
@@ -66,6 +78,32 @@ describe('Phase 12/Workstream C — LocationIntro', () => {
     fireEvent.click(screen.getByText('Allow location'));
     expect(spy).toHaveBeenCalledTimes(1);
     await waitFor(() => expect(screen.queryByText('Improve your destination suggestions')).not.toBeInTheDocument());
+  });
+
+  it('shows a specific retry on the same page when both tablet location stages time out', async () => {
+    vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue(TABLET_TIMEOUT);
+    renderWith('ar');
+    fireEvent.click(screen.getByText('السماح بالموقع'));
+
+    await waitFor(() => expect(screen.getByText('إعادة المحاولة')).toBeInTheDocument());
+    expect(screen.getByText(/استغرق طلب الموقع وقتًا طويلاً/)).toBeInTheDocument();
+    expect(screen.getByText(/خدمات الموقع وWi-Fi/)).toBeInTheDocument();
+  });
+
+  it('shows stage outcomes without coordinates only when safe location debugging is requested', async () => {
+    window.history.replaceState({}, '', '/?debugLocation=1');
+    try {
+      vi.spyOn(geolocationModule, 'requestBrowserLocation').mockResolvedValue(TABLET_TIMEOUT);
+      renderWith('en');
+      fireEvent.click(screen.getByText('Allow location'));
+
+      await waitFor(() => expect(screen.getByText('Safe location diagnostic details')).toBeInTheDocument());
+      expect(screen.getByText(/stage=1; highAccuracy=false; outcome=timeout/)).toBeInTheDocument();
+      expect(screen.getByText(/stage=2; highAccuracy=true; outcome=timeout/)).toBeInTheDocument();
+      expect(document.body.textContent).not.toMatch(/latitude|longitude/i);
+    } finally {
+      window.history.replaceState({}, '', '/');
+    }
   });
 
   it('clicking "Not now" never calls requestBrowserLocation and hides the intro immediately', () => {
