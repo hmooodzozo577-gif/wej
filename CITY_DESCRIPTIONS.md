@@ -4,6 +4,25 @@ Acceptance item #3. This records what was investigated, what was chosen, why,
 and exactly how much coverage exists. It is the provenance record the brief
 asks for; `PROJECT_STATE.md` carries the one-line status.
 
+## Production verification — 2026-09-19
+
+The deployed English path was verified with Tokyo, Riyadh, Zürich, Bogotá,
+Reykjavík and Montréal. The Arabic path initially returned `wrong_place` for
+correct articles because Wikipedia's Arabic REST summaries commonly omit the
+inline `coordinates` object. The Worker now fetches the Arabic summary and its
+English companion in parallel, accepts companion coordinates only when both
+pages carry the exact same Wikidata entity, and still applies the 45 km city
+guard. Arabic text and attribution continue to come from the Arabic article.
+
+Legacy Arabic `wrong_place` cache rows from before the policy change are
+refreshed once. A temporary companion-request failure returns `unavailable`
+without storing a false seven-day rejection. Worker deployment run
+`35456017713` succeeded; production returned verified Arabic descriptions for
+Riyadh, Tokyo and Zürich. The Arabic Japan page then rendered Tokyo's prose,
+source and licence without the fallback. This is sampled production proof;
+full 810-city coverage remains measured by the Admin cache report rather than
+claimed from the sample.
+
 ## What the user asked for
 
 Each featured city should carry BOTH:
@@ -18,7 +37,7 @@ Explicitly rejected: any return to a per-city-type template
 (`"[City] is one of the major cities of [Country]"`), and any fabricated,
 generated or AI-written factual filler.
 
-## Egress re-check, 2026-09-16
+## Historical egress re-check, 2026-09-16
 
 The previous round reported that the agent sandbox could not reach the
 encyclopedic sources. That was re-tested from scratch this round, not
@@ -111,8 +130,8 @@ Tripoli (Lebanon) vs Tripoli (Libya) collision in this catalog.
 | | |
 |---|---|
 | Cities with structured facts | **810 of 829** (unchanged) |
-| Cities with a verified description **measured from this sandbox** | **0** — Wikipedia is unreachable here, so no lookup can be performed or measured |
-| Cities with a verified description **in production** | Unknown until the Worker is deployed and the endpoint is exercised. The admin dashboard reports the real figure from `city_descriptions` (see the Content panel), broken down by status |
+| Cities with a verified description in the 2026-09-19 production sample | **9/9 requests succeeded** — six English city samples plus Arabic Riyadh, Tokyo and Zürich |
+| Full production coverage | Read from the Admin `city_descriptions` cache report; the small verification sample is not extrapolated to all 810 cities |
 
 **No filler was written to claim a higher number.** The implementation is
 complete and tested; the measurement is not something this environment can

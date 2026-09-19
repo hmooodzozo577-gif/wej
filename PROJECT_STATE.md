@@ -23,8 +23,8 @@ configuration, and current Git state outrank this document when they differ.
   configured in the current Pages build, so no challenge is rendered and it
   is not the present cause of a disabled button. Rating persistence and R2
   screenshot persistence remain separate production checks.
-- City descriptions: the production endpoint returns verified English
-  descriptions, but Arabic requests were cached as `wrong_place`. Root cause
+- City descriptions: the production endpoint previously returned verified
+  English descriptions, but Arabic requests were cached as `wrong_place`. Root cause
   is VERIFIED: Arabic Wikipedia REST summaries commonly omit coordinates,
   while the Worker required inline coordinates. The current fix fetches the
   Arabic and English companion summaries in parallel, borrows coordinates
@@ -32,15 +32,20 @@ configuration, and current Git state outrank this document when they differ.
   existing 45 km guard. Legacy Arabic `wrong_place` cache rows are refreshed
   once. A transient companion failure returns `unavailable` and is not cached
   as a false rejection. Real local Worker calls returned verified Arabic
-  descriptions for Riyadh, Tokyo, and Zürich. DEPLOYMENT/PRODUCTION
-  VERIFICATION is pending this round's push.
+  descriptions for Riyadh, Tokyo, and Zürich. DEPLOYED and
+  PRODUCTION-VERIFIED: Worker run `35456017713` succeeded; fresh production
+  requests returned `ok` for those three Arabic cities, and the deployed
+  Arabic Japan page rendered Tokyo's description, attribution and licence
+  without the unavailable fallback or horizontal overflow.
 - Tablet geolocation: the two-stage browser request remains unchanged. A
   verified UI defect was fixed: the global prompt marked itself dismissed
   before the browser answered, so a recoverable timeout/unavailable result
   could not show retry on the same page. Retry now appears immediately with a
   cause-specific message. `?debugLocation=1` exposes only stage, accuracy
   mode, outcome, and duration — never coordinates. Browser QA passed for
-  AR/mobile, EN/tablet, and a successful tablet-sized grant. The original
+  AR/mobile, EN/tablet, and a successful tablet-sized grant. Pages run
+  `35456017721` succeeded, and the same failure/retry/diagnostic path was
+  verified on the deployed build. The original
   physical-tablet provider failure still requires USER ACCEPTANCE on that
   device and must not be called fixed before that retest.
 - Verification for this local round: frontend 924/924, Worker 201/201,
@@ -48,6 +53,8 @@ configuration, and current Git state outrank this document when they differ.
   Wrangler dry-run clean, live-source Worker integration pass, and responsive
   browser QA with zero overflow. Phase 14, country exclusion, visa unknown,
   no-AI, privacy, and deferred traveler-budget behavior remain unchanged.
+- Delivery commit: `4fae3d720522a3d80a133fc2227547e301e430f3` on
+  `claude/marhaba-kxry8l`; Worker and Pages workflows both concluded success.
 - Confirmed Phase 17 backlog after this blocker round is accepted:
   collapse “مناسب لـ / Suitable for” to the highest score by default with
   Show more/less, and make the destination rating card more compact without
