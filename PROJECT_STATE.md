@@ -7,7 +7,7 @@ configuration, and current Git state outrank this document when they differ.
 
 ### Current verified state — 2026-09-20
 
-- State document version: 27.
+- State document version: 28.
 - Working/deployment branch: `claude/marhaba-kxry8l`. The pre-resume local
   work was preserved separately at local branch
   `codex/pre-resume-backup-20260919` before this branch was fast-forwarded to
@@ -17,18 +17,21 @@ configuration, and current Git state outrank this document when they differ.
   follow-up are IMPLEMENTED, TESTED, DEPLOYED, and PRODUCTION-VERIFIED. Phase
   17 is READY FOR USER REVIEW, not phase-complete; final user acceptance
   remains pending. Phase 18 and Phase 21 remain NOT STARTED.
-- The user reports that Contact/Suggestion/Report submission failed in their
-  production session. A fresh Playwright production session on 2026-09-20
-  enabled Send and received HTTP 201 with reference `WJH-20260919-F14973`, so
-  the endpoint and D1 write path are VERIFIED for a clean session. The generic
-  client failure was replaced locally with specific preserved-input messages
-  for rate limit, challenge, and product-data availability failures; the exact
-  historical user-session cause remains UNKNOWN. After the current deployment,
-  three fresh real production submissions all returned HTTP 201 and rendered
-  their references: Suggestion `WJH-20260920-F2385C`, Site bug
-  `WJH-20260920-E3B8A4`, and Incorrect information
-  `WJH-20260920-377BAF`. The current form path is PRODUCTION-VERIFIED; user
-  acceptance of their original browser/session scenario remains pending.
+- The final acceptance pass reproduced concrete Contact/Suggestion/Report UI
+  defects: Footer's white text leaked into the light paper dialog, making
+  labels and success copy effectively invisible; the 10-character requirement
+  disabled Send without explaining why; and two native clicks in one browser
+  task could both pass React's pre-render `saving` state and issue duplicate
+  requests. The dialog now owns semantic theme colors, explains the minimum,
+  traps focus, localizes its image picker, and uses a synchronous ref lock in
+  addition to the rendered disabled state. The exact cause in the user's older
+  session remains UNKNOWN; Turnstile was inactive and is not claimed as that
+  cause. Fresh post-fix production UI submissions each issued exactly one
+  request, returned HTTP 201, and rendered references: Arabic/mobile Suggestion
+  `WJH-20260920-573978`, English/desktop Site bug `WJH-20260920-2A516D`, and
+  Arabic/tablet general Contact (`other`) `WJH-20260920-2E4C8B`. A browser-level
+  forced network failure preserved the entered text and announced the error.
+  The current form path is PRODUCTION-VERIFIED; user acceptance remains pending.
 - The selected identity is **Cinematic Compass Atlas / أطلس البوصلة
   السينمائي**: verified destination photography, a modern compass and quiet
   route cartography, ink/navy and warm paper grounds, restrained orange
@@ -37,12 +40,17 @@ configuration, and current Git state outrank this document when they differ.
   system.
 - Phase 17 covers the shared shell and visual system plus Home, Purpose/Quiz,
   Results, Explore, Destination, forms, async states, light/dark/system themes,
-  and responsive AR/EN layouts. Home now selects one eligible hero destination
-  per browser session from a 21-country sourced/editorially-ready pool, keeps
-  it stable across navigation/language/theme, and avoids the four most recent
-  session choices. IL/ISR stays excluded; Monaco remains valid. The compass is
-  shared by Home, Surprise, and quiz loading; reduced motion disables the
-  decorative motion.
+  and responsive AR/EN layouts. Home selects one eligible hero destination per
+  browser session from the sourced/editorially-ready pool, keeps it stable
+  across navigation/language/theme, and avoids recent choices. Four additional
+  unique labels are selected from the same pool for the compass, exclude the
+  featured destination, stay stable in-session, and keep an eight-country
+  cross-session anti-repeat history. The locked journey/nearby microcopy is
+  integrated around the primary action and compass. The 16-second plane follows
+  a long curved route on a layer outside the clipped photograph; a sparse
+  theme-aware route pattern continues across public pages. Reduced motion
+  freezes continuous flight while retaining the route. IL/ISR stays excluded;
+  Monaco remains valid.
 - The page contains exactly one `مناسب لـ / Suitable for` section above
   Additional information. It shows only the highest-rated eligible purpose by
   default; an accessible 44px Show more/less control exposes the remaining
@@ -50,22 +58,26 @@ configuration, and current Git state outrank this document when they differ.
   confidence, insufficient-data behavior, methodology details, and sources are
   preserved. Results and destination rating surfaces are compact without
   removing validation, submission, success, or failure behavior.
-- Final local verification: frontend 938/938 and Worker 202/202 tests pass;
-  frontend and Worker TypeScript are clean; frontend and Worker oxlint are
-  clean; the production frontend build and Worker Wrangler dry-run pass. No
-  runtime dependency was added; the current build reports 14.68 kB gzip CSS
-  and 616.38 kB gzip for the primary JS chunk. Local Playwright review covered
-  Arabic/English, RTL/LTR, light/dark, 390/1320/1440px, expanded mobile menu,
-  Home, Explore, Destination, Purpose, and Quiz with zero horizontal overflow.
-  The independent Impeccable finish reviewer returned `ship` after scoring all
-  four requested correction items resolved. Fresh production Playwright checks
-  verified session stability and recent-session avoidance for the dynamic
-  Hero, AR/EN RTL/LTR phone/tablet/desktop light/dark/system modes, expanded
-  mobile navigation, compact Surprise with an at-rest compass and a real
-  result, automatic question advance through the optional checkpoint and
-  results, 44px rating targets, official-source visa copy, and a sourced city
-  narrative bounded to 153 characters/two sentences. All tested viewports had
-  zero horizontal overflow.
+- Final acceptance-pass local verification: frontend 946/946 tests pass;
+  frontend TypeScript and oxlint are clean and the production build passes.
+  Worker code did not change, so its previously verified 202/202 suite was not
+  rerun and no Worker deployment was performed. No runtime dependency was
+  added. The final build reports 16.33 kB gzip CSS and 617.77 kB gzip for the
+  primary JS chunk, +1.65 kB and +1.39 kB respectively against the prior
+  documented build. Independent Impeccable then Taste review returned `ship`
+  with no P0/P1/P2 findings after the focus, orbit-label, motif-density, file
+  input, and touch-target repair round.
+- Fresh production Playwright acceptance verified AR/EN, RTL/LTR, dark/light/
+  system themes, 390px and 430px phones, 820px portrait tablet, 1180px landscape
+  tablet, and desktop with zero horizontal overflow or Hero title/orbit overlap.
+  Zoom-equivalent 100/90/80/75/67/50% viewports kept both CTA and compass inside
+  the stable 610px desktop frame. The plane moved 377px in 4.1 seconds and its
+  route layer extended above and below the photograph. Purpose/Quiz, all 194
+  Explore cards, compact Surprise, and protected previous/next destination
+  arrows worked. Reduced motion froze the plane at a visible route point. The
+  production Hero decoded a 1240×607 eager high-priority WebP. Headless lab
+  observation measured LCP 348ms and CLS 0.022; these are test-session values,
+  not field performance claims.
 - No recommendation scoring, question branching, geolocation behavior,
   privacy rules, country exclusion, or provider logic changed. Worker city
   narrative output is now limited to two complete sentences/280 characters,
@@ -77,12 +89,12 @@ configuration, and current Git state outrank this document when they differ.
 - The pre-Phase-17 acceptance baseline is USER-VERIFIED: the same physical
   tablet location retest succeeded; Contact, Suggestion, and Report persist to
   D1 in production; verified Arabic city descriptions render with attribution.
-- Latest frontend delivery commit: `e3e9f8a` on
-  `claude/marhaba-kxry8l`. GitHub Pages workflow run `35484971643` concluded
-  success and the Destination follow-up was verified against production in
-  Arabic/RTL/dark phone and English/LTR/light desktop states. Worker code did
-  not change, so no Worker deployment was required. Final USER ACCEPTANCE
-  remains pending; Phase 17 is not closed.
+- Latest frontend delivery commits: `abfa58b` (visual acceptance pass) and
+  `0c670d8` (same-task feedback duplicate lock) on
+  `claude/marhaba-kxry8l`. GitHub Pages workflow runs `35489324874` and
+  `35489751480` both concluded success; the latter is the production-verified
+  build. Worker code did not change, so no Worker deployment was required.
+  Final USER ACCEPTANCE remains pending; Phase 17 is not closed.
 
 ### Historical implementation notes
 
