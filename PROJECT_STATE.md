@@ -7,23 +7,27 @@ configuration, and current Git state outrank this document when they differ.
 
 ### Current verified state — 2026-09-20
 
-- State document version: 25.
+- State document version: 26.
 - Working/deployment branch: `claude/marhaba-kxry8l`. The pre-resume local
   work was preserved separately at local branch
   `codex/pre-resume-backup-20260919` before this branch was fast-forwarded to
   the current remote history.
 - Phase 16 (AI) remains CANCELLED/SKIPPED. Phase 17 — UI/UX Evolution's final
-  acceptance implementation is COMPLETE LOCALLY and READY FOR DEPLOYMENT; it
-  is not yet production-verified or user-accepted. Phase 18 and Phase 21 remain
-  NOT STARTED.
+  acceptance implementation is IMPLEMENTED, TESTED, DEPLOYED, and
+  PRODUCTION-VERIFIED. It is READY FOR USER REVIEW, not phase-complete; final
+  user acceptance remains pending. Phase 18 and Phase 21 remain NOT STARTED.
 - The user reports that Contact/Suggestion/Report submission failed in their
   production session. A fresh Playwright production session on 2026-09-20
   enabled Send and received HTTP 201 with reference `WJH-20260919-F14973`, so
   the endpoint and D1 write path are VERIFIED for a clean session. The generic
   client failure was replaced locally with specific preserved-input messages
   for rate limit, challenge, and product-data availability failures; the exact
-  historical user-session cause remains UNKNOWN. Fresh production submission
-  of all three feedback types is still required after deployment.
+  historical user-session cause remains UNKNOWN. After the current deployment,
+  three fresh real production submissions all returned HTTP 201 and rendered
+  their references: Suggestion `WJH-20260920-F2385C`, Site bug
+  `WJH-20260920-E3B8A4`, and Incorrect information
+  `WJH-20260920-377BAF`. The current form path is PRODUCTION-VERIFIED; user
+  acceptance of their original browser/session scenario remains pending.
 - The selected identity is **Cinematic Compass Atlas / أطلس البوصلة
   السينمائي**: verified destination photography, a modern compass and quiet
   route cartography, ink/navy and warm paper grounds, restrained orange
@@ -53,7 +57,14 @@ configuration, and current Git state outrank this document when they differ.
   Arabic/English, RTL/LTR, light/dark, 390/1320/1440px, expanded mobile menu,
   Home, Explore, Destination, Purpose, and Quiz with zero horizontal overflow.
   The independent Impeccable finish reviewer returned `ship` after scoring all
-  four requested correction items resolved.
+  four requested correction items resolved. Fresh production Playwright checks
+  verified session stability and recent-session avoidance for the dynamic
+  Hero, AR/EN RTL/LTR phone/tablet/desktop light/dark/system modes, expanded
+  mobile navigation, compact Surprise with an at-rest compass and a real
+  result, automatic question advance through the optional checkpoint and
+  results, 44px rating targets, official-source visa copy, and a sourced city
+  narrative bounded to 153 characters/two sentences. All tested viewports had
+  zero horizontal overflow.
 - No recommendation scoring, question branching, geolocation behavior,
   privacy rules, country exclusion, or provider logic changed. Worker city
   narrative output is now limited to two complete sentences/280 characters,
@@ -65,10 +76,11 @@ configuration, and current Git state outrank this document when they differ.
 - The pre-Phase-17 acceptance baseline is USER-VERIFIED: the same physical
   tablet location retest succeeded; Contact, Suggestion, and Report persist to
   D1 in production; verified Arabic city descriptions render with attribution.
-- The prior deployed baseline remains commit
-  `f7807c4a15e7fc0d49460f446c550a4387b8928c`; the current final-acceptance
-  implementation has not yet been pushed or deployed. Final USER ACCEPTANCE
-  remains pending; Phase 17 is not closed.
+- Delivery commit: `421f8219f685985f2370a187edc96fd1f5677812` on
+  `claude/marhaba-kxry8l`. GitHub Pages workflow run `35478292164` and
+  Cloudflare Worker workflow run `35478292190` both concluded success and were
+  verified against production. Final USER ACCEPTANCE remains pending; Phase 17
+  is not closed.
 
 ### Historical implementation notes
 
