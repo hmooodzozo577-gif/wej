@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import destinationImages from '../data/generated/destinationImages.json';
-import { buildHeroPool, selectSessionHero } from './heroDestination';
+import { buildHeroPool, selectHeroOrbitDestinations, selectSessionHero } from './heroDestination';
 
 class MemoryStorage implements Storage {
   private readonly values = new Map<string, string>();
@@ -58,5 +58,42 @@ describe('the data-backed Home hero destination', () => {
     const selected = selectSessionHero(pool, { session, local }, () => 0);
     expect(pool).toContain(selected);
     expect(selected.countryCode).not.toBe('IL');
+  });
+
+  it('builds four unique compass destinations from the eligible pool and excludes the featured destination', () => {
+    const pool = buildHeroPool();
+    const featured = pool[0]!;
+    const orbit = selectHeroOrbitDestinations(pool, featured, { session, local }, 4, () => 0);
+
+    expect(orbit).toHaveLength(4);
+    expect(new Set(orbit.map((destination) => destination.countryCode))).toHaveLength(4);
+    expect(orbit.some((destination) => destination.countryCode === featured.countryCode)).toBe(false);
+    expect(orbit.every((destination) => pool.includes(destination))).toBe(true);
+  });
+
+  it('keeps compass destinations stable in-session and avoids the previous orbit on a new session', () => {
+    const pool = buildHeroPool();
+    const featured = pool[0]!;
+    const first = selectHeroOrbitDestinations(pool, featured, { session, local }, 4, () => 0);
+    const stable = selectHeroOrbitDestinations(pool, featured, { session, local }, 4, (length) => length - 1);
+    expect(stable.map((destination) => destination.countryCode)).toEqual(first.map((destination) => destination.countryCode));
+
+    session.clear();
+    const next = selectHeroOrbitDestinations(pool, featured, { session, local }, 4, () => 0);
+    expect(next.every((destination) => !first.includes(destination))).toBe(true);
+  });
+
+  it('rejects duplicate or invalid remembered compass destinations', () => {
+    const pool = buildHeroPool();
+    const featured = pool[0]!;
+    session.setItem('wejhaty.hero.orbit.current.v1', JSON.stringify({
+      featured: featured.countryCode,
+      codes: [pool[1]!.countryCode, pool[1]!.countryCode, 'XX', featured.countryCode],
+    }));
+
+    const selected = selectHeroOrbitDestinations(pool, featured, { session, local }, 4, () => 0);
+    expect(selected).toHaveLength(4);
+    expect(new Set(selected.map((destination) => destination.countryCode))).toHaveLength(4);
+    expect(selected.some((destination) => destination.countryCode === featured.countryCode)).toBe(false);
   });
 });

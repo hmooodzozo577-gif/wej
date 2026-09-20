@@ -9,7 +9,7 @@ import { Icon } from '../components/Icon';
 import { DestinationImage } from '../components/DestinationImage';
 import { CompassMark } from '../components/CompassMark';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
-import { HERO_DESTINATION_POOL, selectSessionHero } from '../home/heroDestination';
+import { HERO_DESTINATION_POOL, selectHeroOrbitDestinations, selectSessionHero } from '../home/heroDestination';
 
 export function Home() {
   const navigate = useNavigate();
@@ -20,6 +20,7 @@ export function Home() {
   const how = t.how;
   const pu = t.purposes;
   const [featuredDestination] = useState(() => selectSessionHero(HERO_DESTINATION_POOL));
+  const [orbitDestinations] = useState(() => selectHeroOrbitDestinations(HERO_DESTINATION_POOL, featuredDestination));
 
   // Ports the header's `go('how')` special case: land on Home, then smooth
   // -scroll to #howSection.
@@ -40,46 +41,63 @@ export function Home() {
     <>
       <section className="hero home-hero-cinematic">
         <div className="container">
-          <div className="home-hero-frame">
-            <DestinationImage destination={featuredDestination} lang={lang} className="hero-folio-image" priority variant="hero" />
+          <div className="home-hero-stage">
             <TravelRouteDecor variant="home" />
-            <div className="home-hero-scrim" />
-            <div className="hero-grid">
-              <div className="hero-copy">
-                <h1 className="display">{h.h1}</h1>
-                <p className="hero-engine-label">{h.eyebrow}</p>
-                <p className="lead">{h.lead}</p>
-                <div className="hero-cta-row">
-                  <button type="button" className="btn btn-gold" onClick={() => navigate('/purpose')}>
-                    <Icon name="compass" size={18} /> {h.cta}
-                  </button>
-                  <button type="button" className="btn btn-ghost" onClick={() => navigate('/explore')}>
-                    {h.cta2}
-                  </button>
+            <div className="home-hero-frame">
+              <DestinationImage destination={featuredDestination} lang={lang} className="hero-folio-image" priority variant="hero" />
+              <div className="home-hero-scrim" />
+              <div className="hero-grid">
+                <div className="hero-copy">
+                  <h1 className="display">{h.h1}</h1>
+                  <p className="hero-engine-label">{h.eyebrow}</p>
+                  <p className="lead">{h.lead}</p>
+                  <div className="hero-cta-cluster">
+                    <p className="hero-editorial-note hero-journey-note">{h.journeyStarts}</p>
+                    <div className="hero-cta-row">
+                      <button type="button" className="btn btn-gold" onClick={() => navigate('/purpose')}>
+                        <Icon name="compass" size={18} /> {h.cta}
+                      </button>
+                      <button type="button" className="btn btn-ghost" onClick={() => navigate('/explore')}>
+                        {h.cta2}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="hero-stats">
+                    <div className="hero-stat">
+                      <b>{WORLD_CATALOG.length}+</b>
+                      <span>{h.stat1l}</span>
+                    </div>
+                    <div className="hero-stat">
+                      <b>{h.stat2n}</b>
+                      <span>{h.stat2l}</span>
+                    </div>
+                    <div className="hero-stat">
+                      <b>{h.stat3n}</b>
+                      <span>{h.stat3l}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="hero-stats">
-                  <div className="hero-stat">
-                    <b>{WORLD_CATALOG.length}+</b>
-                    <span>{h.stat1l}</span>
-                  </div>
-                  <div className="hero-stat">
-                    <b>{h.stat2n}</b>
-                    <span>{h.stat2l}</span>
-                  </div>
-                  <div className="hero-stat">
-                    <b>{h.stat3n}</b>
-                    <span>{h.stat3l}</span>
+                <div className="home-hero-compass-cluster">
+                  <p className="hero-editorial-note hero-nearby-note">{h.nearbyDestinations}</p>
+                  <div className="home-hero-compass">
+                    <CompassMark size={190} />
+                    {orbitDestinations.map((destination, index) => (
+                      <span
+                        key={destination.countryCode}
+                        className={`hero-orbit-destination orbit-${index + 1}`}
+                        data-destination={destination.id}
+                      >
+                        {nameOf(destination, lang)}
+                      </span>
+                    ))}
                   </div>
                 </div>
+                <Link className="hero-destination-badge" to={`/destination/${featuredDestination.id}`}>
+                  <span>{lang === 'ar' ? 'وجهة من الكتالوج' : 'From the catalog'}</span>
+                  <strong>{nameOf(featuredDestination, lang)}</strong>
+                  <Icon name="arrowEnd" size={18} />
+                </Link>
               </div>
-              <div className="home-hero-compass">
-                <CompassMark size={190} />
-              </div>
-              <Link className="hero-destination-badge" to={`/destination/${featuredDestination.id}`}>
-                <span>{lang === 'ar' ? 'وجهة من الكتالوج' : 'From the catalog'}</span>
-                <strong>{nameOf(featuredDestination, lang)}</strong>
-                <Icon name="arrowEnd" size={18} />
-              </Link>
             </div>
           </div>
         </div>

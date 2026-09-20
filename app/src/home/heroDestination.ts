@@ -5,7 +5,10 @@ import { WORLD_CATALOG } from '../data/worldCatalog';
 
 const SESSION_KEY = 'wejhaty.hero.current.v1';
 const HISTORY_KEY = 'wejhaty.hero.recent.v1';
+const ORBIT_SESSION_KEY = 'wejhaty.hero.orbit.current.v1';
+const ORBIT_HISTORY_KEY = 'wejhaty.hero.orbit.recent.v1';
 const HISTORY_LIMIT = 4;
+const ORBIT_HISTORY_LIMIT = 8;
 
 // These thresholds describe the evidence needed for a country to carry the
 // first viewport. They are intentionally data rules, not a hand-written list:
@@ -92,6 +95,70 @@ export function selectSessionHero(
     storage.local,
     HISTORY_KEY,
     JSON.stringify([selected.countryCode, ...recent.filter((code) => code !== selected.countryCode)].slice(0, HISTORY_LIMIT)),
+  );
+  return selected;
+}
+
+function readCodeList(storage: Storage, key: string, limit: number): string[] {
+  try {
+    const value = JSON.parse(safeRead(storage, key) ?? '[]');
+    return Array.isArray(value)
+      ? value.filter((code): code is string => typeof code === 'string').slice(0, limit)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Selects the small destinations around the Home compass from the same
+ * evidence-backed pool as the featured Hero. The selection stays stable for
+ * the session and keeps a short cross-session anti-repeat history. */
+export function selectHeroOrbitDestinations(
+  pool: CatalogEntry[],
+  featured: CatalogEntry,
+  storage: HeroStorage = { session: sessionStorage, local: localStorage },
+  count = 4,
+  pickIndex: (length: number) => number = secureIndex,
+): CatalogEntry[] {
+  const byCode = new Map(pool.map((destination) => [destination.countryCode, destination]));
+  try {
+    const remembered = JSON.parse(safeRead(storage.session, ORBIT_SESSION_KEY) ?? 'null') as {
+      featured?: unknown;
+      codes?: unknown;
+    } | null;
+    if (remembered?.featured === featured.countryCode && Array.isArray(remembered.codes)) {
+      const seen = new Set<string>();
+      const restored = remembered.codes
+        .filter((code): code is string => {
+          if (typeof code !== 'string' || code === featured.countryCode || !byCode.has(code) || seen.has(code)) return false;
+          seen.add(code);
+          return true;
+        })
+        .map((code) => byCode.get(code)!);
+      if (restored.length === Math.min(count, Math.max(0, pool.length - 1))) return restored;
+    }
+  } catch {
+    // Malformed or blocked storage only removes persistence, never the UI.
+  }
+
+  const recent = readCodeList(storage.local, ORBIT_HISTORY_KEY, ORBIT_HISTORY_LIMIT);
+  const recentSet = new Set(recent);
+  const eligible = pool.filter((destination) => destination.countryCode !== featured.countryCode);
+  const fresh = eligible.filter((destination) => !recentSet.has(destination.countryCode));
+  const candidates = fresh.length >= count ? [...fresh] : [...eligible];
+  const selected: CatalogEntry[] = [];
+  const target = Math.min(count, candidates.length);
+  while (selected.length < target && candidates.length) {
+    const index = Math.abs(pickIndex(candidates.length)) % candidates.length;
+    selected.push(candidates.splice(index, 1)[0]!);
+  }
+
+  const codes = selected.map((destination) => destination.countryCode);
+  safeWrite(storage.session, ORBIT_SESSION_KEY, JSON.stringify({ featured: featured.countryCode, codes }));
+  safeWrite(
+    storage.local,
+    ORBIT_HISTORY_KEY,
+    JSON.stringify([...codes, ...recent.filter((code) => !codes.includes(code))].slice(0, ORBIT_HISTORY_LIMIT)),
   );
   return selected;
 }

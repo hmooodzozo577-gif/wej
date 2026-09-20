@@ -10,6 +10,7 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
   const [screenshot, setScreenshot] = useState<string | undefined>();
+  const [screenshotName, setScreenshotName] = useState('');
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
   const [reference, setReference] = useState<string | null>(null);
   const [failureCode, setFailureCode] = useState<string | null>(null);
@@ -17,13 +18,8 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
   const challenge = useRef<HTMLDivElement | null>(null);
   const opener = useRef<HTMLButtonElement | null>(null);
   const dialog = useRef<HTMLElement | null>(null);
-  // Shared with ResultRating/DestinationRating rather than reimplemented:
-  // the previous ad hoc version here had no handling for a script that
-  // fails to load, which left Submit disabled forever with no explanation
-  // whenever Turnstile was configured but its challenge could not load
-  // (blocked by an ad blocker, a firewall, or any network policy that
-  // refuses challenges.cloudflare.com) — the root cause of the reported
-  // "cannot be pressed or completed" bug.
+  // Shared with ResultRating/DestinationRating so loading, failure, and retry
+  // behavior stays consistent whenever the production challenge is enabled.
   const turnstile = useTurnstile(challenge, open);
 
   useEffect(() => {
@@ -32,13 +28,35 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
     const openerElement = opener.current;
     document.body.style.overflow = 'hidden';
     dialog.current?.focus();
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+    const keepFocusInDialog = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        return;
+      }
+      if (event.key !== 'Tab' || !dialog.current) return;
+      const focusable = [...dialog.current.querySelectorAll<HTMLElement>(
+        'button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])',
+      )].filter((element) => !element.hasAttribute('hidden') && element.getAttribute('aria-hidden') !== 'true');
+      if (!focusable.length) {
+        event.preventDefault();
+        dialog.current.focus();
+        return;
+      }
+      const first = focusable[0]!;
+      const last = focusable.at(-1)!;
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || active === dialog.current)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
-    window.addEventListener('keydown', closeOnEscape);
+    window.addEventListener('keydown', keepFocusInDialog);
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', closeOnEscape);
+      window.removeEventListener('keydown', keepFocusInDialog);
       openerElement?.focus();
     };
   }, [open]);
@@ -46,14 +64,19 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
   const chooseScreenshot = (file?: File) => {
     setFileError(false);
     setScreenshot(undefined);
+    setScreenshotName('');
     if (!file) return;
     if (file.size > 2_000_000 || !['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
       setFileError(true);
       return;
     }
+    setScreenshotName(file.name);
     const reader = new FileReader();
     reader.onload = () => setScreenshot(typeof reader.result === 'string' ? reader.result : undefined);
-    reader.onerror = () => setFileError(true);
+    reader.onerror = () => {
+      setScreenshotName('');
+      setFileError(true);
+    };
     reader.readAsDataURL(file);
   };
 
@@ -92,7 +115,7 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
               <button type="button" className="feedback-close" aria-label={strings.close} onClick={() => setOpen(false)}>×</button>
             </div>
             {status === 'saved' ? (
-              <div className="feedback-success">
+              <div className="feedback-success" role="status" aria-live="polite">
                 <p>{strings.thanks}</p>
                 {reference ? <strong>{strings.reference}: {reference}</strong> : null}
               </div>
@@ -120,26 +143,44 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
                   />
                 </div>
                 <label className="field">
-                  <span>{strings.message}</span>
-                  <textarea required minLength={10} maxLength={4000} rows={6} value={message} onChange={(event) => setMessage(event.target.value)} />
+                  <span id="feedback-message-label">{strings.message}</span>
+                  <textarea
+                    required
+                    minLength={10}
+                    maxLength={4000}
+                    rows={6}
+                    value={message}
+                    aria-labelledby="feedback-message-label"
+                    aria-describedby="feedback-message-hint"
+                    onChange={(event) => setMessage(event.target.value)}
+                  />
+                  <small id="feedback-message-hint" className="form-hint">{strings.messageHint}</small>
                 </label>
                 <label className="field">
                   <span>{strings.email}</span>
                   <input type="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} />
                 </label>
-                <label className="field">
-                  <span>{strings.screenshot}</span>
-                  <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => chooseScreenshot(event.target.files?.[0])} />
-                </label>
+                <div className="field feedback-file-field">
+                  <span id="feedback-screenshot-label">{strings.screenshot}</span>
+                  <input
+                    id="feedback-screenshot"
+                    className="visually-hidden feedback-file-input"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    aria-labelledby="feedback-screenshot-label feedback-file-trigger"
+                    onChange={(event) => chooseScreenshot(event.target.files?.[0])}
+                  />
+                  <div className="feedback-file-control">
+                    <label id="feedback-file-trigger" htmlFor="feedback-screenshot" className="btn btn-ghost btn-sm feedback-file-trigger">
+                      {strings.chooseFile}
+                    </label>
+                    <span className="feedback-file-name" aria-live="polite">{screenshotName || strings.noFileSelected}</span>
+                  </div>
+                </div>
                 {fileError ? <p className="form-error">{strings.screenshotError}</p> : null}
                 {turnstile.required ? <div ref={challenge} className="turnstile-slot" /> : null}
-                {/* Acceptance fix — Send being disabled while the challenge
-                    is still loading/rendering (turnstile.blocking, before
-                    either a token or a failure) previously had NO visible
-                    explanation at all: the empty .turnstile-slot has no
-                    height until the widget renders, so a user who finished
-                    typing could stare at a disabled button with no
-                    indication anything was happening. */}
+                {/* If the optional production challenge is loading, explain
+                    the temporary disabled state instead of leaving it silent. */}
                 {turnstile.required && turnstile.blocking && !turnstile.failed ? (
                   <p className="form-hint">{strings.verifyingChallenge}</p>
                 ) : null}

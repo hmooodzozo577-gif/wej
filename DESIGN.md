@@ -98,7 +98,7 @@ components:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
     rounded: "{rounded.card}"
-    padding: "24px 22px 22px"
+    padding: "18px 18px 16px"
   destination-card:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
@@ -180,10 +180,10 @@ All visible numbers use Latin digits in Arabic and English.
 
 The global container is `1240px` with `24px` inline gutters, reduced to `18px` on phones. Major sections use fluid vertical rhythm (`clamp(56px, 7vw, 92px)`) and fine horizontal rules to connect content into one atlas rather than a stack of isolated panels.
 
-- **Home:** a cinematic photograph fills a `650–720px` frame on desktop. The promise and actions occupy one side, the compass balances the other, and the destination badge remains inside the image. At `760px` and below, the frame becomes a taller single-column composition with the actions, statistics, compass, and badge preserved.
+- **Home:** a cinematic photograph fills a zoom-stable `560–610px` frame on desktop. The promise and actions occupy one side, the compass balances the other, and the destination badge remains inside the image. At `760px` and below, the frame becomes a `680–690px` single-column composition with the actions, statistics, compass, and badge preserved. Its height intentionally avoids viewport-height units so browser zoom cannot push the primary action outside the composition.
 - **Purpose:** choices use two columns where space allows and one on phones. Cards remain comfortably tappable and visibly actionable before hover.
 - **Quiz:** content is capped near `900px`; the question sheet and progress line carry the sequence without dashboard density.
-- **Results and Explore:** destination imagery keeps a `16:10` landscape ratio. Results begin with one large top recommendation followed by a two-column grid; Explore uses a three-column catalog before collapsing responsively.
+- **Results and Explore:** destination imagery keeps a `16:10` landscape ratio. Results begin with one large top recommendation followed by a two-column grid; Explore uses a compact four-column catalog on wide screens before collapsing responsively.
 - **Destination:** the photo-first hero uses `clamp(470px, 52vw, 650px)` on larger screens and a taller portrait-biased crop on phones. Below it, a narrower facts rail and wider editorial column form a calm reading layout, then become one column below `860px`. The overview spans the full narrative measure before parallel strengths and cautions; sourced decision-support sections continue below as ruled editorial blocks.
 - **Navigation:** desktop links yield to the mobile menu below `860px`. At `760px` and below, theme, language, and Start move into the opened menu so every control remains available.
 
@@ -251,7 +251,9 @@ The `68px` sticky bar uses translucent paper and `16px` backdrop blur. Desktop l
 
 ### Cinematic Hero and Compass
 
-Home uses one eligible catalog destination selected once per browser session. The photograph fills the frame with `object-fit: cover`, an authored crop, a directional navy scrim, the promise, two actions, route lines, a modern compass, and an in-frame destination badge. The photograph settles once on entry; the compass needle drifts slowly (`5.6s`), and route planes move only a few pixels over `8–11s` cycles.
+Home uses one eligible catalog destination selected once per browser session. The photograph fills the frame with `object-fit: cover`, an authored crop, a directional navy scrim, the promise, two actions, a modern compass, and an in-frame destination badge. “رحلتك تبدأ من هنا / Your journey starts here” sits at the primary decision point; “وجهات أقرب إليك / Destinations closer to you” introduces four small country labels around the compass. Those labels come from the same evidence-backed Hero pool, exclude the featured country, remain stable within the session, and keep a short cross-session anti-repeat history.
+
+The Home route layer is structurally outside the clipped photograph. One continuous SVG path can therefore cross the image and continue into the surrounding page stage. Its original plane silhouette follows a substantial curved path over the shared `16s` travel-slow token rather than oscillating a few pixels. A much sparser global route pattern (`2100 × 1500px`) carries the same travel language into public pages without turning dense content into wallpaper. Light mode reduces its contrast; reduced motion freezes the plane at a legible point while retaining the route.
 
 The compass is a product symbol for guided choice. It appears strongly on Home, in the Surprise interaction, and in miniature while the quiz prepares the next question. Destination and Explore surfaces use lighter route detail.
 
@@ -265,7 +267,7 @@ Rating surfaces remain compact: `44px` star targets, a short optional textarea, 
 
 ### Motion and Accessibility
 
-State feedback uses the centralized fast (`140ms`), normal (`280ms`), and authored (`760ms`) durations. Quiz questions enter from the direction of travel; result cards use a restrained four-card stagger. `prefers-reduced-motion: reduce` disables continuous and decorative animation, removes staggers, and makes state transitions effectively immediate.
+State feedback uses the centralized fast (`140ms`), normal (`280ms`), authored (`760ms`), and travel-slow (`16s`) durations. Quiz questions enter from the direction of travel; result cards use a restrained four-card stagger; the Hero plane alone uses travel-slow for its long route. `prefers-reduced-motion: reduce` disables continuous and decorative animation, removes staggers, and makes state transitions effectively immediate.
 
 Decorative compass, route, and plane graphics are hidden from assistive technology. Interactive surfaces use semantic buttons or links, visible focus, announced validation and async states, and `44px` minimum touch targets where precision matters.
 

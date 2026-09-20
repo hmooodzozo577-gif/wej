@@ -8,6 +8,7 @@ import { AppStateProvider } from '../state/AppStateContext';
 import { Home } from './Home';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { EXCLUDED_COUNTRIES } from '../data/excludedCountries';
+import { I18N } from '../data/i18n';
 
 function renderHome() {
   return render(
@@ -43,5 +44,23 @@ describe('Home hero stat — destination count', () => {
     // changed size for some other reason — the Home test above should still
     // pass regardless, since it reads the same source rather than a literal.
     expect(WORLD_CATALOG.length).toBe(195 - EXCLUDED_COUNTRIES.length);
+  });
+
+  it('keeps the flight path outside the clipping frame and renders the locked travel copy', () => {
+    const { container } = renderHome();
+    expect(container.querySelector('.home-hero-stage > .travel-route-decor')).not.toBeNull();
+    expect(container.querySelector('.home-hero-frame > .travel-route-decor')).toBeNull();
+    expect(screen.getByText(I18N.ar.hero.journeyStarts)).toBeInTheDocument();
+    expect(screen.getByText(I18N.ar.hero.nearbyDestinations)).toBeInTheDocument();
+  });
+
+  it('renders four data-backed compass labels that never repeat the featured destination', () => {
+    const { container } = renderHome();
+    const featuredId = container.querySelector<HTMLAnchorElement>('.hero-destination-badge')!.getAttribute('href')!.split('/').at(-1);
+    const orbitLabels = [...container.querySelectorAll<HTMLElement>('.hero-orbit-destination')];
+    expect(orbitLabels).toHaveLength(4);
+    expect(new Set(orbitLabels.map((label) => label.dataset.destination)).size).toBe(4);
+    expect(orbitLabels.every((label) => label.dataset.destination !== featuredId)).toBe(true);
+    expect(orbitLabels.every((label) => label.tagName === 'SPAN')).toBe(true);
   });
 });

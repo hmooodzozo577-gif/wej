@@ -9,9 +9,8 @@ vi.mock('../telemetry/productDataClient', () => ({ submitFeedback: (payload: unk
 // The Turnstile *loading* logic (script error, timeout, retry) already has
 // dedicated coverage in telemetry/turnstile.test.ts. Here the hook is
 // mocked so these tests can drive FeedbackDialog's own RESPONSE to each
-// state it can report — in particular `failed`, which used to have no
-// representation at all: Submit just stayed disabled forever with no
-// explanation, the reported "cannot be pressed or completed" bug.
+// state it can report — in particular `failed`, which needs a visible
+// explanation and retry path instead of a silently disabled control.
 const useTurnstile = vi.fn();
 vi.mock('../telemetry/turnstile', () => ({ useTurnstile: (...args: unknown[]) => useTurnstile(...args) }));
 
@@ -57,18 +56,9 @@ describe('FeedbackDialog', () => {
     expect(submitFeedback.mock.calls[0]![0]).toMatchObject({ turnstileToken: 'a-real-token' });
   });
 
-  // The reported bug, reproduced at the component level: with Turnstile
-  // required and NOT yet solved, Submit must stay disabled (correct — the
-  // challenge is still the gate) but the traveller must not be left
-  // guessing why. `failed` (the challenge could not load at all) is where
-  // the previous code had literally no branch: no message, no retry, just
-  // a permanently disabled button.
-  //
-  // Acceptance fix — while loading (blocking, not yet failed), the old
-  // code showed NOTHING at all: an invisible, zero-height .turnstile-slot
-  // and a silently disabled button, matching the "cannot press Send"
-  // report with no explanation. A neutral "verifying" hint now fills that
-  // window; it must never look like an error (that's `failed`, distinct).
+  // A required but unfinished challenge is a legitimate temporary gate.
+  // Keep that state distinct from a load failure, explain it neutrally, and
+  // reserve the error/retry treatment for the hook's explicit failed state.
   it('a required-but-unsolved challenge disables Submit and shows a neutral "verifying" hint, not an error', () => {
     useTurnstile.mockReturnValue({ token: undefined, required: true, blocking: true, failed: false, retry: vi.fn() });
     render(<FeedbackDialog lang="en" strings={I18N.en.feedback} />);
@@ -119,6 +109,23 @@ describe('FeedbackDialog', () => {
     expect(screen.getByLabelText(I18N.en.feedback.message)).toHaveValue(typed);
   });
 
+  it('keeps Tab and Shift+Tab focus inside the open dialog', () => {
+    useTurnstile.mockReturnValue(notRequired());
+    render(<FeedbackDialog lang="en" strings={I18N.en.feedback} />);
+    fireEvent.click(screen.getByRole('button', { name: I18N.en.feedback.open }));
+    const dialog = screen.getByRole('dialog');
+    const close = screen.getByRole('button', { name: I18N.en.feedback.close });
+    const file = screen.getByLabelText(`${I18N.en.feedback.screenshot} ${I18N.en.feedback.chooseFile}`);
+
+    close.focus();
+    fireEvent.keyDown(window, { key: 'Tab', shiftKey: true });
+    expect(file).toHaveFocus();
+
+    fireEvent.keyDown(window, { key: 'Tab' });
+    expect(close).toHaveFocus();
+    expect(dialog).toContainElement(document.activeElement as HTMLElement);
+  });
+
   it('explains the one-hour session limit instead of reporting a generic broken form', async () => {
     submitFeedback.mockResolvedValueOnce({ ok: false, data: { error: 'rate_limited' } } as never);
     useTurnstile.mockReturnValue(notRequired());
@@ -151,5 +158,25 @@ describe('FeedbackDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: I18N.ar.feedback.open }));
     expect(screen.getByText(I18N.ar.feedback.verificationFailed)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: I18N.ar.feedback.retryVerification })).toBeInTheDocument();
+  });
+
+  it('explains the minimum message length while the visible Send button is disabled', () => {
+    useTurnstile.mockReturnValue(notRequired());
+    render(<FeedbackDialog lang="ar" strings={I18N.ar.feedback} />);
+    fireEvent.click(screen.getByRole('button', { name: I18N.ar.feedback.open }));
+    const submit = screen.getByRole('button', { name: I18N.ar.feedback.submit });
+    expect(submit).toBeDisabled();
+    expect(screen.getByText(I18N.ar.feedback.messageHint)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(I18N.ar.feedback.message), { target: { value: 'رسالة واضحة تتجاوز الحد الأدنى.' } });
+    expect(submit).toBeEnabled();
+  });
+
+  it('uses localized copy for the custom screenshot picker', () => {
+    useTurnstile.mockReturnValue(notRequired());
+    render(<FeedbackDialog lang="ar" strings={I18N.ar.feedback} />);
+    fireEvent.click(screen.getByRole('button', { name: I18N.ar.feedback.open }));
+    expect(screen.getByText(I18N.ar.feedback.chooseFile)).toBeInTheDocument();
+    expect(screen.getByText(I18N.ar.feedback.noFileSelected)).toBeInTheDocument();
+    expect(screen.getByLabelText(`${I18N.ar.feedback.screenshot} ${I18N.ar.feedback.chooseFile}`)).toHaveAttribute('type', 'file');
   });
 });

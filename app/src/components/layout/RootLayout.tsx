@@ -8,6 +8,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { LocationIntro } from '../LocationIntro';
 import { ProductTelemetry } from '../../telemetry/ProductTelemetry';
+import { TravelBackdrop } from '../TravelBackdrop';
 
 export function RootLayout() {
   const location = useLocation();
@@ -32,6 +33,7 @@ export function RootLayout() {
           here; every other route is unaffected. */}
       {location.pathname !== '/explore' ? <LocationIntro /> : null}
       <main id="app" className="view-enter" key={location.pathname}>
+        <TravelBackdrop />
         <Outlet />
       </main>
       <Footer />

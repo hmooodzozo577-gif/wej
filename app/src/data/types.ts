@@ -307,6 +307,8 @@ export interface HeroStrings {
   eyebrow: string;
   h1: string;
   lead: string;
+  journeyStarts: string;
+  nearbyDestinations: string;
   cta: string;
   cta2: string;
   stat1n: string;
@@ -550,8 +552,11 @@ export interface FeedbackStrings {
   translation: string;
   other: string;
   message: string;
+  messageHint: string;
   email: string;
   screenshot: string;
+  chooseFile: string;
+  noFileSelected: string;
   screenshotError: string;
   submit: string;
   saving: string;
