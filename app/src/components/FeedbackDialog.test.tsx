@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { I18N } from '../data/i18n';
 import { FeedbackDialog } from './FeedbackDialog';
@@ -145,9 +145,12 @@ describe('FeedbackDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: I18N.en.feedback.open }));
     fireEvent.change(screen.getByLabelText(I18N.en.feedback.message), { target: { value: 'A message with more than ten characters.' } });
     const submit = screen.getByRole('button', { name: I18N.en.feedback.submit });
-    fireEvent.click(submit);
-    fireEvent.click(submit);
-    fireEvent.click(submit);
+    // Two native clicks in one browser task reproduce the production race:
+    // React has not committed the `saving` render between these calls.
+    act(() => {
+      submit.click();
+      submit.click();
+    });
     await waitFor(() => expect(submitFeedback).toHaveBeenCalled());
     expect(submitFeedback).toHaveBeenCalledTimes(1);
   });

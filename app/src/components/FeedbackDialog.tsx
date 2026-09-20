@@ -18,6 +18,7 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
   const challenge = useRef<HTMLDivElement | null>(null);
   const opener = useRef<HTMLButtonElement | null>(null);
   const dialog = useRef<HTMLElement | null>(null);
+  const savingLock = useRef(false);
   // Shared with ResultRating/DestinationRating so loading, failure, and retry
   // behavior stays consistent whenever the production challenge is enabled.
   const turnstile = useTurnstile(challenge, open);
@@ -81,26 +82,35 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
   };
 
   const save = async () => {
-    if (message.trim().length < 10 || status === 'saving' || turnstile.blocking) return;
+    if (message.trim().length < 10 || savingLock.current || status === 'saving' || turnstile.blocking) return;
+    // State updates disable the button on the next React commit. This ref is
+    // the same-task lock that rejects a second native click before that render.
+    savingLock.current = true;
     setStatus('saving');
     setFailureCode(null);
-    const result = await submitFeedback({
-      type,
-      message: message.trim(),
-      email: email.trim() || undefined,
-      screenshotDataUrl: screenshot,
-      ...(turnstile.token ? { turnstileToken: turnstile.token } : {}),
-    }, {
-      path: window.location.pathname.replace(/^\/wej/, '') || '/',
-      locale: lang,
-      countryCode,
-    });
-    if (result.ok) {
-      setReference(typeof result.data?.referenceId === 'string' ? result.data.referenceId : null);
-      setStatus('saved');
-    } else {
-      setFailureCode(typeof result.data?.error === 'string' ? result.data.error : null);
+    try {
+      const result = await submitFeedback({
+        type,
+        message: message.trim(),
+        email: email.trim() || undefined,
+        screenshotDataUrl: screenshot,
+        ...(turnstile.token ? { turnstileToken: turnstile.token } : {}),
+      }, {
+        path: window.location.pathname.replace(/^\/wej/, '') || '/',
+        locale: lang,
+        countryCode,
+      });
+      if (result.ok) {
+        setReference(typeof result.data?.referenceId === 'string' ? result.data.referenceId : null);
+        setStatus('saved');
+      } else {
+        setFailureCode(typeof result.data?.error === 'string' ? result.data.error : null);
+        setStatus('failed');
+      }
+    } catch {
       setStatus('failed');
+    } finally {
+      savingLock.current = false;
     }
   };
 
