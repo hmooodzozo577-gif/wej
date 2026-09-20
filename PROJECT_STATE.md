@@ -7,15 +7,16 @@ configuration, and current Git state outrank this document when they differ.
 
 ### Current verified state — 2026-09-20
 
-- State document version: 26.
+- State document version: 27.
 - Working/deployment branch: `claude/marhaba-kxry8l`. The pre-resume local
   work was preserved separately at local branch
   `codex/pre-resume-backup-20260919` before this branch was fast-forwarded to
   the current remote history.
 - Phase 16 (AI) remains CANCELLED/SKIPPED. Phase 17 — UI/UX Evolution's final
-  acceptance implementation is IMPLEMENTED, TESTED, DEPLOYED, and
-  PRODUCTION-VERIFIED. It is READY FOR USER REVIEW, not phase-complete; final
-  user acceptance remains pending. Phase 18 and Phase 21 remain NOT STARTED.
+  acceptance implementation and the approved Destination-page hybrid-design
+  follow-up are IMPLEMENTED, TESTED, DEPLOYED, and PRODUCTION-VERIFIED. Phase
+  17 is READY FOR USER REVIEW, not phase-complete; final user acceptance
+  remains pending. Phase 18 and Phase 21 remain NOT STARTED.
 - The user reports that Contact/Suggestion/Report submission failed in their
   production session. A fresh Playwright production session on 2026-09-20
   enabled Send and received HTTP 201 with reference `WJH-20260919-F14973`, so
@@ -49,11 +50,11 @@ configuration, and current Git state outrank this document when they differ.
   confidence, insufficient-data behavior, methodology details, and sources are
   preserved. Results and destination rating surfaces are compact without
   removing validation, submission, success, or failure behavior.
-- Final local verification: frontend 935/935 and Worker 202/202 tests pass;
+- Final local verification: frontend 938/938 and Worker 202/202 tests pass;
   frontend and Worker TypeScript are clean; frontend and Worker oxlint are
   clean; the production frontend build and Worker Wrangler dry-run pass. No
-  runtime dependency was added; the current build reports 13.60 kB gzip CSS
-  and 622.81 kB gzip for the primary JS chunk. Local Playwright review covered
+  runtime dependency was added; the current build reports 14.68 kB gzip CSS
+  and 616.38 kB gzip for the primary JS chunk. Local Playwright review covered
   Arabic/English, RTL/LTR, light/dark, 390/1320/1440px, expanded mobile menu,
   Home, Explore, Destination, Purpose, and Quiz with zero horizontal overflow.
   The independent Impeccable finish reviewer returned `ship` after scoring all
@@ -76,11 +77,12 @@ configuration, and current Git state outrank this document when they differ.
 - The pre-Phase-17 acceptance baseline is USER-VERIFIED: the same physical
   tablet location retest succeeded; Contact, Suggestion, and Report persist to
   D1 in production; verified Arabic city descriptions render with attribution.
-- Delivery commit: `421f8219f685985f2370a187edc96fd1f5677812` on
-  `claude/marhaba-kxry8l`. GitHub Pages workflow run `35478292164` and
-  Cloudflare Worker workflow run `35478292190` both concluded success and were
-  verified against production. Final USER ACCEPTANCE remains pending; Phase 17
-  is not closed.
+- Latest frontend delivery commit: `e3e9f8a` on
+  `claude/marhaba-kxry8l`. GitHub Pages workflow run `35484971643` concluded
+  success and the Destination follow-up was verified against production in
+  Arabic/RTL/dark phone and English/LTR/light desktop states. Worker code did
+  not change, so no Worker deployment was required. Final USER ACCEPTANCE
+  remains pending; Phase 17 is not closed.
 
 ### Historical implementation notes
 
@@ -1098,9 +1100,16 @@ language switcher, and the full panel set above. Two things are still open:
 - Photos now appear on Explore and Results cards as well as destination heroes.
   Card and hero crops are audited separately; per-country object-position
   overrides correct the reviewed edge cases without replacing accepted layout.
-- Every current image was visually reviewed on 2026-09-12. It depicts an
+- Every current image was visually reviewed under the stricter policy on
+  2026-09-20. It depicts an
   in-country landmark, notable cityscape, nationally important site, or
   representative natural landscape.
+- Thirty weak or ambiguous assets were replaced in the latest audit. Every
+  country now also has a separate 960px WebP card derivative; cards never
+  download the full Hero file, while Home and Destination heroes use responsive
+  card/Hero source sets. Across all 194 countries the card set is 64.6% smaller
+  than sending the Hero set to those surfaces, and every derivative is below
+  200 kB.
 - The old Commons free-search path allowed embassies abroad, US place-name
   homonyms, maps, documents, toys, vehicles, and random objects. The pipeline
   now starts from the human-edited Wikivoyage country article, retrieves exact
@@ -1109,7 +1118,8 @@ language switcher, and the full panel set above. Two things are still open:
 - `app/scripts/destinationImageAudit.json` records the approved source for
   every country. Tests fail if a regenerated manifest silently differs.
 - Manifest: `app/src/data/generated/destinationImages.json`.
-- Assets: `app/public/destinations/*.webp`.
+- Assets: `app/public/destinations/*.webp` for heroes and
+  `app/public/destinations/cards/*.webp` for cards/mobile candidates.
 - Status: implemented, visually reviewed, deployed, and production-verified.
 
 ## Architecture map
@@ -1238,8 +1248,9 @@ see "Phase 16 — AI API Integration" above. Phase 17 is implemented, deployed,
 and production-verified. Current order:
 
 0. **PHASE 17 DEPLOYMENT RESOLVED / PRODUCTION-VERIFIED.** Pages run
-   `35468405011` deployed commit `f7807c4`; the production 16-case browser
-   matrix and interaction checks passed. Worker deployment was unnecessary
+   `35484971643` deployed the Destination follow-up commit `e3e9f8a`; the
+   production responsive-image and bilingual/theme checks passed in addition
+   to the existing 16-case browser matrix. Worker deployment was unnecessary
    because Worker code did not change.
 1. Obtain final user acceptance for Phase 17. Do not call the phase complete
    and do not begin Phase 18 before that acceptance.
