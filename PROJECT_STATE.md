@@ -5,25 +5,39 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-### Current verified state — 2026-09-19
+### Current verified state — 2026-09-20
 
-- State document version: 23.
+- State document version: 25.
 - Working/deployment branch: `claude/marhaba-kxry8l`. The pre-resume local
   work was preserved separately at local branch
   `codex/pre-resume-backup-20260919` before this branch was fast-forwarded to
   the current remote history.
-- Phase 16 (AI) remains CANCELLED/SKIPPED. Phase 17 — UI/UX Evolution is now
-  IMPLEMENTED, TEST-VERIFIED, DEPLOYED, and PRODUCTION-VERIFIED; it is READY
-  FOR FINAL USER ACCEPTANCE. Phase 18 and Phase 21 remain NOT STARTED.
-- The selected identity is **Travel Briefing Folio / ملف الرحلة التحريري**:
-  warm ruled paper and deep ink surfaces, restrained terracotta/teal accents,
-  strong catalog-backed destination imagery, low-radius folio geometry, and
-  compact evidence-first layouts. `PRODUCT.md` records product truth and
-  `DESIGN.md` is the current design-system reference.
+- Phase 16 (AI) remains CANCELLED/SKIPPED. Phase 17 — UI/UX Evolution's final
+  acceptance implementation is COMPLETE LOCALLY and READY FOR DEPLOYMENT; it
+  is not yet production-verified or user-accepted. Phase 18 and Phase 21 remain
+  NOT STARTED.
+- The user reports that Contact/Suggestion/Report submission failed in their
+  production session. A fresh Playwright production session on 2026-09-20
+  enabled Send and received HTTP 201 with reference `WJH-20260919-F14973`, so
+  the endpoint and D1 write path are VERIFIED for a clean session. The generic
+  client failure was replaced locally with specific preserved-input messages
+  for rate limit, challenge, and product-data availability failures; the exact
+  historical user-session cause remains UNKNOWN. Fresh production submission
+  of all three feedback types is still required after deployment.
+- The selected identity is **Cinematic Compass Atlas / أطلس البوصلة
+  السينمائي**: verified destination photography, a modern compass and quiet
+  route cartography, ink/navy and warm paper grounds, restrained orange
+  wayfinding, and evidence-first information layouts. `PRODUCT.md` records
+  product truth; `DESIGN.md` and `.impeccable/design.json` record the built
+  system.
 - Phase 17 covers the shared shell and visual system plus Home, Purpose/Quiz,
   Results, Explore, Destination, forms, async states, light/dark/system themes,
-  and responsive AR/EN layouts. The Home hero now uses a real destination
-  image with eager priority; repeated catalog imagery remains lazy-loaded.
+  and responsive AR/EN layouts. Home now selects one eligible hero destination
+  per browser session from a 21-country sourced/editorially-ready pool, keeps
+  it stable across navigation/language/theme, and avoids the four most recent
+  session choices. IL/ISR stays excluded; Monaco remains valid. The compass is
+  shared by Home, Surprise, and quiz loading; reduced motion disables the
+  decorative motion.
 - The page contains exactly one `مناسب لـ / Suitable for` section above
   Additional information. It shows only the highest-rated eligible purpose by
   default; an accessible 44px Show more/less control exposes the remaining
@@ -31,31 +45,30 @@ configuration, and current Git state outrank this document when they differ.
   confidence, insufficient-data behavior, methodology details, and sources are
   preserved. Results and destination rating surfaces are compact without
   removing validation, submission, success, or failure behavior.
-- Final local verification: frontend 926/926 and Worker 201/201 tests pass;
+- Final local verification: frontend 935/935 and Worker 202/202 tests pass;
   frontend and Worker TypeScript are clean; frontend and Worker oxlint are
   clean; the production frontend build and Worker Wrangler dry-run pass. No
-  runtime dependency was added; the current build reports 10.53 kB gzip CSS
-  and 622.45 kB gzip for the primary JS chunk. Playwright browser QA covered
-  16 representative AR/EN,
-  RTL/LTR, phone/tablet/desktop, light/dark combinations locally and the same
-  16-case matrix against production, both with zero horizontal overflow or
-  alert errors; system mode followed both dark and light OS
-  preferences. Keyboard disclosure, form enablement, 44px touch targets, and
-  corrected contrast were verified in the browser.
+  runtime dependency was added; the current build reports 13.60 kB gzip CSS
+  and 622.81 kB gzip for the primary JS chunk. Local Playwright review covered
+  Arabic/English, RTL/LTR, light/dark, 390/1320/1440px, expanded mobile menu,
+  Home, Explore, Destination, Purpose, and Quiz with zero horizontal overflow.
+  The independent Impeccable finish reviewer returned `ship` after scoring all
+  four requested correction items resolved.
 - No recommendation scoring, question branching, geolocation behavior,
-  privacy rules, country exclusion, provider logic, or Worker code changed.
-  Turnstile remains intentionally inactive. AI remains absent; visa claims,
-  Traveler Budget, and fabricated prices remain prohibited/deferred as before.
+  privacy rules, country exclusion, or provider logic changed. Worker city
+  narrative output is now limited to two complete sentences/280 characters,
+  with the frontend applying the same bound to old cached responses.
+  Turnstile remains intentionally inactive. AI remains absent; fabricated
+  visa difficulty, Traveler Budget, and fabricated prices remain prohibited.
+  `VISA_RESEARCH.md` records that a global verified visa answer still requires
+  a provider contract or maintained official-source registry.
 - The pre-Phase-17 acceptance baseline is USER-VERIFIED: the same physical
   tablet location retest succeeded; Contact, Suggestion, and Report persist to
   D1 in production; verified Arabic city descriptions render with attribution.
-- Delivery commit: `f7807c4a15e7fc0d49460f446c550a4387b8928c` on
-  `claude/marhaba-kxry8l`. Pages workflow run `35468405011` concluded success
-  and deployed the matching Phase 17 CSS/JS. Fresh production browser checks
-  verified Home, Purpose, Quiz, Results, Explore, Destination, bilingual theme
-  behavior, suitability expansion, 44px interaction targets, and feedback
-  enablement. Worker deployment was not required because `worker/**` is
-  unchanged. Final USER ACCEPTANCE is still pending; the phase is not closed.
+- The prior deployed baseline remains commit
+  `f7807c4a15e7fc0d49460f446c550a4387b8928c`; the current final-acceptance
+  implementation has not yet been pushed or deployed. Final USER ACCEPTANCE
+  remains pending; Phase 17 is not closed.
 
 ### Historical implementation notes
 

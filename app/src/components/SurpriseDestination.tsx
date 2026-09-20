@@ -30,13 +30,13 @@ import { compassPointOf } from '../data/geo';
 import { countryInfoOf } from '../data/worldCatalog';
 import type { LocationCoords } from '../state/types';
 import { DestinationImage } from './DestinationImage';
-import { FlagChip } from './flags/FlagIcon';
 import { Icon } from './Icon';
 import { trackEvent } from '../telemetry/productDataClient';
+import { CompassMark } from './CompassMark';
+import { TravelRouteDecor } from './TravelRouteDecor';
 
 const RECENT_STORAGE_KEY = 'wejhaty.surprise.recent';
-const REEL_STEP_MS = 100;
-const REEL_STEPS = 8;
+const COMPASS_REVEAL_MS = 760;
 
 function recentIds(): Set<string> {
   try {
@@ -81,17 +81,13 @@ export function SurpriseDestination({
    *  to compute a real bearing to the chosen destination. */
   origin?: LocationCoords | null;
 }) {
-  const [open, setOpen] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [selected, setSelected] = useState<CatalogEntry | null>(null);
-  const [reelEntry, setReelEntry] = useState<CatalogEntry | null>(null);
   const recent = useRef(recentIds());
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const interval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => () => {
     if (timer.current) clearTimeout(timer.current);
-    if (interval.current) clearInterval(interval.current);
   }, []);
 
   const visibleSelection = selected && candidates.some((candidate) => candidate.id === selected.id) ? selected : null;
@@ -113,7 +109,6 @@ export function SurpriseDestination({
     }
     const winner = available[randomIndex(available.length)]!;
 
-    setOpen(true);
     setSpinning(true);
     setSelected(null);
 
@@ -121,38 +116,27 @@ export function SurpriseDestination({
       recent.current.add(winner.id);
       saveRecent(recent.current);
       trackEvent('surprise_result', { countryCode: winner.countryCode }, { path: '/explore', locale: lang, countryCode: winner.countryCode });
-      setReelEntry(winner);
       setSelected(winner);
       setSpinning(false);
-      interval.current = null;
       timer.current = null;
     };
 
     if (prefersReducedMotion() || candidates.length < 2) {
-      // No flashing reel for a reduced-motion preference — a single short
-      // pause (so the live region still has "choosing…" to announce) then
-      // land directly on the real winner.
       timer.current = setTimeout(finish, 250);
       return;
     }
-
-    let step = 0;
-    interval.current = setInterval(() => {
-      step += 1;
-      if (step >= REEL_STEPS) {
-        if (interval.current) clearInterval(interval.current);
-        finish();
-        return;
-      }
-      setReelEntry(candidates[randomIndex(candidates.length)]!);
-    }, REEL_STEP_MS);
+    timer.current = setTimeout(finish, COMPASS_REVEAL_MS);
   };
 
   const direction = visibleSelection ? directionOf(visibleSelection) : null;
 
   return (
     <section className="surprise-card" aria-labelledby="surprise-title">
-      <div>
+      <TravelRouteDecor variant="explore" />
+      <div className={`surprise-compass${spinning ? ' spinning' : ' landed'}`} aria-hidden="true">
+        <CompassMark size={96} />
+      </div>
+      <div className="surprise-copy">
         <h2 id="surprise-title" className="display">{strings.surpriseTitle}</h2>
         <p>{strings.surpriseBody}</p>
         <button type="button" className="btn btn-gold" onClick={spin} disabled={!candidates.length || spinning}>
@@ -160,38 +144,28 @@ export function SurpriseDestination({
         </button>
       </div>
 
-      {open ? (
-        <div className="surprise-stage">
-          <div className={`surprise-reel${spinning ? ' spinning' : ' landed'}`} aria-hidden="true">
-            {reelEntry ? <FlagChip dest={reelEntry} width={54} height={40} /> : <span className="surprise-reel-placeholder" />}
-          </div>
-
-          {/* One live region for the whole outcome, so a screen reader hears
-              "choosing…" and then the destination — not every cycled flag. */}
-          <div className="surprise-outcome" aria-live="polite" aria-busy={spinning}>
-            {spinning ? (
-              <strong>{strings.surpriseSpinning}</strong>
-            ) : visibleSelection ? (
-              <div className="surprise-result">
-                <DestinationImage destination={visibleSelection} lang={lang} />
-                <strong>{nameOf(visibleSelection, lang)}</strong>
-                {direction ? (
-                  <span className="meta-chip surprise-direction">
-                    <Icon name="compass" size={13} stroke={2.4} /> {direction}
-                  </span>
-                ) : null}
-                <Link
-                  className="btn btn-primary btn-sm"
-                  to={`/destination/${visibleSelection.id}`}
-                  state={{ navigation: { source: 'surprise', ids: [visibleSelection.id], index: 0 } }}
-                >
-                  {strings.surpriseOpen} <Icon name="arrowEnd" size={15} />
-                </Link>
-              </div>
+      <div className="surprise-outcome" aria-live="polite" aria-busy={spinning}>
+        {spinning ? (
+          <strong>{strings.surpriseSpinning}</strong>
+        ) : visibleSelection ? (
+          <div className="surprise-result">
+            <DestinationImage destination={visibleSelection} lang={lang} />
+            <strong>{nameOf(visibleSelection, lang)}</strong>
+            {direction ? (
+              <span className="meta-chip surprise-direction">
+                <Icon name="compass" size={13} stroke={2.4} /> {direction}
+              </span>
             ) : null}
+            <Link
+              className="btn btn-primary btn-sm"
+              to={`/destination/${visibleSelection.id}`}
+              state={{ navigation: { source: 'surprise', ids: [visibleSelection.id], index: 0 } }}
+            >
+              {strings.surpriseOpen} <Icon name="arrowEnd" size={15} />
+            </Link>
           </div>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </section>
   );
 }

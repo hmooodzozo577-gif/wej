@@ -32,6 +32,18 @@ function workerBaseUrl(): string | undefined {
 }
 
 const LOOKUP_TIMEOUT_MS = 9000;
+const CITY_SUMMARY_BUDGET = 280;
+
+export function compactCitySummary(value: string): string {
+  const clean = value.replace(/\s+/g, ' ').trim();
+  const sentences = clean.match(/[^.!؟۔]+[.!؟۔]+(?:\s+|$)/g)?.map((sentence) => sentence.trim()) ?? [];
+  const two = sentences.slice(0, 2).join(' ');
+  if (two && two.length <= CITY_SUMMARY_BUDGET) return two;
+  if (clean.length <= CITY_SUMMARY_BUDGET) return clean;
+  const window = clean.slice(0, CITY_SUMMARY_BUDGET + 1);
+  const lastSpace = window.lastIndexOf(' ');
+  return `${clean.slice(0, lastSpace > 0 ? lastSpace : CITY_SUMMARY_BUDGET).trim()}…`;
+}
 
 /** Per-page-load memo. Reopening a city card, or coming back to a country
  *  during the same visit, must not ask again — the answer cannot have
@@ -77,7 +89,7 @@ export async function lookupCityDescriptions(
       // Only a verified description is kept. Every other status means the
       // card shows facts alone, so there is nothing to store.
       if (description && description.status === 'ok' && description.summary) {
-        result.set(description.cityName, { ...description, summary: toLatinDigits(description.summary) });
+        result.set(description.cityName, { ...description, summary: compactCitySummary(toLatinDigits(description.summary)) });
       }
     }
     memo.set(memoKey, result);

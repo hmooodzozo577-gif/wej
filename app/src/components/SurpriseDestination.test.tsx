@@ -43,40 +43,30 @@ describe('SurpriseDestination', () => {
   });
 
 
-  // Acceptance item #4 — the reel is restored, and the later fixes that
-  // arrived with the compass pass survive the rollback.
-  describe('the restored flag reel', () => {
+  describe('the compact compass reveal', () => {
     const japan = WORLD_CATALOG.find((country) => country.id === 'japan')!;
 
-    it('renders a flag reel, and none of the compass dial it replaced', () => {
+    it('renders the compass identity at rest instead of waiting for activation', () => {
       vi.useFakeTimers();
       const { container } = render(
         <MemoryRouter><SurpriseDestination candidates={[japan]} lang="en" strings={I18N.en.explore} /></MemoryRouter>,
       );
-      fireEvent.click(screen.getByRole('button', { name: I18N.en.explore.surpriseSpin }));
-      act(() => vi.advanceTimersByTime(900));
-      // A real flag in the reel, not an abstract disc.
-      expect(container.querySelector('.surprise-reel svg')).not.toBeNull();
-      // And nothing left of the rejected design.
-      expect(container.querySelector('.surprise-compass')).toBeNull();
-      expect(container.querySelector('.compass-needle')).toBeNull();
-      expect(container.querySelector('.compass-ticks')).toBeNull();
-      expect(container.querySelector('.compass-window')).toBeNull();
+      expect(container.querySelector('.surprise-compass .compass-mark')).not.toBeNull();
+      expect(container.querySelector('.surprise-reel')).toBeNull();
     });
 
-    it('keeps the reel out of the accessibility tree and announces the outcome once', () => {
+    it('keeps the decorative compass out of the accessibility tree and announces the outcome once', () => {
       vi.useFakeTimers();
       const { container } = render(
         <MemoryRouter><SurpriseDestination candidates={[japan]} lang="en" strings={I18N.en.explore} /></MemoryRouter>,
       );
       fireEvent.click(screen.getByRole('button', { name: I18N.en.explore.surpriseSpin }));
-      // The cycled flags must never be announced; only the outcome region is live.
-      expect(container.querySelector('.surprise-reel')).toHaveAttribute('aria-hidden', 'true');
+      expect(container.querySelector('.surprise-compass')).toHaveAttribute('aria-hidden', 'true');
       const live = container.querySelectorAll('[aria-live]');
       expect(live).toHaveLength(1);
       expect(live[0]).toHaveClass('surprise-outcome');
       act(() => vi.advanceTimersByTime(900));
-      expect(container.querySelector('.surprise-reel')).toHaveAttribute('aria-hidden', 'true');
+      expect(container.querySelector('.surprise-compass')).toHaveAttribute('aria-hidden', 'true');
     });
 
     it('survives a blocked sessionStorage instead of throwing out of the click handler', () => {

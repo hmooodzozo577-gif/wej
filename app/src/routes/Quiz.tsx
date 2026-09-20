@@ -12,6 +12,7 @@ import { trackEvent } from '../telemetry/productDataClient';
 import { PassportSelect } from '../components/PassportSelect';
 import { useVisaProviderActive } from '../visa/useVisaRequirements';
 import { waitForLocationSettle } from '../state/waitForLocationSettle';
+import { CompassMark } from '../components/CompassMark';
 
 const OPTIONAL_RESULTS_AFTER = 5;
 const ANSWER_TRANSITION_MS = 140;
@@ -26,6 +27,7 @@ export function Quiz() {
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
   const [advancing, setAdvancing] = useState(false);
+  const [motionDirection, setMotionDirection] = useState<'forward' | 'back'>('forward');
   // Phase 16 workstream A — the geolocation/quiz race condition. See
   // waitForLocationSettle.ts for the full root-cause explanation: this is
   // shown only in the narrow window where the quiz would otherwise finish
@@ -132,6 +134,7 @@ export function Quiz() {
     }
 
     setAdvancing(true);
+    setMotionDirection('forward');
     timer.current = setTimeout(() => {
       if (nextAfterAnswer) dispatch({ type: 'NEXT_QUESTION' });
       else requestResults();
@@ -159,7 +162,6 @@ export function Quiz() {
 
       {passportStep ? (
         <div className="q-card quiz-passport">
-          <div className="q-eyebrow">{purposeName}</div>
           <h2 className="q-text">{t.passport.title}</h2>
           <p>{t.passport.body}</p>
           {/* Acceptance item #5 — the explanation, in the order a traveller
@@ -201,7 +203,6 @@ export function Quiz() {
         </div>
       ) : showCheckpoint ? (
         <div className="q-card quiz-checkpoint">
-          <div className="q-eyebrow">{purposeName}</div>
           <h2 className="q-text">{t.quiz.checkpointTitle}</h2>
           <p>{t.quiz.checkpointBody}</p>
           <div className="quiz-checkpoint-actions">
@@ -222,12 +223,12 @@ export function Quiz() {
       ) : (
         <>
           <div
-            className="q-card"
+            key={question.id}
+            className={`q-card quiz-question-card motion-${motionDirection}`}
             role="radiogroup"
             aria-label={lang === 'ar' ? question.text.ar : question.text.en}
             aria-busy={advancing}
           >
-            <div className="q-eyebrow">{purposeName}</div>
             <h2 className="q-text">{lang === 'ar' ? question.text.ar : question.text.en}</h2>
             <div className={optionsClass}>
               {question.options.map((option) => (
@@ -242,9 +243,9 @@ export function Quiz() {
             </div>
             <div className="quiz-next-status" aria-live="polite">
               {waitingForLocation ? (
-                <><span className="quiz-spinner" aria-hidden="true" /> {t.quiz.waitingForLocation}</>
+                <><CompassMark className="quiz-spinner" size={22} /> {t.quiz.waitingForLocation}</>
               ) : advancing ? (
-                <><span className="quiz-spinner" aria-hidden="true" /> {t.quiz.preparingNext}</>
+                <><CompassMark className="quiz-spinner" size={22} /> {t.quiz.preparingNext}</>
               ) : null}
             </div>
           </div>
@@ -252,7 +253,10 @@ export function Quiz() {
             <button
               type="button"
               className="btn btn-ghost"
-              onClick={() => dispatch({ type: 'PREV_QUESTION' })}
+              onClick={() => {
+                setMotionDirection('back');
+                dispatch({ type: 'PREV_QUESTION' });
+              }}
               disabled={qIndex === 0 || advancing}
             >
               <Icon name="arrowStart" size={16} /> {t.quiz.back}

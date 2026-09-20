@@ -1,22 +1,25 @@
 // Ports renderHome() from wejhaty.html.
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { nameOf } from '../data/destinationText';
 import { PURPOSES } from '../data/purposes';
 import { Icon } from '../components/Icon';
 import { DestinationImage } from '../components/DestinationImage';
+import { CompassMark } from '../components/CompassMark';
+import { TravelRouteDecor } from '../components/TravelRouteDecor';
+import { HERO_DESTINATION_POOL, selectSessionHero } from '../home/heroDestination';
 
 export function Home() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { dispatch } = useAppState();
+  const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
   const h = t.hero;
   const how = t.how;
   const pu = t.purposes;
-  const featuredDestination = WORLD_CATALOG.find((destination) => destination.countryCode === 'JP') ?? WORLD_CATALOG[0];
+  const [featuredDestination] = useState(() => selectSessionHero(HERO_DESTINATION_POOL));
 
   // Ports the header's `go('how')` special case: land on Home, then smooth
   // -scroll to #howSection.
@@ -35,43 +38,49 @@ export function Home() {
 
   return (
     <>
-      <section className="hero">
-        <div className="container hero-grid">
-          <div className="hero-copy">
-            <h1 className="display">{h.h1}</h1>
-            <p className="lead">{h.lead}</p>
-            <div className="hero-cta-row">
-              <button type="button" className="btn btn-gold" onClick={() => navigate('/purpose')}>
-                <Icon name="compass" size={18} /> {h.cta}
-              </button>
-              <button type="button" className="btn btn-ghost" onClick={() => navigate('/explore')}>
-                {h.cta2}
-              </button>
-            </div>
-            <div className="hero-stats">
-              <div className="hero-stat">
-                {/* Stale "30+" (from the original static copy) replaced with
-                    the real catalog size, so this never drifts again. */}
-                <b>{WORLD_CATALOG.length}+</b>
-                <span>{h.stat1l}</span>
-              </div>
-              <div className="hero-stat">
-                <b>{h.stat2n}</b>
-                <span>{h.stat2l}</span>
-              </div>
-              <div className="hero-stat">
-                <b>{h.stat3n}</b>
-                <span>{h.stat3l}</span>
-              </div>
-            </div>
-          </div>
-          <div className="hero-visual hero-folio">
+      <section className="hero home-hero-cinematic">
+        <div className="container">
+          <div className="home-hero-frame">
             <DestinationImage destination={featuredDestination} lang={lang} className="hero-folio-image" priority />
-            <div className="hero-folio-caption">
-              <span>{h.eyebrow}</span>
-              <strong>{nameOf(featuredDestination, lang)}</strong>
+            <TravelRouteDecor variant="home" />
+            <div className="home-hero-scrim" />
+            <div className="hero-grid">
+              <div className="hero-copy">
+                <h1 className="display">{h.h1}</h1>
+                <p className="hero-engine-label">{h.eyebrow}</p>
+                <p className="lead">{h.lead}</p>
+                <div className="hero-cta-row">
+                  <button type="button" className="btn btn-gold" onClick={() => navigate('/purpose')}>
+                    <Icon name="compass" size={18} /> {h.cta}
+                  </button>
+                  <button type="button" className="btn btn-ghost" onClick={() => navigate('/explore')}>
+                    {h.cta2}
+                  </button>
+                </div>
+                <div className="hero-stats">
+                  <div className="hero-stat">
+                    <b>{WORLD_CATALOG.length}+</b>
+                    <span>{h.stat1l}</span>
+                  </div>
+                  <div className="hero-stat">
+                    <b>{h.stat2n}</b>
+                    <span>{h.stat2l}</span>
+                  </div>
+                  <div className="hero-stat">
+                    <b>{h.stat3n}</b>
+                    <span>{h.stat3l}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="home-hero-compass">
+                <CompassMark size={190} />
+              </div>
+              <Link className="hero-destination-badge" to={`/destination/${featuredDestination.id}`}>
+                <span>{lang === 'ar' ? 'وجهة من الكتالوج' : 'From the catalog'}</span>
+                <strong>{nameOf(featuredDestination, lang)}</strong>
+                <Icon name="arrowEnd" size={18} />
+              </Link>
             </div>
-            <div className="hero-folio-index" aria-hidden="true">01</div>
           </div>
         </div>
       </section>
@@ -110,25 +119,21 @@ export function Home() {
           </div>
           <div className="purpose-grid">
             {PURPOSES.map((p) => (
-              <div
+              <button
                 key={p.id}
-                className="purpose-card"
-                role="button"
-                tabIndex={0}
+                type="button"
+                className={`purpose-card${state.purpose === p.id ? ' selected' : ''}`}
+                aria-pressed={state.purpose === p.id}
                 onClick={() => openPurposePreview(p.id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openPurposePreview(p.id);
-                  }
-                }}
               >
+                <span className="purpose-selected-mark" aria-hidden="true">✓</span>
                 <div className="purpose-icon">
                   <Icon name={p.icon} size={22} />
                 </div>
                 <h3>{pu[p.id].n}</h3>
                 <p>{pu[p.id].d}</p>
-              </div>
+                <Icon name="arrowEnd" size={17} className="purpose-arrow" />
+              </button>
             ))}
           </div>
         </div>

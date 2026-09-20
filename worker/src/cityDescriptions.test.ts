@@ -161,6 +161,11 @@ describe('trimming', () => {
     const trimmed = trimToSentences(arabic, 150);
     expect(trimmed.length).toBeLessThanOrEqual(151);
   });
+
+  it('keeps the narrative compact at no more than two complete sentences', () => {
+    const text = 'First useful sentence. Second useful sentence. Third sentence belongs in the source article.';
+    expect(trimToSentences(text)).toBe('First useful sentence. Second useful sentence.');
+  });
 });
 
 describe('request validation', () => {

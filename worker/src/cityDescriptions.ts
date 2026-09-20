@@ -53,7 +53,7 @@ export const MATCH_RADIUS_KM = 45;
 /** Below this the "extract" is a stub, not a description. */
 const MIN_SUMMARY_LENGTH = 80;
 /** Descriptions are trimmed to whole sentences within this budget. */
-const MAX_SUMMARY_LENGTH = 420;
+const MAX_SUMMARY_LENGTH = 280;
 // Acceptance fix (Issue 3 diagnosis) — this is the ONLY outbound
 // third-party network call in the Worker (every other endpoint reads its
 // own bundled/D1 data), yet it had the SHORTEST timeout in the whole
@@ -116,6 +116,11 @@ export function referenceCoordinates(countryCode: string, cityName: string): [nu
  *  mid-word and never appends an ellipsis to a sentence that was complete. */
 export function trimToSentences(text: string, budget = MAX_SUMMARY_LENGTH): string {
   const clean = text.replace(/\s+/g, ' ').trim();
+  const sentences = clean.match(/[^.!؟۔]+[.!؟۔]+(?:\s+|$)/g)?.map((sentence) => sentence.trim()) ?? [];
+  if (sentences.length >= 2) {
+    const twoSentenceSummary = sentences.slice(0, 2).join(' ');
+    if (twoSentenceSummary.length <= budget) return twoSentenceSummary;
+  }
   if (clean.length <= budget) return clean;
   const window = clean.slice(0, budget + 1);
   // Arabic full stop, Arabic question mark and the Latin sentence enders.

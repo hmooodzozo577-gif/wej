@@ -12,6 +12,7 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
   const [screenshot, setScreenshot] = useState<string | undefined>();
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'failed'>('idle');
   const [reference, setReference] = useState<string | null>(null);
+  const [failureCode, setFailureCode] = useState<string | null>(null);
   const [fileError, setFileError] = useState(false);
   const challenge = useRef<HTMLDivElement | null>(null);
   const opener = useRef<HTMLButtonElement | null>(null);
@@ -59,6 +60,7 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
   const save = async () => {
     if (message.trim().length < 10 || status === 'saving' || turnstile.blocking) return;
     setStatus('saving');
+    setFailureCode(null);
     const result = await submitFeedback({
       type,
       message: message.trim(),
@@ -73,7 +75,10 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
     if (result.ok) {
       setReference(typeof result.data?.referenceId === 'string' ? result.data.referenceId : null);
       setStatus('saved');
-    } else setStatus('failed');
+    } else {
+      setFailureCode(typeof result.data?.error === 'string' ? result.data.error : null);
+      setStatus('failed');
+    }
   };
 
   return (
@@ -144,7 +149,17 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
                     <button type="button" className="btn btn-ghost btn-sm" onClick={turnstile.retry}>{strings.retryVerification}</button>
                   </p>
                 ) : null}
-                {status === 'failed' ? <p className="form-error" role="alert">{strings.failed}</p> : null}
+                {status === 'failed' ? (
+                  <p className="form-error" role="alert">
+                    {failureCode === 'rate_limited'
+                      ? strings.rateLimited
+                      : failureCode === 'challenge_failed'
+                        ? strings.challengeRejected
+                        : failureCode === 'product_data_unavailable'
+                          ? strings.serviceUnavailable
+                          : strings.failed}
+                  </p>
+                ) : null}
                 <button type="submit" className="btn btn-primary" disabled={message.trim().length < 10 || status === 'saving' || turnstile.blocking}>
                   {status === 'saving' ? strings.saving : strings.submit}
                 </button>

@@ -9,9 +9,16 @@ const base = enJson as I18nDict;
 
 export const EN: I18nDict = {
   ...base,
+  footer: 'Destination data is a reference; verify official requirements and changing information before travel.',
+  disclaimer: 'Wejhaty recommendations are guidance based on your answers and sourced public data. Verify official requirements, prices, and changing information before travel.',
+  hero: {
+    ...base.hero,
+    eyebrow: 'A travel recommendation engine, no account required',
+    lead: 'Answer a few questions and we will rank destinations around your priorities, with a clear reason behind every result.',
+  },
   results: {
     ...base.results,
-    visaGeneralNote: 'General reference only, not personalized to your nationality.',
+    visaGeneralNote: 'General reference only, not personalized to your nationality. Check visa requirements with the official source before travel.',
     proximityTieBreak: 'Proximity to your current location was included because you said distance matters.',
     proximityUnavailable: 'You said proximity matters, but location was unavailable, so distance did not affect these results.',
     recommendationMethodNote: 'Match percentages are estimates calculated from your answers and sourced international indicators. Missing values use dataset medians and do not guarantee a travel experience.',
@@ -40,6 +47,7 @@ export const EN: I18nDict = {
   },
   explore: {
     ...base.explore,
+    sub: 'Browse every destination in the catalog, or use search and filters to find what fits.',
     sort: 'Sort',
     sortDefault: 'Default order',
     sortNameAsc: 'Name: A–Z',
@@ -52,9 +60,9 @@ export const EN: I18nDict = {
     sortFarthest: 'Farthest from me',
     sortDistanceLocked: 'Share your location to enable sorting by nearest and farthest.',
     surpriseTitle: 'Surprise me',
-    surpriseBody: 'Let the wheel choose a random country from the visible results.',
-    surpriseSpin: 'Spin the wheel',
-    surpriseAgain: 'Spin again',
+    surpriseBody: 'Let the compass choose a random country from the visible results.',
+    surpriseSpin: 'Move the compass',
+    surpriseAgain: 'Choose another',
     surpriseOpen: 'Explore country',
     surpriseSpinning: 'Choosing your destination…',
     surpriseDirections: {
@@ -90,6 +98,9 @@ export const EN: I18nDict = {
     thanks: 'Your message has been received. Thank you.',
     reference: 'Reference',
     failed: 'The message could not be sent. Please try again later.',
+    rateLimited: 'This session has reached the limit of 5 messages per hour. Your text is preserved; try again after an hour.',
+    challengeRejected: 'Security verification did not succeed. Complete it again, then retry sending.',
+    serviceUnavailable: 'Message intake is temporarily unavailable. Your text is preserved; try again later.',
     verificationFailed: 'Verification could not load. Check your connection and try again.',
     retryVerification: 'Retry verification',
     verifyingChallenge: 'Verifying you’re not a robot…',
@@ -101,7 +112,8 @@ export const EN: I18nDict = {
   },
   detail: {
     ...base.detail,
-    visaGeneralNote: 'General reference only, not personalized to your nationality — Wejhaty does not have verified per-nationality visa data.',
+    visa: 'Visa information',
+    visaGeneralNote: 'General reference only, not personalized to your nationality. Wejhaty does not have verified per-nationality visa data; check visa requirements with the official source before travel.',
     capital: 'Capital',
     notRecommendationReady:
       'Core country information and the indicators used in recommendations are available for this destination.',

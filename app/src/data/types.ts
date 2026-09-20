@@ -558,6 +558,9 @@ export interface FeedbackStrings {
   thanks: string;
   reference: string;
   failed: string;
+  rateLimited: string;
+  challengeRejected: string;
+  serviceUnavailable: string;
   /** Shown when the anti-abuse challenge itself could not load or render
    *  (blocked script, network policy, timeout) — distinct from `failed`,
    *  which is a failed SEND attempt. Submit stays disabled either way;

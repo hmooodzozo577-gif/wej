@@ -412,7 +412,6 @@ export function Destination() {
                 </div>
                 <div className="info-item">
                   <div className="label">{dt.visa}</div>
-                  <div className="value">{t.visaLabels[d.visaDiff]}</div>
                   <div className="city-data-note">{dt.visaGeneralNote}</div>
                 </div>
                 <div className="info-item">

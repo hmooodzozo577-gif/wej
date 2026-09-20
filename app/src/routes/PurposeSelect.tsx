@@ -33,13 +33,16 @@ export function PurposeSelect() {
                 key={p.id}
                 type="button"
                 className={`purpose-card${state.purpose === p.id ? ' selected' : ''}`}
+                aria-pressed={state.purpose === p.id}
                 onClick={() => startQuiz(p.id)}
               >
+                <span className="purpose-selected-mark" aria-hidden="true">✓</span>
                 <div className="purpose-icon">
                   <Icon name={p.icon} size={22} />
                 </div>
                 <h3>{pu[p.id].n}</h3>
                 <p>{pu[p.id].d}</p>
+                <Icon name="arrowEnd" size={17} className="purpose-arrow" />
               </button>
             ))}
           </div>

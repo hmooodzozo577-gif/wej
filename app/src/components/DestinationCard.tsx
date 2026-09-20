@@ -49,7 +49,7 @@ export function DestinationCard({
     <Link
       to={`/destination/${dest.id}`}
       state={{ fromResults, purpose, navigation }}
-      className="dest-card"
+      className={`dest-card${fromResults ? ' result-destination-card' : ''}`}
       data-open={dest.id}
       onClick={() => trackEvent('destination_opened', { source: navigation?.source ?? 'direct' }, {
         path: window.location.pathname.replace(/^\/wej/, '') || '/',
@@ -70,6 +70,7 @@ export function DestinationCard({
           {t.regionLabels[continent]}
           {subtitle ? ` · ${subtitle}` : ''}
         </div>
+        {fromResults ? <span className="dest-why-label">{t.results.whyTitle}</span> : null}
         <p className="dest-why">
           {dest.recommendationReady
             ? (whyText ?? descOf(dest, lang))
@@ -102,6 +103,9 @@ export function DestinationCard({
             <span className="meta-chip"><Icon name="globe" size={13} stroke={2.4} /> {formatNumber(info.areaKm2)} {t.detail.areaUnit}</span>
           </div>
         ) : null}
+        <span className="dest-card-cta">
+          {t.results.viewDetails} <Icon name="arrowEnd" size={16} />
+        </span>
       </div>
     </Link>
   );

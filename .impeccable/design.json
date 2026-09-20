@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-20T03:01:26.0964421+03:00",
+  "title": "Design System: وجهتي / Wejhaty",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "primary", "displayName": "Atlas Ink", "canonical": "#17243a", "tonalRamp": ["oklch(15% 0.045 260.5)", "oklch(25% 0.045 260.5)", "oklch(35% 0.045 260.5)", "oklch(45% 0.045 260.5)", "oklch(55% 0.045 260.5)", "oklch(65% 0.045 260.5)", "oklch(80% 0.045 260.5)", "oklch(95% 0.045 260.5)"] },
+      "ink-secondary": { "role": "primary", "displayName": "Secondary Atlas Ink", "canonical": "#24344d", "tonalRamp": ["oklch(15% 0.050 259.1)", "oklch(25% 0.050 259.1)", "oklch(35% 0.050 259.1)", "oklch(45% 0.050 259.1)", "oklch(55% 0.050 259.1)", "oklch(65% 0.050 259.1)", "oklch(80% 0.050 259.1)", "oklch(95% 0.050 259.1)"] },
+      "paper": { "role": "neutral", "displayName": "Warm Paper", "canonical": "#f2eee5", "tonalRamp": ["oklch(15% 0.013 86.8)", "oklch(25% 0.013 86.8)", "oklch(35% 0.013 86.8)", "oklch(45% 0.013 86.8)", "oklch(55% 0.013 86.8)", "oklch(65% 0.013 86.8)", "oklch(80% 0.013 86.8)", "oklch(95% 0.013 86.8)"] },
+      "paper-muted": { "role": "neutral", "displayName": "Muted Paper", "canonical": "#e7e0d4", "tonalRamp": ["oklch(15% 0.018 81.3)", "oklch(25% 0.018 81.3)", "oklch(35% 0.018 81.3)", "oklch(45% 0.018 81.3)", "oklch(55% 0.018 81.3)", "oklch(65% 0.018 81.3)", "oklch(80% 0.018 81.3)", "oklch(95% 0.018 81.3)"] },
+      "paper-raised": { "role": "neutral", "displayName": "Raised Paper", "canonical": "#faf8f3", "tonalRamp": ["oklch(15% 0.007 88.6)", "oklch(25% 0.007 88.6)", "oklch(35% 0.007 88.6)", "oklch(45% 0.007 88.6)", "oklch(55% 0.007 88.6)", "oklch(65% 0.007 88.6)", "oklch(80% 0.007 88.6)", "oklch(95% 0.007 88.6)"] },
+      "surface": { "role": "neutral", "displayName": "Warm Surface", "canonical": "#fffdf8", "tonalRamp": ["oklch(15% 0.007 88.6)", "oklch(25% 0.007 88.6)", "oklch(35% 0.007 88.6)", "oklch(45% 0.007 88.6)", "oklch(55% 0.007 88.6)", "oklch(65% 0.007 88.6)", "oklch(80% 0.007 88.6)", "oklch(95% 0.007 88.6)"] },
+      "text": { "role": "neutral", "displayName": "Reading Ink", "canonical": "#1d293b", "tonalRamp": ["oklch(15% 0.037 258.3)", "oklch(25% 0.037 258.3)", "oklch(35% 0.037 258.3)", "oklch(45% 0.037 258.3)", "oklch(55% 0.037 258.3)", "oklch(65% 0.037 258.3)", "oklch(80% 0.037 258.3)", "oklch(95% 0.037 258.3)"] },
+      "muted": { "role": "neutral", "displayName": "Muted Ink", "canonical": "#626a78", "tonalRamp": ["oklch(15% 0.024 261.7)", "oklch(25% 0.024 261.7)", "oklch(35% 0.024 261.7)", "oklch(45% 0.024 261.7)", "oklch(55% 0.024 261.7)", "oklch(65% 0.024 261.7)", "oklch(80% 0.024 261.7)", "oklch(95% 0.024 261.7)"] },
+      "line": { "role": "neutral", "displayName": "Fine Line", "canonical": "rgba(23, 36, 58, 0.15)", "tonalRamp": ["rgba(23, 36, 58, 0.80)", "rgba(23, 36, 58, 0.64)", "rgba(23, 36, 58, 0.48)", "rgba(23, 36, 58, 0.36)", "rgba(23, 36, 58, 0.24)", "rgba(23, 36, 58, 0.15)", "rgba(23, 36, 58, 0.09)", "rgba(23, 36, 58, 0.04)"] },
+      "terracotta": { "role": "primary", "displayName": "Wayfinding Terracotta", "canonical": "#a94828", "tonalRamp": ["oklch(15% 0.136 38.3)", "oklch(25% 0.136 38.3)", "oklch(35% 0.136 38.3)", "oklch(45% 0.136 38.3)", "oklch(55% 0.136 38.3)", "oklch(65% 0.136 38.3)", "oklch(80% 0.136 38.3)", "oklch(95% 0.136 38.3)"] },
+      "terracotta-bright": { "role": "primary", "displayName": "Bright Terracotta", "canonical": "#cf6a42", "tonalRamp": ["oklch(15% 0.139 41.6)", "oklch(25% 0.139 41.6)", "oklch(35% 0.139 41.6)", "oklch(45% 0.139 41.6)", "oklch(55% 0.139 41.6)", "oklch(65% 0.139 41.6)", "oklch(80% 0.139 41.6)", "oklch(95% 0.139 41.6)"] },
+      "teal": { "role": "secondary", "displayName": "Evidence Teal", "canonical": "#246b68", "tonalRamp": ["oklch(15% 0.069 191.1)", "oklch(25% 0.069 191.1)", "oklch(35% 0.069 191.1)", "oklch(45% 0.069 191.1)", "oklch(55% 0.069 191.1)", "oklch(65% 0.069 191.1)", "oklch(80% 0.069 191.1)", "oklch(95% 0.069 191.1)"] },
+      "teal-bright": { "role": "secondary", "displayName": "Bright Evidence Teal", "canonical": "#368c87", "tonalRamp": ["oklch(15% 0.082 189.8)", "oklch(25% 0.082 189.8)", "oklch(35% 0.082 189.8)", "oklch(45% 0.082 189.8)", "oklch(55% 0.082 189.8)", "oklch(65% 0.082 189.8)", "oklch(80% 0.082 189.8)", "oklch(95% 0.082 189.8)"] },
+      "danger": { "role": "tertiary", "displayName": "Validation Rust", "canonical": "#b3492f", "tonalRamp": ["oklch(15% 0.144 35.0)", "oklch(25% 0.144 35.0)", "oklch(35% 0.144 35.0)", "oklch(45% 0.144 35.0)", "oklch(55% 0.144 35.0)", "oklch(65% 0.144 35.0)", "oklch(80% 0.144 35.0)", "oklch(95% 0.144 35.0)"] },
+      "hero-navy": { "role": "primary", "displayName": "Cinematic Navy", "canonical": "#091827", "tonalRamp": ["oklch(15% 0.037 250.0)", "oklch(25% 0.037 250.0)", "oklch(35% 0.037 250.0)", "oklch(45% 0.037 250.0)", "oklch(55% 0.037 250.0)", "oklch(65% 0.037 250.0)", "oklch(80% 0.037 250.0)", "oklch(95% 0.037 250.0)"] },
+      "hero-navy-raised": { "role": "primary", "displayName": "Raised Cinematic Navy", "canonical": "#0b1b2a", "tonalRamp": ["oklch(15% 0.037 248.4)", "oklch(25% 0.037 248.4)", "oklch(35% 0.037 248.4)", "oklch(45% 0.037 248.4)", "oklch(55% 0.037 248.4)", "oklch(65% 0.037 248.4)", "oklch(80% 0.037 248.4)", "oklch(95% 0.037 248.4)"] },
+      "wayfinding-orange": { "role": "primary", "displayName": "Bright Route Orange", "canonical": "#e66f43", "tonalRamp": ["oklch(15% 0.159 40.2)", "oklch(25% 0.159 40.2)", "oklch(35% 0.159 40.2)", "oklch(45% 0.159 40.2)", "oklch(55% 0.159 40.2)", "oklch(65% 0.159 40.2)", "oklch(80% 0.159 40.2)", "oklch(95% 0.159 40.2)"] },
+      "wayfinding-orange-bright": { "role": "primary", "displayName": "Highlight Route Orange", "canonical": "#ff956d", "tonalRamp": ["oklch(15% 0.139 41.2)", "oklch(25% 0.139 41.2)", "oklch(35% 0.139 41.2)", "oklch(45% 0.139 41.2)", "oklch(55% 0.139 41.2)", "oklch(65% 0.139 41.2)", "oklch(80% 0.139 41.2)", "oklch(95% 0.139 41.2)"] },
+      "warm-white": { "role": "neutral", "displayName": "Warm Hero White", "canonical": "#fff9f3", "tonalRamp": ["oklch(15% 0.010 67.7)", "oklch(25% 0.010 67.7)", "oklch(35% 0.010 67.7)", "oklch(45% 0.010 67.7)", "oklch(55% 0.010 67.7)", "oklch(65% 0.010 67.7)", "oklch(80% 0.010 67.7)", "oklch(95% 0.010 67.7)"] },
+      "dark-paper": { "role": "neutral", "displayName": "Night Paper", "canonical": "#111925", "tonalRamp": ["oklch(15% 0.027 258.3)", "oklch(25% 0.027 258.3)", "oklch(35% 0.027 258.3)", "oklch(45% 0.027 258.3)", "oklch(55% 0.027 258.3)", "oklch(65% 0.027 258.3)", "oklch(80% 0.027 258.3)", "oklch(95% 0.027 258.3)"] },
+      "dark-paper-muted": { "role": "neutral", "displayName": "Muted Night Paper", "canonical": "#1a2533", "tonalRamp": ["oklch(15% 0.031 254.8)", "oklch(25% 0.031 254.8)", "oklch(35% 0.031 254.8)", "oklch(45% 0.031 254.8)", "oklch(55% 0.031 254.8)", "oklch(65% 0.031 254.8)", "oklch(80% 0.031 254.8)", "oklch(95% 0.031 254.8)"] },
+      "dark-paper-raised": { "role": "neutral", "displayName": "Raised Night Paper", "canonical": "#202c3b", "tonalRamp": ["oklch(15% 0.032 254.3)", "oklch(25% 0.032 254.3)", "oklch(35% 0.032 254.3)", "oklch(45% 0.032 254.3)", "oklch(55% 0.032 254.3)", "oklch(65% 0.032 254.3)", "oklch(80% 0.032 254.3)", "oklch(95% 0.032 254.3)"] },
+      "dark-surface": { "role": "neutral", "displayName": "Night Surface", "canonical": "#182331", "tonalRamp": ["oklch(15% 0.031 254.8)", "oklch(25% 0.031 254.8)", "oklch(35% 0.031 254.8)", "oklch(45% 0.031 254.8)", "oklch(55% 0.031 254.8)", "oklch(65% 0.031 254.8)", "oklch(80% 0.031 254.8)", "oklch(95% 0.031 254.8)"] },
+      "dark-text": { "role": "neutral", "displayName": "Night Text", "canonical": "#f0ede6", "tonalRamp": ["oklch(15% 0.010 87.5)", "oklch(25% 0.010 87.5)", "oklch(35% 0.010 87.5)", "oklch(45% 0.010 87.5)", "oklch(55% 0.010 87.5)", "oklch(65% 0.010 87.5)", "oklch(80% 0.010 87.5)", "oklch(95% 0.010 87.5)"] },
+      "dark-muted": { "role": "neutral", "displayName": "Muted Night Text", "canonical": "#aeb7c3", "tonalRamp": ["oklch(15% 0.020 255.6)", "oklch(25% 0.020 255.6)", "oklch(35% 0.020 255.6)", "oklch(45% 0.020 255.6)", "oklch(55% 0.020 255.6)", "oklch(65% 0.020 255.6)", "oklch(80% 0.020 255.6)", "oklch(95% 0.020 255.6)"] },
+      "dark-line": { "role": "neutral", "displayName": "Night Fine Line", "canonical": "rgba(239, 235, 225, 0.17)", "tonalRamp": ["rgba(239, 235, 225, 0.04)", "rgba(239, 235, 225, 0.08)", "rgba(239, 235, 225, 0.12)", "rgba(239, 235, 225, 0.17)", "rgba(239, 235, 225, 0.26)", "rgba(239, 235, 225, 0.38)", "rgba(239, 235, 225, 0.58)", "rgba(239, 235, 225, 0.82)"] },
+      "dark-terracotta": { "role": "primary", "displayName": "Night Wayfinding Terracotta", "canonical": "#e07851", "tonalRamp": ["oklch(15% 0.140 40.9)", "oklch(25% 0.140 40.9)", "oklch(35% 0.140 40.9)", "oklch(45% 0.140 40.9)", "oklch(55% 0.140 40.9)", "oklch(65% 0.140 40.9)", "oklch(80% 0.140 40.9)", "oklch(95% 0.140 40.9)"] },
+      "dark-teal": { "role": "secondary", "displayName": "Night Evidence Teal", "canonical": "#69bbb4", "tonalRamp": ["oklch(15% 0.081 188.4)", "oklch(25% 0.081 188.4)", "oklch(35% 0.081 188.4)", "oklch(45% 0.081 188.4)", "oklch(55% 0.081 188.4)", "oklch(65% 0.081 188.4)", "oklch(80% 0.081 188.4)", "oklch(95% 0.081 188.4)"] },
+      "dark-solid": { "role": "neutral", "displayName": "Solid Night Ink", "canonical": "#0b121d", "tonalRamp": ["oklch(15% 0.025 259.2)", "oklch(25% 0.025 259.2)", "oklch(35% 0.025 259.2)", "oklch(45% 0.025 259.2)", "oklch(55% 0.025 259.2)", "oklch(65% 0.025 259.2)", "oklch(80% 0.025 259.2)", "oklch(95% 0.025 259.2)"] }
+    },
+    "typographyMeta": {
+      "display-ltr": { "displayName": "English Display", "purpose": "Editorial hero, page, and section headings." },
+      "display-rtl": { "displayName": "Arabic Display", "purpose": "Arabic-first hero, page, and section headings with script-appropriate leading." },
+      "body-ltr": { "displayName": "English Body", "purpose": "Readable English interface, evidence, and form copy." },
+      "body-rtl": { "displayName": "Arabic Body", "purpose": "Readable Arabic interface, evidence, and form copy." },
+      "label": { "displayName": "Compact Label", "purpose": "Metadata, actions, and evidence labels in the active language family." }
+    },
+    "shadows": [
+      { "name": "ambient-low", "value": "0 10px 28px rgba(20, 31, 43, 0.06)", "purpose": "Quiet resting depth for interactive cards and compact form planes." },
+      { "name": "interactive-lift", "value": "0 20px 44px rgba(20, 31, 43, 0.13)", "purpose": "Destination-card hover and focus feedback." },
+      { "name": "cinematic-frame", "value": "0 26px 70px rgba(2, 12, 23, 0.32)", "purpose": "Separates the Home hero from its navy stage." },
+      { "name": "dark-feature", "value": "0 22px 54px rgba(7, 17, 29, 0.20)", "purpose": "Depth for the top recommendation and dark photographic features." },
+      { "name": "system-overlay", "value": "0 20px 48px -34px rgba(23, 36, 58, 0.55)", "purpose": "Listboxes, captions, and overlapping utility surfaces." }
+    ],
+    "motion": [
+      { "name": "fast", "value": "140ms", "purpose": "Borders, color feedback, arrows, and compact control state." },
+      { "name": "normal", "value": "280ms", "purpose": "Card lift, question entry, and ordinary authored transitions." },
+      { "name": "slow", "value": "760ms", "purpose": "Image treatment and the authored Surprise landing motion." },
+      { "name": "ease-out", "value": "cubic-bezier(.16, 1, .3, 1)", "purpose": "Confident entrances and physical settling." },
+      { "name": "ease-standard", "value": "cubic-bezier(.2, .8, .2, 1)", "purpose": "Long, restrained compass motion." }
+    ],
+    "breakpoints": [
+      { "name": "compact-phone", "value": "420px" },
+      { "name": "phone", "value": "520px" },
+      { "name": "wide-phone", "value": "640px" },
+      { "name": "tablet-portrait", "value": "760px" },
+      { "name": "mobile-nav", "value": "860px" },
+      { "name": "tablet-landscape", "value": "980px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Dependable product action on ordinary paper surfaces.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Start now</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border:0;border-radius:8px;font:700 .95rem/1.2 Inter,Arial,sans-serif;cursor:pointer;transition:transform 160ms ease,background 160ms ease,border-color 160ms ease}.ds-btn-primary{color:var(--white,#fffdf8);background:var(--ink,#17243a)}.ds-btn-primary:hover{transform:translateY(-1px)}.ds-btn-primary:active{transform:none}.ds-btn-primary:focus-visible{outline:2.5px solid var(--gold,#a94828);outline-offset:3px}"
+    },
+    {
+      "name": "Wayfinding Button",
+      "kind": "button",
+      "refersTo": "button-wayfinding",
+      "description": "The decisive next step, using the restrained action accent.",
+      "html": "<button class=\"ds-btn ds-btn-wayfinding\">Begin choosing</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border:0;border-radius:8px;font:700 .95rem/1.2 Inter,Arial,sans-serif;cursor:pointer;transition:transform 160ms ease,background 160ms ease}.ds-btn-wayfinding{color:#fff9f3;background:var(--gold,#a94828)}.ds-btn-wayfinding:hover{transform:translateY(-1px);background:var(--gold-2,#cf6a42)}.ds-btn-wayfinding:active{transform:none}.ds-btn-wayfinding:focus-visible{outline:2.5px solid var(--gold,#a94828);outline-offset:3px}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action that keeps the surrounding surface visible.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\">Explore destinations</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border-radius:8px;font:700 .95rem/1.2 Inter,Arial,sans-serif;cursor:pointer;transition:transform 160ms ease,background 160ms ease,border-color 160ms ease}.ds-btn-ghost{color:var(--ink,#17243a);border:1.5px solid var(--line,rgba(23,36,58,.15));background:color-mix(in srgb,var(--white,#fffdf8) 42%,transparent)}.ds-btn-ghost:hover{border-color:var(--ink,#17243a);transform:translateY(-1px)}.ds-btn-ghost:active{transform:none}.ds-btn-ghost:focus-visible{outline:2.5px solid var(--gold,#a94828);outline-offset:3px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Compact language-aware field for search and short-form input.",
+      "html": "<label class=\"ds-field\"><span>Search destinations</span><input type=\"search\" placeholder=\"Country or city\"></label>",
+      "css": ".ds-field{display:grid;gap:6px;color:var(--muted,#626a78);font:700 .78rem/1.2 Inter,Arial,sans-serif}.ds-field input{min-height:44px;padding:11px 14px;color:var(--text,#1d293b);border:1.5px solid var(--line,rgba(23,36,58,.15));border-radius:5px;background:var(--white,#fffdf8);font:400 .92rem/1.4 Inter,Arial,sans-serif}.ds-field input:hover{border-color:var(--teal,#246b68)}.ds-field input:focus{border-color:var(--teal,#246b68);outline:2.5px solid var(--gold,#a94828);outline-offset:2px}.ds-field input::placeholder{color:var(--muted,#626a78)}"
+    },
+    {
+      "name": "Purpose Card",
+      "kind": "card",
+      "refersTo": "purpose-card",
+      "description": "An actionable travel-purpose choice with clear rest, hover, focus, press, and selected states.",
+      "html": "<button class=\"ds-purpose-card\"><span class=\"ds-purpose-icon\" aria-hidden=\"true\">↗</span><strong>Leisure travel</strong><span>Holidays, adventures, and cultural discovery</span><b aria-hidden=\"true\">→</b></button>",
+      "css": ".ds-purpose-card{position:relative;display:grid;grid-template-columns:auto 1fr;gap:10px 18px;min-height:178px;padding:24px 22px 22px;text-align:start;color:var(--text,#1d293b);border:1px solid var(--line,rgba(23,36,58,.15));border-radius:16px;background:var(--white,#fffdf8);box-shadow:0 10px 28px rgba(20,31,43,.06);cursor:pointer;transition:transform 280ms cubic-bezier(.16,1,.3,1),box-shadow 280ms cubic-bezier(.16,1,.3,1),border-color 140ms ease}.ds-purpose-card strong{align-self:center;font:700 1rem/1.3 Inter,Arial,sans-serif}.ds-purpose-card>span:not(.ds-purpose-icon){grid-column:2;color:var(--muted,#626a78);font:400 .85rem/1.5 Inter,Arial,sans-serif}.ds-purpose-card>b{position:absolute;inset-inline-end:20px;bottom:22px;color:var(--gold,#a94828)}.ds-purpose-icon{display:grid;place-items:center;width:40px;height:40px;color:var(--gold,#a94828);border:1px solid currentColor;border-radius:12px}.ds-purpose-card:hover,.ds-purpose-card:focus-visible{border-color:var(--gold,#a94828);box-shadow:0 18px 38px rgba(20,31,43,.12);transform:translateY(-5px)}.ds-purpose-card:focus-visible{outline:2.5px solid var(--gold,#a94828);outline-offset:3px}.ds-purpose-card:active{transform:translateY(-1px) scale(.992)}"
+    },
+    {
+      "name": "Destination Card",
+      "kind": "card",
+      "refersTo": "destination-card",
+      "description": "Whole-card destination link with verified photography, evidence, and an explicit action row.",
+      "html": "<a class=\"ds-destination-card\" href=\"#\"><img src=\"/destinations/fr.webp\" alt=\"Paris, France\"><span class=\"ds-destination-body\"><strong>France</strong><small>Europe · Paris</small><span>Art, food, historic cities, and varied landscapes.</span><b>View details →</b></span></a>",
+      "css": ".ds-destination-card{display:flex;flex-direction:column;overflow:hidden;color:var(--text,#1d293b);text-decoration:none;border:1px solid var(--line,rgba(23,36,58,.15));border-radius:16px;background:var(--white,#fffdf8);box-shadow:0 8px 24px rgba(20,31,43,.07);transition:transform 280ms cubic-bezier(.16,1,.3,1),box-shadow 280ms cubic-bezier(.16,1,.3,1),border-color 140ms ease}.ds-destination-card>img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;transition:transform 760ms cubic-bezier(.16,1,.3,1),filter 280ms ease}.ds-destination-body{display:grid;gap:7px;padding:18px 20px 0;font-family:Inter,Arial,sans-serif}.ds-destination-body strong{font-size:1.12rem}.ds-destination-body small{color:var(--muted,#626a78)}.ds-destination-body>span{min-height:44px;color:var(--muted,#626a78);line-height:1.5}.ds-destination-body b{display:flex;justify-content:space-between;min-height:42px;padding-top:10px;color:var(--ink,#17243a);border-top:1px solid var(--line,rgba(23,36,58,.15));font-size:.86rem}.ds-destination-card:hover,.ds-destination-card:focus-visible{border-color:var(--gold,#a94828);box-shadow:0 20px 44px rgba(20,31,43,.13);transform:translateY(-6px)}.ds-destination-card:hover>img{transform:scale(1.035);filter:saturate(1.06)}.ds-destination-card:focus-visible{outline:2.5px solid var(--gold,#a94828);outline-offset:3px}.ds-destination-card:hover b{color:var(--gold,#a94828)}"
+    },
+    {
+      "name": "Atlas Navigation",
+      "kind": "nav",
+      "description": "Sticky translucent paper navigation with compass brand and restrained underline states.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-brand\" href=\"#\"><span><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9.5\" fill=\"none\" stroke=\"#ebe7dc\" stroke-width=\"1.4\"/><path d=\"M15.5 8.5 13 13 8.5 15.5 11 11Z\" fill=\"#e66f43\"/></svg></span>Wejhaty</a><div><a href=\"#\">Home</a><a href=\"#\">Destinations</a></div><button>Start now</button></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:68px;padding:0 18px;color:var(--ink,#17243a);border-bottom:1px solid var(--line,rgba(23,36,58,.15));background:color-mix(in srgb,var(--paper,#f2eee5) 94%,transparent);font-family:Inter,Arial,sans-serif;backdrop-filter:blur(16px) saturate(1.1)}.ds-brand{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;font:600 1.2rem/1 Fraunces,Georgia,serif}.ds-brand>span{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--ink,#17243a)}.ds-brand svg{width:20px;height:20px}.ds-nav>div{display:flex;gap:10px}.ds-nav>div a{padding:8px 10px;color:inherit;text-decoration:none;border-bottom:1px solid transparent;font-size:.92rem;font-weight:600}.ds-nav>div a:hover{border-color:var(--gold,#a94828)}.ds-nav>button{padding:9px 16px;color:var(--white,#fffdf8);border:0;border-radius:8px;background:var(--ink,#17243a);font-weight:700}.ds-nav a:focus-visible,.ds-nav button:focus-visible{outline:2.5px solid var(--gold,#a94828);outline-offset:3px}"
+    },
+    {
+      "name": "Compass Mark",
+      "kind": "custom",
+      "description": "Signature orientation symbol for choosing and moving through a journey.",
+      "html": "<div class=\"ds-compass-wrap\"><svg class=\"ds-compass\" viewBox=\"0 0 120 120\" aria-hidden=\"true\"><circle cx=\"60\" cy=\"60\" r=\"54\"/><circle cx=\"60\" cy=\"60\" r=\"42\"/><path class=\"ds-needle-north\" d=\"M60 22 69 60 60 55 51 60Z\"/><path class=\"ds-needle-south\" d=\"M60 98 51 60 60 65 69 60Z\"/><circle class=\"ds-hub\" cx=\"60\" cy=\"60\" r=\"5\"/><circle class=\"ds-pin\" cx=\"60\" cy=\"60\" r=\"2\"/></svg></div>",
+      "css": ".ds-compass-wrap{display:grid;place-items:center;width:190px;aspect-ratio:1;color:#fff9f3;border-radius:50%;background:radial-gradient(circle,rgba(7,22,35,.9),rgba(7,22,35,.44) 62%,transparent 64%);filter:drop-shadow(0 16px 26px rgba(0,0,0,.3))}.ds-compass{width:100%;height:100%;overflow:visible}.ds-compass>circle{fill:none;stroke:currentColor}.ds-compass>circle:first-child{stroke-width:1.5;opacity:.72}.ds-compass>circle:nth-child(2){stroke-width:.8;opacity:.36}.ds-needle-north{fill:#f17a4e}.ds-needle-south{fill:rgba(255,255,255,.72)}.ds-hub{fill:#0a1a28;stroke:#f4d0bf;stroke-width:1.4}.ds-pin{fill:#f17a4e}@media(prefers-reduced-motion:no-preference){.ds-needle-north,.ds-needle-south,.ds-hub,.ds-pin{transform-origin:60px 60px;animation:ds-compass-breathe 5.6s cubic-bezier(.2,.8,.2,1) infinite alternate}}@keyframes ds-compass-breathe{from{transform:rotate(-5deg)}to{transform:rotate(7deg)}}"
+    },
+    {
+      "name": "Hero Destination Badge",
+      "kind": "custom",
+      "description": "In-frame link that names the current session-stable hero destination.",
+      "html": "<a class=\"ds-hero-badge\" href=\"#\"><span>From the catalog</span><strong>France</strong><b aria-hidden=\"true\">→</b></a>",
+      "css": ".ds-hero-badge{display:grid;grid-template-columns:1fr auto;gap:2px 16px;align-items:center;min-width:210px;padding:14px 16px;color:#fff9f3;text-decoration:none;border:1px solid rgba(255,255,255,.24);border-radius:14px;background:rgba(5,18,31,.78);box-shadow:0 14px 34px rgba(0,0,0,.28);backdrop-filter:blur(10px);font-family:Inter,Arial,sans-serif;transition:transform 280ms cubic-bezier(.16,1,.3,1),border-color 140ms ease}.ds-hero-badge span{grid-column:1;color:rgba(255,249,243,.68);font-size:.78rem}.ds-hero-badge strong{grid-column:1;font-size:1.15rem}.ds-hero-badge b{grid-column:2;grid-row:1/span 2;color:#ff956d}.ds-hero-badge:hover,.ds-hero-badge:focus-visible{border-color:rgba(255,149,109,.85);transform:translateY(-4px)}.ds-hero-badge:focus-visible{outline:2.5px solid #e66f43;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Cinematic Compass Atlas / أطلس البوصلة السينمائي",
+    "overview": "Wejhaty turns travel discovery into a cinematic atlas rather than a generic catalog. A real destination photograph gives each journey a sense of place; an authored compass, fine route lines, deep ink navy, warm paper, and orange wayfinding express guidance. The product remains a practical decision tool, so evidence, uncertainty, and the deterministic recommendation method stay calm and readable.\n\nThe durable story is: see a real place, understand how Wejhaty helps, then choose a purpose. Home makes that story immediate through a session-stable catalog photograph, one promise, two actions, the compass, route details, and an in-frame destination badge. Other routes reuse the same world with less spectacle: photo-first destination surfaces, actionable choices, fine dividers, and compact information planes.\n\nThe visual world was selected as a code-led editorial travel atlas under seed user-pinned-reference:e2c7b435-2026-09-20. The finish contract remains binding: unreviewed and undocumented is unfinished, and every shipping raster carries provenance. Phase 17 received a ship finish-review verdict after its four requested fixes were resolved.",
+    "keyCharacteristics": [
+      "Verified destination photography supplies emotion and geographic specificity.",
+      "Ink navy and warm paper establish trust; orange marks action and movement; teal carries supporting data.",
+      "Compass cartography and route lines recur with restraint as the signature graphic language.",
+      "Soft hero and card geometry supports photography while fine rules keep information editorial.",
+      "Arabic is authored first, with equal English, RTL, LTR, light, dark, mobile, and desktop treatment."
+    ],
+    "rules": [
+      { "name": "The Evidence Leads Rule", "body": "Visual drama may invite exploration, but recommendation reasons, sources, missing coverage, and uncertainty remain easier to inspect than decoration.", "section": "overview" },
+      { "name": "The Sparse Wayfinding Rule", "body": "Reserve terracotta and bright orange for decisions, state, focus, and travel direction. Their rarity gives them authority.", "section": "colors" },
+      { "name": "The Theme Role Rule", "body": "Light and dark themes preserve hierarchy and composition; theme tokens change value without changing meaning.", "section": "colors" },
+      { "name": "The Script-Specific Display Rule", "body": "Never apply Fraunces, tight English tracking, or English leading to Arabic display text.", "section": "typography" },
+      { "name": "The Photograph Carries Place Rule", "body": "Major imagery owns enough area to establish a destination; supporting cards and evidence stay compact around it.", "section": "layout" },
+      { "name": "The Flat Until Interaction Rule", "body": "Use rules and tonal separation for ordinary content. Add lift only when overlap, hierarchy, or interaction state needs it.", "section": "elevation" },
+      { "name": "The Cartographic Geometry Rule", "body": "Pair soft photographic frames with fine straight rules and precise circular compass details. Avoid ornamental blobs and arbitrary capsules.", "section": "shapes" },
+      { "name": "The Compass With Purpose Rule", "body": "Use compass and route graphics only where the traveler is choosing, orienting, or moving through a journey.", "section": "components" }
+    ],
+    "dos": [
+      "Do use verified catalog photography with authored crops, accurate bilingual alt text, and honest fallback behavior.",
+      "Do preserve Arabic-first copy, English parity, logical-property mirroring, and script-specific typography.",
+      "Do keep the recommendation method, reasons, sources, uncertainty, and recovery states visible in light and dark themes.",
+      "Do distinguish verified, sourced, estimated, partial, missing, and unavailable information in visible UI.",
+      "Do keep browser location and passport country separate, optional, and clear about the value of sharing each.",
+      "Do use orange for decisions and movement, teal for supporting data, and fine rules for information structure.",
+      "Do keep every visible number in Latin digits and every important interaction keyboard and touch accessible."
+    ],
+    "donts": [
+      "Don't turn destination discovery back into a generic catalog grid or a stack of interchangeable rounded cards.",
+      "Don't use compass marks, route lines, planes, pills, or editorial numbering as arbitrary decoration.",
+      "Don't fabricate photography, prices, visa status, availability, suitability evidence, testimonials, or customer counts.",
+      "Don't hide missing coverage, source context, provider state, or deterministic recommendation reasoning for visual simplicity.",
+      "Don't let visual work alter Phase 14 scoring, questionnaire branching, optional location and passport boundaries, privacy, or catalog exclusions.",
+      "Don't imply an inactive data provider or Turnstile integration is active, collect a passport number, or infer passport country from browser location.",
+      "Don't reintroduce Israel (`IL`/`ISR`) into catalog or recommendation surfaces; Monaco (`MC`/`MCO`) remains valid."
+    ]
+  }
+}

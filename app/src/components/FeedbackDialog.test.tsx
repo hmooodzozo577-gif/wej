@@ -119,6 +119,17 @@ describe('FeedbackDialog', () => {
     expect(screen.getByLabelText(I18N.en.feedback.message)).toHaveValue(typed);
   });
 
+  it('explains the one-hour session limit instead of reporting a generic broken form', async () => {
+    submitFeedback.mockResolvedValueOnce({ ok: false, data: { error: 'rate_limited' } } as never);
+    useTurnstile.mockReturnValue(notRequired());
+    render(<FeedbackDialog lang="en" strings={I18N.en.feedback} />);
+    fireEvent.click(screen.getByRole('button', { name: I18N.en.feedback.open }));
+    fireEvent.change(screen.getByLabelText(I18N.en.feedback.message), { target: { value: 'A sixth message inside the same hour.' } });
+    fireEvent.click(screen.getByRole('button', { name: I18N.en.feedback.submit }));
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(I18N.en.feedback.rateLimited));
+    expect(screen.getByLabelText(I18N.en.feedback.message)).toHaveValue('A sixth message inside the same hour.');
+  });
+
   // Acceptance fix — double-tapping Send (a slow network, an eager double
   // click) must never fire a second submission while the first is saving.
   it('double-clicking Submit sends only one request', async () => {

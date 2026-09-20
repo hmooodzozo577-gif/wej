@@ -24,6 +24,7 @@ import { useI18n } from '../state/hooks';
 import { DESTINATION_VISUALS } from '../data/destinationVisuals';
 import { FlagBanner, FlagChip } from './flags/FlagIcon';
 import { HeroPhotoAttribution } from './HeroPhotoAttribution';
+import { TravelRouteDecor } from './TravelRouteDecor';
 
 export function DestinationHero({
   d,
@@ -58,6 +59,7 @@ export function DestinationHero({
           small identity chip next to the country name below, never
           rendered as the big blurred/centered banner at the same time. */}
       {visual ? null : <FlagBanner dest={d} lang={lang} />}
+      {visual ? <TravelRouteDecor variant="destination" /> : null}
       {edgeControls}
       <div className="detail-hero-inner">
         <div>

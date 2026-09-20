@@ -113,14 +113,12 @@ export function Results() {
               <span className="mini-tag">
                 <Icon name="sun" size={13} stroke={2.4} /> {r.climate}: {t.climateLabels[first.dest.climate]}
               </span>
-              <span className="mini-tag" title={r.visaGeneralNote}>
-                <Icon name="info" size={13} stroke={2.4} /> {r.visa}: {t.visaLabels[first.dest.visaDiff]}
-              </span>
             </div> : null}
             {first.dest.recommendationReady ? <p className="results-method-note">{r.visaGeneralNote}</p> : null}
+            <span className="top-pick-cta">{r.viewDetails} <Icon name="arrowEnd" size={16} /></span>
           </div>
           <div className="match-ring-wrap">
-            <DestinationImage destination={first.dest} lang={lang} />
+            <DestinationImage destination={first.dest} lang={lang} priority />
             <b
               className="matchNum"
               style={{ fontFamily: "'Fraunces',serif", fontSize: '1.9rem', color: '#D9A85C' }}

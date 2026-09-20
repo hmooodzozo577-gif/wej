@@ -93,7 +93,14 @@ export function Header() {
           </button>
         </div>
       </div>
-      <div className="container mobile-menu">{navLinks}</div>
+      <div className="container mobile-menu">
+        {navLinks}
+        <div className="mobile-menu-controls">
+          <ThemeSwitch lang={lang} />
+          <LanguageSwitch lang={lang} onChange={(l) => dispatch({ type: 'SET_LANG', lang: l })} />
+          <button type="button" className="btn btn-primary btn-sm" onClick={goPurpose}>{t.nav.cta}</button>
+        </div>
+      </div>
     </header>
   );
 }
