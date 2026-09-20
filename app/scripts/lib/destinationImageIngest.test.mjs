@@ -159,6 +159,13 @@ describe('scoreCandidate', () => {
   it('rejects an SVG/diagram/undersized image by file type or resolution', () => {
     expect(scoreCandidate(makeCandidate({ mime: 'image/svg+xml' })).rejected).toBe(true);
     expect(scoreCandidate(makeCandidate({ width: 200, height: 120 })).rejected).toBe(true);
+    expect(scoreCandidate(makeCandidate({ width: 1599, height: 1000 })).rejected).toBe(true);
+    expect(scoreCandidate(makeCandidate({ width: 2000, height: 899 })).rejected).toBe(true);
+  });
+
+  it('rejects crops that are too square or too panoramic for a responsive destination Hero', () => {
+    expect(scoreCandidate(makeCandidate({ width: 2000, height: 1800 })).rejected).toBe(true);
+    expect(scoreCandidate(makeCandidate({ width: 2600, height: 1000 })).rejected).toBe(true);
   });
 
   it('rejects an incompatible license even if everything else is ideal', () => {
@@ -212,6 +219,9 @@ describe('buildManifestEntry / validateManifestEntry', () => {
       localPath: '/destinations/sa.webp',
       width: candidate.width,
       height: candidate.height,
+      cardLocalPath: '/destinations/cards/sa.webp',
+      cardWidth: 960,
+      cardHeight: 576,
       retrievedAt: '2026-01-01T00:00:00Z',
     });
     const result = validateManifestEntry(manifestEntry);
@@ -224,6 +234,7 @@ describe('buildManifestEntry / validateManifestEntry', () => {
       iso2: 'IL', iso3: 'ISR', countryName: 'Israel', localPath: '/x.webp',
       sourcePage: 'https://example.org', license: 'CC0', originalUrl: 'https://example.org/x.jpg',
       retrievedAt: '2026-01-01T00:00:00Z', width: 2000, height: 1200,
+      cardLocalPath: '/destinations/cards/fr.webp', cardWidth: 720, cardHeight: 432,
     });
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.includes('excluded'))).toBe(true);
@@ -240,6 +251,7 @@ describe('buildManifestEntry / validateManifestEntry', () => {
       iso2: 'FR', iso3: 'FRA', countryName: 'France', localPath: '/x.webp',
       sourcePage: 'https://example.org', license: 'CC0', originalUrl: 'https://example.org/x.jpg',
       retrievedAt: '2026-01-01T00:00:00Z', width: 900, height: 1600,
+      cardLocalPath: '/destinations/cards/fr.webp', cardWidth: 405, cardHeight: 720,
     });
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.includes('non-landscape'))).toBe(true);
@@ -254,6 +266,7 @@ describe('buildManifestEntry / validateManifestEntry', () => {
       iso2: 'BJ', iso3: 'BEN', countryName: 'Benin', localPath: '/x.webp',
       sourcePage: 'https://example.org', license: 'CC0', originalUrl: 'https://example.org/x.jpg',
       retrievedAt: '2026-01-01T00:00:00Z', width: 1440, height: 206,
+      cardLocalPath: '/destinations/cards/bj.webp', cardWidth: 720, cardHeight: 103,
     });
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.includes('extreme aspect ratio'))).toBe(true);
@@ -264,8 +277,20 @@ describe('buildManifestEntry / validateManifestEntry', () => {
       iso2: 'FR', iso3: 'FRA', countryName: 'France', localPath: '/x.webp',
       sourcePage: 'https://example.org', license: 'CC0', originalUrl: 'https://example.org/x.jpg',
       retrievedAt: '2026-01-01T00:00:00Z', width: 1440, height: 810,
+      cardLocalPath: '/destinations/cards/fr.webp', cardWidth: 720, cardHeight: 405,
     });
     expect(result.valid).toBe(true);
+  });
+
+  it('rejects a card derivative wider than the 960px delivery budget', () => {
+    const result = validateManifestEntry({
+      iso2: 'FR', iso3: 'FRA', countryName: 'France', localPath: '/x.webp',
+      sourcePage: 'https://example.org', license: 'CC0', originalUrl: 'https://example.org/x.jpg',
+      retrievedAt: '2026-01-01T00:00:00Z', width: 1920, height: 1080,
+      cardLocalPath: '/destinations/cards/fr.webp', cardWidth: 1200, cardHeight: 675,
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes('card image width'))).toBe(true);
   });
 
   it('rejects an entry with an invalid/unrecognized license', () => {
@@ -273,6 +298,7 @@ describe('buildManifestEntry / validateManifestEntry', () => {
       iso2: 'FR', iso3: 'FRA', countryName: 'France', localPath: '/x.webp',
       sourcePage: 'https://example.org', license: 'Some made-up license', originalUrl: 'https://example.org/x.jpg',
       retrievedAt: '2026-01-01T00:00:00Z', width: 2000, height: 1200,
+      cardLocalPath: '/destinations/cards/fr.webp', cardWidth: 720, cardHeight: 432,
     });
     expect(result.valid).toBe(false);
   });

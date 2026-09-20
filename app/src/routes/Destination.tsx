@@ -21,7 +21,6 @@ import {
 import type {
   CatalogEntry,
   CountryInfo,
-  Destination as DestinationType,
   DetailStrings,
   Lang,
   PurposeId,
@@ -44,17 +43,6 @@ import { regionGradientCss } from '../components/regionGradient';
 import { buildWhyText } from '../engine';
 import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
 import type { DestinationNavigation } from '../state/types';
-
-// Same 7-purpose "best suited for" ranking as the original (excludes "other").
-const PURPOSE_SCORE_KEYS: [PurposeId, keyof DestinationType][] = [
-  ['tourism', 'pTourism'],
-  ['work', 'pWork'],
-  ['education', 'pEdu'],
-  ['medical', 'pMed'],
-  ['immigration', 'pImmi'],
-  ['investment', 'pInvest'],
-  ['wellness', 'pWellness'],
-];
 
 // Phase 11 Step 1 — compact, build-time Country Information card. Shared by
 // both the basic-country branch and the full-destination branch below, so
@@ -80,7 +68,7 @@ function CountryInfoCard({
   const languagesText = info.languagesEn.join(' · ');
 
   return (
-    <div className="detail-card">
+    <div className="detail-card destination-section country-info-section">
       <h3>
         <Icon name="globe" size={18} /> {dt.countryInfo}
       </h3>
@@ -249,9 +237,10 @@ export function Destination() {
   // --- Country without the original editorial profile: sourced factual state ---
   if (!d.recommendationReady) {
     return (
-      <div className="detail-wrap">
+      <div className="detail-wrap destination-page">
         <div className="container">
-          <div className="back-row">
+          <section className="destination-opening" aria-labelledby="destination-title">
+          <div className="back-row destination-opening-actions">
             <button type="button" className="btn btn-ghost btn-sm" onClick={goBackBasic}>
               <Icon name="arrowStart" size={16} /> {t.results.exploreAll}
             </button>
@@ -275,6 +264,7 @@ export function Destination() {
             }
           />
           <SurprisePager navigation={navigation} surpriseLabel={dt.surpriseAgain} />
+          </section>
 
           {/* Visual refinement pass: two-zone layout. First (now narrow,
               see .detail-grid's 1fr/2fr override in wejhaty.css) column
@@ -285,9 +275,9 @@ export function Destination() {
               plus the compact Travel/Accommodation/Travel Cost row and
               Tourism Insights, nested here rather than as a separate
               full-width section below the whole grid. */}
-          <div className="detail-grid">
-            <div>
-              <div className="detail-card">
+          <div className="detail-grid destination-content-grid">
+            <aside className="destination-facts" aria-label={dt.countryInfo}>
+              <div className="detail-card destination-section destination-facts-summary">
                 <div className="info-grid">
                   <div className="info-item">
                     <div className="label">{dt.region}</div>
@@ -303,10 +293,10 @@ export function Destination() {
               </div>
               {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
               <FeaturedCitiesCard destination={d} lang={lang} strings={dt} />
-            </div>
-            <div>
+            </aside>
+            <div className="destination-narrative">
               {why || profile ? (
-                <div className="detail-card">
+                <div className="detail-card destination-section overview-card">
                   <h3>
                     <Icon name="info" size={18} /> {dt.overview}
                   </h3>
@@ -341,16 +331,13 @@ export function Destination() {
 
   // --- Full destination: unchanged from before Phase 10 ---
   const cities = citiesOf(d, lang).join(' · ');
-  const bestFor = [...PURPOSE_SCORE_KEYS]
-    .sort((a, b) => (d[b[1]] as number) - (d[a[1]] as number))
-    .slice(0, 3);
-
   const goBack = () => navigate(fromResults ? '/results' : '/explore');
 
   return (
-    <div className="detail-wrap">
+    <div className="detail-wrap destination-page">
       <div className="container">
-        <div className="back-row">
+        <section className="destination-opening" aria-labelledby="destination-title">
+        <div className="back-row destination-opening-actions">
           <button type="button" className="btn btn-ghost btn-sm" onClick={goBack}>
             <Icon name="arrowStart" size={16} /> {fromResults ? dt.back : t.results.exploreAll}
           </button>
@@ -384,6 +371,7 @@ export function Destination() {
           }
         />
         <SurprisePager navigation={navigation} surpriseLabel={dt.surpriseAgain} />
+        </section>
 
         {/* Visual refinement pass: two-zone layout. First (now narrow,
             see .detail-grid's 1fr/2fr override in wejhaty.css) column is
@@ -394,9 +382,9 @@ export function Destination() {
             weaknesses/best-for, plus the compact Travel/Accommodation/
             Travel Cost row and Tourism Insights, nested here rather than
             as a separate full-width section below the whole grid. */}
-        <div className="detail-grid">
-          <div>
-            <div className="detail-card">
+        <div className="detail-grid destination-content-grid">
+          <aside className="destination-facts" aria-label={dt.countryInfo}>
+            <div className="detail-card destination-section destination-facts-summary">
               <div className="info-grid">
                 <div className="info-item">
                   <div className="label">{dt.cost}</div>
@@ -426,53 +414,31 @@ export function Destination() {
             </div>
             <FeaturedCitiesCard destination={d} lang={lang} strings={dt} />
             {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
-          </div>
-          <div>
-            {/* Approved-dashboard pass: `why` (only present when arriving
-                from quiz results with a match score) is semantically
-                different from the other 4 cards — it explains THIS
-                specific match, not a general comparative fact — and
-                rendering it as a 5th item inside the 2x2 grid would
-                orphan Best For alone in a 3rd row (a real edge case a
-                prior version of this grid had: Overview/Why paired,
-                Strengths/Weaknesses paired, Best For alone). Pulled out
-                to its own full-width card ABOVE the grid instead: the
-                grid stays a clean, always-exactly-4-cards 2x2
-                (Overview/Strengths/Weaknesses/Best For) whether or not
-                `why` is present, and the match explanation still reads
-                first, as the most personally relevant content on the
-                page when it exists. */}
+          </aside>
+          <div className="destination-narrative">
+            {/* A personalized match explanation is semantically different
+                from the general editorial overview, so it stays full-width
+                above the calmer information layout when present. */}
             {why ? (
-              <div className="detail-card why-box">
+              <div className="detail-card destination-section why-box">
                 <h3>
                   <Icon name="bulb" size={18} /> {dt.why}
                 </h3>
                 <p>{why}</p>
               </div>
             ) : null}
-            {/* Landscape correction pass (real user visual review of
-                production): a prior version of .overview-cards-grid
-                switched to 3 columns at 1180px, which put Overview/
-                Strengths/Weaknesses on one row and orphaned Best For
-                alone on a second row — explicitly rejected by the user.
-                Fixed two ways together: the 1180px 3-column override is
-                REMOVED from wejhaty.css entirely (2 columns is now the
-                only landscape state this grid ever has), and each card
-                now carries its own explicit class
-                (overview-card/strengths-card/weaknesses-card/
-                bestfor-card) mapped to a named grid-template-area — so
-                even if a future change reorders this JSX, CSS
-                auto-placement can never regenerate the orphan. Fixed
-                2x2: Overview+Strengths first row, Weaknesses+BestFor
-                second row, always. */}
+            {/* Overview spans the reading measure, followed by parallel
+                strengths and cautions. The old duplicate "Best suited for"
+                summary is intentionally absent; CountrySuitability below is
+                the single source for that decision-support information. */}
             <div className="overview-cards-grid">
-              <div className="detail-card overview-card">
+              <div className="detail-card destination-section overview-card">
                 <h3>
                   <Icon name="info" size={18} /> {dt.overview}
                 </h3>
                 <p>{descOf(d, lang)}</p>
               </div>
-              <div className="detail-card strengths-card">
+              <div className="detail-card destination-section strengths-card">
                 <h3>
                   <Icon name="check" size={18} /> {dt.strengths}
                 </h3>
@@ -484,7 +450,7 @@ export function Destination() {
                   ))}
                 </div>
               </div>
-              <div className="detail-card weaknesses-card">
+              <div className="detail-card destination-section weaknesses-card">
                 <h3>
                   <Icon name="info" size={18} /> {dt.weaknesses}
                 </h3>
@@ -492,18 +458,6 @@ export function Destination() {
                   {weaknessesOf(d, lang).map((s) => (
                     <span className="pill warn" key={s}>
                       <Icon name="info" size={13} stroke={2.6} /> {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="detail-card bestfor-card">
-                <h3>
-                  <Icon name="sparkle" size={18} /> {dt.bestFor}
-                </h3>
-                <div className="dest-meta">
-                  {bestFor.map(([pid]) => (
-                    <span className="meta-chip" key={pid}>
-                      {t.purposes[pid].n}
                     </span>
                   ))}
                 </div>

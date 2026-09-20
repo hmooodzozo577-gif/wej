@@ -16,7 +16,9 @@ describe('destination images on catalog cards', () => {
       );
       const image = container.querySelector<HTMLImageElement>('.destination-card-image');
       expect(image, destination.countryCode).not.toBeNull();
-      expect(image!.getAttribute('src'), destination.countryCode).toBe(DESTINATION_VISUALS[destination.countryCode].imagePath);
+      expect(image!.getAttribute('src'), destination.countryCode).toBe(DESTINATION_VISUALS[destination.countryCode].cardImagePath);
+      expect(image!.getAttribute('width'), destination.countryCode).toBe(String(DESTINATION_VISUALS[destination.countryCode].cardWidth));
+      expect(image!.getAttribute('height'), destination.countryCode).toBe(String(DESTINATION_VISUALS[destination.countryCode].cardHeight));
       expect(image!.getAttribute('alt'), destination.countryCode).toBe(DESTINATION_VISUALS[destination.countryCode].altAr);
       expect(image!.style.objectFit, destination.countryCode).toBe('cover');
       expect(image!.style.objectPosition, destination.countryCode).toBe(DESTINATION_VISUALS[destination.countryCode].cardPosition);

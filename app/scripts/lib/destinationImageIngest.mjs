@@ -101,7 +101,13 @@ const EXCLUDED_TERMS = [
   'transit area', 'plattegrond',
 ];
 const LANDMARK_HINT_TERMS = ['skyline', 'landmark', 'cityscape', 'view of', 'panorama', 'temple', 'palace', 'tower', 'bridge', 'coast', 'mountain', 'old town', 'downtown'];
-const MIN_WIDTH = 800;
+// Source-quality gate for newly ingested destination imagery. The optimized
+// local file may be smaller for delivery, but the source must comfortably
+// support a 1080-class cinematic Hero without upscaling.
+const MIN_SOURCE_WIDTH = 1600;
+const MIN_SOURCE_HEIGHT = 900;
+const MIN_ASPECT = 1.25;
+const MAX_ASPECT = 2.4;
 const REJECTED_MIME = new Set(['image/svg+xml', 'application/pdf', 'image/tiff', 'image/gif']);
 
 export function scoreCandidate(candidate) {
@@ -119,8 +125,12 @@ export function scoreCandidate(candidate) {
   }
   const width = candidate.width || 0;
   const height = candidate.height || 0;
-  if (width < MIN_WIDTH) {
-    return { score: 0, rejected: true, reason: `below minimum resolution (${width}px < ${MIN_WIDTH}px)` };
+  if (width < MIN_SOURCE_WIDTH || height < MIN_SOURCE_HEIGHT) {
+    return {
+      score: 0,
+      rejected: true,
+      reason: `below minimum source resolution (${width}x${height} < ${MIN_SOURCE_WIDTH}x${MIN_SOURCE_HEIGHT})`,
+    };
   }
   const license = classifyLicense(candidate.extmetadata?.LicenseShortName);
   if (!license.allowed) {
@@ -130,6 +140,9 @@ export function scoreCandidate(candidate) {
   let score = 1; // passed every hard gate above
   if (width > height) score += 2; // landscape orientation strongly preferred
   const aspect = height > 0 ? width / height : 0;
+  if (aspect < MIN_ASPECT || aspect > MAX_ASPECT) {
+    return { score: 0, rejected: true, reason: `unsuitable responsive aspect ratio (${aspect.toFixed(2)} outside ${MIN_ASPECT}-${MAX_ASPECT})` };
+  }
   if (aspect >= 1.3 && aspect <= 2.2) score += 1; // a "strong horizontal composition" band, not ultra-panoramic or near-square
   if (width >= 1600) score += 1; // comfortably above hero-image resolution
   if (LANDMARK_HINT_TERMS.some((term) => haystack.includes(term))) score += 2;
@@ -161,7 +174,18 @@ export function selectBestCandidate(candidates) {
 // only ever set once a file has actually been downloaded+optimized by
 // the CLI — never guessed/constructed from the country code alone (that
 // would silently claim an image exists when it doesn't).
-export function buildManifestEntry({ entry, candidate, license, localPath, width, height, retrievedAt }) {
+export function buildManifestEntry({
+  entry,
+  candidate,
+  license,
+  localPath,
+  width,
+  height,
+  cardLocalPath,
+  cardWidth,
+  cardHeight,
+  retrievedAt,
+}) {
   return {
     iso2: entry.iso2,
     iso3: entry.iso3,
@@ -176,6 +200,9 @@ export function buildManifestEntry({ entry, candidate, license, localPath, width
     retrievedAt,
     width,
     height,
+    cardLocalPath,
+    cardWidth,
+    cardHeight,
   };
 }
 
@@ -313,7 +340,11 @@ export function isDuplicateHash(hash, seenHashes) {
   return seenHashes.has(hash);
 }
 
-const REQUIRED_MANIFEST_FIELDS = ['iso2', 'iso3', 'countryName', 'localPath', 'sourcePage', 'license', 'originalUrl', 'retrievedAt', 'width', 'height'];
+const REQUIRED_MANIFEST_FIELDS = [
+  'iso2', 'iso3', 'countryName', 'localPath', 'sourcePage', 'license',
+  'originalUrl', 'retrievedAt', 'width', 'height',
+  'cardLocalPath', 'cardWidth', 'cardHeight',
+];
 
 export function validateManifestEntry(entry) {
   const errors = [];
@@ -323,6 +354,12 @@ export function validateManifestEntry(entry) {
   if (entry.iso2 === 'IL' || entry.iso3 === 'ISR') errors.push('excluded country (IL/ISR) must never appear in the manifest');
   if (typeof entry.width === 'number' && typeof entry.height === 'number' && entry.width <= entry.height) {
     errors.push('non-landscape image (width <= height)');
+  }
+  if (typeof entry.cardWidth === 'number' && (entry.cardWidth <= 0 || entry.cardWidth > 960)) {
+    errors.push(`invalid card image width (${entry.cardWidth}) — expected 1..960`);
+  }
+  if (typeof entry.cardHeight === 'number' && entry.cardHeight <= 0) {
+    errors.push(`invalid card image height (${entry.cardHeight}) — expected a positive value`);
   }
   // Extreme banner/strip crops (e.g. 1440x206, a ~7:1 aspect ratio) pass
   // the width>height check above but crop to an unrecognizable sliver

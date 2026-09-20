@@ -1,5 +1,5 @@
 // Hero-image correction pass — compact, accessible photo-attribution
-// disclosure. A CSS background-image (see DestinationHero.tsx) carries
+// disclosure. The decorative Hero image (see DestinationHero.tsx) carries
 // no alt text, so this is the ONLY place the real landmark identity,
 // source, author, and license survive once the photo moved out of a
 // standalone <img>-based sidebar card. Native <details>/<summary> — the

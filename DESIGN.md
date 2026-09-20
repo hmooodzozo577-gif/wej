@@ -113,7 +113,7 @@ components:
 
 Wejhaty turns travel discovery into a cinematic atlas rather than a generic catalog. A real destination photograph gives each journey a sense of place; an authored compass, fine route lines, deep ink navy, warm paper, and orange wayfinding express guidance. The product remains a practical decision tool, so evidence, uncertainty, and the deterministic recommendation method stay calm and readable.
 
-The durable story is: see a real place, understand how Wejhaty helps, then choose a purpose. Home makes that story immediate through a session-stable catalog photograph, one promise, two actions, the compass, route details, and an in-frame destination badge. Other routes reuse the same world with less spectacle: photo-first destination surfaces, actionable choices, fine dividers, and compact information planes.
+The durable story is: see a real place, understand how Wejhaty helps, then choose a purpose. Home makes that story immediate through a session-stable catalog photograph, one promise, two actions, the compass, route details, and an in-frame destination badge. Destination detail uses a deliberate hybrid rhythm: a cinematic photographic opening establishes place, then a quiet editorial body turns facts and evidence into a readable travel brief. Other routes reuse the same world with less spectacle: photo-first destination surfaces, actionable choices, fine dividers, and compact information planes.
 
 The visual world was selected as a code-led editorial travel atlas under seed `user-pinned-reference:e2c7b435-2026-09-20`. The finish contract remains binding: unreviewed and undocumented is unfinished, and every shipping raster carries provenance. Phase 17 received a `ship` finish-review verdict after its four requested fixes were resolved.
 
@@ -184,7 +184,7 @@ The global container is `1240px` with `24px` inline gutters, reduced to `18px` o
 - **Purpose:** choices use two columns where space allows and one on phones. Cards remain comfortably tappable and visibly actionable before hover.
 - **Quiz:** content is capped near `900px`; the question sheet and progress line carry the sequence without dashboard density.
 - **Results and Explore:** destination imagery keeps a `16:10` landscape ratio. Results begin with one large top recommendation followed by a two-column grid; Explore uses a three-column catalog before collapsing responsively.
-- **Destination:** the photo-first hero spans `clamp(340px, 45vw, 560px)`. Below it, a narrower facts rail and wider editorial column become one column below `980px`.
+- **Destination:** the photo-first hero uses `clamp(470px, 52vw, 650px)` on larger screens and a taller portrait-biased crop on phones. Below it, a narrower facts rail and wider editorial column form a calm reading layout, then become one column below `860px`. The overview spans the full narrative measure before parallel strengths and cautions; sourced decision-support sections continue below as ruled editorial blocks.
 - **Navigation:** desktop links yield to the mobile menu below `860px`. At `760px` and below, theme, language, and Start move into the opened menu so every control remains available.
 
 Use CSS logical properties for spacing, rules, overlays, and directional cues. RTL mirrors through layout and icon direction, without direction-specific JavaScript.
@@ -236,6 +236,14 @@ Purpose choices are real buttons with `16px` corners, a fine border, `24px 22px 
 ### Destination Cards
 
 Destination cards are whole-card links with `16px` corners, one-pixel borders, a verified `16:10` photograph, evidence chips, and a bottom action row. Hover or focus lifts the surface `6px`, enriches the image slightly, and turns the action row toward terracotta. Result cards add a `3px` terracotta top rule.
+
+### Destination Detail
+
+The destination page pairs a tall cinematic hero with a quiet editorial body. The hero uses an authored cover crop, a directional navy scrim, asymmetrical soft corners, restrained route detail, and compact source disclosure. Orange appears only in wayfinding lines, match state, focus, and decisive controls; it never becomes a broad decorative wash.
+
+Below the hero, ordinary information sections sit on the page rather than inside a stack of elevated cards. Fine rules, whitespace, and a narrow facts rail establish hierarchy; rounded or tinted containers remain reserved for content that is interactive, personalized, or meaningfully set apart.
+
+**The Surface-Specific Image Rule.** Hero and card imagery are separate delivery roles. Cards use the smaller derivative and their own focal position; heroes use the larger responsive source set, intrinsic dimensions, and independent hero focal position. Keep both crops in shared metadata so a correction improves every consumer without per-page overrides, and preserve verified provenance, bilingual alt text where the image is meaningful, and explicit source disclosure where a hero image is decorative.
 
 ### Navigation
 

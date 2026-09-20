@@ -41,7 +41,7 @@ export function Home() {
       <section className="hero home-hero-cinematic">
         <div className="container">
           <div className="home-hero-frame">
-            <DestinationImage destination={featuredDestination} lang={lang} className="hero-folio-image" priority />
+            <DestinationImage destination={featuredDestination} lang={lang} className="hero-folio-image" priority variant="hero" />
             <TravelRouteDecor variant="home" />
             <div className="home-hero-scrim" />
             <div className="hero-grid">

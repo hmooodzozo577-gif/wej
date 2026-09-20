@@ -55,11 +55,14 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MANIFEST_PATH = path.join(__dirname, '../src/data/generated/destinationImages.json');
 const ASSETS_DIR = path.join(__dirname, '../public/destinations');
+const CARD_ASSETS_DIR = path.join(ASSETS_DIR, 'cards');
 const COMMONS_API = 'https://commons.wikimedia.org/w/api.php';
 const WIKIVOYAGE_API = 'https://en.wikivoyage.org/w/api.php';
 const USER_AGENT = 'Wejhaty-DestinationImages/1.0 (https://github.com/hmooodzozo577-gif/wej; build-time ingestion tool, not a runtime client)';
-const MAX_HERO_WIDTH = 1440; // within the task's own 1200-1600px target band
-const WEBP_QUALITY = 78; // hero-friendly quality/size balance, tuned for a ~100-200KB target average
+const MAX_HERO_WIDTH = 1920; // 1080-class Hero source; never upscaled
+const HERO_WEBP_QUALITY = 78; // hero-friendly quality/size balance
+const MAX_CARD_WIDTH = 960; // enough for high-DPI cards without shipping the Hero payload
+const CARD_WEBP_QUALITY = 72;
 
 function parseArgs(argv) {
   const args = { country: null, all: false, dryRun: false };
@@ -185,24 +188,36 @@ async function downloadBuffer(url) {
   return Buffer.from(await res.arrayBuffer());
 }
 
-/** DOWNLOAD + OPTIMIZATION: real fetch of the original file, resized to
- *  a hero-friendly max width (aspect ratio preserved, never upscaled)
- *  and converted to WebP. Returns the optimized buffer plus its real
- *  post-resize dimensions — the manifest must reflect the ACTUAL stored
- *  asset, not the original Commons file's dimensions. */
+/** DOWNLOAD + OPTIMIZATION: create separate Hero and card derivatives from
+ *  the verified original. Cards never download the much larger Hero asset;
+ *  both variants preserve aspect ratio and are never upscaled. */
 async function downloadAndOptimize(candidate) {
   const original = await downloadBuffer(candidate.url);
-  const image = sharp(original, { failOn: 'error' });
-  const meta = await image.metadata();
+  const meta = await sharp(original, { failOn: 'error' }).metadata();
   if (!meta.width || !meta.height) throw new Error('could not read image dimensions (corrupt/invalid file)');
 
-  const targetWidth = Math.min(MAX_HERO_WIDTH, meta.width);
-  const optimized = await image
-    .resize({ width: targetWidth, withoutEnlargement: true })
-    .webp({ quality: WEBP_QUALITY })
-    .toBuffer();
-  const outMeta = await sharp(optimized).metadata();
-  return { buffer: optimized, width: outMeta.width, height: outMeta.height };
+  const [heroBuffer, cardBuffer] = await Promise.all([
+    sharp(original, { failOn: 'error' })
+      .resize({ width: Math.min(MAX_HERO_WIDTH, meta.width), withoutEnlargement: true })
+      .webp({ quality: HERO_WEBP_QUALITY })
+      .toBuffer(),
+    sharp(original, { failOn: 'error' })
+      .resize({ width: Math.min(MAX_CARD_WIDTH, meta.width), withoutEnlargement: true })
+      .webp({ quality: CARD_WEBP_QUALITY })
+      .toBuffer(),
+  ]);
+  const [heroMeta, cardMeta] = await Promise.all([
+    sharp(heroBuffer).metadata(),
+    sharp(cardBuffer).metadata(),
+  ]);
+  return {
+    buffer: heroBuffer,
+    width: heroMeta.width,
+    height: heroMeta.height,
+    cardBuffer,
+    cardWidth: cardMeta.width,
+    cardHeight: cardMeta.height,
+  };
 }
 
 async function ingestOne(entry, { dryRun, seenHashes }) {
@@ -303,6 +318,9 @@ async function ingestOne(entry, { dryRun, seenHashes }) {
       localPath: `/destinations/${localFileName}`,
       width: optimized.width,
       height: optimized.height,
+      cardLocalPath: `/destinations/cards/${localFileName}`,
+      cardWidth: optimized.cardWidth,
+      cardHeight: optimized.cardHeight,
       retrievedAt: new Date().toISOString(),
     });
     const validation = validateManifestEntry(manifestEntry);
@@ -312,11 +330,13 @@ async function ingestOne(entry, { dryRun, seenHashes }) {
     }
 
     fs.mkdirSync(ASSETS_DIR, { recursive: true });
+    fs.mkdirSync(CARD_ASSETS_DIR, { recursive: true });
     fs.writeFileSync(path.join(ASSETS_DIR, localFileName), optimized.buffer);
+    fs.writeFileSync(path.join(CARD_ASSETS_DIR, localFileName), optimized.cardBuffer);
     seenHashes.add(hash);
 
     report.status = 'OK';
-    report.detail = `${candidate.title} — ${optimized.width}x${optimized.height}, ${(optimized.buffer.length / 1024).toFixed(1)}KB`;
+    report.detail = `${candidate.title} — Hero ${optimized.width}x${optimized.height}, ${(optimized.buffer.length / 1024).toFixed(1)}KB; card ${optimized.cardWidth}x${optimized.cardHeight}, ${(optimized.cardBuffer.length / 1024).toFixed(1)}KB`;
     report.manifestEntry = manifestEntry;
     return report;
   }
@@ -414,6 +434,16 @@ async function main() {
         if (targetIso2.has(iso2.toUpperCase()) && !finalIso2.has(iso2)) {
           fs.unlinkSync(path.join(ASSETS_DIR, file));
           console.log(`Removed orphaned asset (re-targeted but failed this run): ${file}`);
+        }
+      }
+    }
+    if (fs.existsSync(CARD_ASSETS_DIR)) {
+      for (const file of fs.readdirSync(CARD_ASSETS_DIR)) {
+        if (!file.endsWith('.webp')) continue;
+        const iso2 = file.slice(0, -'.webp'.length);
+        if (targetIso2.has(iso2.toUpperCase()) && !finalIso2.has(iso2)) {
+          fs.unlinkSync(path.join(CARD_ASSETS_DIR, file));
+          console.log(`Removed orphaned card asset (re-targeted but failed this run): ${file}`);
         }
       }
     }

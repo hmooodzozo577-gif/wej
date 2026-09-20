@@ -1,9 +1,10 @@
 {
-  "reviewedAt": "2026-09-13",
+  "reviewedAt": "2026-09-20",
   "criteria": [
-    "Depicts an in-country landmark, notable cityscape, nationally important site, or representative natural landscape",
-    "No maps, flags, diagrams, documents, random objects, foreign homonyms, or unrelated people/events",
-    "Landscape crop is usable in the destination hero",
+    "Depicts a recognizable in-country landmark, notable cityscape, nationally important site, or representative natural landscape",
+    "Has a clear focal subject, usable lighting and contrast, and no visible blur, pixelation, or severe compression damage",
+    "No maps, flags, diagrams, documents, random objects, foreign homonyms, generic crowds, or unrelated people/events",
+    "Optimized delivery asset is at least 1280 pixels wide; newly ingested sources must be at least 1600x900 and use a responsive landscape ratio",
     "Card crop and hero crop were separately rendered and visually reviewed; focal-point overrides are recorded for exceptions",
     "Commons license and attribution metadata are present"
   ],
@@ -30,8 +31,8 @@
     {
       "iso2": "AG",
       "status": "approved",
-      "landmarkName": "Barbuda ISS008-E-7945",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Barbuda_ISS008-E-7945.jpg"
+      "landmarkName": "Antigua English Harbour Nelson's Dockyard 2",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Antigua_English_Harbour_Nelson%27s_Dockyard_2.jpg"
     },
     {
       "iso2": "AL",
@@ -66,8 +67,8 @@
     {
       "iso2": "AU",
       "status": "approved",
-      "landmarkName": "LordHoweIslandFromKimsLookout",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:LordHoweIslandFromKimsLookout.jpg"
+      "landmarkName": "Sydney Opera House and Harbour Bridge Dusk (2) 2019-06-21",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Sydney_Opera_House_and_Harbour_Bridge_Dusk_(2)_2019-06-21.jpg"
     },
     {
       "iso2": "AZ",
@@ -126,8 +127,8 @@
     {
       "iso2": "BJ",
       "status": "approved",
-      "landmarkName": "Porto-Novo vue",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Porto-Novo_vue.jpg"
+      "landmarkName": "Store and casino - Ganvie, Benin (33721536115)",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Store_and_casino_-_Ganvie,_Benin_(33721536115).jpg"
     },
     {
       "iso2": "BN",
@@ -180,8 +181,8 @@
     {
       "iso2": "CA",
       "status": "approved",
-      "landmarkName": "PengrowthSaddledomeDay",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:PengrowthSaddledomeDay.jpg"
+      "landmarkName": "1 lake louise pano 2019",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:1_lake_louise_pano_2019.jpg"
     },
     {
       "iso2": "CD",
@@ -306,8 +307,8 @@
     {
       "iso2": "EC",
       "status": "approved",
-      "landmarkName": "FACHADA ASAMBLEA NACIONAL. QUITO, 20 DE FEBRERO 2020. 01",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:FACHADA_ASAMBLEA_NACIONAL._QUITO,_20_DE_FEBRERO_2020._01.jpg"
+      "landmarkName": "Ecuador - Cotopaxi",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Ecuador_-_Cotopaxi.JPG"
     },
     {
       "iso2": "EE",
@@ -318,8 +319,8 @@
     {
       "iso2": "EG",
       "status": "approved",
-      "landmarkName": "Wikimedia 2016 -34",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Wikimedia_2016_-34.jpg"
+      "landmarkName": "All Gizah Pyramids",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:All_Gizah_Pyramids.jpg"
     },
     {
       "iso2": "ER",
@@ -354,8 +355,8 @@
     {
       "iso2": "FM",
       "status": "approved",
-      "landmarkName": "Palikir Government Buildings",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Palikir_Government_Buildings.jpg"
+      "landmarkName": "Nan Madol megalithic site, Pohnpei (Federated States of Micronesia)",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Nan_Madol_megalithic_site,_Pohnpei_(Federated_States_of_Micronesia).jpg"
     },
     {
       "iso2": "FR",
@@ -366,8 +367,8 @@
     {
       "iso2": "GA",
       "status": "approved",
-      "landmarkName": "Libreville1",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Libreville1.jpg"
+      "landmarkName": "Pointe Denis",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Pointe_Denis.JPG"
     },
     {
       "iso2": "GB",
@@ -450,8 +451,8 @@
     {
       "iso2": "HT",
       "status": "approved",
-      "landmarkName": "US Navy 100221-N-5787K-002 An aerial view of the logistical area near the port in Port-au-Prince (cropped)",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:US_Navy_100221-N-5787K-002_An_aerial_view_of_the_logistical_area_near_the_port_in_Port-au-Prince_(cropped).jpg"
+      "landmarkName": "Citadelle Laferrière Aerial View",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Citadelle_Laferri%C3%A8re_Aerial_View.jpg"
     },
     {
       "iso2": "HU",
@@ -474,8 +475,8 @@
     {
       "iso2": "IN",
       "status": "approved",
-      "landmarkName": "UB City",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:UB_City.jpg"
+      "landmarkName": "Aks The Reflection Taj Mahal",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Aks_The_Reflection_Taj_Mahal.jpg"
     },
     {
       "iso2": "IQ",
@@ -570,8 +571,8 @@
     {
       "iso2": "KW",
       "status": "approved",
-      "landmarkName": "Carmuseumq8",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Carmuseumq8.jpg"
+      "landmarkName": "Kuwait City Kuwait Towers View to the al-Hamra Tower",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kuwait_City_Kuwait_Towers_View_to_the_al-Hamra_Tower.jpg"
     },
     {
       "iso2": "KZ",
@@ -588,8 +589,8 @@
     {
       "iso2": "LB",
       "status": "approved",
-      "landmarkName": "Beirutcity",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Beirutcity.jpg"
+      "landmarkName": "Pigeon Rocks of Beirut, Rock of Raouche, Beirut, Lebanon",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Pigeon_Rocks_of_Beirut,_Rock_of_Raouche,_Beirut,_Lebanon.jpg"
     },
     {
       "iso2": "LC",
@@ -624,8 +625,8 @@
     {
       "iso2": "LT",
       "status": "approved",
-      "landmarkName": "Trakai-bridge",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Trakai-bridge.jpg"
+      "landmarkName": "Trakai Island Castle, Lithuania - Diliff",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Trakai_Island_Castle,_Lithuania_-_Diliff.jpg"
     },
     {
       "iso2": "LU",
@@ -672,14 +673,14 @@
     {
       "iso2": "MG",
       "status": "approved",
-      "landmarkName": "Lake Anosy, Central Antananarivo, Capital of Madagascar, Photo by Sascha Grabow",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Lake_Anosy,_Central_Antananarivo,_Capital_of_Madagascar,_Photo_by_Sascha_Grabow.jpg"
+      "landmarkName": "Allée des baobabs Morondava Madagascar",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:All%C3%A9e_des_baobabs_Morondava_Madagascar.jpg"
     },
     {
       "iso2": "MH",
       "status": "approved",
-      "landmarkName": "Kwajalein Atoll, Marshall Islands",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Kwajalein_Atoll,_Marshall_Islands.jpg"
+      "landmarkName": "The Marshall Islands - Majuro - Laura Beach - 3-2000",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:The_Marshall_Islands_-_Majuro_-_Laura_Beach_-_3-2000.jpg"
     },
     {
       "iso2": "MK",
@@ -732,8 +733,8 @@
     {
       "iso2": "MW",
       "status": "approved",
-      "landmarkName": "Lilongwe Area 2",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Lilongwe_Area_2.jpg"
+      "landmarkName": "Cape McLear, Malawi (2498445835)",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Cape_McLear,_Malawi_(2498445835).jpg"
     },
     {
       "iso2": "MX",
@@ -768,8 +769,8 @@
     {
       "iso2": "NG",
       "status": "approved",
-      "landmarkName": "The National Assembly Globe",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:The_National_Assembly_Globe.jpg"
+      "landmarkName": "Zuma Rock - Nature",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Zuma_Rock_-_Nature.jpg"
     },
     {
       "iso2": "NI",
@@ -792,8 +793,8 @@
     {
       "iso2": "NP",
       "status": "approved",
-      "landmarkName": "Early morning view of Bhaktapur Durbar Square",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Early_morning_view_of_Bhaktapur_Durbar_Square.jpg"
+      "landmarkName": "Sagarmatha Everest Zone, Nepal, Himalayas",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Sagarmatha_Everest_Zone,_Nepal,_Himalayas.jpg"
     },
     {
       "iso2": "NR",
@@ -804,14 +805,14 @@
     {
       "iso2": "NZ",
       "status": "approved",
-      "landmarkName": "Auckland CBD",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Auckland_CBD.jpg"
+      "landmarkName": "Milford Sound in Fiordland National Park 01",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Milford_Sound_in_Fiordland_National_Park_01.jpg"
     },
     {
       "iso2": "OM",
       "status": "approved",
-      "landmarkName": "Old city of Maskat",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Old_city_of_Maskat.jpg"
+      "landmarkName": "Sultan Qaboos Grand Mosque (1)",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Sultan_Qaboos_Grand_Mosque_(1).jpg"
     },
     {
       "iso2": "PA",
@@ -828,14 +829,14 @@
     {
       "iso2": "PG",
       "status": "approved",
-      "landmarkName": "Port Moresby Town2 Mschlauch",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Port_Moresby_Town2_Mschlauch.jpg"
+      "landmarkName": "Rabaul from Vulcanology Observatory",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Rabaul_from_Vulcanology_Observatory.jpg"
     },
     {
       "iso2": "PH",
       "status": "approved",
-      "landmarkName": "Iss047e099713 lrg Manila",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Iss047e099713_lrg_Manila.jpg"
+      "landmarkName": "Banaue Philippines Batad-Rice-Terraces-04",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Banaue_Philippines_Batad-Rice-Terraces-04.jpg"
     },
     {
       "iso2": "PK",
@@ -858,8 +859,8 @@
     {
       "iso2": "PT",
       "status": "approved",
-      "landmarkName": "Lisboa837",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Lisboa837.png"
+      "landmarkName": "Lisbon Torre de Belém BW 2018-10-03 16-35-39",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Lisbon_Torre_de_Bel%C3%A9m_BW_2018-10-03_16-35-39.jpg"
     },
     {
       "iso2": "PW",
@@ -870,8 +871,8 @@
     {
       "iso2": "PY",
       "status": "approved",
-      "landmarkName": "Asunción Paraguay",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Asunci%C3%B3n_Paraguay.jpg"
+      "landmarkName": "00 3819 Asunción - Paraguay (Südamerika)",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:00_3819_Asunci%C3%B3n_-_Paraguay_(S%C3%BCdamerika).jpg"
     },
     {
       "iso2": "QA",
@@ -972,8 +973,8 @@
     {
       "iso2": "SO",
       "status": "approved",
-      "landmarkName": "Mogadishu Skyline 5th picture",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Mogadishu_Skyline_5th_picture.jpg"
+      "landmarkName": "Isbahaysiga Mosque 01",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Isbahaysiga_Mosque_01.jpg"
     },
     {
       "iso2": "SR",
@@ -990,8 +991,8 @@
     {
       "iso2": "ST",
       "status": "approved",
-      "landmarkName": "Org 4cd8129a56d8fa1d 1582100284000",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Org_4cd8129a56d8fa1d_1582100284000.jpg"
+      "landmarkName": "Pico Cão Grande",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Pico_C%C3%A3o_Grande.jpg"
     },
     {
       "iso2": "SV",
@@ -1038,8 +1039,8 @@
     {
       "iso2": "TL",
       "status": "approved",
-      "landmarkName": "Old town Baucau (east part)",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Old_town_Baucau_(east_part).jpg"
+      "landmarkName": "Cristo Rei of Dili",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Cristo_Rei_of_Dili.jpg"
     },
     {
       "iso2": "TM",
@@ -1140,8 +1141,8 @@
     {
       "iso2": "VU",
       "status": "approved",
-      "landmarkName": "Port Vila aerial",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Port_Vila_aerial.jpg"
+      "landmarkName": "Mount Yasur eruption 2006, Tanna Island, Vanuatu, VAN 0516",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Mount_Yasur_eruption_2006,_Tanna_Island,_Vanuatu,_VAN_0516.jpg"
     },
     {
       "iso2": "WS",
@@ -1152,8 +1153,8 @@
     {
       "iso2": "YE",
       "status": "approved",
-      "landmarkName": "San'a03 flickr",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:San%27a03_flickr.jpg"
+      "landmarkName": "Sana'a, Yemen (in explore) - Flickr - Rod Waddington",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Sana%27a,_Yemen_(in_explore)_-_Flickr_-_Rod_Waddington.jpg"
     },
     {
       "iso2": "ZA",
@@ -1170,8 +1171,8 @@
     {
       "iso2": "ZW",
       "status": "approved",
-      "landmarkName": "Harare skyline",
-      "sourcePage": "https://commons.wikimedia.org/wiki/File:Harare_skyline.jpg"
+      "landmarkName": "Victoria Falls, Zimbabwe 01",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Victoria_Falls,_Zimbabwe_01.jpg"
     }
   ]
 }

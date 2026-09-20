@@ -66,11 +66,17 @@ describe('DESTINATION_VISUALS — current production state', () => {
   it('every entry has a non-empty local image path (deploy-base-prefixed), alt text in both languages, and a valid attribution URL', () => {
     const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const imagePathPattern = new RegExp(`^${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/destinations/[a-z]{2}\\.webp$`);
+    const cardPathPattern = new RegExp(`^${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/destinations/cards/[a-z]{2}\\.webp$`);
     for (const [iso2, visual] of Object.entries(DESTINATION_VISUALS)) {
       expect(visual.imagePath, `${iso2} imagePath`).toMatch(imagePathPattern);
+      expect(visual.cardImagePath, `${iso2} cardImagePath`).toMatch(cardPathPattern);
       expect(visual.altEn, `${iso2} altEn`).toBeTruthy();
       expect(visual.altAr, `${iso2} altAr`).toBeTruthy();
       expect(visual.attributionUrl, `${iso2} attributionUrl`).toMatch(/^https:\/\/commons\.wikimedia\.org\//);
+      expect(visual.width, `${iso2} width`).toBeGreaterThan(0);
+      expect(visual.height, `${iso2} height`).toBeGreaterThan(0);
+      expect(visual.cardWidth, `${iso2} cardWidth`).toBeLessThanOrEqual(960);
+      expect(visual.cardHeight, `${iso2} cardHeight`).toBeGreaterThan(0);
     }
   });
 });

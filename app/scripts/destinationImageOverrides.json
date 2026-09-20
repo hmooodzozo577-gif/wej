@@ -1,51 +1,53 @@
 {
   "SA": {
-    "preferredQueries": ["AlUla Saudi Arabia", "Riyadh skyline Saudi Arabia", "Kingdom Centre Riyadh"]
+    "preferredQueries": ["AlUla Saudi Arabia","Riyadh skyline Saudi Arabia","Kingdom Centre Riyadh"]
   },
   "FR": {
-    "preferredQueries": ["Eiffel Tower Paris France", "Palace of Versailles France", "Mont Saint-Michel France", "Louvre Paris France"]
+    "preferredQueries": ["Eiffel Tower Paris France","Palace of Versailles France","Mont Saint-Michel France","Louvre Paris France"]
   },
   "AU": {
-    "preferredQueries": ["Sydney Opera House Australia", "Uluru Australia", "Great Barrier Reef Australia", "Sydney Harbour Bridge Australia"]
+    "preferredQueries": ["Sydney Opera House Australia","Uluru Australia","Great Barrier Reef Australia","Sydney Harbour Bridge Australia"],
+    "preferredTitles": ["File:Sydney Opera House and Harbour Bridge Dusk (2) 2019-06-21.jpg"]
   },
   "GB": {
-    "preferredQueries": ["Tower Bridge London United Kingdom", "Big Ben London United Kingdom", "Edinburgh Castle United Kingdom"]
+    "preferredQueries": ["Tower Bridge London United Kingdom","Big Ben London United Kingdom","Edinburgh Castle United Kingdom"]
   },
   "TR": {
-    "preferredQueries": ["Hagia Sophia Istanbul Turkey", "Cappadocia Turkey landscape", "Bosphorus Istanbul Turkey skyline"]
+    "preferredQueries": ["Hagia Sophia Istanbul Turkey","Cappadocia Turkey landscape","Bosphorus Istanbul Turkey skyline"]
   },
   "AT": {
-    "preferredQueries": ["Schonbrunn Palace Vienna Austria", "Hallstatt Austria", "Vienna skyline Austria"]
+    "preferredQueries": ["Schonbrunn Palace Vienna Austria","Hallstatt Austria","Vienna skyline Austria"]
   },
   "PL": {
-    "preferredQueries": ["Wawel Castle Krakow Poland", "Warsaw Old Town Poland", "Malbork Castle Poland"]
+    "preferredQueries": ["Wawel Castle Krakow Poland","Warsaw Old Town Poland","Malbork Castle Poland"]
   },
   "PE": {
-    "preferredQueries": ["Machu Picchu Peru", "Cusco Peru landscape", "Lima skyline Peru"]
+    "preferredQueries": ["Machu Picchu Peru","Cusco Peru landscape","Lima skyline Peru"]
   },
   "IE": {
-    "preferredQueries": ["Cliffs of Moher Ireland", "Dublin skyline Ireland", "Ring of Kerry Ireland landscape"]
+    "preferredQueries": ["Cliffs of Moher Ireland","Dublin skyline Ireland","Ring of Kerry Ireland landscape"]
   },
   "VA": {
     "preferredTitles": ["File:Peters Square Sunrise Vatican Rome Sep19 R16 01827.jpg"],
-    "preferredQueries": ["St Peter's Basilica Vatican City", "St Peter's Square Vatican City aerial"]
+    "preferredQueries": ["St Peter's Basilica Vatican City","St Peter's Square Vatican City aerial"]
   },
   "GE": {
     "wikivoyageTitle": "Georgia (country)",
-    "preferredQueries": ["Tbilisi Georgia country skyline", "Svaneti Georgia country landscape"]
+    "preferredQueries": ["Tbilisi Georgia country skyline","Svaneti Georgia country landscape"]
   },
   "FM": {
     "wikivoyageTitle": "Federated States of Micronesia",
-    "preferredQueries": ["Pohnpei Micronesia landscape", "Nan Madol Micronesia"]
+    "preferredQueries": ["Pohnpei Micronesia landscape","Nan Madol Micronesia"],
+    "preferredTitles": ["File:Nan Madol megalithic site, Pohnpei (Federated States of Micronesia).jpg"]
   },
   "BE": {
     "preferredTitles": ["File:Grand-Place, Brussels - panorama, June 2018.jpg"]
   },
   "SO": {
-    "preferredTitles": ["File:Mogadishu Skyline 5th picture.jpg"]
+    "preferredTitles": ["File:Isbahaysiga Mosque 01.jpg"]
   },
   "TO": {
-    "preferredTitles": ["File:Haamonga-A-Maui.jpg", "File:Tonga Royal Palace Oct 08.jpg"]
+    "preferredTitles": ["File:Haamonga-A-Maui.jpg","File:Tonga Royal Palace Oct 08.jpg"]
   },
   "SG": {
     "preferredTitles": ["File:Skylines of the Central Business District, Singapore at dusk.jpg"]
@@ -66,12 +68,90 @@
     "preferredTitles": ["File:Jamaica Ocho Rios Dunn's River Falls 1.jpg"]
   },
   "MH": {
-    "preferredTitles": ["File:Kwajalein Atoll, Marshall Islands.jpg"]
+    "preferredTitles": ["File:The Marshall Islands - Majuro - Laura Beach - 3-2000.jpg"]
   },
   "MZ": {
     "preferredTitles": ["File:Maputo skyline 2006.jpg"]
   },
   "SL": {
     "preferredTitles": ["File:Freetown-aerialview.jpg"]
+  },
+  "AG": {
+    "preferredTitles": ["File:Antigua English Harbour Nelson's Dockyard 2.jpg"]
+  },
+  "BJ": {
+    "preferredTitles": ["File:Store and casino - Ganvie, Benin (33721536115).jpg"]
+  },
+  "CA": {
+    "preferredTitles": ["File:1 lake louise pano 2019.jpg"]
+  },
+  "EC": {
+    "preferredTitles": ["File:Ecuador - Cotopaxi.JPG"]
+  },
+  "EG": {
+    "preferredTitles": ["File:All Gizah Pyramids.jpg"]
+  },
+  "GA": {
+    "preferredTitles": ["File:Pointe Denis.JPG"]
+  },
+  "HT": {
+    "preferredTitles": ["File:Citadelle Laferrière Aerial View.jpg"]
+  },
+  "IN": {
+    "preferredTitles": ["File:Aks The Reflection Taj Mahal.jpg"]
+  },
+  "KW": {
+    "preferredTitles": ["File:Kuwait City Kuwait Towers View to the al-Hamra Tower.jpg"]
+  },
+  "LB": {
+    "preferredTitles": ["File:Pigeon Rocks of Beirut, Rock of Raouche, Beirut, Lebanon.jpg"]
+  },
+  "LT": {
+    "preferredTitles": ["File:Trakai Island Castle, Lithuania - Diliff.jpg"]
+  },
+  "MG": {
+    "preferredTitles": ["File:Allée des baobabs Morondava Madagascar.jpg"]
+  },
+  "MW": {
+    "preferredTitles": ["File:Cape McLear, Malawi (2498445835).jpg"]
+  },
+  "NG": {
+    "preferredTitles": ["File:Zuma Rock - Nature.jpg"]
+  },
+  "NP": {
+    "preferredTitles": ["File:Sagarmatha Everest Zone, Nepal, Himalayas.jpg"]
+  },
+  "NZ": {
+    "preferredTitles": ["File:Milford Sound in Fiordland National Park 01.jpg"]
+  },
+  "OM": {
+    "preferredTitles": ["File:Sultan Qaboos Grand Mosque (1).jpg"]
+  },
+  "PH": {
+    "preferredTitles": ["File:Banaue Philippines Batad-Rice-Terraces-04.jpg"]
+  },
+  "PT": {
+    "preferredTitles": ["File:Lisbon Torre de Belém BW 2018-10-03 16-35-39.jpg"]
+  },
+  "PY": {
+    "preferredTitles": ["File:00 3819 Asunción - Paraguay (Südamerika).jpg"]
+  },
+  "ST": {
+    "preferredTitles": ["File:Pico Cão Grande.jpg"]
+  },
+  "TL": {
+    "preferredTitles": ["File:Cristo Rei of Dili.jpg"]
+  },
+  "VU": {
+    "preferredTitles": ["File:Mount Yasur eruption 2006, Tanna Island, Vanuatu, VAN 0516.jpg"]
+  },
+  "YE": {
+    "preferredTitles": ["File:Sana'a, Yemen (in explore) - Flickr - Rod Waddington.jpg"]
+  },
+  "ZW": {
+    "preferredTitles": ["File:Victoria Falls, Zimbabwe 01.jpg"]
+  },
+  "PG": {
+    "preferredTitles": ["File:Rabaul from Vulcanology Observatory.jpg"]
   }
 }

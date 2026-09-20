@@ -12,7 +12,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Andorra_la_Vella_-_view2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:17.842Z",
     "width": 1440,
-    "height": 593
+    "height": 593,
+    "cardLocalPath": "/destinations/cards/ad.webp",
+    "cardWidth": 960,
+    "cardHeight": 395
   },
   {
     "iso2": "AE",
@@ -27,7 +30,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/95/%D0%90%D0%B1%D1%83-%D0%94%D0%B0%D0%B1%D0%B8_%28Abu_Dhabi%29_-_panoramio_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:34.818Z",
     "width": 1280,
-    "height": 738
+    "height": 738,
+    "cardLocalPath": "/destinations/cards/ae.webp",
+    "cardWidth": 960,
+    "cardHeight": 554
   },
   {
     "iso2": "AF",
@@ -42,22 +48,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Kabul_TV_Hill_view.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:08.343Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/af.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "AG",
     "iso3": "ATG",
     "countryName": "Antigua and Barbuda",
-    "landmarkName": "Barbuda ISS008-E-7945",
+    "landmarkName": "Antigua English Harbour Nelson's Dockyard 2",
     "localPath": "/destinations/ag.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Barbuda_ISS008-E-7945.jpg",
-    "author": "Image Science and Analysis Laboratory, NASA-Johnson Space Center.",
-    "license": "Public domain",
-    "licenseUrl": null,
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/95/Barbuda_ISS008-E-7945.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:30:21.124Z",
-    "width": 1440,
-    "height": 1071
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Antigua_English_Harbour_Nelson%27s_Dockyard_2.jpg",
+    "author": "Dr. Thomas Liptak",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Antigua_English_Harbour_Nelson%27s_Dockyard_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:16:27.728Z",
+    "width": 1920,
+    "height": 1280,
+    "cardLocalPath": "/destinations/cards/ag.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "AL",
@@ -72,7 +84,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/06/Tirana_from_South.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:10.918Z",
     "width": 1440,
-    "height": 928
+    "height": 928,
+    "cardLocalPath": "/destinations/cards/al.webp",
+    "cardWidth": 960,
+    "cardHeight": 619
   },
   {
     "iso2": "AM",
@@ -87,7 +102,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Mount_Ararat_and_the_Yerevan_skyline_in_spring_%2828mm%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:27.088Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/am.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "AO",
@@ -102,7 +120,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Luanda_feb09_ost01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:19.526Z",
     "width": 1440,
-    "height": 955
+    "height": 955,
+    "cardLocalPath": "/destinations/cards/ao.webp",
+    "cardWidth": 960,
+    "cardHeight": 637
   },
   {
     "iso2": "AR",
@@ -117,7 +138,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Vista_a%C3%A9rea_de_la_Plaza_del_Congreso_10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:24.096Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/ar.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "AT",
@@ -132,22 +156,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Wien_katedra_sw_Szczepana_widok_z_wiezy_6.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:18.152Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/at.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "AU",
     "iso3": "AUS",
     "countryName": "Australia",
-    "landmarkName": "LordHoweIslandFromKimsLookout",
+    "landmarkName": "Sydney Opera House and Harbour Bridge Dusk (2) 2019-06-21",
     "localPath": "/destinations/au.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:LordHoweIslandFromKimsLookout.jpg",
-    "author": "David Morgan-Mar",
-    "license": "CC BY 2.5",
-    "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/db/LordHoweIslandFromKimsLookout.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:38:10.243Z",
-    "width": 1024,
-    "height": 687
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Sydney_Opera_House_and_Harbour_Bridge_Dusk_(2)_2019-06-21.jpg",
+    "author": "Benh LIEU SONG (Flickr)",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/53/Sydney_Opera_House_and_Harbour_Bridge_Dusk_%282%29_2019-06-21.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:16:34.594Z",
+    "width": 1920,
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/au.webp",
+    "cardWidth": 960,
+    "cardHeight": 480
   },
   {
     "iso2": "AZ",
@@ -162,7 +192,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Flame_towers_from_Baku_boulevard.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:41:56.128Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/az.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "BA",
@@ -177,7 +210,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Sarajevo_City_Panorama.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:14.317Z",
     "width": 1440,
-    "height": 860
+    "height": 860,
+    "cardLocalPath": "/destinations/cards/ba.webp",
+    "cardWidth": 960,
+    "cardHeight": 573
   },
   {
     "iso2": "BB",
@@ -192,7 +228,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Bridgetown_Promenade.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:55.033Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/bb.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "BD",
@@ -207,7 +246,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/40/Barisal_Skyline_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:52.965Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/bd.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "BE",
@@ -222,7 +264,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/26/Grand-Place%2C_Brussels_-_panorama%2C_June_2018.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:01.251Z",
     "width": 1440,
-    "height": 819
+    "height": 819,
+    "cardLocalPath": "/destinations/cards/be.webp",
+    "cardWidth": 960,
+    "cardHeight": 546
   },
   {
     "iso2": "BF",
@@ -237,7 +282,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/05/Monument_aux_h%C3%A9ros_nationaux_-_Ouagadougou_-_2024.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:28.662Z",
     "width": 1440,
-    "height": 876
+    "height": 876,
+    "cardLocalPath": "/destinations/cards/bf.webp",
+    "cardWidth": 960,
+    "cardHeight": 584
   },
   {
     "iso2": "BG",
@@ -252,7 +300,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Panoramic_view_over_central_Sofia_and_the_Vitosha_Mountain_2017-10-08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:26.248Z",
     "width": 1440,
-    "height": 1150
+    "height": 1150,
+    "cardLocalPath": "/destinations/cards/bg.webp",
+    "cardWidth": 960,
+    "cardHeight": 767
   },
   {
     "iso2": "BH",
@@ -267,7 +318,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Bahrain_World_trade_Center_.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:51.260Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/bh.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "BI",
@@ -282,22 +336,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Gitega.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:30.380Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/bi.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "BJ",
     "iso3": "BEN",
     "countryName": "Benin",
-    "landmarkName": "Porto-Novo vue",
+    "landmarkName": "Store and casino - Ganvie, Benin (33721536115)",
     "localPath": "/destinations/bj.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Porto-Novo_vue.jpg",
-    "author": "Élisée.Adad",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/08/Porto-Novo_vue.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:31:04.931Z",
-    "width": 834,
-    "height": 567
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Store_and_casino_-_Ganvie,_Benin_(33721536115).jpg",
+    "author": "Dan Sloan",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Store_and_casino_-_Ganvie%2C_Benin_%2833721536115%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:16:51.341Z",
+    "width": 1920,
+    "height": 1280,
+    "cardLocalPath": "/destinations/cards/bj.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "BN",
@@ -312,7 +372,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/65/Kuala_Belait_at_Night_%2818623608099%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:21.511Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/bn.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "BO",
@@ -327,7 +390,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/86/La_Paz-center.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:12.567Z",
     "width": 1280,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/bo.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "BR",
@@ -342,7 +408,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Planalto_Central_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:17.769Z",
     "width": 1440,
-    "height": 689
+    "height": 689,
+    "cardLocalPath": "/destinations/cards/br.webp",
+    "cardWidth": 960,
+    "cardHeight": 459
   },
   {
     "iso2": "BS",
@@ -357,7 +426,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a1/BHA_Nassau%2C_Paradise_Island%2C_Atlantis_Bridge_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:49.304Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/bs.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "BT",
@@ -372,7 +444,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/47/Thimphu-12-vom_Buddha_Dordenma-2015-gje.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:09.142Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/bt.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "BW",
@@ -387,7 +462,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Vista_a%C3%A9rea_del_delta_del_Okavango%2C_Botsuana%2C_2018-08-01%2C_DD_39.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:42:01.519Z",
     "width": 1440,
-    "height": 961
+    "height": 961,
+    "cardLocalPath": "/destinations/cards/bw.webp",
+    "cardWidth": 960,
+    "cardHeight": 641
   },
   {
     "iso2": "BY",
@@ -402,7 +480,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ca/%D0%9C%D1%96%D0%BD%D1%81%D0%BA._%D0%A1%D0%BA%D0%B2%D0%B5%D1%80_%D0%BF%D0%B0_%D0%BF%D0%BB%D0%BE%D1%88%D1%87%D1%8B_%D0%9D%D0%B5%D0%B7%D0%B0%D0%BB%D0%B5%D0%B6%D0%BD%D0%B0%D1%81%D1%86%D1%96.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:56.572Z",
     "width": 1440,
-    "height": 906
+    "height": 906,
+    "cardLocalPath": "/destinations/cards/by.webp",
+    "cardWidth": 960,
+    "cardHeight": 604
   },
   {
     "iso2": "BZ",
@@ -417,22 +498,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Belmopan_Parliament.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:03.736Z",
     "width": 1440,
-    "height": 1066
+    "height": 1066,
+    "cardLocalPath": "/destinations/cards/bz.webp",
+    "cardWidth": 960,
+    "cardHeight": 711
   },
   {
     "iso2": "CA",
     "iso3": "CAN",
     "countryName": "Canada",
-    "landmarkName": "PengrowthSaddledomeDay",
+    "landmarkName": "1 lake louise pano 2019",
     "localPath": "/destinations/ca.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:PengrowthSaddledomeDay.jpg",
-    "author": "Gorgo",
-    "license": "Public domain",
-    "licenseUrl": null,
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/04/PengrowthSaddledomeDay.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:38:05.161Z",
-    "width": 1440,
-    "height": 702
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:1_lake_louise_pano_2019.jpg",
+    "author": "Chensiyuan",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6c/1_lake_louise_pano_2019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:17:48.482Z",
+    "width": 1920,
+    "height": 1077,
+    "cardLocalPath": "/destinations/cards/ca.webp",
+    "cardWidth": 960,
+    "cardHeight": 538
   },
   {
     "iso2": "CD",
@@ -447,7 +534,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Bukavu_centre_ville.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:12.443Z",
     "width": 1440,
-    "height": 817
+    "height": 817,
+    "cardLocalPath": "/destinations/cards/cd.webp",
+    "cardWidth": 960,
+    "cardHeight": 545
   },
   {
     "iso2": "CF",
@@ -462,7 +552,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/58/Bangui_City_Centre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:36.217Z",
     "width": 1440,
-    "height": 801
+    "height": 801,
+    "cardLocalPath": "/destinations/cards/cf.webp",
+    "cardWidth": 960,
+    "cardHeight": 534
   },
   {
     "iso2": "CG",
@@ -477,7 +570,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Quartier_OCH.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:37.837Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/cg.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "CH",
@@ -492,7 +588,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Rhine_Rhein_Basel_2006_871.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:00.619Z",
     "width": 1440,
-    "height": 957
+    "height": 957,
+    "cardLocalPath": "/destinations/cards/ch.webp",
+    "cardWidth": 960,
+    "cardHeight": 638
   },
   {
     "iso2": "CI",
@@ -507,7 +606,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/93/Plateau_2010%2C_Abidjan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:32.591Z",
     "width": 1440,
-    "height": 865
+    "height": 865,
+    "cardLocalPath": "/destinations/cards/ci.webp",
+    "cardWidth": 960,
+    "cardHeight": 577
   },
   {
     "iso2": "CL",
@@ -522,7 +624,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Santiago_de_Chile%2C_Desde_Cerro_San_Crist%C3%B3bal_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:41.527Z",
     "width": 1440,
-    "height": 998
+    "height": 998,
+    "cardLocalPath": "/destinations/cards/cl.webp",
+    "cardWidth": 960,
+    "cardHeight": 665
   },
   {
     "iso2": "CM",
@@ -537,7 +642,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/80/Yaound%C3%A9_view_from_central_market_%282014%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:33.423Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/cm.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "CN",
@@ -552,7 +660,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/06/Skyline_of_Beijing_CBD_with_B-5906_approaching_%2820211016171955%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:44.449Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/cn.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "CO",
@@ -567,7 +678,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Centro_internacional.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:46.531Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/co.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "CR",
@@ -582,7 +696,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Cityscape_of_San_Jos%C3%A9%2C_Costa_Rica_%28253552473%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:49.987Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/cr.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "CU",
@@ -597,7 +714,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Cuba_libre_%286941395159%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:55.454Z",
     "width": 1280,
-    "height": 853
+    "height": 853,
+    "cardLocalPath": "/destinations/cards/cu.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "CV",
@@ -612,7 +732,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/74/Mindelo_%28S_Vicente%2C_Cabo_Verde%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:34.677Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/cv.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "CY",
@@ -627,7 +750,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/72/Cyprus%2C_Ayia_Napa._2017-12-30.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:58.485Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/cy.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "CZ",
@@ -642,7 +768,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Pet%C5%99%C3%ADn_Tower_View_IMG_3020.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:39.100Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/cz.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "DE",
@@ -657,7 +786,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/83/Cityscape_Berlin.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:45.838Z",
     "width": 1440,
-    "height": 737
+    "height": 737,
+    "cardLocalPath": "/destinations/cards/de.webp",
+    "cardWidth": 960,
+    "cardHeight": 491
   },
   {
     "iso2": "DJ",
@@ -672,7 +804,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Lake_Assal_3-Djibouti.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:06.213Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/dj.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "DK",
@@ -687,7 +822,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Copenhagen_-_view_from_Christiansborg_castle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:02.519Z",
     "width": 1440,
-    "height": 874
+    "height": 874,
+    "cardLocalPath": "/destinations/cards/dk.webp",
+    "cardWidth": 960,
+    "cardHeight": 583
   },
   {
     "iso2": "DM",
@@ -702,7 +840,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Portsmouth_%28Dominica%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:07.556Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/dm.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "DO",
@@ -717,7 +858,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Santo_Domingo_%28Dominican_Republic%29_taken_atop_Novocentro_tower_viewing_the_city_to_the_southwest_2010.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:09.639Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/do.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "DZ",
@@ -732,22 +876,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Argel_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:30:15.288Z",
     "width": 1440,
-    "height": 915
+    "height": 915,
+    "cardLocalPath": "/destinations/cards/dz.webp",
+    "cardWidth": 960,
+    "cardHeight": 610
   },
   {
     "iso2": "EC",
     "iso3": "ECU",
     "countryName": "Ecuador",
-    "landmarkName": "FACHADA ASAMBLEA NACIONAL. QUITO, 20 DE FEBRERO 2020. 01",
+    "landmarkName": "Ecuador - Cotopaxi",
     "localPath": "/destinations/ec.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:FACHADA_ASAMBLEA_NACIONAL._QUITO,_20_DE_FEBRERO_2020._01.jpg",
-    "author": "Asamblea Nacional  del Ecuador",
-    "license": "CC BY-SA 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5b/FACHADA_ASAMBLEA_NACIONAL._QUITO%2C_20_DE_FEBRERO_2020._01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:32:14.928Z",
-    "width": 1440,
-    "height": 702
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Ecuador_-_Cotopaxi.JPG",
+    "author": null,
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/69/Ecuador_-_Cotopaxi.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:17:53.239Z",
+    "width": 1920,
+    "height": 1440,
+    "cardLocalPath": "/destinations/cards/ec.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "EE",
@@ -762,22 +912,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/92/Tallinna_vanalinn_2015.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:27.113Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/ee.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "EG",
     "iso3": "EGY",
     "countryName": "Egypt",
-    "landmarkName": "Wikimedia 2016 -34",
+    "landmarkName": "All Gizah Pyramids",
     "localPath": "/destinations/eg.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Wikimedia_2016_-34.jpg",
-    "author": "Wael Mostafa",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Wikimedia_2016_-34.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:32:16.763Z",
-    "width": 1181,
-    "height": 787
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:All_Gizah_Pyramids.jpg",
+    "author": "Ricardo Liberato",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/af/All_Gizah_Pyramids.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:17:58.851Z",
+    "width": 1920,
+    "height": 1276,
+    "cardLocalPath": "/destinations/cards/eg.webp",
+    "cardWidth": 960,
+    "cardHeight": 638
   },
   {
     "iso2": "ER",
@@ -792,7 +948,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Fiat_tagliero%2C_09.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:24.932Z",
     "width": 1440,
-    "height": 758
+    "height": 758,
+    "cardLocalPath": "/destinations/cards/er.webp",
+    "cardWidth": 960,
+    "cardHeight": 505
   },
   {
     "iso2": "ES",
@@ -807,7 +966,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Madrid_%2838624991251%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:54.782Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/es.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "ET",
@@ -822,7 +984,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6e/AddisView.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:30.644Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/et.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "FI",
@@ -837,7 +1002,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Helsinki_Lutheran_Cathedral_%28panoraaman%C3%A4k%C3%B6ala%29-2_%28s%C3%A4%C3%A4t%C3%B6%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:33.879Z",
     "width": 1440,
-    "height": 945
+    "height": 945,
+    "cardLocalPath": "/destinations/cards/fi.webp",
+    "cardWidth": 960,
+    "cardHeight": 630
   },
   {
     "iso2": "FJ",
@@ -852,22 +1020,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Naviti_island%2C_Yasawa%2C_Fiji_%281%29_-_August_2016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:42:05.369Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/fj.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "FM",
     "iso3": "FSM",
     "countryName": "Micronesia",
-    "landmarkName": "Palikir Government Buildings",
+    "landmarkName": "Nan Madol megalithic site, Pohnpei (Federated States of Micronesia)",
     "localPath": "/destinations/fm.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Palikir_Government_Buildings.jpg",
-    "author": "MaxMonaco",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Nan_Madol_megalithic_site,_Pohnpei_(Federated_States_of_Micronesia).jpg",
+    "author": "Patrick Nunn",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Palikir_Government_Buildings.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:34:24.087Z",
-    "width": 1440,
-    "height": 811
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Nan_Madol_megalithic_site%2C_Pohnpei_%28Federated_States_of_Micronesia%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:18:03.375Z",
+    "width": 1920,
+    "height": 1440,
+    "cardLocalPath": "/destinations/cards/fm.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "FR",
@@ -882,22 +1056,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4b/La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:49.757Z",
     "width": 1440,
-    "height": 900
+    "height": 900,
+    "cardLocalPath": "/destinations/cards/fr.webp",
+    "cardWidth": 960,
+    "cardHeight": 600
   },
   {
     "iso2": "GA",
     "iso3": "GAB",
     "countryName": "Gabon",
-    "landmarkName": "Libreville1",
+    "landmarkName": "Pointe Denis",
     "localPath": "/destinations/ga.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Libreville1.jpg",
-    "author": "Global Photographer",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Pointe_Denis.JPG",
+    "author": "Nolween",
     "license": "CC BY-SA 3.0",
-    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/54/Libreville1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:32:35.482Z",
-    "width": 908,
-    "height": 584
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Pointe_Denis.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:18:06.396Z",
+    "width": 1920,
+    "height": 1440,
+    "cardLocalPath": "/destinations/cards/ga.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "GB",
@@ -912,7 +1092,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/67/London_Skyline_%28125508655%29.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:51.863Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/gb.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "GD",
@@ -927,7 +1110,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/St_George%27s%2C_Grenada_-_panoramio_%288%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:46.774Z",
     "width": 1440,
-    "height": 961
+    "height": 961,
+    "cardLocalPath": "/destinations/cards/gd.webp",
+    "cardWidth": 960,
+    "cardHeight": 641
   },
   {
     "iso2": "GE",
@@ -942,7 +1128,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/45/View_of_Tbilisi_from_Tabori_Church_2023-10-08-2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:40.066Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/ge.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "GH",
@@ -957,7 +1146,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Accra_town.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:44.016Z",
     "width": 1440,
-    "height": 809
+    "height": 809,
+    "cardLocalPath": "/destinations/cards/gh.webp",
+    "cardWidth": 960,
+    "cardHeight": 539
   },
   {
     "iso2": "GM",
@@ -972,7 +1164,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/35/Banjul_Gambia_skyline.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:38.365Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/gm.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "GN",
@@ -987,7 +1182,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/42/Un_aper%C3%A7u_de_la_ville_de_conakry.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:50.035Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/gn.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "GQ",
@@ -1002,7 +1200,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Bata%2C_2015-02_-i---i-_%2816325440088%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:21.777Z",
     "width": 1440,
-    "height": 954
+    "height": 954,
+    "cardLocalPath": "/destinations/cards/gq.webp",
+    "cardWidth": 960,
+    "cardHeight": 636
   },
   {
     "iso2": "GR",
@@ -1017,7 +1218,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Aerial_view_of_the_Old_Venetian_Harbour_in_Chania%2C_Greece.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:22.845Z",
     "width": 1440,
-    "height": 959
+    "height": 959,
+    "cardLocalPath": "/destinations/cards/gr.webp",
+    "cardWidth": 960,
+    "cardHeight": 639
   },
   {
     "iso2": "GT",
@@ -1032,7 +1236,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/49/Buildings_in_Guatemala_City.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:48.748Z",
     "width": 1440,
-    "height": 767
+    "height": 767,
+    "cardLocalPath": "/destinations/cards/gt.webp",
+    "cardWidth": 960,
+    "cardHeight": 511
   },
   {
     "iso2": "GW",
@@ -1047,7 +1254,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/65/20130610_-_Monumento_aos_Her%C3%B3is_da_Independ%C3%AAncia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:52.365Z",
     "width": 1440,
-    "height": 954
+    "height": 954,
+    "cardLocalPath": "/destinations/cards/gw.webp",
+    "cardWidth": 960,
+    "cardHeight": 636
   },
   {
     "iso2": "GY",
@@ -1062,7 +1272,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Lethem_Guyana_Kunuku_Mountains.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:54.656Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/gy.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "HN",
@@ -1077,7 +1290,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Centro_historico_de_Tegucigalpa_y_Comayag%C3%BCela.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:05.887Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/hn.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "HR",
@@ -1092,22 +1308,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Zagreb_%2829255640143%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:53.929Z",
     "width": 1440,
-    "height": 961
+    "height": 961,
+    "cardLocalPath": "/destinations/cards/hr.webp",
+    "cardWidth": 960,
+    "cardHeight": 641
   },
   {
     "iso2": "HT",
     "iso3": "HTI",
     "countryName": "Haiti",
-    "landmarkName": "US Navy 100221-N-5787K-002 An aerial view of the logistical area near the port in Port-au-Prince (cropped)",
+    "landmarkName": "Citadelle Laferrière Aerial View",
     "localPath": "/destinations/ht.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:US_Navy_100221-N-5787K-002_An_aerial_view_of_the_logistical_area_near_the_port_in_Port-au-Prince_(cropped).jpg",
-    "author": "U.S. Navy photo by Mass Communication Specialist 2nd Class Meranda Keller",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Citadelle_Laferri%C3%A8re_Aerial_View.jpg",
+    "author": "SPC Gibran Torres, United States Army",
     "license": "Public domain",
     "licenseUrl": null,
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3a/US_Navy_100221-N-5787K-002_An_aerial_view_of_the_logistical_area_near_the_port_in_Port-au-Prince_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:33:02.586Z",
-    "width": 1440,
-    "height": 1018
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Citadelle_Laferri%C3%A8re_Aerial_View.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:18:12.434Z",
+    "width": 1920,
+    "height": 1280,
+    "cardLocalPath": "/destinations/cards/ht.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "HU",
@@ -1122,7 +1344,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Budapest%2C_Hungary_%28explored%29_%2814995308504%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:07.907Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/hu.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "ID",
@@ -1137,7 +1362,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Andhika_bayu_nugraha-taman_nasional_bromo_tengger_semeru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:26.112Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/id.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "IE",
@@ -1152,22 +1380,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/92/Dublin_-_aerial_-_2025-07-07_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:36.255Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/ie.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "IN",
     "iso3": "IND",
     "countryName": "India",
-    "landmarkName": "UB City",
+    "landmarkName": "Aks The Reflection Taj Mahal",
     "localPath": "/destinations/in.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:UB_City.jpg",
-    "author": null,
-    "license": "CC BY-SA 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/27/UB_City.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:33:12.028Z",
-    "width": 800,
-    "height": 546
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Aks_The_Reflection_Taj_Mahal.jpg",
+    "author": "Antrix3",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/af/Aks_The_Reflection_Taj_Mahal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:18:26.112Z",
+    "width": 1920,
+    "height": 1272,
+    "cardLocalPath": "/destinations/cards/in.webp",
+    "cardWidth": 960,
+    "cardHeight": 636
   },
   {
     "iso2": "IQ",
@@ -1182,7 +1416,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/90/21._Erbil_Citadel%2C_Erbil_Governorate%2C_Iraqi_Kurdistan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:42:09.624Z",
     "width": 1440,
-    "height": 956
+    "height": 956,
+    "cardLocalPath": "/destinations/cards/iq.webp",
+    "cardWidth": 960,
+    "cardHeight": 637
   },
   {
     "iso2": "IR",
@@ -1197,7 +1434,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Iran_-_Hamedan_view_from_Alvand_Mountain_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:29.076Z",
     "width": 1440,
-    "height": 954
+    "height": 954,
+    "cardLocalPath": "/destinations/cards/ir.webp",
+    "cardWidth": 960,
+    "cardHeight": 636
   },
   {
     "iso2": "IS",
@@ -1212,7 +1452,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Overlooking_Eyjafj%C3%B6r%C3%B0ur_from_Hamrar_%28close%29.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:10.473Z",
     "width": 1280,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/is.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "IT",
@@ -1227,7 +1470,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Rome_Skyline_%288012016319%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:59.245Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/it.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "JM",
@@ -1242,7 +1488,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/45/Jamaica_Ocho_Rios_Dunn%27s_River_Falls_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:42:13.842Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/jm.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "JO",
@@ -1257,7 +1506,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/66/Amman.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:37.518Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/jo.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "JP",
@@ -1272,7 +1524,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Akiba_denkigai.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:16.016Z",
     "width": 1440,
-    "height": 919
+    "height": 919,
+    "cardLocalPath": "/destinations/cards/jp.webp",
+    "cardWidth": 960,
+    "cardHeight": 613
   },
   {
     "iso2": "KE",
@@ -1287,7 +1542,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/08/Nairobi%2C_view_from_KICC.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:41.917Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/ke.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "KG",
@@ -1302,7 +1560,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/42/Bishkek_City%27s_business_center.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:48.501Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/kg.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "KH",
@@ -1317,7 +1578,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Phnom_Penh_aerial.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:31.706Z",
     "width": 1280,
-    "height": 851
+    "height": 851,
+    "cardLocalPath": "/destinations/cards/kh.webp",
+    "cardWidth": 960,
+    "cardHeight": 638
   },
   {
     "iso2": "KI",
@@ -1332,7 +1596,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Manra_Lagoon_AKK.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:44.276Z",
     "width": 1440,
-    "height": 965
+    "height": 965,
+    "cardLocalPath": "/destinations/cards/ki.webp",
+    "cardWidth": 960,
+    "cardHeight": 643
   },
   {
     "iso2": "KM",
@@ -1347,7 +1614,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Moroni_harbour_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:48.077Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/km.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "KN",
@@ -1362,7 +1632,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Nevis_2008.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:53.644Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/kn.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "KP",
@@ -1377,7 +1650,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Panoramic_view_from_Juche_Tower.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:05.748Z",
     "width": 1440,
-    "height": 668
+    "height": 668,
+    "cardLocalPath": "/destinations/cards/kp.webp",
+    "cardWidth": 960,
+    "cardHeight": 445
   },
   {
     "iso2": "KR",
@@ -1392,22 +1668,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/88/%EB%8D%95%EC%88%98%EA%B6%81%EC%9D%98_%EA%B0%80%EC%9D%84.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:23.425Z",
     "width": 1440,
-    "height": 961
+    "height": 961,
+    "cardLocalPath": "/destinations/cards/kr.webp",
+    "cardWidth": 960,
+    "cardHeight": 641
   },
   {
     "iso2": "KW",
     "iso3": "KWT",
     "countryName": "Kuwait",
-    "landmarkName": "Carmuseumq8",
+    "landmarkName": "Kuwait City Kuwait Towers View to the al-Hamra Tower",
     "localPath": "/destinations/kw.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Carmuseumq8.jpg",
-    "author": "Kuwaitsoccer",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Carmuseumq8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:33:47.272Z",
-    "width": 1440,
-    "height": 1080
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Kuwait_City_Kuwait_Towers_View_to_the_al-Hamra_Tower.jpg",
+    "author": "Zairon",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/49/Kuwait_City_Kuwait_Towers_View_to_the_al-Hamra_Tower.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:18:37.866Z",
+    "width": 1920,
+    "height": 1344,
+    "cardLocalPath": "/destinations/cards/kw.webp",
+    "cardWidth": 960,
+    "cardHeight": 672
   },
   {
     "iso2": "KZ",
@@ -1422,7 +1704,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Trip_to_Astana_%282015-10-24%29_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:39.455Z",
     "width": 1440,
-    "height": 909
+    "height": 909,
+    "cardLocalPath": "/destinations/cards/kz.webp",
+    "cardWidth": 960,
+    "cardHeight": 606
   },
   {
     "iso2": "LA",
@@ -1437,22 +1722,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/28/20171118_Vientiane_3220_DxO.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:52.209Z",
     "width": 1440,
-    "height": 954
+    "height": 954,
+    "cardLocalPath": "/destinations/cards/la.webp",
+    "cardWidth": 960,
+    "cardHeight": 636
   },
   {
     "iso2": "LB",
     "iso3": "LBN",
     "countryName": "Lebanon",
-    "landmarkName": "Beirutcity",
+    "landmarkName": "Pigeon Rocks of Beirut, Rock of Raouche, Beirut, Lebanon",
     "localPath": "/destinations/lb.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Beirutcity.jpg",
-    "author": "Yoniw",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/db/Beirutcity.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:33:55.713Z",
-    "width": 800,
-    "height": 522
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Pigeon_Rocks_of_Beirut,_Rock_of_Raouche,_Beirut,_Lebanon.jpg",
+    "author": "Vyacheslav Argenberg",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/83/Pigeon_Rocks_of_Beirut%2C_Rock_of_Raouche%2C_Beirut%2C_Lebanon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:18:45.751Z",
+    "width": 1920,
+    "height": 1440,
+    "cardLocalPath": "/destinations/cards/lb.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "LC",
@@ -1467,7 +1758,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ea/CastriesStLucia.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:54.960Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/lc.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "LI",
@@ -1482,7 +1776,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9b/View_of_Vaduz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:01.944Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/li.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "LK",
@@ -1497,7 +1794,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/11/Colombo_skyline_2024.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:27.138Z",
     "width": 1440,
-    "height": 811
+    "height": 811,
+    "cardLocalPath": "/destinations/cards/lk.webp",
+    "cardWidth": 960,
+    "cardHeight": 541
   },
   {
     "iso2": "LR",
@@ -1512,7 +1812,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/25/Liberia%2C_Africa_-_panoramio_%28256%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:58.768Z",
     "width": 1440,
-    "height": 954
+    "height": 954,
+    "cardLocalPath": "/destinations/cards/lr.webp",
+    "cardWidth": 960,
+    "cardHeight": 636
   },
   {
     "iso2": "LS",
@@ -1527,22 +1830,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/09/Maseru_from_Parliament_Hill.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:57.299Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/ls.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "LT",
     "iso3": "LTU",
     "countryName": "Lithuania",
-    "landmarkName": "Trakai-bridge",
+    "landmarkName": "Trakai Island Castle, Lithuania - Diliff",
     "localPath": "/destinations/lt.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Trakai-bridge.jpg",
-    "author": "No machine-readable author provided. Jakro64 assumed (based on copyright claims).",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Trakai_Island_Castle,_Lithuania_-_Diliff.jpg",
+    "author": "Diliff",
     "license": "CC BY-SA 3.0",
-    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/75/Trakai-bridge.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:34:03.544Z",
-    "width": 1000,
-    "height": 750
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/db/Trakai_Island_Castle%2C_Lithuania_-_Diliff.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:18:52.504Z",
+    "width": 1920,
+    "height": 1190,
+    "cardLocalPath": "/destinations/cards/lt.webp",
+    "cardWidth": 960,
+    "cardHeight": 595
   },
   {
     "iso2": "LU",
@@ -1557,7 +1866,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/18/Luxemburg.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:05.291Z",
     "width": 1440,
-    "height": 1084
+    "height": 1084,
+    "cardLocalPath": "/destinations/cards/lu.webp",
+    "cardWidth": 960,
+    "cardHeight": 723
   },
   {
     "iso2": "LV",
@@ -1572,7 +1884,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Vistas_desde_la_iglesia_de_San_Pedro%2C_Riga%2C_Letonia%2C_2012-08-07%2C_DD_12.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:33:54.684Z",
     "width": 1440,
-    "height": 935
+    "height": 935,
+    "cardLocalPath": "/destinations/cards/lv.webp",
+    "cardWidth": 960,
+    "cardHeight": 623
   },
   {
     "iso2": "LY",
@@ -1587,7 +1902,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Marcus_Aurelius_Arch_Tripoli_Libya.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:00.175Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/ly.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "MA",
@@ -1602,7 +1920,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/85/Kasbah_des_Oudaias_P1060356.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:35.029Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/ma.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "MC",
@@ -1617,7 +1938,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Monte_Carlo_7_2013.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:29.699Z",
     "width": 1440,
-    "height": 720
+    "height": 720,
+    "cardLocalPath": "/destinations/cards/mc.webp",
+    "cardWidth": 960,
+    "cardHeight": 480
   },
   {
     "iso2": "MD",
@@ -1632,7 +1956,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/52/Arch_of_Triumph%2C_Chisinau%2C_Republic_of_Moldova_%2851160304626_cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:26.302Z",
     "width": 1440,
-    "height": 847
+    "height": 847,
+    "cardLocalPath": "/destinations/cards/md.webp",
+    "cardWidth": 960,
+    "cardHeight": 565
   },
   {
     "iso2": "ME",
@@ -1647,37 +1974,46 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Titograd.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:33.692Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/me.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "MG",
     "iso3": "MDG",
     "countryName": "Madagascar",
-    "landmarkName": "Lake Anosy, Central Antananarivo, Capital of Madagascar, Photo by Sascha Grabow",
+    "landmarkName": "Allée des baobabs Morondava Madagascar",
     "localPath": "/destinations/mg.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Lake_Anosy,_Central_Antananarivo,_Capital_of_Madagascar,_Photo_by_Sascha_Grabow.jpg",
-    "author": "Sascha Grabow www.saschagrabow.com",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Lake_Anosy%2C_Central_Antananarivo%2C_Capital_of_Madagascar%2C_Photo_by_Sascha_Grabow.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:34:06.667Z",
-    "width": 857,
-    "height": 575
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:All%C3%A9e_des_baobabs_Morondava_Madagascar.jpg",
+    "author": "Cactus0625",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f5/All%C3%A9e_des_baobabs_Morondava_Madagascar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:18:57.199Z",
+    "width": 1920,
+    "height": 1308,
+    "cardLocalPath": "/destinations/cards/mg.webp",
+    "cardWidth": 960,
+    "cardHeight": 654
   },
   {
     "iso2": "MH",
     "iso3": "MHL",
     "countryName": "Marshall Islands",
-    "landmarkName": "Kwajalein Atoll, Marshall Islands",
+    "landmarkName": "The Marshall Islands - Majuro - Laura Beach - 3-2000",
     "localPath": "/destinations/mh.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Kwajalein_Atoll,_Marshall_Islands.jpg",
-    "author": "Matt Kieffer",
-    "license": "CC BY-SA 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/11/Kwajalein_Atoll%2C_Marshall_Islands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:42:17.190Z",
-    "width": 1440,
-    "height": 1043
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:The_Marshall_Islands_-_Majuro_-_Laura_Beach_-_3-2000.jpg",
+    "author": "mrlins",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cb/The_Marshall_Islands_-_Majuro_-_Laura_Beach_-_3-2000.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:36:50.579Z",
+    "width": 1920,
+    "height": 1266,
+    "cardLocalPath": "/destinations/cards/mh.webp",
+    "cardWidth": 960,
+    "cardHeight": 633
   },
   {
     "iso2": "MK",
@@ -1692,7 +2028,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0e/Stone_Bridge_Skopje_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:10.086Z",
     "width": 1440,
-    "height": 953
+    "height": 953,
+    "cardLocalPath": "/destinations/cards/mk.webp",
+    "cardWidth": 960,
+    "cardHeight": 635
   },
   {
     "iso2": "ML",
@@ -1707,7 +2046,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Bamako_ACI_2000_Aeriel.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:12.690Z",
     "width": 1440,
-    "height": 809
+    "height": 809,
+    "cardLocalPath": "/destinations/cards/ml.webp",
+    "cardWidth": 960,
+    "cardHeight": 539
   },
   {
     "iso2": "MM",
@@ -1722,7 +2064,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/19/Naypyidaw_--_Water_Fountain_Garden.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:39.564Z",
     "width": 1440,
-    "height": 794
+    "height": 794,
+    "cardLocalPath": "/destinations/cards/mm.webp",
+    "cardWidth": 960,
+    "cardHeight": 529
   },
   {
     "iso2": "MN",
@@ -1737,7 +2082,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c2/UB_downtown.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:31.422Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/mn.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "MR",
@@ -1752,7 +2100,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/83/15-Nouakchott-eH-R0058185.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:18.082Z",
     "width": 1280,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/mr.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "MT",
@@ -1767,7 +2118,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/29/Malta%2C_2010_-_panoramio_-_Bengt_Nyman_%2823%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:14.782Z",
     "width": 1440,
-    "height": 720
+    "height": 720,
+    "cardLocalPath": "/destinations/cards/mt.webp",
+    "cardWidth": 960,
+    "cardHeight": 480
   },
   {
     "iso2": "MU",
@@ -1782,7 +2136,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/da/The_view_from_Trou_aux_Cerfs_%283007258484%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:19.946Z",
     "width": 1440,
-    "height": 975
+    "height": 975,
+    "cardLocalPath": "/destinations/cards/mu.webp",
+    "cardWidth": 960,
+    "cardHeight": 650
   },
   {
     "iso2": "MV",
@@ -1797,22 +2154,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Male-total.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:10.089Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/mv.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "MW",
     "iso3": "MWI",
     "countryName": "Malawi",
-    "landmarkName": "Lilongwe Area 2",
+    "landmarkName": "Cape McLear, Malawi (2498445835)",
     "localPath": "/destinations/mw.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Lilongwe_Area_2.jpg",
-    "author": "Brian Dell",
-    "license": "Public domain",
-    "licenseUrl": null,
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/99/Lilongwe_Area_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:34:08.510Z",
-    "width": 1229,
-    "height": 859
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Cape_McLear,_Malawi_(2498445835).jpg",
+    "author": "Joachim Huber from Switzerland",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/74/Cape_McLear%2C_Malawi_%282498445835%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:19:04.738Z",
+    "width": 1920,
+    "height": 1277,
+    "cardLocalPath": "/destinations/cards/mw.webp",
+    "cardWidth": 960,
+    "cardHeight": 638
   },
   {
     "iso2": "MX",
@@ -1827,7 +2190,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Sobrevuelos_CDMX_HJ2A5091_%2840386338731%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:21.823Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/mx.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "MY",
@@ -1842,7 +2208,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Skyline_of_George_Town%2C_Penang_at_night_January_2025_02-01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:29.225Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/my.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "MZ",
@@ -1857,7 +2226,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/50/Maputo_skyline_2006.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:42:21.794Z",
     "width": 1440,
-    "height": 967
+    "height": 967,
+    "cardLocalPath": "/destinations/cards/mz.webp",
+    "cardWidth": 960,
+    "cardHeight": 645
   },
   {
     "iso2": "NA",
@@ -1872,7 +2244,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Windhoek-Skyline.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:41.939Z",
     "width": 1440,
-    "height": 964
+    "height": 964,
+    "cardLocalPath": "/destinations/cards/na.webp",
+    "cardWidth": 960,
+    "cardHeight": 643
   },
   {
     "iso2": "NE",
@@ -1887,22 +2262,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/26/Niamey_from_grand_mosque_theatre_2006.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:00.543Z",
     "width": 1440,
-    "height": 1110
+    "height": 1110,
+    "cardLocalPath": "/destinations/cards/ne.webp",
+    "cardWidth": 960,
+    "cardHeight": 740
   },
   {
     "iso2": "NG",
     "iso3": "NGA",
     "countryName": "Nigeria",
-    "landmarkName": "The National Assembly Globe",
+    "landmarkName": "Zuma Rock - Nature",
     "localPath": "/destinations/ng.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:The_National_Assembly_Globe.jpg",
-    "author": "Ovinuchi Prince Ejiohuo",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Zuma_Rock_-_Nature.jpg",
+    "author": "Anass Sedrati",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e4/The_National_Assembly_Globe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:35:03.166Z",
-    "width": 1440,
-    "height": 937
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Zuma_Rock_-_Nature.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:19:11.718Z",
+    "width": 1920,
+    "height": 1440,
+    "cardLocalPath": "/destinations/cards/ng.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "NI",
@@ -1917,7 +2298,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Avenida_Bolivar_A_Chavez.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:57.765Z",
     "width": 1440,
-    "height": 811
+    "height": 811,
+    "cardLocalPath": "/destinations/cards/ni.webp",
+    "cardWidth": 960,
+    "cardHeight": 541
   },
   {
     "iso2": "NL",
@@ -1932,7 +2316,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9b/00_0781_Canal_in_Delft_%28NL%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:03.740Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/nl.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "NO",
@@ -1947,22 +2334,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0b/00_4400_View_over_the_store_Lungeg%C3%A5rdsvann_-_Bergen_%28Norway%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:28.045Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/no.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "NP",
     "iso3": "NPL",
     "countryName": "Nepal",
-    "landmarkName": "Early morning view of Bhaktapur Durbar Square",
+    "landmarkName": "Sagarmatha Everest Zone, Nepal, Himalayas",
     "localPath": "/destinations/np.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Early_morning_view_of_Bhaktapur_Durbar_Square.jpg",
-    "author": "Bikrampratapsingh",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Early_morning_view_of_Bhaktapur_Durbar_Square.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:34:55.693Z",
-    "width": 800,
-    "height": 518
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Sagarmatha_Everest_Zone,_Nepal,_Himalayas.jpg",
+    "author": "Vyacheslav Argenberg",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Sagarmatha_Everest_Zone%2C_Nepal%2C_Himalayas.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:19:29.600Z",
+    "width": 1920,
+    "height": 1280,
+    "cardLocalPath": "/destinations/cards/np.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "NR",
@@ -1977,37 +2370,46 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/64/Buada_Lagoon%2C_Nauru_2007.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:34:53.484Z",
     "width": 1440,
-    "height": 956
+    "height": 956,
+    "cardLocalPath": "/destinations/cards/nr.webp",
+    "cardWidth": 960,
+    "cardHeight": 637
   },
   {
     "iso2": "NZ",
     "iso3": "NZL",
     "countryName": "New Zealand",
-    "landmarkName": "Auckland CBD",
+    "landmarkName": "Milford Sound in Fiordland National Park 01",
     "localPath": "/destinations/nz.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Auckland_CBD.jpg",
-    "author": "ChewyPineapple",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/74/Auckland_CBD.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:38:11.893Z",
-    "width": 1227,
-    "height": 769
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Milford_Sound_in_Fiordland_National_Park_01.jpg",
+    "author": "Krzysztof Golik",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/da/Milford_Sound_in_Fiordland_National_Park_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:19:41.826Z",
+    "width": 1920,
+    "height": 1280,
+    "cardLocalPath": "/destinations/cards/nz.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "OM",
     "iso3": "OMN",
     "countryName": "Oman",
-    "landmarkName": "Old city of Maskat",
+    "landmarkName": "Sultan Qaboos Grand Mosque (1)",
     "localPath": "/destinations/om.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Old_city_of_Maskat.jpg",
-    "author": "Leon petrosyan",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Sultan_Qaboos_Grand_Mosque_(1).jpg",
+    "author": "Mostafameraji",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Old_city_of_Maskat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:35:12.025Z",
-    "width": 1259,
-    "height": 944
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Sultan_Qaboos_Grand_Mosque_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:36:37.913Z",
+    "width": 1920,
+    "height": 1280,
+    "cardLocalPath": "/destinations/cards/om.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "PA",
@@ -2022,7 +2424,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Panor%C3%A1mica_nocturna_de_la_ciudad_de_Panam%C3%A1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:26.831Z",
     "width": 1440,
-    "height": 991
+    "height": 991,
+    "cardLocalPath": "/destinations/cards/pa.webp",
+    "cardWidth": 960,
+    "cardHeight": 661
   },
   {
     "iso2": "PE",
@@ -2037,37 +2442,46 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/54/Plaza_Mayor_de_Lima-1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:32.290Z",
     "width": 1440,
-    "height": 804
+    "height": 804,
+    "cardLocalPath": "/destinations/cards/pe.webp",
+    "cardWidth": 960,
+    "cardHeight": 536
   },
   {
     "iso2": "PG",
     "iso3": "PNG",
     "countryName": "Papua New Guinea",
-    "landmarkName": "Port Moresby Town2 Mschlauch",
+    "landmarkName": "Rabaul from Vulcanology Observatory",
     "localPath": "/destinations/pg.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Port_Moresby_Town2_Mschlauch.jpg",
-    "author": "MSchlauch",
-    "license": "Public domain",
-    "licenseUrl": null,
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Port_Moresby_Town2_Mschlauch.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:35:28.120Z",
-    "width": 904,
-    "height": 515
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Rabaul_from_Vulcanology_Observatory.jpg",
+    "author": "Stefan Krasowski from New York, NY, USA",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/90/Rabaul_from_Vulcanology_Observatory.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:24:25.156Z",
+    "width": 1920,
+    "height": 1440,
+    "cardLocalPath": "/destinations/cards/pg.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "PH",
     "iso3": "PHL",
     "countryName": "Philippines",
-    "landmarkName": "Iss047e099713 lrg Manila",
+    "landmarkName": "Banaue Philippines Batad-Rice-Terraces-04",
     "localPath": "/destinations/ph.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Iss047e099713_lrg_Manila.jpg",
-    "author": "Astronaut photograph ISS047-E-99713 was acquired on May 6, 2016, with a Nikon D4 digital camera using a 400 millimeter lens, and is provided by the ISS Crew Earth Observations Facility and the Earth Science and Remote Sensing Unit, Johnson Space Center.",
-    "license": "Public domain",
-    "licenseUrl": null,
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Iss047e099713_lrg_Manila.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:35:34.937Z",
-    "width": 1440,
-    "height": 958
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Banaue_Philippines_Batad-Rice-Terraces-04.jpg",
+    "author": "CEphoto, Uwe Aranas",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/35/Banaue_Philippines_Batad-Rice-Terraces-04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:20:14.938Z",
+    "width": 1920,
+    "height": 1280,
+    "cardLocalPath": "/destinations/cards/ph.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "PK",
@@ -2082,7 +2496,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Clocktower_Faisalabad%2C_Panorama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:17.600Z",
     "width": 1440,
-    "height": 680
+    "height": 680,
+    "cardLocalPath": "/destinations/cards/pk.webp",
+    "cardWidth": 960,
+    "cardHeight": 453
   },
   {
     "iso2": "PL",
@@ -2097,7 +2514,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Castle_Square_%2822346p%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:42.933Z",
     "width": 1440,
-    "height": 1134
+    "height": 1134,
+    "cardLocalPath": "/destinations/cards/pl.webp",
+    "cardWidth": 960,
+    "cardHeight": 756
   },
   {
     "iso2": "PS",
@@ -2112,22 +2532,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Palestine-06314_-_West_Bank_%2834121979493%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:24.855Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/ps.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "PT",
     "iso3": "PRT",
     "countryName": "Portugal",
-    "landmarkName": "Lisboa837",
+    "landmarkName": "Lisbon Torre de Belém BW 2018-10-03 16-35-39",
     "localPath": "/destinations/pt.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Lisboa837.png",
-    "author": "Lacobrigo",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Lisbon_Torre_de_Bel%C3%A9m_BW_2018-10-03_16-35-39.jpg",
+    "author": "Berthold Werner",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/43/Lisboa837.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:38:19.962Z",
-    "width": 1021,
-    "height": 627
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Lisbon_Torre_de_Bel%C3%A9m_BW_2018-10-03_16-35-39.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:20:21.617Z",
+    "width": 1920,
+    "height": 1413,
+    "cardLocalPath": "/destinations/cards/pt.webp",
+    "cardWidth": 960,
+    "cardHeight": 706
   },
   {
     "iso2": "PW",
@@ -2142,22 +2568,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Melekeok_State_Office.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:20.697Z",
     "width": 1440,
-    "height": 1077
+    "height": 1077,
+    "cardLocalPath": "/destinations/cards/pw.webp",
+    "cardWidth": 960,
+    "cardHeight": 718
   },
   {
     "iso2": "PY",
     "iso3": "PRY",
     "countryName": "Paraguay",
-    "landmarkName": "Asunción Paraguay",
+    "landmarkName": "00 3819 Asunción - Paraguay (Südamerika)",
     "localPath": "/destinations/py.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Asunci%C3%B3n_Paraguay.jpg",
-    "author": "AnonymousUnknown author",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:00_3819_Asunci%C3%B3n_-_Paraguay_(S%C3%BCdamerika).jpg",
+    "author": "W. Bulach",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Asunci%C3%B3n_Paraguay.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:35:29.545Z",
-    "width": 975,
-    "height": 551
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d5/00_3819_Asunci%C3%B3n_-_Paraguay_%28S%C3%BCdamerika%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:22:53.992Z",
+    "width": 1920,
+    "height": 1258,
+    "cardLocalPath": "/destinations/cards/py.webp",
+    "cardWidth": 960,
+    "cardHeight": 629
   },
   {
     "iso2": "QA",
@@ -2172,7 +2604,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/86/Doha_skyline_in_the_morning_%2812544910974%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:40.502Z",
     "width": 1440,
-    "height": 1161
+    "height": 1161,
+    "cardLocalPath": "/destinations/cards/qa.webp",
+    "cardWidth": 960,
+    "cardHeight": 774
   },
   {
     "iso2": "RO",
@@ -2187,7 +2622,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Bucharest-Skyline-01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:40.187Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/ro.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "RS",
@@ -2202,7 +2640,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Kragujevac_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:06.687Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/rs.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "RU",
@@ -2217,7 +2658,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/85/Saint_Basil%27s_Cathedral_and_the_Red_Square.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:41.566Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/ru.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "RW",
@@ -2232,7 +2676,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/83/Kigali2018Cropped.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:51.019Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/rw.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "SA",
@@ -2247,7 +2694,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/20/Riyadh_Skyline.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:37.200Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/sa.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "SB",
@@ -2262,7 +2712,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Fenualoa_lagoon_2-4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:18.341Z",
     "width": 1440,
-    "height": 1066
+    "height": 1066,
+    "cardLocalPath": "/destinations/cards/sb.webp",
+    "cardWidth": 960,
+    "cardHeight": 711
   },
   {
     "iso2": "SC",
@@ -2277,7 +2730,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/41/Beau_Vallon_%28Seychelles%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:09.515Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/sc.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "SD",
@@ -2292,7 +2748,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/df/Elmek_Nimir_Bridge.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:29.605Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/sd.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "SE",
@@ -2307,7 +2766,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/97/G%C3%B6teborg_2503_stitch_%2828573994096%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:32.086Z",
     "width": 1440,
-    "height": 706
+    "height": 706,
+    "cardLocalPath": "/destinations/cards/se.webp",
+    "cardWidth": 960,
+    "cardHeight": 471
   },
   {
     "iso2": "SG",
@@ -2322,7 +2784,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/27/Skylines_of_the_Central_Business_District%2C_Singapore_at_dusk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:42:30.626Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/sg.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "SI",
@@ -2337,7 +2802,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f6/2021-07-28_Ljubljana-0881.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:16.741Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/si.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "SK",
@@ -2352,7 +2820,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/45/Hlavn%C3%A9_Namestie_%2835096533142%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:14.443Z",
     "width": 1440,
-    "height": 991
+    "height": 991,
+    "cardLocalPath": "/destinations/cards/sk.webp",
+    "cardWidth": 960,
+    "cardHeight": 661
   },
   {
     "iso2": "SL",
@@ -2367,7 +2838,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Mountain_Bintunami.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:42:35.544Z",
     "width": 1440,
-    "height": 954
+    "height": 954,
+    "cardLocalPath": "/destinations/cards/sl.webp",
+    "cardWidth": 960,
+    "cardHeight": 636
   },
   {
     "iso2": "SM",
@@ -2382,7 +2856,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Contrada_della_Pieve%2C_1%2C_Citt%C3%A0_di_San_Marino%2C_San_Marino_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:00.018Z",
     "width": 1440,
-    "height": 820
+    "height": 820,
+    "cardLocalPath": "/destinations/cards/sm.webp",
+    "cardWidth": 960,
+    "cardHeight": 547
   },
   {
     "iso2": "SN",
@@ -2397,22 +2874,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Pointe_des_Almadies_-_Senegal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:03.786Z",
     "width": 1440,
-    "height": 1076
+    "height": 1076,
+    "cardLocalPath": "/destinations/cards/sn.webp",
+    "cardWidth": 960,
+    "cardHeight": 717
   },
   {
     "iso2": "SO",
     "iso3": "SOM",
     "countryName": "Somalia",
-    "landmarkName": "Mogadishu Skyline 5th picture",
+    "landmarkName": "Isbahaysiga Mosque 01",
     "localPath": "/destinations/so.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Mogadishu_Skyline_5th_picture.jpg",
-    "author": "Isma4l",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Isbahaysiga_Mosque_01.jpg",
+    "author": "Omar Gadood",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Mogadishu_Skyline_5th_picture.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:42:25.276Z",
-    "width": 1080,
-    "height": 810
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Isbahaysiga_Mosque_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:54:51.238Z",
+    "width": 1920,
+    "height": 887,
+    "cardLocalPath": "/destinations/cards/so.webp",
+    "cardWidth": 960,
+    "cardHeight": 444
   },
   {
     "iso2": "SR",
@@ -2427,7 +2910,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Waterkant_Paramaribo_with_the_Unesco_Heritage_Buildings.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:31.883Z",
     "width": 1440,
-    "height": 628
+    "height": 628,
+    "cardLocalPath": "/destinations/cards/sr.webp",
+    "cardWidth": 960,
+    "cardHeight": 419
   },
   {
     "iso2": "SS",
@@ -2442,22 +2928,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Juba_City.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:25.395Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/ss.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "ST",
     "iso3": "STP",
     "countryName": "São Tomé and Príncipe",
-    "landmarkName": "Org 4cd8129a56d8fa1d 1582100284000",
+    "landmarkName": "Pico Cão Grande",
     "localPath": "/destinations/st.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Org_4cd8129a56d8fa1d_1582100284000.jpg",
-    "author": "wsrolim",
-    "license": "CC BY-SA 4.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Org_4cd8129a56d8fa1d_1582100284000.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:36:02.254Z",
-    "width": 1440,
-    "height": 810
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Pico_C%C3%A3o_Grande.jpg",
+    "author": "Philippe Bourachot",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Pico_C%C3%A3o_Grande.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:20:36.906Z",
+    "width": 1920,
+    "height": 1079,
+    "cardLocalPath": "/destinations/cards/st.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "SV",
@@ -2472,7 +2964,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ab/MALECON_DEL_PUERTO_DE_LA_LIBERTAD._-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:19.167Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/sv.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "SY",
@@ -2487,7 +2982,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/95/Aleppo%2C_View_of_the_city%2C_Syria.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:35.534Z",
     "width": 1440,
-    "height": 809
+    "height": 809,
+    "cardLocalPath": "/destinations/cards/sy.webp",
+    "cardWidth": 960,
+    "cardHeight": 539
   },
   {
     "iso2": "SZ",
@@ -2502,7 +3000,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/74/Mbabane_%286035476964%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:32:29.279Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/sz.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "TD",
@@ -2517,7 +3018,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/36/Place_de_la_nation4_%28Tchad%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:31:38.441Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/td.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "TG",
@@ -2532,7 +3036,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Monuments_de_l%27ind%C3%A9pendance_et_Palais_des_congr%C3%A8s_de_Lom%C3%A9.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:42.756Z",
     "width": 1440,
-    "height": 662
+    "height": 662,
+    "cardLocalPath": "/destinations/cards/tg.webp",
+    "cardWidth": 960,
+    "cardHeight": 441
   },
   {
     "iso2": "TH",
@@ -2547,7 +3054,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/20/Temple_of_the_Emerald_of_buddha_or_Wat_Phra_Kaew_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:31.296Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/th.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "TJ",
@@ -2562,22 +3072,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Tehron_Street_Dushanbe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:37.461Z",
     "width": 1440,
-    "height": 959
+    "height": 959,
+    "cardLocalPath": "/destinations/cards/tj.webp",
+    "cardWidth": 960,
+    "cardHeight": 639
   },
   {
     "iso2": "TL",
     "iso3": "TLS",
     "countryName": "Timor-Leste",
-    "landmarkName": "Old town Baucau (east part)",
+    "landmarkName": "Cristo Rei of Dili",
     "localPath": "/destinations/tl.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Old_town_Baucau_(east_part).jpg",
-    "author": "David Stanley",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Cristo_Rei_of_Dili.jpg",
+    "author": "Bro. Jeffrey  Pioquinto, SJ",
     "license": "CC BY 2.0",
     "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/18/Old_town_Baucau_%28east_part%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:36:40.959Z",
-    "width": 1024,
-    "height": 768
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Cristo_Rei_of_Dili.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:36:45.337Z",
+    "width": 1920,
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/tl.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "TM",
@@ -2592,7 +3108,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/28/Balkanabat_%2835672063011%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:52.158Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/tm.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "TN",
@@ -2607,7 +3126,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Panoramique_du_centre_de_Tunis_%283197369985%29_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:49.172Z",
     "width": 1440,
-    "height": 838
+    "height": 838,
+    "cardLocalPath": "/destinations/cards/tn.webp",
+    "cardWidth": 960,
+    "cardHeight": 559
   },
   {
     "iso2": "TO",
@@ -2622,7 +3144,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Tonga_Royal_Palace_Oct_08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:44.772Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/to.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "TR",
@@ -2637,7 +3162,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Ankara_%2816290014657%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:33.143Z",
     "width": 1440,
-    "height": 810
+    "height": 810,
+    "cardLocalPath": "/destinations/cards/tr.webp",
+    "cardWidth": 960,
+    "cardHeight": 540
   },
   {
     "iso2": "TT",
@@ -2652,7 +3180,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/96/POS_SKYLINE_2024_BEAUTIFUL_EVAN-P_2024_10-8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:47.136Z",
     "width": 1440,
-    "height": 959
+    "height": 959,
+    "cardLocalPath": "/destinations/cards/tt.webp",
+    "cardWidth": 960,
+    "cardHeight": 639
   },
   {
     "iso2": "TV",
@@ -2667,7 +3198,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Funafuti_Plage_w.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:53.582Z",
     "width": 1440,
-    "height": 966
+    "height": 966,
+    "cardLocalPath": "/destinations/cards/tv.webp",
+    "cardWidth": 960,
+    "cardHeight": 644
   },
   {
     "iso2": "TZ",
@@ -2682,7 +3216,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/81/Scene_at_Nyerere_Square%2C_Dodoma_City.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:39.421Z",
     "width": 1440,
-    "height": 863
+    "height": 863,
+    "cardLocalPath": "/destinations/cards/tz.webp",
+    "cardWidth": 960,
+    "cardHeight": 575
   },
   {
     "iso2": "UA",
@@ -2697,7 +3234,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/62/Kyiv_%28234807751%29.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:56.817Z",
     "width": 1440,
-    "height": 957
+    "height": 957,
+    "cardLocalPath": "/destinations/cards/ua.webp",
+    "cardWidth": 960,
+    "cardHeight": 638
   },
   {
     "iso2": "UG",
@@ -2712,7 +3252,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b5/View_from_7th_floor_on_Crane_Chambers_at_Kampala_road_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:55.042Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/ug.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "US",
@@ -2727,7 +3270,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/87/Boston_Public_Garden_-_Boston%2C_MA_-_DSC01502.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:38:08.078Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/us.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "UY",
@@ -2742,7 +3288,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ca/The_City_%28198895997%29.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:58.546Z",
     "width": 1440,
-    "height": 809
+    "height": 809,
+    "cardLocalPath": "/destinations/cards/uy.webp",
+    "cardWidth": 960,
+    "cardHeight": 539
   },
   {
     "iso2": "UZ",
@@ -2757,7 +3306,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/39/Kalon-Ensemble_Buchara.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:59.985Z",
     "width": 1440,
-    "height": 689
+    "height": 689,
+    "cardLocalPath": "/destinations/cards/uz.webp",
+    "cardWidth": 960,
+    "cardHeight": 459
   },
   {
     "iso2": "VA",
@@ -2772,7 +3324,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Peters_Square_Sunrise_Vatican_Rome_Sep19_R16_01827.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:04.661Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/va.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "VC",
@@ -2787,7 +3342,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cb/St._Vincent%2C_Karibik_-_Kingstown_City_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:56.903Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/vc.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "VE",
@@ -2802,7 +3360,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Caracas_desde_el_%C3%A1vila.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:06.661Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/ve.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "VN",
@@ -2817,22 +3378,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Th%C3%A1p_R%C3%B9a_-_NKS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:09.110Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/vn.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "VU",
     "iso3": "VUT",
     "countryName": "Vanuatu",
-    "landmarkName": "Port Vila aerial",
+    "landmarkName": "Mount Yasur eruption 2006, Tanna Island, Vanuatu, VAN 0516",
     "localPath": "/destinations/vu.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Port_Vila_aerial.jpg",
-    "author": "Phillip Capper from Wellington, New Zealand",
-    "license": "CC BY 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Port_Vila_aerial.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:37:01.520Z",
-    "width": 1024,
-    "height": 685
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Mount_Yasur_eruption_2006,_Tanna_Island,_Vanuatu,_VAN_0516.jpg",
+    "author": "Rolf Cosar",
+    "license": "CC BY 2.5",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/06/Mount_Yasur_eruption_2006%2C_Tanna_Island%2C_Vanuatu%2C_VAN_0516.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:20:53.982Z",
+    "width": 1920,
+    "height": 1277,
+    "cardLocalPath": "/destinations/cards/vu.webp",
+    "cardWidth": 960,
+    "cardHeight": 638
   },
   {
     "iso2": "WS",
@@ -2847,22 +3414,28 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Samoa_-_Apia_Govt_buildings.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:35:58.146Z",
     "width": 1440,
-    "height": 1080
+    "height": 1080,
+    "cardLocalPath": "/destinations/cards/ws.webp",
+    "cardWidth": 960,
+    "cardHeight": 720
   },
   {
     "iso2": "YE",
     "iso3": "YEM",
     "countryName": "Yemen",
-    "landmarkName": "San'a03 flickr",
+    "landmarkName": "Sana'a, Yemen (in explore) - Flickr - Rod Waddington",
     "localPath": "/destinations/ye.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:San%27a03_flickr.jpg",
-    "author": "ai@ce",
-    "license": "CC BY 2.0",
-    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5c/San%27a03_flickr.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:37:10.211Z",
-    "width": 1200,
-    "height": 900
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Sana%27a,_Yemen_(in_explore)_-_Flickr_-_Rod_Waddington.jpg",
+    "author": "Rod Waddington from Kergunyah, Australia",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Sana%27a%2C_Yemen_%28in_explore%29_-_Flickr_-_Rod_Waddington.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:20:58.687Z",
+    "width": 1920,
+    "height": 1282,
+    "cardLocalPath": "/destinations/cards/ye.webp",
+    "cardWidth": 960,
+    "cardHeight": 641
   },
   {
     "iso2": "ZA",
@@ -2877,7 +3450,10 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Ciudad_del_Cabo_desde_Cabeza_de_Le%C3%B3n%2C_Sud%C3%A1frica%2C_2018-07-22%2C_DD_34.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:36:23.725Z",
     "width": 1440,
-    "height": 960
+    "height": 960,
+    "cardLocalPath": "/destinations/cards/za.webp",
+    "cardWidth": 960,
+    "cardHeight": 640
   },
   {
     "iso2": "ZM",
@@ -2892,21 +3468,27 @@
     "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/15/Downtown_Lusaka.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
     "retrievedAt": "2026-09-12T20:37:13.223Z",
     "width": 1440,
-    "height": 1085
+    "height": 1085,
+    "cardLocalPath": "/destinations/cards/zm.webp",
+    "cardWidth": 960,
+    "cardHeight": 723
   },
   {
     "iso2": "ZW",
     "iso3": "ZWE",
     "countryName": "Zimbabwe",
-    "landmarkName": "Harare skyline",
+    "landmarkName": "Victoria Falls, Zimbabwe 01",
     "localPath": "/destinations/zw.webp",
-    "sourcePage": "https://commons.wikimedia.org/wiki/File:Harare_skyline.jpg",
-    "author": "Radozw at Serbian Wikipedia",
-    "license": "CC BY-SA 3.0",
-    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Harare_skyline.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-    "retrievedAt": "2026-09-12T20:37:14.332Z",
-    "width": 800,
-    "height": 442
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Victoria_Falls,_Zimbabwe_01.jpg",
+    "author": "Bernard Gagnon",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Victoria_Falls%2C_Zimbabwe_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "retrievedAt": "2026-09-20T01:21:21.050Z",
+    "width": 1920,
+    "height": 1034,
+    "cardLocalPath": "/destinations/cards/zw.webp",
+    "cardWidth": 960,
+    "cardHeight": 517
   }
 ]

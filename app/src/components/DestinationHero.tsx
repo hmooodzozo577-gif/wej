@@ -12,11 +12,12 @@
 // entries with no countryCode at all. Never a broken image, never a
 // blank box, never a wrong-country image.
 //
-// `.detail-hero` (wejhaty.generated.css) already ships
-// background-size:cover/background-position:center (no distortion, a
-// clean crop) and a `::after` dark gradient overlay anchored to the
-// bottom (where the hero's own text sits) — reused as-is for the photo
-// background, not redesigned.
+// The real photo is an intrinsic-size <img> rather than a CSS background:
+// this lets the browser prioritize the above-the-fold asset, reserve its
+// aspect ratio before decoding, and keep responsive focal-point metadata in
+// one maintainable place. It remains decorative to assistive technology
+// because the adjacent h1 and source disclosure identify the destination and
+// landmark without repeating the same announcement twice.
 import type { ReactNode } from 'react';
 import type { FlagSubject } from '../data/types';
 import { nameOf } from '../data/destinationText';
@@ -49,23 +50,35 @@ export function DestinationHero({
   return (
     <div
       className={visual ? 'detail-hero' : 'detail-hero flag-banner'}
-      style={{
-        backgroundImage: visual ? `url(${visual.imagePath})` : fallbackBackground,
-        ...(visual ? { backgroundPosition: visual.heroPosition } : {}),
-      }}
+      style={visual ? undefined : { backgroundImage: fallbackBackground }}
     >
       {/* Flag stays the dominant Hero visual ONLY when no real photo
           exists — once a photo is available the flag is demoted to the
           small identity chip next to the country name below, never
           rendered as the big blurred/centered banner at the same time. */}
-      {visual ? null : <FlagBanner dest={d} lang={lang} />}
+      {visual ? (
+        <img
+          className="detail-hero-image"
+          src={visual.imagePath}
+          srcSet={`${visual.cardImagePath} ${visual.cardWidth}w, ${visual.imagePath} ${visual.width}w`}
+          sizes="(max-width: 900px) 100vw, 1280px"
+          alt=""
+          aria-hidden="true"
+          width={visual.width}
+          height={visual.height}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          style={{ objectPosition: visual.heroPosition }}
+        />
+      ) : <FlagBanner dest={d} lang={lang} />}
       {visual ? <TravelRouteDecor variant="destination" /> : null}
       {edgeControls}
       <div className="detail-hero-inner">
         <div>
           <span className="name-flag">
             <FlagChip dest={d} width={38} height={28} />
-            <h1 className="display">{nameOf(d, lang)}</h1>
+            <h1 id="destination-title" className="display">{nameOf(d, lang)}</h1>
           </span>
           <div className="sub">{subContent}</div>
         </div>

@@ -27,6 +27,15 @@ describe('Home hero stat — destination count', () => {
     expect(screen.queryByText('٣٠+')).not.toBeInTheDocument();
   });
 
+  it('offers both card and full Hero image candidates for the cinematic frame', () => {
+    const { container } = renderHome();
+    const image = container.querySelector<HTMLImageElement>('.hero-folio-image');
+    expect(image).not.toBeNull();
+    expect(image!.getAttribute('src')).toMatch(/\/destinations\/[a-z]{2}\.webp$/);
+    expect(image!.getAttribute('srcset')).toMatch(/\/destinations\/cards\/[a-z]{2}\.webp 960w, .*\/destinations\/[a-z]{2}\.webp \d+w$/);
+    expect(image!.getAttribute('sizes')).toBe('(max-width: 760px) 100vw, min(88vw, 1240px)');
+  });
+
   it('is wired to WORLD_CATALOG.length, not a separate hard-coded number', () => {
     // Sanity anchor: the base convention is 195 (193 UN members + 2
     // observers), minus whatever excludedCountries.ts currently configures

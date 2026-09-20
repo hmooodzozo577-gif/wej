@@ -29,13 +29,22 @@ describe('Hero-image correction pass — full-destination branch (ksa, real SA i
     expect(DESTINATION_VISUALS.SA).toBeDefined();
   });
 
-  it('the Hero background resolves to the real destination image, not the flag/gradient fallback', () => {
+  it('renders the real destination image as an eager, dimensioned Hero image instead of a CSS background', () => {
     const { container } = renderAt('/destination/ksa');
     const hero = container.querySelector('.detail-hero')!;
     expect(hero).not.toBeNull();
     expect(hero.classList.contains('flag-banner')).toBe(false);
-    const style = hero.getAttribute('style') || '';
-    expect(style).toContain(DESTINATION_VISUALS.SA.imagePath);
+    expect(hero.getAttribute('style') || '').not.toContain(DESTINATION_VISUALS.SA.imagePath);
+    const image = hero.querySelector('.detail-hero-image') as HTMLImageElement;
+    expect(image).not.toBeNull();
+    expect(image.getAttribute('src')).toBe(DESTINATION_VISUALS.SA.imagePath);
+    expect(image.getAttribute('srcset')).toContain(DESTINATION_VISUALS.SA.cardImagePath);
+    expect(image.getAttribute('sizes')).toBe('(max-width: 900px) 100vw, 1280px');
+    expect(image.getAttribute('loading')).toBe('eager');
+    expect(image.getAttribute('fetchpriority')).toBe('high');
+    expect(image.getAttribute('width')).toBe(String(DESTINATION_VISUALS.SA.width));
+    expect(image.getAttribute('height')).toBe(String(DESTINATION_VISUALS.SA.height));
+    expect(image.getAttribute('alt')).toBe('');
   });
 
   it('the flag no longer renders as the dominant Hero banner — only as the small identity chip next to the name', () => {
@@ -56,9 +65,9 @@ describe('Hero-image correction pass — full-destination branch (ksa, real SA i
     expect(h1!.textContent).toBeTruthy();
   });
 
-  it('the standalone sidebar image card no longer exists anywhere on the page', () => {
+  it('the Hero image is the only destination photo and no standalone sidebar image card exists', () => {
     const { container } = renderAt('/destination/ksa');
-    expect(container.querySelector('img')).toBeNull();
+    expect(container.querySelectorAll('.detail-hero-image')).toHaveLength(1);
     expect(container.querySelector('.destination-visual')).toBeNull();
   });
 
@@ -95,8 +104,7 @@ describe('Hero-image correction pass — worldwide imagery (bg, Bulgaria — bas
     const hero = container.querySelector('.detail-hero')!;
     expect(hero).not.toBeNull();
     expect(hero.classList.contains('flag-banner')).toBe(false);
-    expect(hero.getAttribute('style') || '').toContain(DESTINATION_VISUALS.BG.imagePath);
-    expect(container.querySelector('img')).toBeNull();
+    expect(hero.querySelector('.detail-hero-image')?.getAttribute('src')).toBe(DESTINATION_VISUALS.BG.imagePath);
   });
 
   it('renders the matching attribution disclosure', () => {
@@ -109,8 +117,8 @@ describe('Hero-image correction pass — second full-destination spot check (jap
   it('resolves its own real image, not a stale/shared one', () => {
     const { container } = renderAt('/destination/japan');
     const hero = container.querySelector('.detail-hero')!;
-    const style = hero.getAttribute('style') || '';
-    expect(style).toContain(DESTINATION_VISUALS.JP.imagePath);
-    expect(style).not.toContain(DESTINATION_VISUALS.SA.imagePath);
+    const src = hero.querySelector('.detail-hero-image')?.getAttribute('src') || '';
+    expect(src).toBe(DESTINATION_VISUALS.JP.imagePath);
+    expect(src).not.toBe(DESTINATION_VISUALS.SA.imagePath);
   });
 });

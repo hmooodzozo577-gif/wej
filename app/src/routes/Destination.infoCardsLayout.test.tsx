@@ -104,25 +104,24 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     expect(getByText('الإقامة')).toBeInTheDocument();
   });
 
-  it('landscape-composition pass: Overview/Strengths/Weaknesses/BestFor are wrapped in .overview-cards-grid, in DOM order, no duplicates (full destination only)', () => {
+  it('hybrid layout: Overview/Strengths/Weaknesses share one editorial grid in semantic order', () => {
     const { container } = renderAt('/destination/japan');
     const grid = container.querySelector('.overview-cards-grid');
     expect(grid).not.toBeNull();
     const headings = Array.from(grid!.querySelectorAll(':scope > .detail-card > h3')).map((h) => h.textContent);
-    // DOM order must be Overview, Strengths, Weaknesses, Best For —
-    // never reordered for visual packing.
+    // DOM order remains Overview, Strengths, Weaknesses.
     expect(headings[0]).toContain('نظرة عامة');
     expect(headings.some((h) => h!.includes('نقاط القوة'))).toBe(true);
     expect(headings.some((h) => h!.includes('نقاط تحتاج انتباه'))).toBe(true);
-    expect(headings.some((h) => h!.includes('الأنسب لـ'))).toBe(true);
+    expect(headings.some((h) => h!.includes('الأنسب لـ'))).toBe(false);
     // No duplicated card.
     expect(grid!.querySelectorAll(':scope > .overview-card')).toHaveLength(1);
   });
 
-  it('approved-dashboard pass: .overview-cards-grid always has exactly 4 children — Why (when present) is a sibling BEFORE the grid, never a 5th grid item, so Best For never ends up orphaned alone in a 3rd row', () => {
+  it('hybrid destination pass: the editorial overview grid has exactly 3 non-duplicative sections; Why remains a sibling when present', () => {
     const { container } = renderAt('/destination/japan');
     const grid = container.querySelector('.overview-cards-grid')!;
-    expect(grid.children).toHaveLength(4);
+    expect(grid.children).toHaveLength(3);
     // If `why` rendered at all (only when arriving with a match score —
     // not this route's own state, so it's absent here), it must not be
     // a descendant of the grid.
@@ -139,7 +138,7 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     // report, not here.
     const grid = container.querySelector('.overview-cards-grid');
     expect(grid).not.toBeNull();
-    expect(grid!.children.length).toBeGreaterThanOrEqual(4);
+    expect(grid!.children.length).toBe(3);
   });
 
   it('composition-refinement pass: each compact card carries its own explicit grid-area class (not positional nth-child)', async () => {
@@ -157,22 +156,21 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     expect(grid.querySelectorAll(':scope > .tourism-insights-card')).toHaveLength(1);
   });
 
-  it('each of the four compact cards carries its own grid-area class (overview/strengths/weaknesses/bestfor) — structural two-column placement, not positional auto-placement', () => {
+  it('each editorial section carries its own grid-area class and the duplicate best-for summary stays absent', () => {
     const { container } = renderAt('/destination/ksa', true);
     const grid = container.querySelector('.overview-cards-grid')!;
     expect(grid.querySelector(':scope > .overview-card')).not.toBeNull();
     expect(grid.querySelector(':scope > .strengths-card')).not.toBeNull();
     expect(grid.querySelector(':scope > .weaknesses-card')).not.toBeNull();
-    expect(grid.querySelector(':scope > .bestfor-card')).not.toBeNull();
+    expect(grid.querySelector(':scope > .bestfor-card')).toBeNull();
   });
 
   it('landscape correction pass REGRESSION: no 3-column (or any other >2-column) override of .overview-cards-grid remains anywhere in the stylesheet', async () => {
     // jsdom has no real layout engine, so this can't measure computed
     // columns — the meaningful, non-brittle guard here is against the
     // exact CSS rule this pass removed ever coming back: a real user
-    // rejected the 3-column-at-1180px layout it produced (Overview/
-    // Strengths/Weaknesses on one row, Best For orphaned alone on a
-    // second). Reads the actual shipped stylesheet source rather than
+    // rejected the 3-column-at-1180px layout it produced. Reads the actual
+    // shipped stylesheet source rather than
     // asserting a pixel value.
     const fs = await import('node:fs');
     const path = await import('node:path');

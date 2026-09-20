@@ -10,10 +10,9 @@
 // to the generated JSON; this file and DestinationHero.tsx/
 // HeroPhotoAttribution.tsx already handle it.
 //
-// Hero-image correction pass: the real photo is now the Destination
-// Hero's own CSS background (see DestinationHero.tsx) instead of a
-// separate sidebar card — the data layer here is unchanged, only its
-// consumer moved.
+// Hero-image correction pass: the real photo is now an intrinsic-size
+// responsive image inside the Destination Hero (see DestinationHero.tsx)
+// instead of a separate sidebar card.
 //
 // Coverage is 194/194 effective countries. The build-time ingestion pipeline
 // starts from each country's Wikivoyage travel article, validates the exact
@@ -26,6 +25,8 @@ import { DESTINATION_IMAGE_CROPS } from './destinationImageCrops';
 export interface DestinationVisualMeta {
   /** Local asset path (e.g. via a Vite `import`), never a remote/hotlinked URL. */
   imagePath: string;
+  /** Smaller local derivative used by cards, result rows and the surprise UI. */
+  cardImagePath: string;
   altEn: string;
   altAr: string;
   /** Required whenever the source license mandates attribution (e.g. CC BY, CC BY-SA). */
@@ -35,11 +36,17 @@ export interface DestinationVisualMeta {
   /** Hero-image correction pass — structured fields (verified, straight
    *  from the manifest entry, never invented) for the compact photo-info
    *  disclosure's separate Source/Author/License rows. `landmarkName` is
-   *  also the only place the real landmark identity survives once the
-   *  photo is a CSS background instead of an <img alt="…">. */
+   *  also keeps the real landmark identity available while the decorative
+   *  Hero image itself intentionally has empty alt text. */
   landmarkName: string;
   author: string | null;
   license: string;
+  /** Intrinsic optimized asset dimensions. Used by the Hero image to reserve
+   *  layout space before decoding and avoid above-the-fold layout shift. */
+  width: number;
+  height: number;
+  cardWidth: number;
+  cardHeight: number;
   cardPosition: string;
   heroPosition: string;
 }
@@ -58,6 +65,9 @@ interface DestinationImageManifestEntry {
   retrievedAt: string;
   width: number;
   height: number;
+  cardLocalPath: string;
+  cardWidth: number;
+  cardHeight: number;
 }
 
 function buildAltText(entry: DestinationImageManifestEntry): { altEn: string; altAr: string } {
@@ -102,9 +112,14 @@ export const DESTINATION_VISUALS: Record<string, DestinationVisualMeta> = Object
     entry.iso2,
     {
       imagePath: `${DEPLOY_BASE}${entry.localPath}`,
+      cardImagePath: `${DEPLOY_BASE}${entry.cardLocalPath}`,
       landmarkName: entry.landmarkName,
       author: entry.author,
       license: entry.license,
+      width: entry.width,
+      height: entry.height,
+      cardWidth: entry.cardWidth,
+      cardHeight: entry.cardHeight,
       cardPosition: DESTINATION_IMAGE_CROPS[entry.iso2]?.card ?? 'center',
       heroPosition: DESTINATION_IMAGE_CROPS[entry.iso2]?.hero ?? 'center',
       ...buildAltText(entry),
