@@ -2800,8 +2800,9 @@ html[dir='rtl'] .home-hero-scrim {
 }
 
 .hero-destination-badge span { grid-column: 1; color: rgba(255, 249, 243, .68); font-size: .78rem; }
-.hero-destination-badge strong { grid-column: 1; font-size: 1.15rem; }
+.hero-destination-badge strong { display: flex; align-items: center; gap: 6px; grid-column: 1; font-size: 1.15rem; }
 .hero-destination-badge svg { grid-column: 2; grid-row: 1 / span 2; color: #ff8c61; }
+.hero-destination-badge-pin { flex: 0 0 auto; color: rgba(255, 140, 97, .9); }
 
 .travel-route-decor {
   position: absolute;
@@ -3540,8 +3541,20 @@ html[dir='rtl'] .hero-editorial-note {
 }
 
 .home-hero-frame .hero-stat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 7px;
   padding-block: 13px;
 }
+
+.hero-stat-icon {
+  flex: 0 0 auto;
+  color: rgba(255, 173, 139, .85);
+}
+
+.home-hero-frame .hero-stat b { flex: 0 0 auto; }
+.home-hero-frame .hero-stat span { flex-basis: 100%; }
 
 .home-hero-compass-cluster {
   position: relative;
@@ -3660,6 +3673,12 @@ html[dir='rtl'] .hero-vertical-tagline {
   offset-rotate: auto;
   animation: route-flight var(--motion-travel-slow) linear infinite;
   filter: drop-shadow(0 3px 5px rgba(3, 13, 23, .35));
+}
+
+/* Static, quieter accent on the second route — DESIGN.md reserves the
+   travel-slow animated route for one plane only, so this stays still. */
+.route-plane-secondary {
+  opacity: .4;
 }
 
 @keyframes route-flight {

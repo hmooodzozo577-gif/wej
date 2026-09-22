@@ -59,20 +59,23 @@ export function Home() {
                         <Icon name="compass" size={18} /> {h.cta}
                       </button>
                       <button type="button" className="btn btn-ghost" onClick={() => navigate('/explore')}>
-                        {h.cta2}
+                        {h.cta2} <Icon name="arrowEnd" size={16} />
                       </button>
                     </div>
                   </div>
                   <div className="hero-stats">
                     <div className="hero-stat">
+                      <Icon name="globe" size={16} className="hero-stat-icon" />
                       <b>{WORLD_CATALOG.length}+</b>
                       <span>{h.stat1l}</span>
                     </div>
                     <div className="hero-stat">
+                      <Icon name="briefcase" size={16} className="hero-stat-icon" />
                       <b>{h.stat2n}</b>
                       <span>{h.stat2l}</span>
                     </div>
                     <div className="hero-stat">
+                      <Icon name="shield" size={16} className="hero-stat-icon" />
                       <b>{h.stat3n}</b>
                       <span>{h.stat3l}</span>
                     </div>
@@ -99,7 +102,10 @@ export function Home() {
                 </div>
                 <Link className="hero-destination-badge" to={`/destination/${featuredDestination.id}`}>
                   <span>{lang === 'ar' ? 'وجهة من الكتالوج' : 'From the catalog'}</span>
-                  <strong>{nameOf(featuredDestination, lang)}</strong>
+                  <strong>
+                    <Icon name="map" size={14} className="hero-destination-badge-pin" />
+                    {nameOf(featuredDestination, lang)}
+                  </strong>
                   <Icon name="arrowEnd" size={18} />
                 </Link>
               </div>

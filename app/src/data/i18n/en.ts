@@ -13,6 +13,7 @@ export const EN: I18nDict = {
   disclaimer: 'Wejhaty recommendations are guidance based on your answers and sourced public data. Verify official requirements, prices, and changing information before travel.',
   hero: {
     ...base.hero,
+    h1: 'Discover your next destination',
     eyebrow: 'A travel recommendation engine, no account required',
     lead: 'Answer a few questions and we will rank destinations around your priorities, with a clear reason behind every result.',
     journeyStarts: 'Your journey starts here',

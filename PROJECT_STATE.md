@@ -8,47 +8,67 @@ configuration, and current Git state outrank this document when they differ.
 ### Current verified state — 2026-09-22
 
 - State document version: 29.
-- Working branch: `claude/modest-cray-34bvoa`, fast-forwarded from
+- Working/deployment branch: `claude/marhaba-kxry8l`, fast-forwarded from
   `origin/claude/marhaba-kxry8l` at `e240ecc` earlier this round (a separate
   agent session's Phase 17 work, verified as a real, ancestor-preserving
   history — see the version-28 entry below for the full reconciliation
-  record). This round is the FIRST increment of the still-open "FINAL
-  UI/UX ACCEPTANCE PASS" the user asked for on top of that baseline, scoped
-  narrowly to the Home hero compass cluster against a user-supplied visual
-  reference. It does not complete that pass and does not touch Phase 17's
-  "ready for review" status either way.
-- Home hero compass-cluster restyle (`app/src/routes/Home.tsx`,
-  `app/src/styles/wejhaty.css`, `app/src/data/i18n/{ar,en}.ts`,
-  `app/src/data/types.ts`): the four orbiting destination labels now carry a
-  small embedded flag chip (`FlagChip`, never emoji/remote) next to the
-  country name, and gently float (a gentle vertical `translate` oscillation,
-  6.5–8.5s, staggered per node) with `prefers-reduced-motion: reduce`
-  disabling the animation entirely. The underlying selection mechanism —
-  session-stable, evidence-backed pool, cross-session anti-repeat, featured
-  destination excluded — is UNCHANGED; only the badges' visual treatment
-  changed. A new low-contrast bilingual vertical decorative flourish
-  ("استكشف • احلم • اكتشف" / "EXPLORE • DREAM • DISCOVER", localized by
-  active language) sits beside the compass cluster on desktop, hidden below
-  the existing 980px single-column breakpoint, `aria-hidden`, and positioned
-  with `top` + explicit `dir`-gated `left`/`right` rather than logical
-  `inset-inline-*` (which resolves against an element's OWN writing-mode —
-  `vertical-rl` here — not the physical direction the reader expects; using
-  it caused the tagline to render as a collapsed ~16×45px box in the wrong
-  position before this was found and fixed).
-  Explicitly OUT of scope for this increment, per user decision when shown
-  the visual reference and asked directly: no "من نحن" (About) nav item, no
-  search icon — neither exists as a real feature and DESIGN.md's own rule
-  against implying an inactive feature is active rules out a non-functional
-  placeholder; the compass nodes kept their dynamic rotating pool rather
-  than the reference image's fixed Saudi/Italy/Thailand/UAE set (visual
-  examples only, not a mechanism change). The rest of the visual reference
-  (headline copy, CTA icon treatment, stats-row icons, destination-badge
-  reposition, second flight-path detail) is a still-open gap-matrix item,
-  not yet built.
-  Verified: `Home.stats.test.tsx` (2 new tests — flag chip present and
-  matched per badge, vertical tagline localized/`aria-hidden`), full
-  frontend suite 948/948, worker suite 202/202, both typechecks, oxlint,
-  frontend build, all clean.
+  record). This round completes the scoped "FINAL UI/UX ACCEPTANCE PASS"
+  increment the user asked for on top of that baseline, against a single
+  user-supplied Home hero visual reference. It does not touch Phase 17's
+  "ready for review" status, does not begin Phase 18, and is not itself a
+  claim that Phase 17 is complete — that remains the user's call.
+- Home hero restyle against the visual reference (`app/src/routes/Home.tsx`,
+  `app/src/components/TravelRouteDecor.tsx`, `app/src/styles/wejhaty.css`,
+  `app/src/data/i18n/{ar,en}.ts`, `app/src/data/types.ts`):
+    * The four orbiting compass-cluster destination badges now carry a small
+      embedded flag chip (`FlagChip`, never emoji/remote) next to the
+      country name, and gently float (a vertical `translate` oscillation,
+      6.5–8.5s, staggered per node) with `prefers-reduced-motion: reduce`
+      disabling the animation. The underlying selection mechanism —
+      session-stable, evidence-backed pool, cross-session anti-repeat,
+      featured destination excluded — is UNCHANGED; only the badges' visual
+      treatment changed. The reference image's fixed Saudi/Italy/Thailand/
+      UAE badge set was NOT adopted (visual examples only, per explicit user
+      decision) — the dynamic pool stays authoritative.
+    * A low-contrast bilingual vertical decorative flourish ("استكشف • احلم
+      • اكتشف" / "EXPLORE • DREAM • DISCOVER", localized by active language)
+      sits beside the compass cluster on desktop, hidden below the existing
+      980px single-column breakpoint, `aria-hidden`. Positioned with `top` +
+      explicit `dir`-gated `left`/`right` rather than logical
+      `inset-inline-*`, which resolves against an element's OWN
+      writing-mode (`vertical-rl` here) rather than the physical direction
+      the reader expects — using it first collapsed the tagline to a
+      ~16×45px box in the wrong place before this was found and fixed.
+    * Hero CTA buttons gained icons (arrow on the secondary action; the
+      primary compass icon already existed); the 3 hero stats gained
+      leading icons (globe/briefcase/shield); the destination badge gained a
+      small map-pin icon before the destination name.
+    * H1 copy updated to match the reference ("اكتشف وجهتك القادمة" /
+      "Discover your next destination"). The reference's separate kicker
+      line ABOVE the headline was built, then REMOVED after the
+      `impeccable` craft-floor check flagged it as an explicit, brief-proof
+      ban ("a kicker or eyebrow above a heading... no brief earns it back");
+      the existing eyebrow-BELOW-h1 subhead line was left as-is.
+    * The route plane silhouette was redrawn as an original, simplified
+      top-down airplane (fuselage/wings/tail as separate subpaths in one
+      `d`, authored for this project, not traced from the reference icon),
+      plus a second, quieter, static (non-animated) plane on the route's
+      second path — DESIGN.md reserves the travel-slow animation for one
+      plane only.
+    * Explicitly OUT of scope, per user decision when shown the reference
+      and asked directly: no "من نحن" (About) nav item, no search icon —
+      neither exists as a real feature and DESIGN.md's own rule against
+      implying an inactive feature is active rules out a non-functional
+      placeholder.
+  Verified: `impeccable detect` clean on the changed files; `Home.stats.test.tsx`
+  (2 new tests — flag chip present and matched per badge, vertical tagline
+  localized/`aria-hidden`); full frontend suite 948/948; worker suite
+  202/202; both typechecks; oxlint; frontend build; worker `wrangler deploy
+  --dry-run`; a Playwright matrix across AR/EN × light/dark × desktop/
+  tablet/mobile (6 combinations) plus a `prefers-reduced-motion: reduce`
+  pass, all clean — badge/flag count, tagline visibility and localization,
+  CTA/stat icon presence, destination-badge pin, and keyboard focus outline
+  verified in every combination.
 
 ### Current verified state — 2026-09-20
 
