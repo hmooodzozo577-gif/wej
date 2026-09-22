@@ -75,13 +75,18 @@ export function Home() {
                       <span>{h.stat2l}</span>
                     </div>
                     <div className="hero-stat hero-stat-phrase">
-                      <Icon name="sparkle" size={16} className="hero-stat-icon" />
+                      <Icon name="check" size={16} className="hero-stat-icon" />
                       <span>{h.stat3l}</span>
                     </div>
                   </div>
                 </div>
                 <div className="home-hero-compass-cluster">
-                  <p className="hero-editorial-note hero-nearby-note">{h.nearbyDestinations}</p>
+                  <p className="hero-editorial-note hero-nearby-note">
+                    {h.nearbyDestinations}
+                    <svg className="hero-nearby-flourish" viewBox="0 0 34 20" aria-hidden="true" focusable="false">
+                      <path d="M4 2 C 4 12, 16 10, 30 17" />
+                    </svg>
+                  </p>
                   <div className="home-hero-compass">
                     <CompassMark size={190} />
                     {orbitDestinations.map((destination, index) => (
@@ -113,7 +118,8 @@ export function Home() {
         </div>
       </section>
 
-      <section className="section" id="howSection">
+      <section className="section home-how-section" id="howSection">
+        <TravelRouteDecor variant="how" />
         <div className="container">
           <div className="section-head center">
             <h2 className="display">{how.title}</h2>

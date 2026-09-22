@@ -27,7 +27,8 @@ a.btn {
 .destination-card-image {
   display: block;
   width: 100%;
-  height: 150px;
+  height: auto;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   object-position: center;
   background: var(--paper-2);
@@ -1778,11 +1779,17 @@ body {
   border-radius: 0;
   padding: 8px 10px;
   border-bottom: 1px solid transparent;
+  transition: border-bottom-color 160ms ease, color 160ms ease;
 }
 
 .nav-links a:hover,
 .nav-links button.navlink:hover {
   background: transparent;
+  border-bottom-color: var(--gold);
+}
+
+.nav-links button.navlink.active {
+  color: var(--ink);
   border-bottom-color: var(--gold);
 }
 
@@ -2014,6 +2021,20 @@ html[dir='rtl'] .hero-folio::before {
   border-bottom: 1px solid var(--line);
 }
 
+.page-hero-ambient {
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero-ambient > .container {
+  position: relative;
+  z-index: 1;
+}
+
+.page-hero-ambient > .travel-route-how {
+  opacity: .3;
+}
+
 .page-hero h1 {
   max-width: 16ch;
   font-size: clamp(2.6rem, 6vw, 5rem);
@@ -2134,8 +2155,11 @@ html[dir='rtl'] .q-option.selected {
   grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.7fr);
   min-height: 430px;
   padding: clamp(28px, 5vw, 58px);
-  border-radius: 2px;
-  background: var(--ink);
+  border-radius: 4px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(217, 168, 92, .16), transparent 55%),
+    var(--ink);
+  border-top: 3px solid var(--gold);
 }
 
 .rank-badge,
@@ -2161,19 +2185,47 @@ html[dir='rtl'] .q-option.selected {
   filter: saturate(0.86);
 }
 
-.match-ring-wrap .matchNum,
-.match-ring-wrap > span {
+/* The primary card's match score reads as a proper editorial badge — a
+   conic-gradient ring driven by the same animated --match custom property
+   Results.tsx already sets, rather than a plain text pill. */
+.match-ring {
+  --match: 0;
   position: absolute;
-  inset-inline-end: 16px;
-  bottom: 40px;
-  padding: 6px 10px;
-  color: #fff !important;
-  background: rgba(23, 36, 58, 0.88);
+  inset-inline-end: 18px;
+  top: 18px;
+  width: 88px;
+  height: 88px;
+  padding: 4px;
+  border-radius: 50%;
+  background: conic-gradient(var(--gold) calc(var(--match) * 1%), rgba(255, 255, 255, .22) 0);
+  box-shadow: 0 10px 26px rgba(7, 17, 29, .45);
 }
 
-.match-ring-wrap > span {
-  bottom: 15px;
-  font-size: 0.75rem;
+.match-ring-inner {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(11, 22, 37, .92);
+  backdrop-filter: blur(4px);
+}
+
+.match-ring .matchNum {
+  color: #fff9f3;
+  font-family: var(--ff-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.match-ring span {
+  margin-top: 2px;
+  color: rgba(255, 249, 243, .68);
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }
 
 .results-grid,
@@ -2193,7 +2245,8 @@ html[dir='rtl'] .q-option.selected {
 
 .destination-card-image,
 .dest-card .destination-card-image {
-  height: 220px;
+  height: auto;
+  aspect-ratio: 4 / 3;
 }
 
 .dest-body {
@@ -2994,6 +3047,16 @@ html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translate
 
 @keyframes hero-photo-settle { from { transform: scale(1.055); filter: saturate(.82); } to { transform: scale(1.015); filter: saturate(1); } }
 @keyframes compass-breathe { from { transform: rotate(-5deg); } to { transform: rotate(7deg); } }
+/* Slower, non-alternating drift for the Home hero compass only — loops back
+   to its start angle so it reads as gentle wandering rather than a
+   mechanical two-point ping-pong. */
+@keyframes hero-compass-drift {
+  0% { transform: rotate(-4deg); }
+  24% { transform: rotate(3deg); }
+  50% { transform: rotate(-6deg); }
+  76% { transform: rotate(2deg); }
+  100% { transform: rotate(-4deg); }
+}
 @keyframes plane-drift-one { from { translate: -6px 2px; } to { translate: 12px -7px; } }
 @keyframes plane-drift-two { from { translate: 7px -4px; } to { translate: -10px 6px; } }
 @keyframes surprise-compass-spin { 0% { transform: rotate(0deg); } 72% { transform: rotate(610deg); } 100% { transform: rotate(682deg); } }
@@ -3119,7 +3182,7 @@ html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translate
 }
 
 .destination-page .detail-hero {
-  height: clamp(470px, 52vw, 650px);
+  height: clamp(380px, 38vw, 560px);
   margin-bottom: 0;
   overflow: hidden;
   isolation: isolate;
@@ -3170,9 +3233,9 @@ html[dir='ltr'] .destination-page .detail-hero::after {
   max-width: 12ch;
   margin-bottom: 10px;
   color: #fff;
-  font-size: clamp(3.1rem, 7vw, 6.6rem);
-  line-height: .94;
-  letter-spacing: -.045em;
+  font-size: clamp(2.6rem, 5.4vw, 5.2rem);
+  line-height: .96;
+  letter-spacing: -.04em;
 }
 
 .destination-page .detail-hero .sub {
@@ -3363,8 +3426,8 @@ html[dir='ltr'] .destination-page .detail-hero::after {
   }
 
   .destination-page .detail-hero {
-    height: min(620px, 125vw);
-    min-height: 470px;
+    height: min(480px, 95vw);
+    min-height: 360px;
     border-radius: 20px 20px 7px 20px;
   }
 
@@ -3385,7 +3448,7 @@ html[dir='ltr'] .destination-page .detail-hero::after {
   }
 
   .destination-page .detail-hero h1 {
-    font-size: clamp(2.7rem, 15vw, 4.5rem);
+    font-size: clamp(2.2rem, 11vw, 3.6rem);
   }
 
   .destination-page .detail-match {
@@ -3483,6 +3546,7 @@ html[dir='ltr'] .destination-page .detail-hero::after {
 .home-hero-stage {
   position: relative;
   isolation: isolate;
+  contain: layout paint;
 }
 
 .home-hero-stage > .travel-route-decor {
@@ -3493,6 +3557,14 @@ html[dir='ltr'] .destination-page .detail-hero::after {
   color: #ffd3c1;
   opacity: .78;
   overflow: visible;
+  /* Forces its own stable compositor layer. This element deliberately
+     extends outside its container in every direction (by design — see
+     DESIGN.md), which is the exact shape of element most prone to a known
+     class of Android Chrome compositor bug where a scroll cycle repaints
+     an unpromoted overlay layer at a stale position. Defensive hardening
+     against a user-reported scroll-return glitch that could not be
+     reproduced locally to confirm the mechanism directly. */
+  will-change: transform;
 }
 
 .home-hero-frame {
@@ -3508,7 +3580,13 @@ html[dir='ltr'] .destination-page .detail-hero::after {
 }
 
 .home-hero-frame .hero-copy h1 {
-  font-size: clamp(3.25rem, 5vw, 5.1rem);
+  font-size: clamp(2.6rem, 4.2vw, 4.4rem);
+}
+
+@media (min-width: 900px) {
+  .home-hero-frame .hero-copy h1 {
+    white-space: nowrap;
+  }
 }
 
 .home-hero-frame .hero-engine-label {
@@ -3574,6 +3652,28 @@ html[dir='rtl'] .hero-editorial-note {
   color: rgba(255, 173, 139, .85);
 }
 
+/* The phrase stat has no separate number, so forcing its text onto a new
+   row (like the numeric stats' label) left the icon alone on the first
+   row with visible empty space beside it. Keep icon + phrase on one row,
+   vertically centered, and give the phrase the numeric stats' bold weight
+   so the three cells read as one family. */
+.home-hero-frame .hero-stat-phrase {
+  flex-wrap: nowrap;
+}
+
+.home-hero-frame .hero-stat-phrase span {
+  flex-basis: auto;
+  color: #fff9f3;
+  font-family: var(--ff-display);
+  font-weight: 700;
+  font-size: .92rem;
+  line-height: 1.3;
+}
+
+html[dir='rtl'] .home-hero-frame .hero-stat-phrase span {
+  font-family: var(--ff-ar);
+}
+
 .home-hero-frame .hero-stat b { flex: 0 0 auto; }
 .home-hero-frame .hero-stat span { flex-basis: 100%; }
 
@@ -3596,6 +3696,38 @@ html[dir='rtl'] .hero-editorial-note {
   position: relative;
   inset: auto;
   width: min(21vw, 218px);
+}
+
+.home-hero-compass .compass-needle {
+  animation: hero-compass-drift 9.5s cubic-bezier(.45, .05, .35, 1) infinite;
+}
+
+.hero-nearby-note {
+  position: relative;
+}
+
+.hero-nearby-flourish {
+  position: absolute;
+  z-index: 2;
+  top: 100%;
+  inset-inline-start: 50%;
+  width: 34px;
+  height: 20px;
+  margin-top: 1px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.hero-nearby-flourish path {
+  fill: none;
+  stroke: rgba(255, 149, 109, .68);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 2.5 5;
+}
+
+html[dir='rtl'] .hero-nearby-flourish {
+  transform: scaleX(-1);
 }
 
 .hero-orbit-destination {
@@ -3640,10 +3772,10 @@ html[dir='rtl'] .hero-editorial-note {
   border-radius: 3px;
 }
 
-.hero-orbit-destination.orbit-1 { inset-block-start: -14px; inset-inline-start: 50%; transform: translateX(-50%); animation-name: hero-orbit-1; animation-delay: 0s; animation-duration: 9s; }
-.hero-orbit-destination.orbit-2 { inset-block-start: 36%; inset-inline-end: -54px; animation-name: hero-orbit-2; animation-delay: 1.7s; animation-duration: 11.5s; }
-.hero-orbit-destination.orbit-3 { inset-block-end: -13px; inset-inline-start: 50%; transform: translateX(-50%); animation-name: hero-orbit-3; animation-delay: 3.2s; animation-duration: 10.2s; }
-.hero-orbit-destination.orbit-4 { inset-block-start: 52%; inset-inline-start: -58px; animation-name: hero-orbit-4; animation-delay: 4.5s; animation-duration: 12.8s; }
+.hero-orbit-destination.orbit-1 { inset-block-start: -14px; inset-inline-start: 50%; transform: translateX(-50%); animation-name: hero-orbit-1; animation-delay: 0s; animation-duration: 13.5s; }
+.hero-orbit-destination.orbit-2 { inset-block-start: 36%; inset-inline-end: -54px; animation-name: hero-orbit-2; animation-delay: 1.7s; animation-duration: 17s; }
+.hero-orbit-destination.orbit-3 { inset-block-end: -13px; inset-inline-start: 50%; transform: translateX(-50%); animation-name: hero-orbit-3; animation-delay: 3.2s; animation-duration: 15.2s; }
+.hero-orbit-destination.orbit-4 { inset-block-start: 52%; inset-inline-start: -58px; animation-name: hero-orbit-4; animation-delay: 4.5s; animation-duration: 19s; }
 
 html[dir='rtl'] .hero-orbit-destination.orbit-1,
 html[dir='rtl'] .hero-orbit-destination.orbit-3 { transform: translateX(50%); }
@@ -3744,6 +3876,43 @@ html[dir='rtl'] .hero-vertical-tagline {
   opacity: .38;
   animation: route-flight-secondary 21s linear infinite;
   filter: drop-shadow(0 3px 5px rgba(3, 13, 23, .3));
+}
+
+.home-how-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.home-how-section > .container {
+  position: relative;
+  z-index: 1;
+}
+
+.travel-route-how {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: .4;
+  color: var(--gold);
+}
+
+.route-plane-how-a {
+  offset-path: path('M -40 40 C 250 130 520 10 800 90 S1180 150 1320 60');
+  offset-distance: 0%;
+  offset-rotate: auto;
+  animation: route-flight 27s linear infinite;
+}
+
+.route-plane-how-b {
+  offset-path: path('M 1320 170 C 1000 90 700 190 400 110 S 60 40 -40 130');
+  offset-distance: 100%;
+  offset-rotate: reverse;
+  opacity: .7;
+  animation: route-flight-secondary 35s linear infinite;
 }
 
 @keyframes route-flight {
@@ -3977,24 +4146,19 @@ html[dir='rtl'] .hero-vertical-tagline {
   outline-offset: 3px;
 }
 
-/* Tablet gets its own intentional 3-column row (not desktop's 4, not the
-   2-column bucket meant for narrower phones-in-landscape) across both
-   tablet portrait and landscape widths. */
-@media (min-width: 700px) and (max-width: 1179px) {
-  .explore-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-  }
-
-  .explore-grid .destination-card-image { aspect-ratio: 16 / 9; }
+/* Fluid, container-aware column count: the grid finds its own column
+   count from available width via auto-fit, so every width in between
+   gets a sensible result instead of jumping at a couple of hand-picked
+   pixel thresholds. Card images keep one consistent aspect ratio
+   (.dest-card .destination-card-image, 16/10, fluid height) at every
+   width rather than switching ratio only inside a tablet band. */
+.explore-grid {
+  grid-template-columns: repeat(auto-fit, minmax(236px, 1fr));
+  gap: 18px 16px;
 }
 
 @media (min-width: 1180px) {
-  .explore-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px 14px;
-  }
-
+  .explore-grid { gap: 18px 14px; }
   .explore-grid .dest-body { padding: 14px 15px 15px; }
   .explore-grid .dest-body h3 { font-size: 1rem; }
   .explore-grid .dest-why { font-size: .83rem; }

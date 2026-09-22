@@ -4,16 +4,20 @@
 // then smooth-scroll to #howSection) becomes: navigate home with
 // `state: { scrollTo: 'how' }`, which <Home/> reads on mount (routes/Home.tsx).
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../../state/hooks';
 import { LanguageSwitch } from '../LanguageSwitch';
 import { ThemeSwitch } from '../ThemeSwitch';
 
 export function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { dispatch } = useAppState();
   const { lang, t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isHome = location.pathname === '/';
+  const isExplore = location.pathname.startsWith('/explore');
+  const isPurpose = location.pathname.startsWith('/purpose') || location.pathname.startsWith('/quiz');
 
   // Matches the original exactly: `.mobile-menu` visibility is driven by the
   // existing `body.menu-open .mobile-menu { display: flex; }` CSS rule, not
@@ -44,16 +48,16 @@ export function Header() {
 
   const navLinks = (
     <>
-      <button type="button" className="navlink" onClick={goHome}>
+      <button type="button" className={`navlink${isHome ? ' active' : ''}`} onClick={goHome} aria-current={isHome ? 'page' : undefined}>
         {t.nav.home}
       </button>
       <button type="button" className="navlink" onClick={goHow}>
         {t.nav.how}
       </button>
-      <button type="button" className="navlink" onClick={goExplore}>
+      <button type="button" className={`navlink${isExplore ? ' active' : ''}`} onClick={goExplore} aria-current={isExplore ? 'page' : undefined}>
         {t.nav.explore}
       </button>
-      <button type="button" className="navlink" onClick={goPurpose}>
+      <button type="button" className={`navlink${isPurpose ? ' active' : ''}`} onClick={goPurpose} aria-current={isPurpose ? 'page' : undefined}>
         {t.nav.quiz}
       </button>
     </>

@@ -18,7 +18,7 @@ export const EN: I18nDict = {
     lead: 'Answer a few questions and we will rank destinations around your priorities, with a clear reason behind every result.',
     journeyStarts: 'Your journey starts here',
     nearbyDestinations: 'Destinations closer to you',
-    verticalTagline: 'EXPLORE • DREAM • DISCOVER',
+    verticalTagline: 'CHOOSE • COMPARE • GO',
     stat3l: 'A few quick questions decide your destination',
   },
   results: {

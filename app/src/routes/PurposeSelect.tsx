@@ -4,6 +4,7 @@ import { useAppState, useI18n } from '../state/hooks';
 import { PURPOSES } from '../data/purposes';
 import { Icon } from '../components/Icon';
 import { trackEvent } from '../telemetry/productDataClient';
+import { TravelRouteDecor } from '../components/TravelRouteDecor';
 
 export function PurposeSelect() {
   const navigate = useNavigate();
@@ -19,7 +20,8 @@ export function PurposeSelect() {
 
   return (
     <>
-      <section className="page-hero">
+      <section className="page-hero page-hero-ambient">
+        <TravelRouteDecor variant="how" />
         <div className="container">
           <h1 className="display">{pu.title}</h1>
           <p>{pu.sub}</p>

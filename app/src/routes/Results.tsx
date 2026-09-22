@@ -1,6 +1,6 @@
 // Ports renderResults() from wejhaty.html, including the animated match-
 // percentage count-up (`.matchNum`) and the top-pick / results-grid layout.
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { costLabel, nameOf } from '../data/destinationText';
@@ -119,13 +119,12 @@ export function Results() {
           </div>
           <div className="match-ring-wrap">
             <DestinationImage destination={first.dest} lang={lang} priority />
-            <b
-              className="matchNum"
-              style={{ fontFamily: "'Fraunces',serif", fontSize: '1.9rem', color: '#D9A85C' }}
-            >
-              {animatedMatch}%
-            </b>
-            <span>{r.match}</span>
+            <div className="match-ring" style={{ '--match': animatedMatch } as CSSProperties}>
+              <div className="match-ring-inner">
+                <b className="matchNum">{animatedMatch}%</b>
+                <span>{r.match}</span>
+              </div>
+            </div>
           </div>
         </Link>
 

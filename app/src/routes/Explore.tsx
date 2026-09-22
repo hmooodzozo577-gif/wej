@@ -20,6 +20,7 @@ import { SurpriseDestination } from '../components/SurpriseDestination';
 import { filteredCatalog, sortCatalog } from '../data/exploreCatalog';
 import { trackEvent } from '../telemetry/productDataClient';
 import { useResolvedCountryCode } from '../geo/useResolvedCountryCode';
+import { TravelRouteDecor } from '../components/TravelRouteDecor';
 
 const CONTINENTS: Continent[] = ['Africa', 'Asia', 'Europe', 'MiddleEast', 'NAmerica', 'SouthAmerica', 'Oceania'];
 
@@ -66,7 +67,8 @@ export function Explore() {
 
   return (
     <>
-      <section className="page-hero">
+      <section className="page-hero page-hero-ambient">
+        <TravelRouteDecor variant="how" />
         <div className="container">
           <h1 className="display">{ex.title}</h1>
           <p>{ex.sub}</p>
