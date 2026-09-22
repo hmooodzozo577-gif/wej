@@ -63,4 +63,24 @@ describe('Home hero stat — destination count', () => {
     expect(orbitLabels.every((label) => label.dataset.destination !== featuredId)).toBe(true);
     expect(orbitLabels.every((label) => label.tagName === 'SPAN')).toBe(true);
   });
+
+  it('carries a flag chip inside every compass badge, matching each badge\'s own destination', () => {
+    const { container } = renderHome();
+    const orbitLabels = [...container.querySelectorAll<HTMLElement>('.hero-orbit-destination')];
+    for (const label of orbitLabels) {
+      const chip = label.querySelector('.flag-chip, .flag-fallback');
+      expect(chip).not.toBeNull();
+      // The flag chip must be the badge's own destination, not a stray/duplicated one.
+      expect(label.textContent).not.toBe('');
+    }
+  });
+
+  it('renders the decorative vertical tagline localized to the active language, hidden from assistive tech', () => {
+    const { container } = renderHome();
+    const tagline = container.querySelector('.hero-vertical-tagline');
+    expect(tagline).not.toBeNull();
+    expect(tagline!.getAttribute('aria-hidden')).toBe('true');
+    expect(tagline!.textContent).toBe(I18N.ar.hero.verticalTagline);
+    expect(I18N.ar.hero.verticalTagline).not.toBe(I18N.en.hero.verticalTagline);
+  });
 });

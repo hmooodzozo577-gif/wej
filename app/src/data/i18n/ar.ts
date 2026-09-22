@@ -26,6 +26,7 @@ export const AR: I18nDict = {
     lead: 'أجب عن بضعة أسئلة لنرتّب لك الوجهات الأقرب إلى أولوياتك، مع شرح واضح لسبب كل نتيجة.',
     journeyStarts: 'رحلتك تبدأ من هنا',
     nearbyDestinations: 'وجهات أقرب إليك',
+    verticalTagline: 'استكشف • احلم • اكتشف',
   },
   results: {
     ...base.results,

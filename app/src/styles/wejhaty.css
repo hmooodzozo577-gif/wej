@@ -3567,29 +3567,81 @@ html[dir='rtl'] .hero-editorial-note {
 .hero-orbit-destination {
   position: absolute;
   z-index: 3;
-  max-width: 112px;
-  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 118px;
+  padding: 5px 9px;
   overflow: visible;
   color: rgba(255, 249, 243, .9);
   border: 1px solid rgba(255, 255, 255, .24);
-  border-radius: 6px;
+  border-radius: 14px;
   background: rgba(5, 18, 31, .68);
+  box-shadow: 0 8px 20px rgba(2, 12, 23, .24);
   font-size: .75rem;
   font-weight: 700;
   line-height: 1.35;
-  text-align: center;
+  text-align: start;
   text-decoration: none;
   white-space: normal;
   backdrop-filter: blur(7px);
+  translate: 0 0;
+  animation: hero-badge-float 7.2s ease-in-out infinite;
 }
 
-.hero-orbit-destination.orbit-1 { inset-block-start: -14px; inset-inline-start: 50%; transform: translateX(-50%); }
-.hero-orbit-destination.orbit-2 { inset-block-start: 36%; inset-inline-end: -54px; }
-.hero-orbit-destination.orbit-3 { inset-block-end: -13px; inset-inline-start: 50%; transform: translateX(-50%); }
-.hero-orbit-destination.orbit-4 { inset-block-start: 52%; inset-inline-start: -58px; }
+.hero-orbit-destination .flag-chip {
+  flex: 0 0 auto;
+  border-color: rgba(255, 255, 255, .28);
+  border-radius: 3px;
+}
+
+.hero-orbit-destination.orbit-1 { inset-block-start: -14px; inset-inline-start: 50%; transform: translateX(-50%); animation-delay: 0s; }
+.hero-orbit-destination.orbit-2 { inset-block-start: 36%; inset-inline-end: -54px; animation-delay: 1.7s; animation-duration: 8.1s; }
+.hero-orbit-destination.orbit-3 { inset-block-end: -13px; inset-inline-start: 50%; transform: translateX(-50%); animation-delay: 3.2s; animation-duration: 7.6s; }
+.hero-orbit-destination.orbit-4 { inset-block-start: 52%; inset-inline-start: -58px; animation-delay: 4.5s; animation-duration: 8.4s; }
 
 html[dir='rtl'] .hero-orbit-destination.orbit-1,
 html[dir='rtl'] .hero-orbit-destination.orbit-3 { transform: translateX(50%); }
+
+@keyframes hero-badge-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -6px; }
+}
+
+.hero-vertical-tagline {
+  position: absolute;
+  z-index: 2;
+  top: 4px;
+  width: 1.4em;
+  height: 240px;
+  margin: 0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  color: rgba(255, 249, 243, .46);
+  text-shadow: 0 2px 10px rgba(3, 13, 23, .55);
+  font-family: var(--ff-display);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* inset-inline-start would resolve against this element's OWN vertical
+   writing-mode (its block axis is horizontal), not the physical direction
+   the reader expects — so the horizontal offset is set explicitly per
+   `dir` instead, keeping `top` (a physical property, unaffected by the
+   element's own writing-mode) for the vertical one above. */
+html[dir='ltr'] .hero-vertical-tagline { left: calc(100% + 80px); }
+html[dir='rtl'] .hero-vertical-tagline { right: calc(100% + 80px); }
+
+html[dir='rtl'] .hero-vertical-tagline {
+  font-family: var(--ff-ar);
+  letter-spacing: .08em;
+  text-transform: none;
+}
 
 .travel-route-line {
   stroke: currentColor;
@@ -3817,6 +3869,7 @@ html[dir='rtl'] .hero-orbit-destination.orbit-3 { transform: translateX(50%); }
   .hero-orbit-destination { max-width: 96px; font-size: .75rem; }
   .hero-orbit-destination.orbit-2 { inset-inline-end: -42px; }
   .hero-orbit-destination.orbit-4 { inset-inline-start: -42px; }
+  .hero-vertical-tagline { display: none; }
 }
 
 @media (max-width: 760px) {
@@ -3862,5 +3915,10 @@ html[dir='rtl'] .hero-orbit-destination.orbit-3 { transform: translateX(50%); }
   .route-plane-moving {
     offset-distance: 38%;
     animation: none !important;
+  }
+
+  .hero-orbit-destination {
+    animation: none !important;
+    translate: 0 0 !important;
   }
 }

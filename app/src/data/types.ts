@@ -309,6 +309,7 @@ export interface HeroStrings {
   lead: string;
   journeyStarts: string;
   nearbyDestinations: string;
+  verticalTagline: string;
   cta: string;
   cta2: string;
   stat1n: string;

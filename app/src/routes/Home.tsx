@@ -8,6 +8,7 @@ import { PURPOSES } from '../data/purposes';
 import { Icon } from '../components/Icon';
 import { DestinationImage } from '../components/DestinationImage';
 import { CompassMark } from '../components/CompassMark';
+import { FlagChip } from '../components/flags/FlagIcon';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
 import { HERO_DESTINATION_POOL, selectHeroOrbitDestinations, selectSessionHero } from '../home/heroDestination';
 
@@ -87,10 +88,14 @@ export function Home() {
                         className={`hero-orbit-destination orbit-${index + 1}`}
                         data-destination={destination.id}
                       >
+                        <FlagChip dest={destination} width={18} height={13} />
                         {nameOf(destination, lang)}
                       </span>
                     ))}
                   </div>
+                  <p className="hero-vertical-tagline" aria-hidden="true">
+                    {h.verticalTagline}
+                  </p>
                 </div>
                 <Link className="hero-destination-badge" to={`/destination/${featuredDestination.id}`}>
                   <span>{lang === 'ar' ? 'وجهة من الكتالوج' : 'From the catalog'}</span>
