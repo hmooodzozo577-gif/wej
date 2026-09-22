@@ -5,6 +5,47 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-22 (round 3, repair pass)
+
+- State document version: 31. This round is a production-evidence-driven
+  repair pass, triggered by real screenshots from the user's own Android
+  tablet (Chrome) that surfaced defects the round-2 report had claimed as
+  satisfied. Per explicit user instruction, any such gap reopened the
+  underlying requirement rather than being treated as a new, separate ask.
+  Phase 17 remains READY FOR USER REVIEW, not complete; Phase 18/21 remain
+  NOT STARTED. Local commit `dd49023` on `claude/marhaba-kxry8l` carries
+  this round's work on top of round 2's history (not amended).
+- **Vertical hero tagline re-locked:** "اختر • قارن • انطلق" / "CHOOSE •
+  COMPARE • GO", replacing round 1's "استكشف • احلم • اكتشف" / "EXPLORE •
+  DREAM • DISCOVER" per explicit user instruction this round.
+- **Fluid-first responsive principle:** the prior round's rigid
+  `@media (min-width: 700px) and (max-width: 1179px)` "tablet = 3 columns"
+  Explore-grid override was explicitly rejected and replaced with
+  `grid-template-columns: repeat(auto-fit, minmax(236px, 1fr))` plus one
+  consistent fluid card-image aspect ratio; BROWSER-VERIFIED across the
+  full 320–1920px width list (natural 1→2→3→4 column progression, no
+  forced jump). The same fluid-clamp principle was applied to the
+  Destination-page hero (image height ceiling and heading size reduced,
+  not swapped for a fixed pixel value).
+- **P0 Hero scroll-return corruption (Android Chrome, user-reported):**
+  remains UNREPRODUCED after 5 distinct attempts across this and the prior
+  round (instant scroll, wheel+smooth-scroll, SPA navigation, and CDP
+  touch-emulated swipes in both orientations, re-run again against this
+  round's final build). Defensive `contain: layout paint` /
+  `will-change: transform` hardening applied to `.home-hero-stage` and its
+  full-bleed route decor — explicitly disclosed as unconfirmed hardening,
+  not a confirmed fix. Needs the user to re-test on the real device after
+  deploy.
+- **Results primary card redesigned** (conic-gradient match-ring badge
+  replacing the old small text pill, refined background/border) —
+  secondary result cards and all scoring/ranking logic untouched.
+- Two new low-contrast, slow (27s/35s, `linear`) background planes added
+  behind How-It-Works, reused as ambient motion on the Purpose and Explore
+  page heroes via a new `TravelRouteDecor` `"how"` variant.
+- Full evidence and per-item verification detail: see this round's
+  pre-push report in the session transcript rather than duplicating it
+  here.
+
 ### Current verified state — 2026-09-22 (round 2)
 
 - State document version: 30. Supersedes version 29's framing of the FINAL
