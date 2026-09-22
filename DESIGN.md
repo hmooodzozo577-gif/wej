@@ -267,7 +267,7 @@ Rating surfaces remain compact: `44px` star targets, a short optional textarea, 
 
 ### Motion and Accessibility
 
-State feedback uses the centralized fast (`140ms`), normal (`280ms`), authored (`760ms`), and travel-slow (`16s`) durations. Quiz questions enter from the direction of travel; result cards use a restrained four-card stagger; the Hero plane alone uses travel-slow for its long route. `prefers-reduced-motion: reduce` disables continuous and decorative animation, removes staggers, and makes state transitions effectively immediate.
+State feedback uses the centralized fast (`140ms`), normal (`280ms`), authored (`760ms`), and travel-slow (`16s`) durations. Quiz questions enter from the direction of travel; result cards use a restrained four-card stagger; the Hero's primary plane uses travel-slow for its long route. A second, quieter plane travels the Hero's other route in the opposite direction at its own slower pace (`21s`) — both are real, continuous motion rather than one live route beside one static line; the second stays visually subordinate (lower opacity, smaller scale) so it reads as a background travel signal, not a second focal point. `prefers-reduced-motion: reduce` disables continuous and decorative animation, removes staggers, and makes state transitions effectively immediate.
 
 Decorative compass, route, and plane graphics are hidden from assistive technology. Interactive surfaces use semantic buttons or links, visible focus, announced validation and async states, and `44px` minimum touch targets where precision matters.
 

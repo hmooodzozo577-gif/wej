@@ -74,9 +74,8 @@ export function Home() {
                       <b>{h.stat2n}</b>
                       <span>{h.stat2l}</span>
                     </div>
-                    <div className="hero-stat">
-                      <Icon name="shield" size={16} className="hero-stat-icon" />
-                      <b>{h.stat3n}</b>
+                    <div className="hero-stat hero-stat-phrase">
+                      <Icon name="sparkle" size={16} className="hero-stat-icon" />
                       <span>{h.stat3l}</span>
                     </div>
                   </div>

@@ -5,9 +5,122 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-### Current verified state — 2026-09-22
+### Current verified state — 2026-09-22 (round 2)
 
-- State document version: 29.
+- State document version: 30. Supersedes version 29's framing of the FINAL
+  UI/UX ACCEPTANCE PASS as Home-hero-only — this round extended the same
+  pass to Purpose, Quiz, Explore, Surprise, the global travel background,
+  and site-wide button feedback, per explicit further user instruction in
+  the same session. Phase 17 remains READY FOR USER REVIEW, not complete;
+  Phase 18/21 remain NOT STARTED. Two local checkpoint commits from the
+  first sub-round (`53ea04c`, `b7df189`) are preserved as history, not
+  amended; this round's work is additional commit(s) on top.
+- **Hero copy, locked per explicit user decision:** eyebrow is now
+  "محرك توصية للسفر" (`بدون حساب` removed) / "A travel recommendation
+  engine"; the third hero stat no longer shows a fabricated "0%" — it now
+  reads "أسئلة قليلة تحدد وجهتك" / "A few quick questions decide your
+  destination" with a sparkle icon, no numeral. "رحلتك تبدأ من هنا" and
+  "وجهات أقرب إليك" are unchanged and got a stronger editorial type
+  treatment (larger size, RTL Cairo at weight 600). A separate kicker line
+  above the h1 ("رحلات أفضل .. لحياة أوسع") was explicitly tried and then
+  explicitly rejected by the user this round — it must NOT be
+  reintroduced.
+- **Compass orbit badges:** now genuinely orbit — four distinct elliptical
+  `@keyframes` (one per badge), staggered delays (0/1.7/3.2/4.5s) and
+  durations (9–12.8s), verified via computed `animationName`/`duration`/
+  `delay` in a real browser, not just CSS presence. Restyled as lightweight
+  pill markers (999px radius, low-opacity navy glass, a small orange dot
+  leader) rather than gray buttons. The underlying dynamic, session-stable,
+  anti-repeat, evidence-backed destination pool is UNCHANGED — only visual
+  treatment and motion changed. `prefers-reduced-motion: reduce` freezes
+  all four (`animationName` verified `none` in a real reduced-motion
+  browser context).
+- **Flight routes:** the primary route's plane animates over `16s`
+  (unchanged token) along an original, authored top-down silhouette
+  (fuselage/wings/tail as separate subpaths, not traced from any
+  reference). A second, quieter plane now also moves — `21s`, opposite
+  direction, lower opacity/scale — along the route's other path, which
+  was previously just a static empty dashed line. DESIGN.md's Motion
+  section was updated to describe two live routes instead of one plane
+  alone, per explicit user decision (documented as evidence-driven, not
+  silently reinterpreted).
+- **Global travel background** (`TravelBackdrop.tsx`, used app-wide via
+  `RootLayout`): opacity roughly doubled (light `.055→.13`, dark
+  `.075→.16`) after browser evidence confirmed the prior value was too
+  faint to read as intended. Applied as one uniform bump rather than a
+  fully differentiated per-section intensity system (Hero/secondary/dense
+  sections) — a scope simplification, disclosed here rather than silently
+  claimed as a full hierarchy implementation.
+- **Light mode:** browser evidence (screenshots of Explore, Purpose, and
+  Home secondary sections in light theme) showed the existing e240ecc-era
+  light system already uses warm paper surfaces, dark text, and orange
+  accents — genuinely distinct from dark mode, not a recolored dark theme.
+  This claim in the round's brief did not match rendered reality, and per
+  this session's own source-of-truth rule (rendered UI over documentation
+  or claims), no light-mode card rebuild was performed. Added the one
+  concretely missing piece: a thin orange gradient transition edge between
+  the navy Hero and the paper page below it.
+- **Density passes** (padding/min-height only, no logic changes): Purpose
+  cards (`min-height` 136→108px desktop, 126→100px mobile; icon 46→38px);
+  Quiz (`.quiz-wrap` bottom padding 100→56px, `.q-card` padding max
+  54→36px, `.quiz-nav` margin-top 30→18px) — verified by screenshot, the
+  large dead space below quiz options is gone; Explore's location-request
+  card collapsed to a single compact row in its idle state (title +
+  truncated explanation + button on one line) via a new
+  `explore-location-card-idle` scoped class, leaving the richer
+  post-grant state (nearby list) unchanged; Surprise Me strip (compass
+  74→58px, image 168→132px, padding 18/22→14/20px); the Home location
+  banner (padding 14/18→9/16px).
+- **Explore grid:** added an explicit 700–1179px breakpoint forcing 3
+  columns (was falling into a 2-column bucket below 960px and the
+  desktop-default 3 only in a narrow 961–1179px gap) — verified via
+  computed `gridTemplateColumns` at 900px width. Card image aspect
+  narrowed to 16:9 in that band; `.dest-why` description clamp reduced
+  3→2 lines; `.dest-body` padding reduced (this is a shared class, so
+  Results-page cards get the same modest tightening as a side effect, not
+  separately requested but not excluded either).
+- **Orange signature line:** the section-heading kicker bar and the new
+  Hero transition edge (above) are the two concrete instances added this
+  round; deliberately not applied to every card/section per the round's
+  own "don't outline everything" constraint.
+- **Global button press feedback:** `.btn:active { transform: scale(.97) }`
+  added — previously no button anywhere in the app had a press state
+  (found during this round's design-engineering review, see below); this
+  matches the existing `.purpose-card:active` precedent already in the
+  codebase.
+- **Design review this round:** `impeccable detect` returned zero findings
+  on every touched file, both sub-rounds. `impeccable`'s own craft-floor
+  check caught a real problem — a kicker line above the h1 — which was
+  built, flagged, and removed within the same round (documented above).
+  "Taste Skill" (named in the round's brief) does not exist in this
+  environment; `emil-design-eng` — CLAUDE.md's own designated secondary
+  design-engineering critique skill — was used in its place, and that
+  substitution is disclosed here rather than silently assumed equivalent.
+- **Verification:** frontend 948/948 (one `RootLayout.explore.test.tsx`
+  timeout under full-suite parallel load, confirmed a pre-existing flake
+  by passing 10/10 in isolation on the same code, not a regression);
+  worker 202/202 (worker untouched this round, no worker deploy
+  performed); both typechecks and oxlint clean; production build clean
+  (JS gzip 617.93 kB, unchanged from baseline — the documented ~617 kB
+  bundle-size warning is neither solved nor worsened this round; CSS gzip
+  17.19 kB, up from 16.57 kB baseline, consistent with the CSS actually
+  added). A 64-combination structural matrix (AR: small/large phone,
+  tablet portrait/landscape, desktop; EN: phone/tablet/desktop; × light/
+  dark theme; × Home/Purpose/Quiz/Explore) found zero horizontal overflow
+  and zero clipped elements. A separate 320–2400px width sweep (a
+  zoom-equivalent range, since Playwright has no native browser-zoom API)
+  on the same four routes found zero horizontal overflow. Destination
+  page prev/next arrows and the hybrid hero/editorial layout were
+  visually confirmed intact (unchanged this round). Forms (9/10-character
+  Send behavior) were not re-touched this round; their existing passing
+  tests are the evidence, not a fresh re-debug, per the round's own
+  instruction not to re-open a closed bug without a reproduced regression.
+- Still pushed nowhere: this round's commits, like the prior sub-round's,
+  remain local on `claude/marhaba-kxry8l` pending explicit push
+  authorization — the session's sandboxed auto-mode classifier blocks
+  `git push` to this branch (tagged "Production Deploy") without the
+  user's own action, documented in the session transcript, not a choice
+  made here.
 - Working/deployment branch: `claude/marhaba-kxry8l`, fast-forwarded from
   `origin/claude/marhaba-kxry8l` at `e240ecc` earlier this round (a separate
   agent session's Phase 17 work, verified as a real, ancestor-preserving

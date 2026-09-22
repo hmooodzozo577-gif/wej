@@ -14,11 +14,12 @@ export const EN: I18nDict = {
   hero: {
     ...base.hero,
     h1: 'Discover your next destination',
-    eyebrow: 'A travel recommendation engine, no account required',
+    eyebrow: 'A travel recommendation engine',
     lead: 'Answer a few questions and we will rank destinations around your priorities, with a clear reason behind every result.',
     journeyStarts: 'Your journey starts here',
     nearbyDestinations: 'Destinations closer to you',
     verticalTagline: 'EXPLORE • DREAM • DISCOVER',
+    stat3l: 'A few quick questions decide your destination',
   },
   results: {
     ...base.results,

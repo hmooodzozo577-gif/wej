@@ -23,11 +23,12 @@ export const AR: I18nDict = {
   hero: {
     ...base.hero,
     h1: 'اكتشف وجهتك القادمة',
-    eyebrow: 'محرك توصية للسفر، بدون حساب',
+    eyebrow: 'محرك توصية للسفر',
     lead: 'أجب عن بضعة أسئلة لنرتّب لك الوجهات الأقرب إلى أولوياتك، مع شرح واضح لسبب كل نتيجة.',
     journeyStarts: 'رحلتك تبدأ من هنا',
     nearbyDestinations: 'وجهات أقرب إليك',
     verticalTagline: 'استكشف • احلم • اكتشف',
+    stat3l: 'أسئلة قليلة تحدد وجهتك',
   },
   results: {
     ...base.results,

@@ -232,7 +232,7 @@ export function LocationPersonalize() {
         }[status];
 
   return (
-    <div className="detail-card">
+    <div className={`detail-card explore-location-card${status === 'idle' ? ' explore-location-card-idle' : ''}`}>
       <h3>
         <Icon name="compass" size={18} /> {loc.title}
       </h3>
