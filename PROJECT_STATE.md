@@ -28,7 +28,7 @@ configuration, and current Git state outrank this document when they differ.
   #0b1b2a + white-alpha border → 8px `var(--white)` cream mat + warm
   outline; catalog card → paper mini-card; `.disclaimer-bar`
   ("توصيات وجهتي…") `var(--ink)` → `var(--white)` with ink text and a
-  3px `var(--gold)` inline-start accent; `.footer` (the block directly
+  gold-tinted hairline border and gold info icon; `.footer` (the block directly
   below it, `components/layout/Footer.tsx`) `var(--ink)` → `var(--paper-3)`
   with ink text and a 2px gold top rule. The photograph and its text-side
   scrim stay dark by design.

@@ -2571,8 +2571,7 @@ html[dir='rtl'][data-theme='light'] .home-hero-scrim {
 
 [data-theme='light'] .disclaimer-bar {
   color: var(--ink-2);
-  border: 1px solid var(--line);
-  border-inline-start: 3px solid var(--gold);
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, var(--line));
   background: var(--white);
   box-shadow: 0 10px 26px rgba(58, 42, 26, .06);
 }
