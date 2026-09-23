@@ -40,13 +40,25 @@ jobs:
           for item in json.load(open('.github/probe/urls.json')):
               print(f"\n===== BEGIN {item['id']} {item['url']}")
               try:
-                  req = urllib.request.Request(item['url'], headers={'User-Agent': 'WejhatyResearch/1.0 (+https://hmooodzozo577-gif.github.io/wej/)', 'Accept': 'text/html,application/json'})
+                  headers = {'User-Agent': 'WejhatyResearch/1.0 (+https://hmooodzozo577-gif.github.io/wej/)', 'Accept': item.get('accept', 'text/html,application/json')}
+                  if item.get('lang'): headers['Accept-Language'] = item['lang']
+                  req = urllib.request.Request(item['url'], headers=headers)
                   with urllib.request.urlopen(req, timeout=30) as res:
                       raw = res.read(3_000_000).decode('utf-8', 'replace')
                       print(f"STATUS {res.status} FINAL {res.geturl()} BYTES {len(raw)}")
               except Exception as e:
                   print(f"ERROR {type(e).__name__}: {e}")
                   continue
+              if item.get('raw'):
+                  for line in raw[: item.get('chars', 3000)].split('\n'): print('| ' + line[:220])
+                  print(f"===== END {item['id']}"); continue
+              if item.get('links'):
+                  seen = set()
+                  for href, label in re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', raw, re.S):
+                      label = re.sub(r'<[^>]+>', ' ', label); label = re.sub(r'\s+', ' ', html.unescape(label)).strip()
+                      if (re.search(item['links'], href) or re.search(item['links'], label)) and href not in seen:
+                          seen.add(href); print('| LINK ' + href[:200] + ' :: ' + label[:120])
+                  print(f"===== END {item['id']}"); continue
               if raw.lstrip().startswith('{'):
                   try:
                       data = json.loads(raw)
