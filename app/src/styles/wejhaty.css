@@ -5535,3 +5535,14 @@ html[dir='rtl'] .travel-route-band {
 /* Phase 20 — a destination-match questionnaire returns to the Personal
    Match section; keep its heading clear of the sticky navigation bar. */
 .personal-match-card { scroll-margin-top: 88px; }
+
+/* Phase 20 (Explore performance) — the catalog renders all 194 cards; the
+   browser now lays out and paints only those near the viewport. Cards
+   off-screen keep a placeholder of a typical card's size (410px, measured
+   between 320 and 1920px wide) until first shown, then their real size is
+   remembered ("auto"). Nothing is hidden: every card stays in the page, in
+   find-in-page and in the accessibility tree. */
+.explore-grid > * {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px auto 410px;
+}
