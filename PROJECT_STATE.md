@@ -61,6 +61,14 @@ configuration, and current Git state outrank this document when they differ.
   lifecycle (quiz → save → reload → edit → new trip → reset) and a
   shared-location run proving coordinates never reach storage — 222 checks,
   0 failures, and the same 222 under reduced motion, 0 failures.
+- Deployed: Phase 18 head `c305249` by GitHub Pages run `35823230980`
+  (success). Production verification: EGRESS_BLOCKED — this sandbox's
+  proxy refuses github.io and the Actions artifact store (HTTP 403). The
+  same commit was verified on a local production build instead: the
+  Phase 18 matrix above, the Phase 17 120-check matrix (0 failures), and
+  an explicit location-DENIED flow (no distance question asked, Personal
+  Match shown, no coordinates stored). Performance: Personal Match for all
+  194 countries ≈0.55 ms; main bundle +7 KB gzip (+1.2%), CSS +0.7 KB gzip.
 - Known limits: a location-based preference is unavailable after a
   reload until location is shared again (coordinates are memory-only by
   design); one profile per browser (completing a questionnaire for another
