@@ -29,13 +29,29 @@ on:
         required: true
         default: 'SA,FR,JP,BR,ZA,AU'
 
-permissions:
-  contents: write
+# No workflow-wide token scope; the one job below asks for exactly what it
+# needs (it commits the generated assets to the current branch).
+permissions: {}
 
 jobs:
   ingest:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      # The dispatch input reaches the shell only through this variable —
+      # never interpolated into a script — and is validated before any use.
+      COUNTRIES: ${{ inputs.countries }}
+      REF_NAME: ${{ github.ref_name }}
+      RUN_ID: ${{ github.run_id }}
     steps:
+      - name: Validate the countries input
+        run: |
+          if ! printf '%s' "$COUNTRIES" | grep -Eq '^(all|[A-Z]{2}(,[A-Z]{2})*)$'; then
+            echo "::error::countries must be \"all\" or comma-separated uppercase ISO2 codes (e.g. SA,FR,JP)."
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -53,10 +69,10 @@ jobs:
       - name: Run ingestion
         working-directory: app
         run: |
-          if [ "${{ inputs.countries }}" = "all" ]; then
+          if [ "$COUNTRIES" = "all" ]; then
             node scripts/generate-destination-images.mjs --all
           else
-            IFS=',' read -ra CODES <<< "${{ inputs.countries }}"
+            IFS=',' read -ra CODES <<< "$COUNTRIES"
             for code in "${CODES[@]}"; do
               node scripts/generate-destination-images.mjs --country "$code"
             done
@@ -90,6 +106,6 @@ jobs:
             echo "No changes to commit."
             exit 0
           fi
-          git commit -m "chore: update generated destination imagery (countries: ${{ inputs.countries }})" \
-            -m "Committed by the generate-destination-images workflow run ${{ github.run_id }} on ${{ github.ref_name }} — not authored by a Claude session directly. No PAT, no force-push, this feature branch only."
-          git push origin HEAD:${{ github.ref_name }}
+          git commit -m "chore: update generated destination imagery (countries: $COUNTRIES)" \
+            -m "Committed by the generate-destination-images workflow run $RUN_ID on $REF_NAME — not authored by a Claude session directly. No PAT, no force-push, this feature branch only."
+          git push origin "HEAD:$REF_NAME"

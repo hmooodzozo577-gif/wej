@@ -23,8 +23,8 @@ on:
       - 'app/scripts/lib/entryRequirementsFetch.mjs'
       - '.github/workflows/update-entry-requirements.yml'
 
-permissions:
-  contents: read
+# No workflow-wide token scope; each job below declares its own.
+permissions: {}
 
 concurrency:
   group: entry-requirements-update

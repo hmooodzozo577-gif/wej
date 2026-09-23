@@ -13,10 +13,9 @@ on:
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch: {}
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+# No workflow-wide token scope: the build job reads the repository (and the
+# Pages configuration); only the deploy job can publish.
+permissions: {}
 
 concurrency:
   group: pages
@@ -35,6 +34,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -72,6 +74,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
