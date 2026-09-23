@@ -1,16 +1,51 @@
 # Wejhaty v1.0.0 — release candidate record
 
-Status: **PHASE 20 — FINAL WEJHATY / WEJHATY v1.0.0 RC2 / TECHNICALLY
+Status: **PHASE 20 — FINAL WEJHATY / WEJHATY v1.0.0 RC3 / TECHNICALLY
 VERIFIED / AWAITING USER ACCEPTANCE.** Nothing here is user-accepted or
 final until the user says so. Current truth lives in `PROJECT_STATE.md`
-(state v38 and its authoritative unresolved register); this file records
+(state v39 and its authoritative unresolved register); this file records
 what each candidate is, how it was checked and what the user is asked to
 review.
 
 Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
 PRODUCTION-VERIFIED, USER-VERIFIED, UNVERIFIED, DEFERRED, BLOCKED, FROZEN.
 
-# RC2 — `wejhaty-v1.0.0-rc2` (current)
+# RC3 — `wejhaty-v1.0.0-rc3` (current)
+
+## RC3.1 What it contains
+
+RC2 plus the user's decisions of 2026-09-23:
+
+- **"Edit my preferences" on a destination page** now returns to that
+  destination with its updated Personal Match. The same button on Results
+  still ends on Results.
+- The production and real-Safari smoke tests also check that step.
+- `read-font-license.yml`: a read-only runner job that re-reads the
+  official Thmanyah license pages. The font is still not added; see U1 in
+  the register.
+- Docs.
+
+Nothing else changed. Phase 14, Personal Match methodology, the Worker
+and Passport (FROZEN) are as in RC2. The RC1 and RC2 branches and tags
+stay untouched.
+
+## RC3.2 User-acceptance checklist
+
+Use the RC2.2 checklist below. It still applies unchanged, with one
+addition:
+
+4b. **Edit from a destination**: with saved preferences, open a
+destination (e.g. Japan) and choose "تعديل تفضيلاتي". Change a few
+answers and finish. You land back on that destination with its new
+"التوافق معك" score. From Results, the same button still returns to
+Results.
+
+## RC3.3 Integrity and production verification
+
+Filled in after this candidate's deploy and smoke runs, in the commit
+that records them.
+
+# RC2 — `wejhaty-v1.0.0-rc2` (historical record)
 
 ## RC2.1 What it contains
 

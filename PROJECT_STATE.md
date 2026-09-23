@@ -5,9 +5,67 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-23 (Phase 20 user decisions, RC3)
+
+- State document version: 39. **Status: PHASE 20 — FINAL WEJHATY /
+  WEJHATY v1.0.0 RC3 / TECHNICALLY VERIFIED / AWAITING USER ACCEPTANCE.**
+  The user will review the candidate manually before final acceptance.
+  Phase 21 NOT STARTED (still gated on explicit Phase 20 approval). Phase
+  14, Personal Match methodology and Passport (FROZEN) unchanged.
+- **User decisions recorded (2026-09-23)**: Traveler Budget 13.5c stays
+  deferred (U5); Turnstile stays off (U7); main-site CSP deferred (U11);
+  no further bundle optimisation (U18); the Dark hero note is measured
+  only, and the user decides after seeing the numbers (U19); remote tag
+  `wejhaty-v1.0.0-rc1` created on `38c8292`; Thmanyah license re-read on a
+  runner, with any lawful way to add the font to be tried (U1).
+- **"Edit my preferences" on a destination (U10, RESOLVED)**: the
+  destination page's button now replays the saved questionnaire with the
+  same transient destination-match intent and returns to that destination
+  with its updated Personal Match (heading focused, section in view). The
+  same button on Results still ends on Results. Nothing about the target
+  is stored.
+- **Thmanyah (U1, still BLOCKED)**: `read-font-license.yml` run
+  35930271981 read the official pages from a GitHub runner. The license
+  (Arabic version prevails) allows web use only "as part of a compiled,
+  packaged or obfuscated product" and forbids hosting or uploading the
+  font files to any website, server or platform, and making them
+  extractable, including through web embedding. It also forbids
+  modification. The help centre states this directly: uploading the files
+  to your own website or server is not allowed (Q23). No cloud or hosted
+  font service exists (Q8), and downloads are OTF only, sent by e-mail
+  after registration. A public repository on GitHub Pages cannot self-host
+  the font. Lawful paths need the user: written permission from Thmanyah
+  (the license says exceptions must be written; Ask@thmanyah.com or the
+  help-centre chat), or using the font only for static artwork such as a
+  wordmark, which the license allows for logos and identity. No font file
+  was downloaded, committed or served.
+- **Dark hero "nearby" note (U19, measured, not changed)**: element
+  `p.hero-editorial-note.hero-nearby-note` ("وجهات أقرب إليك" / "Destinations
+  closer to you") in the Home hero compass cluster. Colour `#ffad8b`, halo
+  `text-shadow: 0 2px 12px rgba(3,13,23,.72)`, 600 weight in Arabic; 11.8 px
+  at 390, 13.8 px at 800 and 16.3 px at 1280/1440. Measured under the glyph
+  pixels only across all 22 hero photos × AR/EN × 4 widths (176 states,
+  Chromium):
+  - 390 px: passes; the lowest per-photo median is 5.48:1 without the halo
+    and 6.30:1 with it.
+  - 800 px: medians range 1.31–8.79:1 without the halo and 1.62–9.46:1
+    with it; 10–11 of 22 photos stay below 4.5:1 even with the halo.
+  - 1280 and 1440 px: medians range 1.06–9.15:1 without the halo and
+    1.26–9.75:1 with it; 13 of 22 photos stay below 4.5:1 with the halo.
+  - Worst cases: Japan (EN, 1280) 1.06:1 without the halo, 1.26:1 with it;
+    Sweden (AR, 1440) 1.22:1 and 1.72:1.
+  - WCAG AA needs 4.5:1 at this size.
+- **Verification (local production build)**: frontend 1081/1081 (one full
+  run, `--maxWorkers=2`), `tsc -b`, oxlint and build clean; Worker
+  unchanged (245/245 in RC2). Browser QA (Chromium): edit-from-destination
+  80/80 (AR/EN × Light/Dark × phone/desktop, updated score, focus, reload,
+  Results edit still on Results, nothing stored); destination match
+  100/100; local run of the production smoke 35/35. Production: see the
+  RC3 record in `/RELEASE_CANDIDATE.md`.
+
 ### Current verified state — 2026-09-23 (Phase 20 final repairs, RC2)
 
-- State document version: 38. **Status: PHASE 20 — FINAL WEJHATY /
+- State document version 38 (superseded by 39 above). **Status then: PHASE 20 — FINAL WEJHATY /
   WEJHATY v1.0.0 RC2 / TECHNICALLY VERIFIED / AWAITING USER ACCEPTANCE.**
   Nothing is user-accepted or final. **Phase 21 (Admin post-launch
   enhancements) NOT STARTED — it may begin only after the user explicitly
@@ -1860,6 +1918,7 @@ language switcher, and the full panel set above. Two things are still open:
 | Shared Worker rules (CORS origin, IL/ISR exclusion) | `worker/src/shared.ts` |
 | Questionnaire entry intent (destination match) | `app/src/personalization/quizIntent.ts` |
 | Release tagging (runner) | `.github/workflows/create-release-tag.yml` |
+| Font license re-read (runner, read-only) | `.github/workflows/read-font-license.yml` |
 | Real Safari smoke (macOS runner) | `app/scripts/safari-smoke.mjs` |
 | Public-write rate limits (bindings) | `worker/wrangler.toml` `[[ratelimits]]`, used in `worker/src/product.ts` |
 | City article title allowlist | `worker/src/generated/cityTitles.json` |
@@ -1968,11 +2027,11 @@ see "Non-negotiable product rules" above.)
 ## Roadmap gate and immediate backlog
 
 Phase 16 (AI API Integration) is CANCELLED/SKIPPED by product decision.
-Phase 19 is implemented; Phase 20 produced `wejhaty-v1.0.0-rc1` and then
-`wejhaty-v1.0.0-rc2` (Destination Match fix, heading structure, Explore
+Phase 19 is implemented; Phase 20 produced `wejhaty-v1.0.0-rc1`,
+`wejhaty-v1.0.0-rc2` and then `wejhaty-v1.0.0-rc3` (user decisions) (Destination Match fix, heading structure, Explore
 performance, security backlog, Pass 2). Current order:
 
-1. **PHASE 20 USER ACCEPTANCE GATE (RC2).** Obtain the user's explicit
+1. **PHASE 20 USER ACCEPTANCE GATE (RC3).** Obtain the user's explicit
    acceptance (checklist in `/RELEASE_CANDIDATE.md`). Do not call anything
    FINAL or USER-ACCEPTED before that. If the user asks to remove Phase 18,
    follow "Pre-Phase-18 rollback checkpoint" exactly.
@@ -1989,25 +2048,25 @@ FROZEN, USER-DECISION REQUIRED, UNVERIFIED.
 
 | ID | Item | Status | Reason | Next action | Owner | User decision? |
 |---|---|---|---|---|---|---|
-| U1 | Thmanyah Arabic font | BLOCKED | License text read in Phase 19 forbids hosting/embedding the files; the official page is unreachable from the development sandbox today, and search snippets from Thmanyah's help centre describe websites as a permitted use "under the license" — an ambiguity only Thmanyah can settle | Ask Thmanyah (Ask@thmanyah.com) for written confirmation of web embedding, or authorise a runner-based re-read of the license page | User | Yes |
+| U1 | Thmanyah Arabic font | BLOCKED | Runner re-read (run 35930271981): self-hosting or uploading the font files is forbidden (license; help centre Q23), web use only inside a compiled/packaged/obfuscated product, no modification, no hosted font service (Q8) | Written permission from Thmanyah (Ask@thmanyah.com / help-centre chat), or wordmark-only artwork; user chooses | User | Yes |
 | U2 | Real Safari (macOS) and real Edge | RESOLVED (PRODUCTION-VERIFIED) | Smoke run 35929343828: Safari 26.6.2 11/11, Edge 152 all checks passed | Keep in every release smoke | Maintainer | No |
 | U3 | iOS Safari | UNVERIFIED | No iOS device or simulator in CI | Manual check on an iPhone (checklist in RC2 record) | User | No |
 | U4 | Real screen readers (VoiceOver, TalkBack, NVDA) | UNVERIFIED | Needs a person with assistive technology; automated semantics are clean (axe 0) | Manual checklist in RC2 record | User | No |
-| U5 | Traveler Budget 13.5c (SAR/day) | USER-DECISION REQUIRED | Candidate found: US State Department Foreign Per Diem Rates (public domain, monthly, lodging + meals per location, USD). It is a ceiling for official travellers, not a typical traveller budget | Decide whether to adopt it (with that caveat) or keep deferred; nothing is integrated | User | Yes |
+| U5 | Traveler Budget 13.5c (SAR/day) | DEFERRED — USER DECISION (2026-09-23) | User chose to keep it deferred. Candidate on file: US State Department Foreign Per Diem Rates (a ceiling for official travellers) | None until the user reopens it | User | — |
 | U6 | Automatic PRs from data workflows | BLOCKED | Repository setting "Allow GitHub Actions to create and approve pull requests" is off | Settings → Actions → General → Workflow permissions → enable it | User | No |
-| U7 | Turnstile in production | DEFERRED — USER DECISION | Adds friction; code and fail-closed verification are ready; per-address limits are active | Decide; then set `TURNSTILE_SECRET_KEY` and the site key | User | Yes |
+| U7 | Turnstile in production | DEFERRED — USER DECISION (2026-09-23: keep off) | Adds friction; code and fail-closed verification are ready; per-address limits are active | None until the user reopens it | User | — |
 | U8 | Paid travel/visa providers | DEFERRED | No credentials/contract; Worker provider path stays dormant | None until a provider decision | User | Yes |
 | U9 | Passport / entry information | FROZEN | User decision: no coverage, source, UI, copy or behaviour changes | Regression-test only | User | — |
-| U10 | Destination page "Edit my preferences" ends on general Results | USER-DECISION REQUIRED | Same intent question as the fixed CTA, but it changes an existing, accepted flow | Decide whether it should also return to the destination | User | Yes |
-| U11 | Main-site CSP | DEFERRED | GitHub Pages cannot send headers; a meta CSP is possible but can break images, fonts or the Worker if incomplete | Decide on a meta CSP after an inventory, or a host with headers | User | Yes |
+| U10 | Destination page "Edit my preferences" | RESOLVED (user decision 2026-09-23) | Now returns to the same destination with its updated match; Results' edit unchanged | — | — | — |
+| U11 | Main-site CSP | DEFERRED — USER DECISION (2026-09-23) | GitHub Pages cannot send headers; a meta CSP needs a full inventory | None until the user reopens it | User | — |
 | U12 | GitHub Actions SHA pinning | DEFERRED | Needs the upstream actions' commit SHAs (outside this repository's scope) | Enable Dependabot for Actions or pin manually | Maintainer | No |
 | U13 | Streamed (undeclared-length) body limits | DEFERRED | Declared-length ceilings are enforced; a chunked body is still bounded by each handler's field limits | Revisit with a streaming reader if abuse appears | Maintainer | No |
 | U14 | Paid-provider limiters | DEFERRED | Providers dormant | Add with any provider activation | Maintainer | No |
 | U15 | Dependency advisory (previously judged unreachable) | DEFERRED | Not exploitable in current use | Re-check at the next dependency upgrade | Maintainer | No |
 | U16 | Slow-test policy | DEFERRED | Two heavy tests can exceed 5 s under full parallel load | Policy: run with `--maxWorkers=2`; never raise timeouts to hide contention | Maintainer | No |
 | U17 | Rate limiter precision | ACCEPTED LIMITATION | Cloudflare's limiter is approximate per location (~2× budget seen in production) | None | — | No |
-| U18 | Main bundle size (flags + datasets, ~620 kB gzip) | DEFERRED | Lazy-loading the datasets is a larger change | Measure and propose separately | Maintainer | Yes (scope) |
-| U19 | Dark hero "nearby" note contrast without its halo | DEFERRED | Dark mode kept unchanged by request | User decision if wanted | User | Yes |
+| U18 | Main bundle size (flags + datasets, ~634 kB gzip) | DEFERRED — USER DECISION (2026-09-23: no further optimisation) | Lazy-loading the datasets is a larger change | None until the user reopens it | User | — |
+| U19 | Dark hero "nearby" note contrast | USER-DECISION REQUIRED | Measured: 13 of 22 hero photos below 4.5:1 at 1280/1440 even with the halo (worst 1.26:1, Japan); phone passes | User decides whether to change it | User | Yes |
 | U20 | Phase 21 (Admin) | NOT STARTED | Blocked on Phase 20 acceptance | Checkpoint, then Phase 21 | User | Yes |
 | R1 | heading-order (axe) | RESOLVED | h2 structure, visuals unchanged | — | — | — |
 | R2 | Explore mobile blocking time | RESOLVED | TBT 3.17 s → 1.42 s | — | — | — |
