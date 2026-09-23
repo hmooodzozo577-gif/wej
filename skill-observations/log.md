@@ -71,3 +71,18 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** When editing CSS (or any brace-structured source) by script: anchor on a full line including the leading newline and indentation, assert the anchor occurs exactly once, and after the edit verify placement structurally (e.g. the enclosing block's extent, or the rule's top-level position) rather than trusting a green build.
 
 **Principle:** A tolerant parser turns a mis-anchored edit into a silent regression. Uniqueness plus structural post-checks are cheap insurance; build success is not evidence of correct placement.
+
+### Observation 5: Privacy/leak checks in browser tests must match the data's meaning, not a keyword
+**Status:** OPEN
+
+**Date:** 2026-09-23
+**Session context:** A read-only production smoke test asserting that a session-only passport country is never sent over the network, plus lab performance runs on a heavy page.
+**Skill:** playwright-skill (browser QA scripts); relevant to any skill that writes verification scripts
+**Type:** open-source
+**Phase/Area:** Verification scripts
+
+**Issue:** The first leak check flagged any request body containing the word "passport". An anonymous analytics event legitimately named `quiz_passport_choice` with `{ chosen: true }` tripped it — a false positive that could have prompted removing a harmless event, while a real leak under another field name would have passed. Separately, a performance script read First Contentful Paint a fixed 2.5 s after `load`; on a throttled heavy page FCP came later, so the metric silently recorded 0.
+
+**Suggested improvement:** In verification scripts, express a privacy assertion as the sensitive value or field shape (e.g. a passport/nationality key with a string value, or the chosen country's code) rather than a substring, and list the known-benign events it must allow. For lab metrics, wait until the metric entry exists (with a timeout) instead of a fixed delay, and treat a missing value as a failed measurement, never as 0.
+
+**Principle:** A check that matches on vocabulary rather than meaning produces both false alarms and blind spots; a missing measurement must never be recorded as a result.
