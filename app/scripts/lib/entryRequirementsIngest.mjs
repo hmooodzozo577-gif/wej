@@ -60,7 +60,9 @@ export function htmlToLines(html) {
   const withoutInvisible = html
     .replace(/<!--[\s\S]*?-->/g, ' ')
     .replace(/<(script|style|noscript|template|svg)\b[\s\S]*?<\/\1\s*>/gi, ' ');
-  const text = withoutInvisible.replace(/<\/?([a-z0-9]+)\b[^>]*>/gi, (_, tag) => (BLOCK_TAGS.test(tag) ? '\n' : ' '));
+  // Inline tags (links, emphasis) vanish without adding a space, exactly
+  // as a browser renders "(<a>Iceland</a>, Norway)"; block tags break lines.
+  const text = withoutInvisible.replace(/<\/?([a-z0-9]+)\b[^>]*>/gi, (_, tag) => (BLOCK_TAGS.test(tag) ? '\n' : ''));
   return decodeEntities(text)
     .split('\n')
     .map((line) => line.replace(/[\s ​]+/g, ' ').trim())
@@ -217,7 +219,12 @@ function assertRange(count, [min, max], label) {
 /** Case-, quote- and whitespace-insensitive (official HTML is full of
  *  non-breaking spaces and typographic apostrophes). */
 function phraseKey(text) {
-  return text.replace(/[’‘]/g, "'").replace(/\s+/g, ' ').toLowerCase();
+  return text
+    .replace(/[’‘]/g, "'")
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([,.;:)])/g, '$1')
+    .replace(/\(\s+/g, '(')
+    .toLowerCase();
 }
 
 export function hasPhrase(lines, phrase) {

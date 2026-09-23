@@ -274,7 +274,11 @@ function verifySchengen(lines) {
     'Cyprus participates in the Schengen cooperation. Nevertheless, internal borders controls have not yet been abolished',
     'Ireland, on the other hand, is exceptionally allowed by the Schengen Protocol not to apply the Schengen rules',
   ]) {
-    if (!hasPhrase(lines, phrase)) throw new Error(`Schengen area page: membership statement changed — "${phrase.slice(0, 60)}…" not found`);
+    if (!hasPhrase(lines, phrase)) {
+      const near = lines.find((line) => line.includes('Schengen area is composed') || line.includes('Cyprus participates') || line.includes('Ireland, on the other hand'));
+      console.error(`  nearest line on the page: ${near ?? '(none)'}`);
+      throw new Error(`Schengen area page: membership statement changed — "${phrase.slice(0, 60)}…" not found`);
+    }
   }
   if (SCHENGEN.length !== 29) throw new Error('Schengen registry is not 29 states');
 }
