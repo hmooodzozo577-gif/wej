@@ -26,6 +26,9 @@ export function DestinationCard({
   whyText,
   purpose,
   navigation,
+  personalScore,
+  personalLabel,
+  personalAria,
 }: {
   dest: CatalogEntry;
   lang: Lang;
@@ -35,6 +38,12 @@ export function DestinationCard({
   whyText?: string;
   purpose?: PurposeId;
   navigation?: DestinationNavigation;
+  /** Phase 18 — the traveller's Personal Match ("XX% لك"). When present it
+   *  replaces the plain match pill; always shown with its label so it can
+   *  never be mistaken for general suitability. */
+  personalScore?: number | null;
+  personalLabel?: string;
+  personalAria?: string;
 }) {
   const fromResults = matchScore !== undefined;
   const continent = continentOf(dest);
@@ -64,7 +73,11 @@ export function DestinationCard({
             <FlagChip dest={dest} width={24} height={18} />
             <h3>{nameOf(dest, lang)}</h3>
           </span>
-          {matchScore !== undefined ? <span className="match-pill">{matchScore}%</span> : null}
+          {personalScore !== undefined && personalScore !== null ? (
+            <span className="match-pill personal-pill" aria-label={personalAria}>
+              {personalScore}% <small>{personalLabel}</small>
+            </span>
+          ) : matchScore !== undefined ? <span className="match-pill">{matchScore}%</span> : null}
         </div>
         <div className="dest-region">
           {t.regionLabels[continent]}

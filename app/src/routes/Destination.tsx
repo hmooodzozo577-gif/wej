@@ -43,6 +43,10 @@ import { regionGradientCss } from '../components/regionGradient';
 import { buildWhyText } from '../engine';
 import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
 import type { DestinationNavigation } from '../state/types';
+import { usePersonalization } from '../personalization/usePersonalization';
+import { computePersonalMatch } from '../personalization/personalMatch';
+import { PersonalMatchSection } from '../personalization/PersonalMatchSection';
+import { PERSONAL_COPY } from '../personalization/copy';
 
 // Phase 11 Step 1 — compact, build-time Country Information card. Shared by
 // both the basic-country branch and the full-destination branch below, so
@@ -204,6 +208,7 @@ export function Destination() {
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
   const routeState = location.state as { fromResults?: boolean; purpose?: PurposeId; navigation?: DestinationNavigation } | null;
+  const { preferences } = usePersonalization();
 
   const d = WORLD_CATALOG.find((x) => x.id === id);
   if (!d) {
@@ -226,7 +231,15 @@ export function Destination() {
   const fromResults = !!(routeState?.fromResults && state.results);
   const resultItem = fromResults ? state.results!.find((result) => result.dest.id === d.id) : undefined;
   const matchScore = resultItem?.score ?? null;
-  const why = resultItem && state.purpose ? buildWhyText(lang, state.purpose, resultItem.reasons, d, resultItem.score, state.answers) : null;
+  // Phase 18 — with a saved profile, the Personal Match section is the one
+  // explanation shown; the Phase 14 text remains only as the fallback for a
+  // results visit without a usable profile.
+  const personal = preferences ? computePersonalMatch(d, preferences, { origin: state.location.coords }) : null;
+  const why = !personal && resultItem && state.purpose ? buildWhyText(lang, state.purpose, resultItem.reasons, d, resultItem.score, state.answers) : null;
+  const pc = PERSONAL_COPY[lang];
+  const heroChip = personal && personal.score !== null && personal.eligible
+    ? { text: `${personal.score}% ${pc.forYou}`, aria: pc.scoreAria(personal.score) }
+    : null;
 
   const goBackBasic = () => navigate(fromResults ? '/results' : '/explore');
   const startAgain = () => {
@@ -255,9 +268,13 @@ export function Destination() {
             fallbackBackground={regionGradientCss(continent)}
             subContent={t.regionLabels[continent]}
             rightContent={
-              <div className="detail-match detail-match-browse">
-                {matchScore !== null ? `${matchScore}% ${t.results.match}` : dt.browse}
-              </div>
+              heroChip ? (
+                <div className="detail-match" aria-label={heroChip.aria}>{heroChip.text}</div>
+              ) : (
+                <div className="detail-match detail-match-browse">
+                  {matchScore !== null ? `${matchScore}% ${t.results.match}` : dt.browse}
+                </div>
+              )
             }
             edgeControls={
               <HeroEdgeControls current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} />
@@ -295,6 +312,7 @@ export function Destination() {
               <FeaturedCitiesCard destination={d} lang={lang} strings={dt} />
             </aside>
             <div className="destination-narrative">
+              <PersonalMatchSection destination={d} match={personal} />
               {why || profile ? (
                 <div className="detail-card destination-section overview-card">
                   <h3>
@@ -356,7 +374,9 @@ export function Destination() {
             </>
           }
           rightContent={
-            matchScore !== null ? (
+            heroChip ? (
+              <div className="detail-match" aria-label={heroChip.aria}>{heroChip.text}</div>
+            ) : matchScore !== null ? (
               <div className="detail-match">
                 {matchScore}% {dt.match}
               </div>
@@ -416,6 +436,7 @@ export function Destination() {
             {info ? <CountryInfoCard info={info} borders={borders} dt={dt} lang={lang} /> : null}
           </aside>
           <div className="destination-narrative">
+            <PersonalMatchSection destination={d} match={personal} />
             {/* A personalized match explanation is semantically different
                 from the general editorial overview, so it stays full-width
                 above the calmer information layout when present. */}

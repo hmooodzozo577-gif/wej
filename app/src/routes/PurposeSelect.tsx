@@ -1,16 +1,19 @@
 // Ports renderPurpose() from wejhaty.html.
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { PURPOSES } from '../data/purposes';
 import { Icon } from '../components/Icon';
 import { trackEvent } from '../telemetry/productDataClient';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
+import { PERSONAL_COPY } from '../personalization/copy';
 
 export function PurposeSelect() {
   const navigate = useNavigate();
   const { state, dispatch } = useAppState();
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   const pu = t.purposes;
+  // Phase 18 — confirms a "reset preferences" that led here.
+  const justReset = !!(useLocation().state as { personalizationReset?: boolean } | null)?.personalizationReset;
 
   const startQuiz = (id: (typeof PURPOSES)[number]['id']) => {
     trackEvent('quiz_started', { purpose: id }, { path: '/purpose', locale: state.lang });
@@ -25,6 +28,7 @@ export function PurposeSelect() {
         <div className="container">
           <h1 className="display">{pu.title}</h1>
           <p>{pu.sub}</p>
+          {justReset ? <p className="personal-reset-note" role="status">{PERSONAL_COPY[lang].resetDone}</p> : null}
         </div>
       </section>
       <section className="section" style={{ paddingTop: 34 }}>

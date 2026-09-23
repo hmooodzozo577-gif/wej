@@ -4893,3 +4893,203 @@ html[dir='rtl'] .travel-route-band {
     translate: 0 0 !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Phase 18 — Personalization. Quiet, integrated UI: one labelled personal
+   number, never an unlabelled second percentage; controls as small ghost
+   buttons; no dashboard chrome. Fluid (clamp/auto-fit), theme-token based.
+   -------------------------------------------------------------------------- */
+.personal-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-top: 16px;
+}
+
+.personal-controls .btn { min-height: 44px; }
+
+.personal-saved-note {
+  flex: 1 1 260px;
+  margin: 0;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+/* Featured result: the ring's caption stacks the label, how much of the
+   traveller's preferences it rests on, and the separate general figure. */
+.top-pick-score-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.top-pick-confidence,
+.top-pick-general {
+  color: rgba(255, 249, 243, .66);
+  font-size: .78rem;
+  line-height: 1.4;
+}
+
+.top-pick-general b { color: #fff9f3; font-weight: 800; }
+
+[data-theme='light'] .top-pick .top-pick-confidence,
+[data-theme='light'] .top-pick .top-pick-general { color: var(--muted); }
+[data-theme='light'] .top-pick .top-pick-general b { color: var(--ink); }
+
+.match-pill.personal-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  color: var(--gold);
+  border-color: color-mix(in srgb, var(--gold) 34%, var(--line));
+}
+
+.match-pill.personal-pill small {
+  color: var(--muted);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+/* Destination — "Why this destination suits you". */
+.personal-match-card {
+  display: grid;
+  gap: 14px;
+}
+
+.personal-match-head h3 { margin-bottom: 4px; }
+
+.personal-match-basis {
+  margin: 0;
+  color: var(--muted);
+  font-size: .86rem;
+}
+
+.personal-match-score {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+}
+
+.personal-match-value {
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.personal-match-value b {
+  color: var(--gold);
+  font-family: var(--ff-display);
+  font-size: clamp(1.9rem, 4vw, 2.5rem);
+  line-height: 1;
+}
+
+.personal-match-confidence,
+.personal-match-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: .84rem;
+}
+
+.personal-match-constraint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--gold);
+  font-size: .88rem;
+  font-weight: 700;
+}
+
+.personal-factors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 14px 22px;
+}
+
+.personal-factor-group h4 {
+  margin: 0 0 8px;
+  padding-bottom: 6px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  font-size: .82rem;
+  font-weight: 800;
+}
+
+.personal-factor-group.is-positive h4 { border-bottom-color: color-mix(in srgb, var(--teal) 55%, var(--line)); }
+.personal-factor-group.is-negative h4 { border-bottom-color: color-mix(in srgb, var(--gold) 55%, var(--line)); }
+.personal-factor-group.is-unavailable { opacity: .78; }
+
+.personal-factor-group ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.personal-factor-group li {
+  display: grid;
+  gap: 2px;
+}
+
+.personal-factor-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  font-size: .92rem;
+  font-weight: 750;
+}
+
+.personal-factor-strength {
+  padding: 1px 7px;
+  color: var(--gold);
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent);
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+.personal-factor-detail {
+  color: var(--muted);
+  font-size: .84rem;
+  line-height: 1.5;
+}
+
+.personal-match-actions .btn { min-height: 44px; }
+
+.personal-match-card.is-empty p { margin: 0; color: var(--muted); }
+.personal-match-card.is-empty .btn { justify-self: start; min-height: 44px; }
+
+/* Home — a returning traveller's quiet way back. */
+.hero-continue-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-top: 6px;
+  color: #ffb08d;
+  font-size: .9rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  text-underline-offset: 4px;
+}
+
+.hero-continue-link:hover,
+.hero-continue-link:focus-visible { color: #fff9f3; }
+[data-theme='light'] .home-hero-frame .hero-continue-link { color: var(--gold); }
+[data-theme='light'] .home-hero-frame .hero-continue-link:hover,
+[data-theme='light'] .home-hero-frame .hero-continue-link:focus-visible { color: var(--ink); }
+
+.personal-reset-note {
+  margin: 12px 0 0;
+  color: var(--gold);
+  font-size: .9rem;
+  font-weight: 700;
+}
