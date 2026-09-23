@@ -16,7 +16,7 @@ Wejhaty helps a traveler move from broad preferences to a practical, explainable
 
 ## Positioning
 
-Wejhaty's distinguishing mechanism is a deterministic recommendation engine over a worldwide catalog, paired with transparent reasons and explicit uncertainty. The interview gathers only supported preferences; Phase 14 remains the sole scoring and candidate-selection authority, and the browser-local Personal Match layer (Phase 18) may only reorder within Phase 14's top candidates, always labelled separately from a country's general suitability. Location may break otherwise-equal matches only when the traveler opts into proximity, and passport country is optional and used only for verified entry requirements.
+Wejhaty's distinguishing mechanism is a deterministic recommendation engine over a worldwide catalog, paired with transparent reasons and explicit uncertainty. The interview gathers only supported preferences; Phase 14 remains the sole scoring and candidate-selection authority, and the browser-local Personal Match layer (Phase 18) may only reorder within Phase 14's top candidates, always labelled separately from a country's general suitability. Location may break otherwise-equal matches only when the traveler opts into proximity, and passport country is optional and used only to show entry requirements from destinations' official sources, never to rank.
 
 ## Operating Context
 
@@ -39,6 +39,8 @@ Wejhaty's distinguishing mechanism is a deterministic recommendation engine over
 - All visible numbers use Latin digits in both languages.
 - Missing, partial, sourced, and verified information must remain visibly distinguishable.
 - Turnstile is not currently enabled and must not be represented as active.
+- Entry-requirement coverage is partial (official sources for 34 destinations) and must be presented as partial; uncovered destinations say so instead of guessing.
+- Arabic typography stays on the current font stack: the Thmanyah typeface's license does not permit web hosting from this public repository.
 
 ## Brand Commitments
 

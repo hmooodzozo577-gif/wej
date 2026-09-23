@@ -121,7 +121,7 @@ that column below is, by definition, not a secret and must never be one.
 |---|---|---|---|
 | `AMADEUS_API_KEY` / `AMADEUS_API_SECRET` | Worker secret | **secret** | Flight offers are unavailable; the app says so |
 | `AMADEUS_ENV` | Worker `[vars]` | mode switch, not a secret | Sandbox API is used |
-| `SHERPA_API_KEY` | Worker secret | **secret** | No visa provider; every lookup answers `unknown` and the passport step says live data is not switched on |
+| `SHERPA_API_KEY` | Worker secret | **secret** | No visa provider; the Worker's `/api/visa/*` lookups answer `unknown`. The frontend no longer calls them (Phase 19): passport entry information comes from the official-source snapshot |
 | `SHERPA_BASE_URL` | Worker `[vars]` | host override for the sandbox | Production Sherpa host is used |
 | `TURNSTILE_SECRET_KEY` | Worker secret | **secret** | Reports and ratings are accepted without a challenge (today's state) |
 | `ADMIN_TOKEN` | Worker secret | **secret** | With no `ADMIN_ACCESS_AUD` either, `/api/admin/*` returns 503 and serves nothing |

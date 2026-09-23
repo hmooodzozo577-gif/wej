@@ -55,14 +55,20 @@ persistent autonomous engineering operating contract for this project.
   passport drives entry requirements only.
 - Never fabricate a visa or entry-requirement claim. The editorial
   easy/medium/hard label stays disclosed as a general reference. A
-  passport-specific entry requirement may only be shown when a real
-  provider returned it, with that provider's name and a check date;
-  with no provider configured the answer is "unknown". Scraped or
-  unofficial passport-index datasets are not an acceptable source.
-- The visa layer never changes a Phase 14 weight or a match score. It
-  may only reorder destinations already within 3 points of each other.
-  Blending visa convenience into the score itself needs an explicit
-  user decision first (see `PROJECT_STATE.md`, Roadmap gate).
+  passport-specific entry requirement may only be shown when the
+  destination's own official source (the registry in
+  `app/scripts/generate-entry-requirements.mjs`) lists that nationality or
+  states a rule covering every foreign national — always with the
+  official link and the last-checked date; everything else is "unknown"
+  with a pointer to the official source. Never invent durations, validity
+  periods, blank-page rules, eVisa eligibility or fees. Scraped or
+  unofficial passport-index datasets, blogs and aggregators are not
+  acceptable sources, and no anti-bot or access barrier is bypassed.
+- The passport is information only: it never changes a Phase 14 weight,
+  a match score, a Personal Match number or any order. Any ranking use
+  needs an explicit user decision first. The passport country stays in
+  the browser tab — never stored, logged, sent to the Worker or put in a
+  URL.
 - Only a passport COUNTRY is ever collected — never a passport number.
 - Every visible number renders as Latin digits in both languages. New
   numbers go through `app/src/data/format.ts`; new localized content

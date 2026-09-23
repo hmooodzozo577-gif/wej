@@ -1,5 +1,11 @@
 # Visa data research
 
+> **Superseded in part (2026-09-23, Phase 19).** Passport-specific entry
+> information is now shown for 34 destinations from their official
+> sources, with the official link and last-checked date; see
+> `PROJECT_STATE.md`, "Passport and visa system". The research below is
+> kept as the historical record.
+
 Current conclusion as of 2026-09-20: Wejhaty must not publish easy/medium/hard
 visa labels from its static destination data. Entry requirements depend on
 passport nationality, destination, travel purpose, passport type, residence,

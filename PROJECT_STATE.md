@@ -5,11 +5,86 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-23 (Phase 19 hardening + Phase 20 release candidate)
+
+- State document version: 36. **Status: PHASE 20 — FINAL WEJHATY /
+  RELEASE CANDIDATE / AWAITING USER ACCEPTANCE** (`wejhaty-v1.0.0-rc1`,
+  not user-accepted, not final). Phase 21 NOT STARTED. Phase 17 and Phase
+  18 still await the user's acceptance as well. Phase 14 weights, the
+  Country Suitability methodology, Personal Match (`personal-match-1.0`,
+  formula, confidence/coverage), the catalog and the Israel exclusion are
+  unchanged.
+- **Passport entry information (new, information only)**: after the
+  results and on each destination page, a traveller who chose a passport
+  sees the entry requirement for that passport from the destination's own
+  official source — status, and allowed stay / passport validity / extra
+  steps only where that source states them — with the official link and
+  the last-checked date. Coverage is partial and says so: 34 destinations
+  (the 29 Schengen States via Regulation (EU) 2018/1806, the UK Home
+  Office visa-national and ETA lists, IRCC Canada, Singapore ICA, the
+  Saudi eVisa portal, Maldives Immigration). Anything else is "not covered
+  by our sources" with a pointer to the official source; a passport the
+  source does not list is not guessed. Details and rules: "Passport and
+  visa system" below.
+- **Privacy**: the passport country stays in the tab's memory. The lookup
+  is local over a bundled, lazily loaded snapshot; nothing is sent to the
+  Worker, stored, logged or put in a URL. The old dormant frontend provider
+  client that posted the passport country to the Worker was removed.
+- **No ranking effect**: Results no longer passes any passport-derived
+  rank into Personal Match; order and every percentage are identical with
+  and without a passport (UI test proves it).
+- **Visual/accessibility fixes**: phone theme menu stays inside the
+  viewport (collision-aware Select placement, all listboxes); Light Home
+  Hero paper is localized to the copy column and masked at top/bottom so
+  the photograph stays vivid (Dark unchanged); the tablet compass dial
+  scales with its box between 560 and 930px; the catalog stat reads 194
+  (no "+"); the Light "وجهات أقرب إليك" note is a paper tag (worst case
+  5.1:1); orange CTAs moved to `#c0532c` (white text 4.65:1, was 2.9:1 —
+  also Dark mode's orange buttons, 3.0:1 before); Light hero stat captions
+  use ink-2 and its two orange editorial lines a deeper orange (all ≥5:1 at
+  the 10th percentile of photo pixels behind them).
+- **Thmanyah Arabic font: BLOCKED by its license.** The official license
+  (font.thmanyah.com/licenses, read on 2026-09-23) forbids hosting or
+  redistributing the font files on any server or platform and forbids
+  making them extractable by end users, including through web embedding;
+  modification (e.g. subsetting) is forbidden too. A public GitHub repo +
+  GitHub Pages cannot comply, so the font was not added and the current
+  typography is unchanged. Unblocking needs written permission from
+  Thmanyah (Ask@thmanyah.com) for web embedding.
+- **Verification (local production build, Chromium)**: frontend 1064/1064
+  tests (98 files; run with `--maxWorkers=2` — two heavy tests can time
+  out under full parallel load), Worker 202/202, `tsc -b`, oxlint and
+  build clean. Browser QA: core flows 46/46, edge cases 18/18 (malformed
+  or old profiles, Worker down/offline/500 for feedback, broken photo,
+  theme change inside the open phone menu, reload mid-quiz, location
+  denied), responsive 732/732 (13 widths 320–1920 × AR/EN × Light/Dark ×
+  7 pages, no horizontal overflow), passport flow 8/8 contexts, Phase 17
+  matrix 120/120 (normal and reduced motion), Phase 18 matrix 226/226, UA
+  matrix 648/648 (normal and reduced motion). axe: no critical or serious
+  violation; `heading-order` (moderate — h1 followed by h3 card titles on
+  Purpose, Explore and Destination) remains.
+- **Browsers**: Chromium verified locally. Firefox and WebKit (Playwright's
+  Linux build — the Safari engine, not Safari) run only through the
+  manual `production-smoke.yml` workflow on GitHub's runner; real Safari,
+  iOS Safari and Edge are not verified.
+- **Performance (19.6, before = 64ea036, after = this state; median of 3
+  cold loads, mobile = 4× CPU + ~1.6 Mbps/150 ms)**: no regression within
+  measurement noise. Main script 621.6 → 624.8 kB transferred (+0.5%, the
+  entry panel code; the snapshot itself is a separate 4.6 kB-gzip chunk
+  loaded only after a passport is chosen). Mobile Home FCP 4.17 → 4.21 s,
+  LCP 4.44 → 4.49 s; Explore desktop FCP 0.96–1.04 s in both builds. The
+  known cost is Explore on a slow phone (≈11,600 DOM nodes, ≈3 s total
+  blocking time, FCP ≈6.5 s) from 194 inline flag SVGs and the bundled
+  datasets — unchanged by Phase 19 and left for a later, measured change.
+- **Release record**: `/RELEASE_CANDIDATE.md` holds the Phase 20 freeze
+  scope, the user-acceptance checklist, data/production/security/
+  accessibility status, the performance baseline and the deferred
+  register. Snapshot branch `release/wejhaty-v1.0.0-rc1`.
+
 ### Current verified state — 2026-09-23 (Phase 18 user-acceptance refinement)
 
-- State document version: 35. **Phase 18 status: USER ACCEPTANCE
-  REFINEMENT — READY FOR USER REVIEW** (not user-accepted). Phase 19 NOT
-  STARTED. The Personal Match methodology (`personal-match-1.0`), Phase 14
+- State document version 35 (superseded by 36 above). **Phase 18 status:
+  USER ACCEPTANCE REFINEMENT — READY FOR USER REVIEW** (not user-accepted). The Personal Match methodology (`personal-match-1.0`), Phase 14
   and privacy are unchanged; this round is presentation only.
 - **Badges**: compact Personal Match badges show only `NN%` (no "لك");
   the accessible name/tooltip is "التوافق معك NN%" / "Personal match NN%".
@@ -817,10 +892,9 @@ server-side travel-provider integrations.
 
 - Phase 14 is the deterministic final ranking authority. Questionnaire code may
   choose which supported question to ask next but may not invent scores,
-  dimensions, or weights. The visa layer is not an exception: it lives outside
-  the engine, changes no weight and no match score, and may only reorder
-  destinations whose Phase 14 scores are already within 3 points of each
-  other (see Passport and visa system). The Phase 18 Personal Match layer
+  dimensions, or weights. The passport is not an exception: it is
+  information only and affects no score, weight or order (see Passport and
+  visa system). The Phase 18 Personal Match layer
   (`app/src/personalization/`) is likewise outside the engine: it changes no
   Phase 14 weight or score and only reorders within Phase 14's top 10
   candidates; its number is always labelled apart from general suitability.
@@ -844,11 +918,12 @@ server-side travel-provider integrations.
   (a) the editorial easy/medium/hard visa label on a destination page, which
       is a general reference and must stay explicitly disclosed as not
       personalized to the viewer;
-  (b) a passport-specific entry requirement, which may ONLY be shown when a
-      real provider returned it, and only alongside that provider's name and
-      a check date. With no provider configured the honest answer is
-      "unknown", and that is what the system returns. Scraped or unofficial
-      passport-index datasets are not an acceptable source.
+  (b) a passport-specific entry requirement, which may ONLY be shown when
+      the destination's own official source lists that nationality or
+      states a rule covering every foreign national, and only alongside
+      the official link and the last-checked date. Everything else is
+      "unknown" with a pointer to the official source. Scraped or
+      unofficial passport-index datasets are not an acceptable source.
 - Precise coordinates remain in memory only and are not sent to external
   recommendation services, and are never exposed or transmitted beyond what a
   feature actually needs.
@@ -967,59 +1042,80 @@ enumeration of the questionnaire's combinatorial answer space.
 
 ## Passport and visa system
 
-- The traveller may optionally name the PASSPORT they would travel with. Only
-  the passport COUNTRY is collected; no passport number is asked for, stored,
-  or representable anywhere in the request shape.
-- The recommendation engine never talks to a visa vendor. It talks to
-  `VisaRequirementsProvider` (`worker/src/visa.ts`), which returns Wejhaty's
-  own canonical vocabulary: `visaFree`, `visaOnArrival`, `eVisa`,
-  `authorizationRequired`, `embassyVisaRequired`, `unknown`.
-- Provider research and the decision record are in `/VISA_PROVIDERS.md`. IATA
-  Timatic/AutoCheck, VisaHQ and Sherpa were evaluated; all three require a
-  commercial account, partnership or approved key. Scraped "passport index"
-  datasets were evaluated and REJECTED as unofficial and unverifiable. Sherpa
-  is the chosen first adapter.
-- With no provider configured — today's state — every lookup answers
-  `unknown`, the UI says the visa service is not enabled, and ranking is
-  unaffected. Provider failure, timeout, non-2xx and malformed JSON all
-  resolve to `unknown`. There is no fabricated fallback anywhere in the path.
-- `GET /api/visa/status` reports only whether a provider is configured, so
-  the PASSPORT STEP can tell the traveller the truth before they answer —
-  it has no destination yet and so cannot learn it from a lookup. It fails
-  closed: any error, any missing Worker, any non-200 means "not active". The
-  step's copy switches by itself the moment a provider key exists.
-- The passport explanation (acceptance item #5) says, in this order: what the
-  answer is FOR (entry and visa requirements), that it is NOT the traveller's
-  location and neither is inferred from the other, what it does to the results
-  TODAY (nothing, because no provider is live), and that no passport number is
-  ever asked for. A test asserts all five points survive in both languages and
-  that nothing shown today claims an effect on ordering.
-- PROVIDER MAPPING IS UNVERIFIED and is not claimed otherwise. Every provider
-  host is refused at the agent egress proxy, so the adapter has never run
-  against a real response. `worker/src/visa.contract.test.ts` asserts what IS
-  verifiable (no credentials -> `unknown` everywhere; an unrecognised value ->
-  `unknown`; a drifted shape neither throws nor invents) and states the
-  unverified status as an assertion. Dropping one real sandbox response per
-  category into `worker/fixtures/sherpa/` turns it into a real mapping test.
-- RANKING BOUNDARY, deliberately narrow: the visa layer is outside the engine.
-  It changes no Phase 14 weight, dimension or semantic, and no match score —
-  the percentage shown is identical with and without a passport. It may only
-  reorder destinations whose Phase 14 scores are already within 3 points of
-  each other, so a materially better match can never be pushed below a
-  materially worse one. Without a passport, or for an `unknown` requirement,
-  it does nothing at all.
-- A score-blending design (adding a visa term to the weighted total) would be
-  a Phase 14 weight change and is deliberately NOT implemented. It is the one
-  open product decision from this round: see Roadmap gate.
-- Display always carries the provider name and the check date, plus a standing
-  caveat that requirements change and must be re-checked before booking.
-  Nothing promises entry, visa approval, an open border, or legal eligibility
-  beyond what the provider returned.
-- Status: `PROVIDER ACCESS REQUESTED — AWAITING VERIFIED TRAVEL REQUIREMENTS
-  API CREDENTIALS`. The user has requested Sherpa API access and created a
-  VisaHQ Business Portal account; neither has yet produced a verified,
-  working credential. No VisaHQ or Sherpa integration exists yet — see
-  /VISA_PROVIDERS.md.
+- The traveller may optionally name the PASSPORT they would travel with (the
+  last questionnaire step, skippable). Only the passport COUNTRY is
+  collected; no passport number is asked for or representable anywhere.
+- **Passport = information only (Phase 19).** It changes no Phase 14 score
+  or weight, no Personal Match number and no order. Any ranking use needs a
+  new explicit user decision.
+- **Where entry information comes from.** `app/scripts/generate-entry-
+  requirements.mjs` reads a fixed, server-owned registry of official pages
+  on a GitHub-hosted runner (the browser never fetches them):
+    - UK: Home Office Immigration Rules — Appendix Visitor: Visa national
+      list (`visa_required`) and Appendix ETA National List
+      (`permit_required` + ETA note), via the gov.uk content API;
+    - 29 Schengen States (the 25 EU members in Schengen + IS, NO, CH, LI;
+      membership confirmed against the Commission's Schengen area page
+      each run; Cyprus and Ireland excluded): Regulation (EU) 2018/1806,
+      consolidated text of 30 December 2025, via the EU Publications
+      Office — Annex I `visa_required`, Annex II `visa_free` with "90 days
+      in any 180-day period"; a biometric-passport footnote becomes a
+      condition; exemptions the Regulation makes conditional on an
+      agreement it does not state is in force (e.g. UAE, Peru) stay
+      unknown;
+    - Canada: IRCC "What you need to enter Canada" — visa-required list
+      (with the "some may qualify for an eTA" caveat) and eTA-required
+      list (by air); a nationality on both lists stays unknown;
+    - Singapore: ICA visa-required list; its own rule covers every other
+      nationality (`visa_free`);
+    - Saudi Arabia: the official eVisa portal's eligible-country list
+      (`evisa`, 90-day note); unlisted nationalities stay unknown;
+    - Maldives: Maldives Immigration — tourist visa on arrival for every
+      foreign tourist, with its passport-validity and Traveller Declaration
+      notes.
+- Fetching is HTTPS-only against an allowlist, with manual redirects (max
+  3, allowlisted hosts only; an http hop is upgraded, never followed), a
+  3 MB cap, 30 s timeouts and a robots.txt check
+  (`app/scripts/lib/entryRequirementsFetch.mjs`). Sources that block
+  automated access (e.g. travel.state.gov, EUR-Lex's bot challenge) are
+  not in the registry; nothing is bypassed.
+- Parsing (`app/scripts/lib/entryRequirementsIngest.mjs`) fails closed: an
+  unrecognised country name, a missing section anchor, an implausible list
+  size or an unreviewed footnote stops the run and leaves the committed
+  snapshot untouched. A category is recorded only when the destination's
+  source lists that nationality or states a rule covering every foreign
+  national. Notes are kept only when their exact supporting sentence is
+  present. Excluded countries never reach the snapshot. Fixture tests use
+  the exact lists captured from the official pages.
+- Snapshot: `app/src/data/generated/entryRequirements.json`
+  (`entry-sources-1.0`), one rule table per legal source, keyed by
+  nationality + destination + methodology version. Generated 2026-09-23.
+  The browser loads it on demand as its own chunk once a passport is
+  chosen.
+- Freshness: `.github/workflows/update-entry-requirements.yml` runs weekly
+  (and on parser changes) and proposes a PR when the data changed or the
+  committed snapshot is 14+ days old. The UI withholds every status once
+  the snapshot is older than 45 days and shows only the official links and
+  the last-checked date. The fetch job holds a read-only token; the
+  branch/PR job installs nothing. PR creation is blocked by the repository
+  setting "Allow GitHub Actions to create and approve pull requests" — the
+  validated snapshot is still pushed to an `update-entry-requirements-*`
+  branch for a manual PR until that setting is enabled.
+- One shared model and lookup (`app/src/entry/entryInfo.ts`,
+  `PassportEntryInfo`) serves Results (`EntryRequirementsPanel`) and the
+  Destination page (`EntryRequirementsCard`). Statuses: covered /
+  not listed / no source / own country; stale withholds the category. Each
+  display carries the official link(s), the last-checked date and "Entry
+  and visa requirements can change. Always verify the official source
+  before travel." Links render only for the official hosts in the
+  allowlist.
+- The editorial easy/medium/hard visa label on destination data remains a
+  disclosed general reference, separate from passport-specific entry
+  information.
+- The Worker's dormant provider path (`worker/src/visa.ts`, Sherpa adapter,
+  `/api/visa/status`, `/api/visa/requirements`) is unchanged, unconfigured
+  and no longer called by the frontend. `/VISA_PROVIDERS.md` keeps the
+  provider research; no paid provider is active.
 
 ## Country pages and optional information
 
@@ -1608,7 +1704,9 @@ language switcher, and the full panel set above. Two things are still open:
 | Image pipeline/review | `app/scripts/generate-destination-images.mjs`, `destinationImageAudit.json` |
 | Destination route | `app/src/routes/Destination.tsx` |
 | Visa provider abstraction | `worker/src/visa.ts` |
-| Visa client / bounded ranking layer | `app/src/visa/` |
+| Passport entry information (model, lookup, UI) | `app/src/entry/` |
+| Entry-requirements generator + official-source registry | `app/scripts/generate-entry-requirements.mjs`, `app/scripts/lib/entryRequirements*.mjs` |
+| Entry-requirements snapshot | `app/src/data/generated/entryRequirements.json` |
 | Custom listbox | `app/src/components/Select.tsx` |
 | Digit/number formatting layer | `app/src/data/format.ts` |
 | Hero edge navigation | `app/src/components/DestinationHeroNav.tsx` |
@@ -1663,11 +1761,11 @@ language switcher, and the full panel set above. Two things are still open:
   `TURNSTILE_SECRET_KEY` and `VITE_TURNSTILE_SITE_KEY` remain external
   account configuration and are not yet set. SECRETS.md lists every one of
   them, what it does, and what happens while it is unset.
-- Visa data: no provider is configured. The abstraction, the canonical
-  vocabulary, request validation (including the IL exclusion), the Sherpa
-  adapter and its category mapping, failure behaviour, the Worker endpoint,
-  the passport UX and the bounded ranking layer are all implemented and
-  tested. `SHERPA_API_KEY` (and `SHERPA_BASE_URL` for the sandbox) are Worker
+- Entry requirements: official-source snapshot (see Passport and visa
+  system), refreshed by `update-entry-requirements.yml`. Paid visa data: no
+  provider is configured. The Worker-side abstraction, Sherpa adapter and
+  endpoints remain implemented, tested and dormant; the frontend no longer
+  calls them. `SHERPA_API_KEY` (and `SHERPA_BASE_URL` for the sandbox) are Worker
   secrets, never committed and never in the frontend.
   `PROVIDER ACCESS REQUESTED — AWAITING VERIFIED TRAVEL REQUIREMENTS API
   CREDENTIALS` — the user has requested Sherpa API access and created a
@@ -1718,56 +1816,37 @@ see "Non-negotiable product rules" above.)
 
 ## Roadmap gate and immediate backlog
 
-Phase 16 (AI API Integration) is CANCELLED/SKIPPED by product decision —
-see "Phase 16 — AI API Integration" above. Phase 17 is implemented, deployed,
-and production-verified. Current order:
+Phase 16 (AI API Integration) is CANCELLED/SKIPPED by product decision.
+Phase 19 (testing, optimization, hardening, passport entry information) is
+implemented; Phase 20 produced release candidate `wejhaty-v1.0.0-rc1`.
+Current order:
 
-0. **PHASE 17 DEPLOYMENT RESOLVED / PRODUCTION-VERIFIED.** Pages run
-   `35484971643` deployed the Destination follow-up commit `e3e9f8a`; the
-   production responsive-image and bilingual/theme checks passed in addition
-   to the existing 16-case browser matrix. Worker deployment was unnecessary
-   because Worker code did not change.
-1. Obtain user acceptance for the Phase 17 final fixes and for Phase 18
-   personalization. Do not call either complete before that acceptance, and
-   do not begin Phase 19 automatically. If the user asks to remove Phase 18,
-   follow "Pre-Phase-18 rollback checkpoint" exactly.
-2. Production-check rating persistence and optional R2 screenshot storage;
-   ordinary Contact, Suggestion, and Site Bug D1 writes are already
-   production-verified.
-3. AWAITING A PRODUCT DECISION — visa scoring. The current visa layer only
-   reorders destinations already within 3 Phase 14 points of each other. The
-   alternative, NOT implemented, is to blend visa convenience into the
-   weighted score itself. That would be a Phase 14 weight/semantic change,
-   which the user approved visa data affecting suitability but did NOT
-   pre-approve, so it is a decision to take before any such change:
-     - proposed shape: one additional scored dimension, `visaConvenience`,
-       normalized 0-100 from the canonical category (visaFree 100,
-       visaOnArrival 80, eVisa 60, authorizationRequired 40,
-       embassyVisaRequired 0, unknown excluded rather than defaulted),
-       weighted alongside the existing dimensions;
-     - proposed weight: 8-11, i.e. between `island` (5) and `safety` (11),
-       so it is a real factor but not a dominant one;
-     - it would only apply when a passport is given AND a provider answered,
-       so most users would see no change at all today;
-     - it needs re-running the per-country reachability and the 40,000-path
-       coverage tests, because adding a dimension changes both.
-   Accept, reject, or amend before it is built.
-4. Obtain a visa-data provider account (Sherpa first — see
-   `/VISA_PROVIDERS.md`), verify the category mapping against a real sandbox
-   response, confirm in writing what the terms permit (caching, storage,
-   attribution, and whether the data may inform ranking as well as display),
-   then set `SHERPA_API_KEY` as a Worker secret.
-5. D1 IS bound and ordinary feedback/event writes are production-verified.
-   Remaining checks are rating persistence, optional R2 screenshot storage,
-   retention, and authenticated Admin panels against real rows.
-6. Configure admin access (`ADMIN_ACCESS_AUD` + `ADMIN_ACCESS_TEAM_DOMAIN`
-   preferred, else `ADMIN_TOKEN`) and, if abuse appears, the two Turnstile
-   keys. All are documented in SECRETS.md and all are inert until set.
-7. Decide whether sourced rich editorial descriptions, strengths and
-   weaknesses are required for the remaining 164 countries. Note that city
-   "known for" narrative is now covered by the Wikipedia description layer,
-   so that part of this item is done.
-8. Reassess the roadmap with the user before Phase 19.
+1. **USER ACCEPTANCE GATE.** Obtain the user's acceptance of the release
+   candidate (Phase 17 visuals, Phase 18 personalization, Phase 19/20).
+   Do not call anything FINAL or USER-ACCEPTED before that, and do not
+   begin Phase 21. If the user asks to remove Phase 18, follow
+   "Pre-Phase-18 rollback checkpoint" exactly.
+2. **Security audit Pass 2 (user-approved, queued).** The approved fixes
+   (public-write rate limiting, Turnstile hardening/tests, city-cache title
+   allowlist, admin JSON content type, CI input/token/permission hardening,
+   malformed intelligence URI, client write timeout, shared CORS origin and
+   country-exclusion helpers, dead `ProductEnv.ADMIN_TOKEN`) are the next
+   task after this release candidate. Until then Pass 1's MEDIUM finding S1
+   (abuse controls rely on a client sessionId; `/api/events` unlimited;
+   Turnstile unconfigured) stands open.
+3. Enable "Allow GitHub Actions to create and approve pull requests" (repo
+   setting) so the weekly entry-requirements and monthly data refreshes can
+   open their PRs; until then merge their pushed branches manually.
+4. Thmanyah Arabic font: blocked by license; needs written web-embedding
+   permission from Thmanyah before any work.
+5. Entry-requirements coverage expansion (e.g. USA, Türkiye, Malaysia,
+   UAE, Japan) — only from official sources that permit automated access
+   and parse unambiguously; otherwise they stay "not covered".
+6. Production-check rating persistence and optional R2 screenshot storage;
+   configure admin access and, if abuse appears, the Turnstile keys.
+7. Performance: the main chunk still carries all flag SVGs and the full
+   datasets (see Phase 19 performance notes); lazy-loading them is the
+   next measurable win if load time becomes a priority.
 
 ## Handoff rule
 

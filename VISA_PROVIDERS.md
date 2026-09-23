@@ -5,6 +5,12 @@ feature. This records what was checked, what was chosen, and what is
 still blocked. It is a decision record, not a roadmap — update it when a
 provider's terms or Wejhaty's access actually change.
 
+> **Phase 19 update (2026-09-23).** Passport entry information no longer
+> depends on a paid provider: it is generated from destinations' own
+> official sources (see `PROJECT_STATE.md`, "Passport and visa system").
+> The frontend no longer calls `/api/visa/*`; the Worker's provider path
+> below stays dormant and unconfigured. No paid provider is active.
+
 ## What Wejhaty needs
 
 | Requirement | Why |
