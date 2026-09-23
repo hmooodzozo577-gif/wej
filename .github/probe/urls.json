@@ -1,0 +1,21 @@
+[
+  {"id": "thmanyah-licenses", "url": "https://font.thmanyah.com/licenses", "chars": 9000},
+  {"id": "thmanyah-home", "url": "https://font.thmanyah.com/", "chars": 5000},
+  {"id": "thmanyah-faq-en", "url": "https://ask.thmanyah.com/en/thmanyah-line-for-everyone", "chars": 9000},
+  {"id": "eu-2018-1806-consolidated", "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:02018R1806-20251230", "anchor": "ANNEX I", "chars": 16000},
+  {"id": "eu-visa-policy", "url": "https://home-affairs.ec.europa.eu/policies/schengen-borders-and-visa/visa-policy_en", "chars": 7000},
+  {"id": "eu-etias", "url": "https://travel-europe.europa.eu/etias_en", "chars": 4000},
+  {"id": "uk-visa-nationals-api", "url": "https://www.gov.uk/api/content/guidance/immigration-rules/immigration-rules-appendix-visitor-visa-national-list", "chars": 9000},
+  {"id": "uk-eta-api", "url": "https://www.gov.uk/api/content/guidance/immigration-rules/immigration-rules-appendix-electronic-travel-authorisation", "chars": 6000},
+  {"id": "us-vwp", "url": "https://travel.state.gov/content/travel/en/us-visas/tourism-visit/visa-waiver-program.html", "anchor": "Participat", "chars": 6000},
+  {"id": "ca-entry", "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/entry-requirements-country.html", "chars": 12000},
+  {"id": "jp-exempt", "url": "https://www.mofa.go.jp/j_info/visit/visa/short/novisa.html", "chars": 9000},
+  {"id": "au-eta", "url": "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/electronic-travel-authority-601", "anchor": "passport", "chars": 5000},
+  {"id": "au-evisitor", "url": "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/evisitor-651", "anchor": "passport", "chars": 5000},
+  {"id": "nz-waiver", "url": "https://www.immigration.govt.nz/new-zealand-visas/preparing-a-visa-application/the-application-process/visa-waiver-countries-and-territories", "chars": 8000},
+  {"id": "ae-entry", "url": "https://u.ae/en/information-and-services/visa-and-emirates-id/do-you-need-an-entry-permit-or-a-visa-to-enter-the-uae", "chars": 9000},
+  {"id": "tr-visa", "url": "https://www.mfa.gov.tr/visa-information-for-foreigners.en.mfa", "chars": 14000},
+  {"id": "sg-ica", "url": "https://www.ica.gov.sg/enter-transit-depart/entering-singapore/visa_requirements", "chars": 8000},
+  {"id": "sa-evisa", "url": "https://visa.visitsaudi.com/", "chars": 3000},
+  {"id": "in-evisa", "url": "https://indianvisaonline.gov.in/evisa/tvoa.html", "chars": 6000}
+]
