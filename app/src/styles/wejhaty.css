@@ -4183,6 +4183,28 @@ html[dir='rtl'] .home-hero-frame .hero-stat-phrase span {
   position: relative;
 }
 
+/* Phase 20 (U19) — Dark: the note sits on the photograph, and bright sky,
+   snow or cloud behind it left the coral text below 4.5:1 on 13 of the
+   22 hero photos at desktop widths, even with its text halo. A small
+   feathered navy backplate sits only behind the words (the hero's own
+   scrim tone), so the ratio holds on every photo without a card edge.
+   Static paint: no filter, no animation, absolutely positioned (no
+   layout shift). Light keeps its paper tag. */
+[data-theme='dark'] .hero-nearby-note {
+  isolation: isolate;
+}
+
+[data-theme='dark'] .hero-nearby-note::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 2px -4px;
+  border-radius: 999px;
+  background: rgba(3, 13, 23, .7);
+  box-shadow: 0 0 14px 8px rgba(3, 13, 23, .7);
+  pointer-events: none;
+}
+
 .hero-nearby-flourish {
   position: absolute;
   z-index: 2;
