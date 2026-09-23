@@ -1,0 +1,61 @@
+name: Create release tag
+
+# Creates an annotated release tag (e.g. wejhaty-v1.0.0-rc2) on an exact
+# commit, from a GitHub-hosted runner with the built-in GITHUB_TOKEN. Used
+# because the development environment's Git proxy refuses tag pushes.
+# Manual dispatch only. It never moves or overwrites an existing tag, and it
+# only tags a commit that is already on the named release branch.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name, e.g. wejhaty-v1.0.0-rc2'
+        required: true
+      sha:
+        description: 'Full 40-character commit SHA to tag'
+        required: true
+      branch:
+        description: 'Release branch that must contain the commit, e.g. release/wejhaty-v1.0.0-rc2'
+        required: true
+      message:
+        description: 'Annotation message'
+        required: true
+
+# No workflow-wide token scope; the job below may only push the new tag.
+permissions: {}
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ inputs.tag }}
+      SHA: ${{ inputs.sha }}
+      BRANCH: ${{ inputs.branch }}
+      MESSAGE: ${{ inputs.message }}
+    steps:
+      - name: Validate inputs
+        run: |
+          printf '%s' "$TAG" | grep -Eq '^wejhaty-v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$' || { echo "::error::Unexpected tag name"; exit 1; }
+          printf '%s' "$SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "::error::SHA must be 40 lowercase hex characters"; exit 1; }
+          printf '%s' "$BRANCH" | grep -Eq '^release/wejhaty-v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$' || { echo "::error::Unexpected branch name"; exit 1; }
+          [ "${#MESSAGE}" -le 200 ] || { echo "::error::Message too long"; exit 1; }
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create and push the annotated tag
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            echo "::error::Tag $TAG already exists; tags are never moved or overwritten."; exit 1
+          fi
+          git fetch origin "refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
+          git merge-base --is-ancestor "$SHA" "origin/$BRANCH" || { echo "::error::$SHA is not on $BRANCH"; exit 1; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" "$SHA" -m "$MESSAGE"
+          git push origin "refs/tags/$TAG"
+          echo "Tagged $SHA as $TAG: $(git rev-parse "$TAG^{tree}") (tree)"

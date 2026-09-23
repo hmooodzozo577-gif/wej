@@ -12,9 +12,14 @@ on:
         required: false
         default: 'https://hmooodzozo577-gif.github.io/wej'
       engines:
-        description: 'Browser engines (comma-separated: chromium,firefox,webkit)'
+        description: 'Browser engines (comma-separated: chromium,firefox,webkit,msedge)'
         required: false
-        default: 'chromium,firefox,webkit'
+        default: 'chromium,firefox,webkit,msedge'
+      safari:
+        description: 'Also check real Safari on a macOS runner (Worker blocked; writes no data)'
+        type: boolean
+        required: false
+        default: true
       worker_checks:
         description: 'Also check the Worker hardening (rate limits, CORS, input handling; writes no data)'
         type: boolean
@@ -45,6 +50,9 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright@1
           npx playwright install --with-deps chromium firefox webkit
+          # Real Microsoft Edge: use the runner's own install when present.
+          if ! command -v microsoft-edge-stable >/dev/null 2>&1; then npx playwright install msedge; fi
+          microsoft-edge-stable --version || true
 
       - name: Run the smoke test
         working-directory: app
@@ -56,7 +64,7 @@ jobs:
             https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
             *) echo "::error::Unsupported site URL"; exit 1 ;;
           esac
-          if ! printf '%s' "$ENGINES" | grep -Eq '^(chromium|firefox|webkit)(,(chromium|firefox|webkit))*$'; then
+          if ! printf '%s' "$ENGINES" | grep -Eq '^(chromium|firefox|webkit|msedge)(,(chromium|firefox|webkit|msedge))*$'; then
             echo "::error::Unsupported engines list"; exit 1
           fi
           node scripts/production-smoke.mjs "$SITE" "$ENGINES"
@@ -65,3 +73,42 @@ jobs:
         if: ${{ !cancelled() && inputs.worker_checks }}
         working-directory: app
         run: node scripts/worker-smoke.mjs
+
+  # Real Safari (macOS desktop) through Apple's safaridriver. The Worker's
+  # hostname is mapped to 127.0.0.1 first, so nothing reaches production
+  # data. iOS Safari is not covered.
+  safari:
+    if: ${{ inputs.safari }}
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Block the Worker and enable safaridriver
+        run: |
+          echo "127.0.0.1 wejhaty-travel-worker.hmooodzozo577.workers.dev" | sudo tee -a /etc/hosts
+          sudo safaridriver --enable
+
+      - name: Install the WebDriver client (runner only, not a project dependency)
+        working-directory: app
+        run: npm install --no-save --no-package-lock selenium-webdriver@4
+
+      - name: Run the Safari smoke test
+        working-directory: app
+        env:
+          SITE: ${{ inputs.site }}
+        run: |
+          case "$SITE" in
+            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            *) echo "::error::Unsupported site URL"; exit 1 ;;
+          esac
+          node scripts/safari-smoke.mjs "$SITE"

@@ -6,14 +6,16 @@
 // the check writes no analytics event, rating, feedback or cache row.
 //
 // Usage: node scripts/production-smoke.mjs [siteUrl] [engines]
-// engines: comma-separated chromium,firefox,webkit (default: all three).
+// engines: comma-separated chromium,firefox,webkit,msedge (default: the
+// first three). msedge is the real Microsoft Edge installed on the runner.
 // WebKit here is Playwright's Linux WebKit build — the Safari engine, not
-// Safari itself — so it never stands in for a real Safari/iOS check.
+// Safari itself — so it never stands in for a real Safari/iOS check (see
+// safari-smoke.mjs for real Safari on macOS).
 // Exit status 0 only when every check passes.
 import { chromium, firefox, webkit } from 'playwright';
 
 const SITE = (process.argv[2] || 'https://hmooodzozo577-gif.github.io/wej').replace(/\/$/, '');
-const ENGINES = { chromium, firefox, webkit };
+const ENGINES = { chromium, firefox, webkit, msedge: { launch: () => chromium.launch({ channel: 'msedge' }) } };
 const engineNames = (process.argv[3] || 'chromium,firefox,webkit').split(',').filter((name) => name in ENGINES);
 const WORKER_HOST = 'wejhaty-travel-worker.hmooodzozo577.workers.dev';
 let checks = 0;
@@ -130,6 +132,30 @@ for (const engine of engineNames) {
     check(!/passport/i.test(stored), `${engine} passport not stored in the browser`);
     check(passportLeaks.length === 0, `${engine} passport never sent over the network`, passportLeaks.join(' '));
     check(errors.length === 0, `${engine} passport flow without page errors`, errors.join(' | '));
+    await context.close();
+  }
+
+  // Destination match: a destination's "how well does it match me" flow
+  // returns to that destination with its Personal Match (Phase 20).
+  {
+    const { context, tab, errors } = await page({ width: 390, height: 844 }, 'light', 'ar');
+    await tab.goto(`${SITE}/destination/japan`, { waitUntil: 'networkidle' });
+    await tab.click('.personal-match-card.is-empty a.btn');
+    await tab.waitForURL(/\/purpose$/);
+    await tab.click('.purpose-card');
+    await tab.waitForURL(/\/quiz\//);
+    for (let i = 0; i < 25 && !(await tab.$('.quiz-passport')); i += 1) {
+      const now = await tab.$('.quiz-checkpoint .btn-primary');
+      if (now) { await now.click(); await tab.waitForTimeout(300); continue; }
+      const option = await tab.$('.q-option');
+      if (option) { await option.click(); await tab.waitForTimeout(450); }
+    }
+    await tab.click('.quiz-passport .btn-ghost:last-child');
+    await tab.waitForURL(/\/destination\/japan$/, { timeout: 15000 }).catch(() => {});
+    check(/\/destination\/japan$/.test(tab.url()), `${engine} destination match returns to Japan`, tab.url());
+    const score = await tab.textContent('.personal-match-card:not(.is-empty) .personal-match-value b').catch(() => null);
+    check(/^\d+%$/.test(score ?? ''), `${engine} destination match shows Japan's Personal Match`, String(score));
+    check(errors.length === 0, `${engine} destination match without page errors`, errors.join(' | '));
     await context.close();
   }
   } catch (error) {
