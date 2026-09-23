@@ -5,9 +5,64 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-23 (Security audit Pass 2, approved fixes)
+
+- State document version: 37. **Status: PHASE 20 — FINAL WEJHATY /
+  RELEASE CANDIDATE / AWAITING USER ACCEPTANCE**, now with the
+  user-approved security Pass 2 fixes on top of `wejhaty-v1.0.0-rc1`
+  (**WEJHATY SECURITY AUDIT — APPROVED PASS 2 FIXES COMPLETE**). Nothing
+  here is user-accepted or final; Phase 21 NOT STARTED. Product behaviour,
+  Phase 14/Country Suitability/Personal Match, the catalog and the Israel
+  exclusion are unchanged.
+- **S1 (was MEDIUM, open) — fixed in code**: each public write endpoint
+  has its own Workers Rate Limiting binding keyed on `CF-Connecting-IP`,
+  never on the client sessionId: `/api/events` 120, `/api/ratings` 10,
+  `/api/feedback` 5 requests per address per 60 s; over budget → 429 with
+  `Retry-After: 60`. The limiter runs before the body is read and before
+  the database check; the address is only the limiter's key (never stored
+  or logged). The per-session D1 caps remain as a second layer. Analytics
+  bodies are capped at 16 KB (413) and event properties at 4,000 chars.
+  Turnstile stays optional and NOT enabled; once a secret is set it now
+  fails closed on a missing/rejected token, non-2xx, malformed body,
+  network error or a 5 s timeout. A limiter outage lets requests through
+  (the session caps still apply).
+- **Other approved fixes**: the city-description Worker only looks up
+  article titles from a generated allowlist of each featured city's English
+  and Arabic names (`worker/src/generated/cityTitles.json`, written by
+  `generate-featured-cities.mjs`), so a request cannot choose which article
+  is verified and cached; `POST /api/admin/feedback/status` requires
+  `Content-Type: application/json` (415 otherwise) and a JSON object; a
+  malformed percent-escape in `/api/intelligence/...` answers 400 instead
+  of 500; the browser's writes (events, ratings, reports) abort after 15 s
+  and fall back to the existing error/retry state (no automatic resend);
+  one shared CORS origin and IL/ISR exclusion helper
+  (`worker/src/shared.ts`) replace the per-module copies; the unused
+  `ProductEnv.ADMIN_TOKEN` is gone; the Featured Cities "read more" link
+  renders only for HTTPS Wikipedia URLs.
+- **CI hardening**: every workflow has `permissions: {}` at the top and
+  per-job grants; the destination-images `countries` input reaches the
+  shell only through an environment variable and must be `all` or
+  comma-separated uppercase ISO2 codes; the Cloudflare API token is given
+  only to the capability-check, provisioning and deploy steps (never to
+  `npm ci` or tests), and the capability check no longer uses `eval`.
+- **Verification**: Worker 233/233 tests and `tsc`; `wrangler deploy
+  --dry-run` lists the three rate-limit bindings; a local workerd run of
+  `app/scripts/worker-smoke.mjs` hit 429 at exactly 5/10/120. Frontend
+  1069/1070 in the full parallel run — the one failure is the known
+  400-profile Personal Match test timing out under load (passes alone,
+  17/17; that code is untouched; raising test timeouts is deferred by the
+  user). Production results are recorded below the deferred items.
+- **Still open / deferred by the user**: production Turnstile keys, paid
+  provider limits, dependency upgrades, CSV parsing, constant-time length
+  handling, the Access JWK cache, a CSP for the main site, action SHA
+  pinning, screenshot magic-byte checks, request-body stream limits, test
+  timeout increases. `/api/cities/descriptions` (bounded to 12 allowlisted
+  cities, edge- and D1-cached) has no per-address limit of its own.
+
 ### Current verified state — 2026-09-23 (Phase 19 hardening + Phase 20 release candidate)
 
-- State document version: 36. **Status: PHASE 20 — FINAL WEJHATY /
+- State document version 36 (superseded by 37 above for security
+  status). **Status: PHASE 20 — FINAL WEJHATY /
   RELEASE CANDIDATE / AWAITING USER ACCEPTANCE** (`wejhaty-v1.0.0-rc1`,
   not user-accepted, not final). Phase 21 NOT STARTED. Phase 17 and Phase
   18 still await the user's acceptance as well. Phase 14 weights, the
@@ -1516,8 +1571,9 @@ round is itself deployed and verified, is **Phase 17 — UI/UX Evolution**
   selection and a screen reader announces "3 of 5".
 - Global and country-specific feedback accepts a categorized message, optional
   email, and optional bounded image attachment, then returns a reference ID.
-  Worker validation, per-session rate limiting, private R2 storage, and optional
-  Turnstile are implemented.
+  Worker validation, per-address edge rate limits (Security Pass 2) on top of
+  per-session caps, private R2 storage, and optional Turnstile are
+  implemented.
 - Cloudflare D1 migrations define sessions, events, ratings, feedback, and daily
   aggregate tables. Migration 0002 adds the rating kind, comment, country and
   origin columns additively — existing rows keep their meaning and default to
@@ -1718,6 +1774,10 @@ language switcher, and the full panel set above. Two things are still open:
 | City descriptions (Worker) | `worker/src/cityDescriptions.ts` |
 | City descriptions (browser) | `app/src/cities/cityDescriptionClient.ts` |
 | Admin auth and routing | `worker/src/admin.ts` |
+| Shared Worker rules (CORS origin, IL/ISR exclusion) | `worker/src/shared.ts` |
+| Public-write rate limits (bindings) | `worker/wrangler.toml` `[[ratelimits]]`, used in `worker/src/product.ts` |
+| City article title allowlist | `worker/src/generated/cityTitles.json` |
+| Production checks (site, Worker) | `app/scripts/production-smoke.mjs`, `app/scripts/worker-smoke.mjs`, `.github/workflows/production-smoke.yml` |
 | Analytics queries | `worker/src/analytics.ts` |
 | Admin dashboard UI | `worker/src/adminPage.ts` |
 | Admin dashboard i18n dictionary | `worker/src/adminI18n.ts` |
@@ -1831,14 +1891,10 @@ Current order:
    Do not call anything FINAL or USER-ACCEPTED before that, and do not
    begin Phase 21. If the user asks to remove Phase 18, follow
    "Pre-Phase-18 rollback checkpoint" exactly.
-2. **Security audit Pass 2 (user-approved, queued).** The approved fixes
-   (public-write rate limiting, Turnstile hardening/tests, city-cache title
-   allowlist, admin JSON content type, CI input/token/permission hardening,
-   malformed intelligence URI, client write timeout, shared CORS origin and
-   country-exclusion helpers, dead `ProductEnv.ADMIN_TOKEN`) are the next
-   task after this release candidate. Until then Pass 1's MEDIUM finding S1
-   (abuse controls rely on a client sessionId; `/api/events` unlimited;
-   Turnstile unconfigured) stands open.
+2. **Security audit Pass 2 — approved fixes done** (see state v37). The
+   items the user deferred stay deferred; do not start them without a new
+   decision. Security is not "fully signed off": Turnstile is still off and
+   the deferred items remain.
 3. Enable "Allow GitHub Actions to create and approve pull requests" (repo
    setting) so the weekly entry-requirements and monthly data refreshes can
    open their PRs; until then merge their pushed branches manually.

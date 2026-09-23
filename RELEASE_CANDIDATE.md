@@ -104,6 +104,14 @@ Each item is AWAITING USER until the user confirms it.
   optional and never stored raw; the personalization profile stays in the
   browser.
 - No AI code or provider in the product.
+- **Addendum — Security Pass 2 applied after rc1.** As the freeze allows,
+  the user-approved Pass 2 fixes were added on the deploy branch on top of
+  this candidate (the `release/wejhaty-v1.0.0-rc1` snapshot itself is
+  unchanged). S1 is fixed in code: per-address edge rate limits on the
+  three public write endpoints, Turnstile hardened but still not enabled,
+  analytics payload cap. Details and production results: `PROJECT_STATE.md`
+  state v37. Security is still not "fully signed off": Turnstile is off and
+  the items the user deferred remain.
 
 ## 7. Accessibility sign-off (20.6)
 
@@ -139,7 +147,7 @@ dataset, and Explore's ≈11,600 DOM nodes.
 
 | Item | Status | Why / what unblocks it |
 |---|---|---|
-| Security Pass 2 fixes (S1 and the rest of the approved list) | DEFERRED — next task | User-approved; runs right after this candidate |
+| Security Pass 2 fixes (S1 and the rest of the approved list) | DONE after rc1 | See the addendum in section 6 and `PROJECT_STATE.md` v37 |
 | Turnstile in production | DEFERRED | User decision; keys not configured |
 | Paid visa providers (Sherpa, VisaHQ, Timatic) | BLOCKED | No working credentials; not needed for current coverage |
 | Entry coverage beyond 34 destinations (e.g. USA, Japan) | BLOCKED / DEFERRED | travel.state.gov and mofa.go.jp refuse automated access; others need unambiguous official lists |
