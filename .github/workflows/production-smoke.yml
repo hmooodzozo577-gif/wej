@@ -20,6 +20,16 @@ on:
         type: boolean
         required: false
         default: true
+      ios:
+        description: 'Also run the Safari checks in an iOS Simulator (Mobile Safari; Worker blocked; writes no data)'
+        type: boolean
+        required: false
+        default: true
+      voiceover:
+        description: 'Also run a VoiceOver smoke test on a destination page (macOS runner; writes no data)'
+        type: boolean
+        required: false
+        default: true
       worker_checks:
         description: 'Also check the Worker hardening (rate limits, CORS, input handling; writes no data)'
         type: boolean
@@ -36,12 +46,12 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
 
@@ -84,12 +94,12 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
 
@@ -112,3 +122,103 @@ jobs:
             *) echo "::error::Unsupported site URL"; exit 1 ;;
           esac
           node scripts/safari-smoke.mjs "$SITE"
+
+  # Mobile Safari in an iOS Simulator: the real Safari app on simulated iOS
+  # (not a physical device), driven by the same checks through safaridriver.
+  ios:
+    if: ${{ inputs.ios }}
+    runs-on: macos-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - name: Block the Worker and enable safaridriver
+        run: |
+          echo "127.0.0.1 wejhaty-travel-worker.hmooodzozo577.workers.dev" | sudo tee -a /etc/hosts
+          sudo safaridriver --enable
+
+      - name: Boot an iPhone simulator
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(dev['udid'] for rt, devs in sorted(d.items(), reverse=True) if 'iOS' in rt for dev in devs if dev['name'].startswith('iPhone')))")
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl list devices | grep "$UDID"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      - name: Install the WebDriver client (runner only, not a project dependency)
+        working-directory: app
+        run: npm install --no-save --no-package-lock selenium-webdriver@4
+
+      - name: Run the Safari smoke test on iOS
+        working-directory: app
+        env:
+          SITE: ${{ inputs.site }}
+          IOS_UDID: ${{ steps.sim.outputs.udid }}
+        run: |
+          case "$SITE" in
+            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            *) echo "::error::Unsupported site URL"; exit 1 ;;
+          esac
+          node scripts/safari-smoke.mjs "$SITE"
+
+      - name: Screenshot of the simulator
+        if: ${{ always() && steps.sim.outputs.udid }}
+        run: xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-safari.png
+
+      - name: Keep the screenshot
+        if: ${{ always() && steps.sim.outputs.udid }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ios-safari-screenshot
+          path: ios-safari.png
+          retention-days: 7
+
+  # Real VoiceOver on a macOS runner (Guidepup drives it): moves through a
+  # destination page by headings and checks what is actually announced.
+  voiceover:
+    if: ${{ inputs.voiceover }}
+    runs-on: macos-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - name: Block the Worker and prepare VoiceOver
+        run: |
+          echo "127.0.0.1 wejhaty-travel-worker.hmooodzozo577.workers.dev" | sudo tee -a /etc/hosts
+          npx --yes @guidepup/setup@0.25.3 setup --ci
+
+      - name: Install Guidepup (runner only, not a project dependency)
+        working-directory: app
+        run: npm install --no-save --no-package-lock @guidepup/guidepup@0.34.0
+
+      - name: Run the VoiceOver smoke test
+        working-directory: app
+        env:
+          SITE: ${{ inputs.site }}
+        run: |
+          case "$SITE" in
+            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            *) echo "::error::Unsupported site URL"; exit 1 ;;
+          esac
+          node scripts/voiceover-smoke.mjs "$SITE"

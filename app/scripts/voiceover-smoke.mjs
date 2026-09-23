@@ -1,0 +1,48 @@
+// Phase 20 — practical VoiceOver smoke test of the deployed site on a
+// GitHub-hosted macOS runner (see .github/workflows/production-smoke.yml).
+// Real VoiceOver reads a destination page in real Safari; the test walks
+// the page by headings (VO + Command + H) and checks what VoiceOver
+// actually announces. The Worker hostname is blocked in /etc/hosts first,
+// and this page sends nothing, so the run writes no production data.
+// It is a smoke test of the heading structure, not a full audit.
+//
+// Usage: node scripts/voiceover-smoke.mjs [siteUrl]
+import { execFileSync } from 'node:child_process';
+import { voiceOver } from '@guidepup/guidepup';
+
+const SITE = (process.argv[2] || 'https://hmooodzozo577-gif.github.io/wej').replace(/\/$/, '');
+let checks = 0;
+let failures = 0;
+const check = (ok, label, detail = '') => {
+  checks += 1;
+  if (!ok) failures += 1;
+  console.log(`${ok ? 'PASS' : 'FAIL'} voiceover ${label}${detail ? ` — ${detail}` : ''}`);
+};
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+execFileSync('open', ['-a', 'Safari', `${SITE}/destination/japan`]);
+await sleep(10000);
+await voiceOver.start();
+try {
+  await sleep(3000);
+  const heard = [];
+  for (let step = 0; step < 14; step += 1) {
+    await voiceOver.perform(voiceOver.keyboardCommands.findNextHeading);
+    await sleep(900);
+    heard.push(await voiceOver.lastSpokenPhrase());
+  }
+  console.log('Spoken while moving by heading:');
+  heard.forEach((phrase, index) => console.log(`  ${index + 1}. ${phrase}`));
+  const level = (n) => heard.filter((phrase) => new RegExp(`heading level ${n}\\b`, 'i').test(phrase)).length;
+  check(heard.some((phrase) => phrase.trim().length > 0), 'VoiceOver announces the page');
+  check(level(1) >= 1, 'the page heading is announced as heading level 1', String(level(1)));
+  check(level(2) >= 3, 'destination sections are announced as heading level 2', String(level(2)));
+  check(heard.some((phrase) => /اليابان|Japan/.test(phrase)), 'the destination name is spoken');
+} catch (error) {
+  check(false, 'run completed', String(error?.message ?? error).split('\n')[0]);
+} finally {
+  await voiceOver.stop();
+}
+
+console.log(`VoiceOver smoke: ${checks} checks, ${failures} failed.`);
+process.exit(failures ? 1 : 0);

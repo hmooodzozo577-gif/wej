@@ -3,22 +3,29 @@
 // GitHub-hosted macOS runner (see .github/workflows/production-smoke.yml),
 // which first maps the Worker's hostname to 127.0.0.1 in /etc/hosts, so the
 // browser cannot reach the Worker and the run writes no production data.
-// iOS Safari is NOT covered by this check.
+// With IOS_UDID set, the same checks drive Mobile Safari in an iOS
+// Simulator on that runner (the real Safari app on simulated iOS — not a
+// physical device).
 //
 // Usage: node scripts/safari-smoke.mjs [siteUrl]
 import { Builder } from 'selenium-webdriver';
 
 const SITE = (process.argv[2] || 'https://hmooodzozo577-gif.github.io/wej').replace(/\/$/, '');
+const WORKER = 'https://wejhaty-travel-worker.hmooodzozo577.workers.dev';
+const IOS_UDID = process.env.IOS_UDID || '';
+const NAME = IOS_UDID ? 'ios-safari' : 'safari';
 let checks = 0;
 let failures = 0;
 const check = (ok, label, detail = '') => {
   checks += 1;
   if (!ok) failures += 1;
-  console.log(`${ok ? 'PASS' : 'FAIL'} safari ${label}${detail ? ` — ${detail}` : ''}`);
+  console.log(`${ok ? 'PASS' : 'FAIL'} ${NAME} ${label}${detail ? ` — ${detail}` : ''}`);
 };
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const driver = await new Builder().forBrowser('safari').build();
+const driver = IOS_UDID
+  ? await new Builder().withCapabilities({ browserName: 'safari', platformName: 'iOS', 'safari:useSimulator': true, 'safari:deviceUDID': IOS_UDID }).build()
+  : await new Builder().forBrowser('safari').build();
 const js = (script, ...args) => driver.executeScript(script, ...args);
 async function waitFor(predicate, timeout = 15000) {
   const end = Date.now() + timeout;
@@ -47,12 +54,21 @@ async function answerQuestionnaire(pick) {
 }
 
 try {
-  await driver.manage().window().setRect({ width: 1280, height: 900 });
-  const version = (await driver.getCapabilities()).get('browserVersion');
-  console.log(`Safari ${version}`);
+  if (!IOS_UDID) await driver.manage().window().setRect({ width: 1280, height: 900 });
+  const capabilities = await driver.getCapabilities();
+  console.log(`${NAME} ${capabilities.get('browserVersion')} on ${capabilities.get('platformName')}`);
 
   await driver.get(`${SITE}/`);
   check(await waitFor('() => !!document.querySelector(".hero-stat b")'), 'home renders');
+  // The questionnaire below would send anonymous events: only continue
+  // when this browser cannot reach the Worker (blocked in /etc/hosts).
+  const worker = await driver.executeAsyncScript(
+    `const done = arguments[arguments.length - 1];
+     fetch(arguments[0] + '/api/intelligence/SA/tourism').then(() => done('reachable'), () => done('blocked'));`,
+    WORKER,
+  );
+  check(worker === 'blocked', 'Worker blocked, so the run writes no production data', worker);
+  if (worker !== 'blocked') throw new Error('Worker reachable: interactive checks skipped');
   check((await js('return document.querySelector(".hero-stat b")?.textContent.trim()')) === '194', 'hero stat reads 194');
   const cta = await js('return getComputedStyle(document.querySelector(".home-hero-frame .btn-gold")).backgroundColor');
   check(cta === 'rgb(192, 83, 44)', 'CTA background', cta);
@@ -90,5 +106,5 @@ try {
   await driver.quit();
 }
 
-console.log(`Safari smoke: ${checks} checks, ${failures} failed.`);
+console.log(`${NAME} smoke: ${checks} checks, ${failures} failed.`);
 process.exit(failures ? 1 : 0);
