@@ -13,6 +13,7 @@ import { PassportSelect } from '../components/PassportSelect';
 import { useVisaProviderActive } from '../visa/useVisaRequirements';
 import { waitForLocationSettle } from '../state/waitForLocationSettle';
 import { CompassMark } from '../components/CompassMark';
+import { TravelRouteDecor } from '../components/TravelRouteDecor';
 
 const OPTIONAL_RESULTS_AFTER = 5;
 const ANSWER_TRANSITION_MS = 140;
@@ -150,6 +151,7 @@ export function Quiz() {
 
   return (
     <div className="quiz-wrap">
+      <TravelRouteDecor variant="quiz" />
       <div className="quiz-top">
         <span className="quiz-count">
           {t.quiz.question} {qIndex + 1} {t.quiz.of} {reachableQuestionCount} — {purposeName}

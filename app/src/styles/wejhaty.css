@@ -34,13 +34,6 @@ a.btn {
   background: var(--paper-2);
 }
 
-.top-pick .destination-card-image {
-  width: 120px;
-  height: 120px;
-  border-radius: 20px;
-  flex: 0 0 auto;
-}
-
 .explore-toolbar {
   grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(150px, 1fr));
 }
@@ -2035,6 +2028,20 @@ html[dir='rtl'] .hero-folio::before {
   opacity: .3;
 }
 
+.purpose-grid-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.purpose-grid-section > .container {
+  position: relative;
+  z-index: 1;
+}
+
+.purpose-grid-section > .travel-route-how {
+  opacity: .18;
+}
+
 .page-hero h1 {
   max-width: 16ch;
   font-size: clamp(2.6rem, 6vw, 5rem);
@@ -2069,8 +2076,39 @@ html[dir='rtl'] .page-hero h1 {
 }
 
 .quiz-wrap {
+  position: relative;
   max-width: 900px;
   padding: clamp(28px, 5vw, 54px) 24px 56px;
+}
+
+.quiz-wrap > .travel-route-quiz {
+  position: absolute;
+  inset: auto;
+  z-index: 0;
+  top: 4px;
+  left: 50%;
+  width: 100vw;
+  height: 90px;
+  transform: translateX(-50%);
+  overflow: visible;
+  pointer-events: none;
+  opacity: .16;
+  color: var(--gold);
+}
+
+.quiz-wrap > .quiz-top,
+.quiz-wrap > .progress-track,
+.quiz-wrap > .q-card,
+.quiz-wrap > .quiz-nav {
+  position: relative;
+  z-index: 1;
+}
+
+.route-plane-quiz {
+  offset-path: path('M -40 60 C 300 10 700 90 1000 30 S1280 70 1320 40');
+  offset-distance: 0%;
+  offset-rotate: auto;
+  animation: route-flight 46s linear infinite;
 }
 
 .quiz-nav {
@@ -2151,10 +2189,18 @@ html[dir='rtl'] .q-option.selected {
   font-size: clamp(2.6rem, 5vw, 4.4rem);
 }
 
+/* Primary Results card — a featured-story composition, not a dashboard
+   row: a framed photograph in its own panel beside a content column,
+   joined by a thin orange seam. The match score lives entirely in the
+   content column (never over the photo); identity (rank badge + flag +
+   name) is a single deliberately-gapped flex cluster so the badge can
+   never visually fuse with the flag. */
 .top-pick {
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.7fr);
-  min-height: 430px;
-  padding: clamp(28px, 5vw, 58px);
+  display: grid;
+  grid-template-columns: minmax(220px, 0.86fr) minmax(300px, 1.1fr);
+  align-items: stretch;
+  min-height: 420px;
+  padding: 0;
   border-radius: 4px;
   background:
     radial-gradient(120% 140% at 100% 0%, rgba(217, 168, 92, .16), transparent 55%),
@@ -2169,36 +2215,77 @@ html[dir='rtl'] .q-option.selected {
   border-radius: 4px;
 }
 
-.match-ring-wrap {
+.top-pick-media {
   position: relative;
-  height: 100%;
-  min-height: 310px;
-  align-items: stretch;
-  overflow: hidden;
+  display: flex;
+  padding: clamp(16px, 2.4vw, 22px);
 }
 
-.top-pick .destination-card-image {
+.top-pick .top-pick-media .destination-card-image {
   width: 100%;
   height: 100%;
-  min-height: 310px;
-  border-radius: 0;
-  filter: saturate(0.86);
+  min-height: 260px;
+  aspect-ratio: auto;
+  border-radius: 16px;
+  filter: saturate(0.92);
 }
 
-/* The primary card's match score reads as a proper editorial badge — a
-   conic-gradient ring driven by the same animated --match custom property
-   Results.tsx already sets, rather than a plain text pill. */
+.top-pick-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: clamp(22px, 3.2vw, 40px) clamp(24px, 3.4vw, 44px) clamp(20px, 3vw, 32px);
+}
+
+.top-pick-body::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: clamp(22px, 3.2vw, 40px);
+  bottom: clamp(20px, 3vw, 32px);
+  width: 2px;
+  background: linear-gradient(180deg, var(--gold), transparent 88%);
+  opacity: .8;
+}
+
+.top-pick-identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.top-pick-identity .rank-badge {
+  margin-bottom: 0;
+}
+
+.top-pick-identity .name-flag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+/* The score is now part of the content column's own reading flow — an
+   editorial stat (ring + number) beside its label, never overlapping the
+   photograph. Driven by the same animated --match custom property
+   Results.tsx sets on .match-ring. */
+.top-pick-score {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .match-ring {
   --match: 0;
-  position: absolute;
-  inset-inline-end: 18px;
-  top: 18px;
-  width: 88px;
-  height: 88px;
-  padding: 4px;
+  flex: 0 0 auto;
+  width: 60px;
+  height: 60px;
+  padding: 3px;
   border-radius: 50%;
   background: conic-gradient(var(--gold) calc(var(--match) * 1%), rgba(255, 255, 255, .22) 0);
-  box-shadow: 0 10px 26px rgba(7, 17, 29, .45);
+  box-shadow: 0 8px 20px rgba(7, 17, 29, .4);
 }
 
 .match-ring-inner {
@@ -2208,24 +2295,21 @@ html[dir='rtl'] .q-option.selected {
   height: 100%;
   border-radius: 50%;
   background: rgba(11, 22, 37, .92);
-  backdrop-filter: blur(4px);
 }
 
 .match-ring .matchNum {
   color: #fff9f3;
   font-family: var(--ff-display);
-  font-size: 1.5rem;
+  font-size: 1.05rem;
   font-weight: 700;
   line-height: 1;
 }
 
-.match-ring span {
-  margin-top: 2px;
-  color: rgba(255, 249, 243, .68);
-  font-size: .62rem;
+.top-pick-score-label {
+  color: rgba(255, 249, 243, .72);
+  font-size: .82rem;
   font-weight: 700;
-  letter-spacing: .04em;
-  text-transform: uppercase;
+  letter-spacing: .03em;
 }
 
 .results-grid,
@@ -2595,20 +2679,25 @@ html[dir='rtl'] .q-option.selected {
     text-align: start;
   }
 
+  .top-pick-media {
+    padding: 14px 14px 0;
+  }
+
+  .top-pick .top-pick-media .destination-card-image {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
+
+  .top-pick-body::before {
+    display: none;
+  }
+
   .top-pick .why {
     margin-inline: 0;
   }
 
   .tag-row {
     justify-content: flex-start;
-  }
-
-  .match-ring-wrap {
-    min-height: 260px;
-  }
-
-  .top-pick .destination-card-image {
-    min-height: 260px;
   }
 
   .overview-cards-grid {
@@ -2881,9 +2970,18 @@ html[dir='rtl'] .home-hero-scrim {
 
 .route-two { opacity: .52; }
 .route-plane { fill: rgba(255, 225, 210, .62); }
-.plane-one { animation: plane-drift-one 8s ease-in-out infinite alternate; }
-.plane-two { animation: plane-drift-two 10s ease-in-out infinite alternate; }
-.plane-three { animation: plane-drift-one 11s ease-in-out infinite alternate-reverse; opacity: .66; }
+
+/* Explore/Destination previously rendered one motionless plane
+   (`route-plane-static`) with no matching animation rule anywhere in the
+   stylesheet — a real, confirmed-static decorative element. Give it a
+   slow, quiet drift so every visible decorative plane on the site moves. */
+.route-plane-drift {
+  animation: plane-drift-one 12s ease-in-out infinite alternate;
+}
+
+.travel-route-explore .route-plane-drift {
+  animation: plane-drift-two 15s ease-in-out infinite alternate;
+}
 
 .purpose-grid { gap: 14px; }
 
@@ -2974,8 +3072,25 @@ html[dir='rtl'] .purpose-card { --dir: -1; }
 
 .top-pick:hover,
 .top-pick:focus-visible { transform: translateY(-4px); box-shadow: 0 28px 64px rgba(7, 17, 29, .28); }
-.top-pick .destination-card-image { border-radius: 0; }
-.top-pick-cta { display: inline-flex; align-items: center; gap: 9px; margin-top: 20px; color: #ff956d; font-weight: 800; }
+.top-pick .top-pick-media .destination-card-image {
+  transition: transform var(--motion-slow) var(--motion-ease-out), filter var(--motion-normal) ease;
+}
+.top-pick:hover .top-pick-media .destination-card-image,
+.top-pick:focus-visible .top-pick-media .destination-card-image {
+  transform: scale(1.04);
+  filter: saturate(1.05);
+}
+.top-pick-cta {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 9px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, .14);
+  color: #ff956d;
+  font-weight: 800;
+}
 .top-pick:hover .top-pick-cta svg,
 .top-pick:focus-visible .top-pick-cta svg { transform: translateX(4px); }
 html[dir='rtl'] .top-pick:hover .top-pick-cta svg,
@@ -3670,6 +3785,30 @@ html[dir='rtl'] .hero-editorial-note {
   line-height: 1.3;
 }
 
+/* At mid-range container widths (the Hero's two-column grid with a still-
+   fairly-narrow copy column — e.g. large-Android-tablet portrait) the
+   three stats no longer all fit on one content-sized line, and the
+   phrase stat was dropping to an orphan second row while still carrying
+   the divider line meant for a same-row neighbour, leaving a stray
+   fragment. A container query (sized off the stats row's own available
+   width, not a guessed viewport breakpoint) turns that same drop into an
+   intentional layout: the phrase stat spans the full row on its own,
+   under a clean horizontal divider instead of a dangling vertical one. */
+.home-hero-frame .hero-stats {
+  container-type: inline-size;
+  container-name: hero-stats;
+}
+
+@container hero-stats (max-width: 640px) {
+  .home-hero-frame .hero-stat-phrase {
+    flex: 1 1 100%;
+    border-inline-end: 0;
+    border-block-start: 1px solid var(--line);
+    margin-top: 2px;
+    padding-top: 17px;
+  }
+}
+
 html[dir='rtl'] .home-hero-frame .hero-stat-phrase span {
   font-family: var(--ff-ar);
 }
@@ -4057,12 +4196,15 @@ html[dir='rtl'] .hero-vertical-tagline {
 
 .top-pick {
   min-height: 360px;
-  padding: clamp(24px, 3.5vw, 42px);
 }
 
-.match-ring-wrap,
-.top-pick .destination-card-image {
-  min-height: 270px;
+.top-pick-body {
+  padding: 18px 20px 22px;
+  gap: 12px;
+}
+
+.top-pick .top-pick-media .destination-card-image {
+  min-height: 200px;
 }
 
 .surprise-card {

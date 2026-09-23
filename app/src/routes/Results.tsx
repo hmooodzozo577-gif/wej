@@ -94,14 +94,27 @@ export function Results() {
           className="top-pick"
           role="button"
         >
-          <div>
-            <span className="rank-badge">
-              <Icon name="medal" size={15} stroke={2.2} /> {r.rank1}
-            </span>
-            <span className="name-flag">
-              <FlagChip dest={first.dest} width={30} height={22} />
-              <h2 className="display">{nameOf(first.dest, lang)}</h2>
-            </span>
+          <div className="top-pick-media">
+            <DestinationImage destination={first.dest} lang={lang} priority />
+          </div>
+          <div className="top-pick-body">
+            <div className="top-pick-identity">
+              <span className="rank-badge">
+                <Icon name="medal" size={15} stroke={2.2} /> {r.rank1}
+              </span>
+              <span className="name-flag">
+                <FlagChip dest={first.dest} width={30} height={22} />
+                <h2 className="display">{nameOf(first.dest, lang)}</h2>
+              </span>
+            </div>
+            <div className="top-pick-score">
+              <div className="match-ring" style={{ '--match': animatedMatch } as CSSProperties}>
+                <div className="match-ring-inner">
+                  <b className="matchNum">{animatedMatch}%</b>
+                </div>
+              </div>
+              <span className="top-pick-score-label">{r.match}</span>
+            </div>
             <p className="why">{whyFirst}</p>
             {first.dest.recommendationReady ? <div className="tag-row">
               <span className="mini-tag">
@@ -116,15 +129,6 @@ export function Results() {
             </div> : null}
             {first.dest.recommendationReady ? <p className="results-method-note">{r.visaGeneralNote}</p> : null}
             <span className="top-pick-cta">{r.viewDetails} <Icon name="arrowEnd" size={16} /></span>
-          </div>
-          <div className="match-ring-wrap">
-            <DestinationImage destination={first.dest} lang={lang} priority />
-            <div className="match-ring" style={{ '--match': animatedMatch } as CSSProperties}>
-              <div className="match-ring-inner">
-                <b className="matchNum">{animatedMatch}%</b>
-                <span>{r.match}</span>
-              </div>
-            </div>
           </div>
         </Link>
 

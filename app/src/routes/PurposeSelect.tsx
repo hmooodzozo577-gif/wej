@@ -27,7 +27,8 @@ export function PurposeSelect() {
           <p>{pu.sub}</p>
         </div>
       </section>
-      <section className="section" style={{ paddingTop: 34 }}>
+      <section className="section purpose-grid-section" style={{ paddingTop: 34 }}>
+        <TravelRouteDecor variant="how" />
         <div className="container">
           <div className="purpose-grid" id="purposeGrid">
             {PURPOSES.map((p) => (
