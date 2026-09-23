@@ -1,0 +1,107 @@
+name: Read font license
+
+# Reads the official Thmanyah font pages (license, download/usage and help
+# centre) from a GitHub-hosted runner, because the development environment
+# cannot reach thmanyah.com. Read-only: it renders each page, prints its
+# visible text and links to the job log and keeps them as an artifact. It
+# never downloads font files and never commits anything.
+on:
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright (runner only)
+        run: |
+          mkdir reader && cd reader
+          npm init -y >/dev/null
+          npm install --no-save --no-package-lock playwright@1
+          npx playwright install --with-deps chromium
+
+      - name: Read the pages
+        working-directory: reader
+        run: |
+          cat > read.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import { mkdirSync, writeFileSync } from 'node:fs';
+
+          // Fixed list: official Thmanyah pages only.
+          const PAGES = [
+            'https://font.thmanyah.com/',
+            'https://font.thmanyah.com/licenses',
+            'https://ask.thmanyah.com/en/thmanyah-line-for-everyone',
+            'https://ask.thmanyah.com/hc/ar-sa/articles/45993930027281',
+            'https://company.thmanyah.com/visual-identity',
+            'https://company.thmanyah.com/faq',
+          ];
+          const FONT_FILE = /\.(woff2?|ttf|otf|eot)(\?|$)/i;
+
+          mkdirSync('out', { recursive: true });
+          const browser = await chromium.launch();
+          const context = await browser.newContext({ locale: 'ar-SA' });
+          for (const [index, url] of PAGES.entries()) {
+            const page = await context.newPage();
+            const fontRequests = new Set();
+            const stylesheets = new Set();
+            // Record, never fetch ourselves: font files the page itself loads
+            // show how Thmanyah serves the font on the web.
+            page.on('request', (request) => {
+              const u = request.url();
+              if (FONT_FILE.test(u)) fontRequests.add(u);
+              else if (request.resourceType() === 'stylesheet') stylesheets.add(u);
+            });
+            let text = '';
+            let links = [];
+            let status = 'error';
+            try {
+              const response = await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
+              status = String(response?.status() ?? 'no response');
+              await page.waitForTimeout(1500);
+              text = await page.evaluate(() => document.body?.innerText ?? '');
+              links = await page.evaluate(() =>
+                [...document.querySelectorAll('a[href]')].map((a) => `${a.textContent.trim().replace(/\s+/g, ' ')} -> ${a.href}`),
+              );
+            } catch (error) {
+              text = `FAILED: ${error.message.split('\n')[0]}`;
+            }
+            const report = [
+              `URL: ${url}`,
+              `Final URL: ${page.url()}`,
+              `HTTP status: ${status}`,
+              '',
+              '--- VISIBLE TEXT ---',
+              text,
+              '',
+              '--- LINKS ---',
+              ...links,
+              '',
+              '--- STYLESHEETS LOADED ---',
+              ...stylesheets,
+              '',
+              '--- FONT FILES REQUESTED BY THE PAGE (not downloaded by this job) ---',
+              ...fontRequests,
+            ].join('\n');
+            writeFileSync(`out/page-${index + 1}.txt`, report);
+            console.log(`\n==================== PAGE ${index + 1} ====================\n${report}`);
+            await page.close();
+          }
+          await browser.close();
+          EOF
+          node read.mjs
+
+      - name: Keep the text as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: font-license-pages
+          path: reader/out/
+          retention-days: 7
