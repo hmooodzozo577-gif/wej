@@ -44,12 +44,21 @@ export type AdminAuth =
   | { ok: true; via: 'access' | 'token'; subject: string | null }
   | { ok: false; status: 401 | 503; error: string };
 
-function constantTimeEqual(actual: string | null, expected: string): boolean {
-  if (!actual || actual.length !== expected.length) return false;
+/** Compares a presented secret with the configured one without revealing
+ *  anything through timing — including the secret's LENGTH (Phase 20
+ *  security backlog): both sides are hashed to fixed 32-byte SHA-256 digests
+ *  first, and the digests are compared in full. */
+export async function constantTimeEqual(actual: string | null, expected: string): Promise<boolean> {
+  if (!actual || !expected) return false;
+  const encoder = new TextEncoder();
+  const [a, b] = await Promise.all([
+    crypto.subtle.digest('SHA-256', encoder.encode(actual)),
+    crypto.subtle.digest('SHA-256', encoder.encode(expected)),
+  ]);
+  const left = new Uint8Array(a);
+  const right = new Uint8Array(b);
   let difference = 0;
-  for (let index = 0; index < actual.length; index += 1) {
-    difference |= actual.charCodeAt(index) ^ expected.charCodeAt(index);
-  }
+  for (let index = 0; index < left.length; index += 1) difference |= left[index]! ^ right[index]!;
   return difference === 0;
 }
 
@@ -70,6 +79,34 @@ function decodeSegment(value: string): Record<string, unknown> | null {
 }
 
 interface AccessKey { kid?: unknown; kty?: unknown; alg?: unknown; n?: unknown; e?: unknown; use?: unknown }
+
+// Phase 20 security backlog — the team's public signing keys are cached in
+// the isolate instead of being fetched on every admin request. A cached set
+// is trusted for ACCESS_KEYS_TTL_MS; a token signed with a key id the cache
+// does not know triggers one refresh (key rotation), at most once per
+// ACCESS_KEYS_REFRESH_MIN_MS so random key ids cannot turn every request
+// into an upstream fetch. Only successful fetches are cached.
+export const ACCESS_KEYS_TTL_MS = 10 * 60_000;
+export const ACCESS_KEYS_REFRESH_MIN_MS = 60_000;
+const accessKeyCache = new Map<string, { keys: AccessKey[]; fetchedAt: number }>();
+
+/** Test seam: forget every cached key set. */
+export function resetAccessKeyCache(): void {
+  accessKeyCache.clear();
+}
+
+async function fetchAccessKeys(teamDomain: string, fetchImpl: typeof fetch, now: number): Promise<AccessKey[] | null> {
+  try {
+    const response = await fetchImpl(`https://${teamDomain}/cdn-cgi/access/certs`);
+    if (!response.ok) return null;
+    const body = await response.json() as { keys?: AccessKey[] };
+    const keys = Array.isArray(body.keys) ? body.keys : [];
+    accessKeyCache.set(teamDomain, { keys, fetchedAt: now });
+    return keys;
+  } catch {
+    return null;
+  }
+}
 
 /** Verifies a Cloudflare Access JWT: RS256 signature against the team's
  *  published keys, plus audience and expiry. A token that fails ANY of these
@@ -94,17 +131,21 @@ export async function verifyAccessJwt(
   if (typeof payload.exp !== 'number' || payload.exp * 1000 <= now) return { ok: false, reason: 'expired' };
   if (typeof payload.nbf === 'number' && payload.nbf * 1000 > now + 60_000) return { ok: false, reason: 'not_yet_valid' };
 
-  let keys: AccessKey[];
-  try {
-    const response = await fetchImpl(`https://${teamDomain}/cdn-cgi/access/certs`);
-    if (!response.ok) return { ok: false, reason: 'certs_unavailable' };
-    const body = await response.json() as { keys?: AccessKey[] };
-    keys = body.keys ?? [];
-  } catch {
-    return { ok: false, reason: 'certs_unavailable' };
+  const cached = accessKeyCache.get(teamDomain);
+  let keys: AccessKey[] | null = cached && now - cached.fetchedAt < ACCESS_KEYS_TTL_MS ? cached.keys : null;
+  let fetchedNow = false;
+  if (!keys) {
+    keys = await fetchAccessKeys(teamDomain, fetchImpl, now);
+    fetchedNow = true;
+    if (!keys) return { ok: false, reason: 'certs_unavailable' };
   }
-
-  const key = keys.find((candidate) => candidate.kid === header.kid && candidate.kty === 'RSA');
+  const findKey = (set: AccessKey[]) => set.find((candidate) => candidate.kid === header.kid && candidate.kty === 'RSA');
+  let key = findKey(keys);
+  if (!key && !fetchedNow && cached && now - cached.fetchedAt >= ACCESS_KEYS_REFRESH_MIN_MS) {
+    const refreshed = await fetchAccessKeys(teamDomain, fetchImpl, now);
+    if (!refreshed) return { ok: false, reason: 'certs_unavailable' };
+    key = findKey(refreshed);
+  }
   if (!key || typeof key.n !== 'string' || typeof key.e !== 'string') return { ok: false, reason: 'unknown_key' };
 
   try {
@@ -150,7 +191,7 @@ export async function authenticateAdmin(
   // The Bearer scheme is REQUIRED, not stripped-if-present: a bare secret in
   // the Authorization header is not a credential this endpoint accepts.
   const bearer = /^Bearer\s+(.+)$/i.exec(request.headers.get('Authorization') ?? '')?.[1] ?? null;
-  if (!constantTimeEqual(bearer, env.ADMIN_TOKEN!)) return { ok: false, status: 401, error: 'unauthorized' };
+  if (!await constantTimeEqual(bearer, env.ADMIN_TOKEN!)) return { ok: false, status: 401, error: 'unauthorized' };
   return { ok: true, via: 'token', subject: null };
 }
 

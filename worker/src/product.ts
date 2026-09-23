@@ -321,10 +321,26 @@ function decodeScreenshot(value: unknown): { bytes: Uint8Array; contentType: str
   try {
     const binary = atob(match[2]!);
     if (binary.length > 2_000_000) return undefined;
-    return { bytes: Uint8Array.from(binary, (char) => char.charCodeAt(0)), contentType: match[1]! };
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    // Phase 20 security backlog — the bytes must actually BE one of the
+    // accepted image types; the stored content type is the one the bytes
+    // prove, not the one the data URL claims (a PNG saved as ".jpg" is still
+    // accepted, as before, but stored as image/png; a non-image is refused).
+    const detected = detectImageType(bytes);
+    if (!detected) return undefined;
+    return { bytes, contentType: detected };
   } catch {
     return undefined;
   }
+}
+
+/** The accepted screenshot type the bytes' signature proves, or null. */
+export function detectImageType(bytes: Uint8Array): 'image/png' | 'image/jpeg' | 'image/webp' | null {
+  const starts = (...signature: number[]) => signature.every((value, index) => bytes[index] === value);
+  if (starts(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)) return 'image/png';
+  if (starts(0xff, 0xd8, 0xff)) return 'image/jpeg';
+  if (starts(0x52, 0x49, 0x46, 0x46) && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) return 'image/webp';
+  return null;
 }
 
 async function handleFeedback(request: Request, env: ProductEnv, origin: string | null) {

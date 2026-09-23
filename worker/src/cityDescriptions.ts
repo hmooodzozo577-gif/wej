@@ -33,13 +33,16 @@
 // description.
 import cityCoordinates from './generated/cityCoordinates.json';
 import cityTitles from './generated/cityTitles.json';
-import type { D1DatabaseLike } from './product';
+import { clientAddressOf, type D1DatabaseLike, type RateLimiterLike } from './product';
 import { isExcludedCountry } from './shared';
 
 export interface CityDescriptionEnv {
   PRODUCT_DB?: D1DatabaseLike;
   /** Set to 'off' to disable outbound description fetching entirely. */
   CITY_DESCRIPTIONS?: string;
+  /** Phase 20 security backlog — per-address edge limit for this endpoint,
+   *  the one public route that can cause outbound fetches. */
+  CITY_DESCRIPTIONS_RATE_LIMITER?: RateLimiterLike;
 }
 
 export const DESCRIPTION_SOURCE = 'Wikipedia';
@@ -416,6 +419,19 @@ export async function handleCityDescriptionRequest(
   const url = new URL(request.url);
   if (url.pathname !== '/api/cities/descriptions') return null;
   if (request.method !== 'POST') return json({ error: 'method_not_allowed', message: 'Use POST.' }, 405);
+  if (env.CITY_DESCRIPTIONS_RATE_LIMITER) {
+    let allowed = true;
+    try {
+      ({ success: allowed } = await env.CITY_DESCRIPTIONS_RATE_LIMITER.limit({ key: `/api/cities/descriptions|${clientAddressOf(request)}` }));
+    } catch {
+      allowed = true; // a limiter outage must not take the descriptions down
+    }
+    if (allowed === false) {
+      const limited = json({ error: 'rate_limited' }, 429);
+      limited.headers.set('Retry-After', '60');
+      return limited;
+    }
+  }
 
   let body: unknown;
   try {

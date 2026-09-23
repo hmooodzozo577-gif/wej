@@ -4,8 +4,8 @@
 //   * an unverified Access JWT being trusted
 //   * a filter value reaching SQL as anything other than a bound parameter
 //   * any coordinate, IP or fingerprint appearing anywhere in analytics
-import { describe, expect, it } from 'vitest';
-import { authenticateAdmin, handleAdminRequest, verifyAccessJwt, type AdminEnv } from './admin';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ACCESS_KEYS_REFRESH_MIN_MS, ACCESS_KEYS_TTL_MS, authenticateAdmin, constantTimeEqual, handleAdminRequest, resetAccessKeyCache, verifyAccessJwt, type AdminEnv } from './admin';
 import { FEEDBACK_STATUSES, parseFeedbackQuery, parseFilters } from './analytics';
 
 const json = (body: unknown, status: number) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
@@ -63,6 +63,7 @@ describe('admin authentication', () => {
 });
 
 describe('Cloudflare Access JWT verification', () => {
+  beforeEach(() => resetAccessKeyCache());
   const teamDomain = 'team.cloudflareaccess.com';
   const audience = 'aud-tag';
   const encode = (value: unknown) => btoa(JSON.stringify(value)).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
@@ -278,5 +279,82 @@ describe('privacy — enforced by what the SQL can even ask for', () => {
     expect(injected).toBe(false);
     const boundAsValue = db.calls.some((call) => call.values.some((value) => String(value).includes('OR 1=1')));
     expect(boundAsValue).toBe(true);
+  });
+});
+
+describe('constant-time token comparison (Phase 20 security backlog)', () => {
+  it('accepts only the exact secret and never throws on odd input', async () => {
+    expect(await constantTimeEqual('fixture-admin-secret', 'fixture-admin-secret')).toBe(true);
+    for (const presented of ['fixture-admin-secreT', 'fixture-admin-secret ', 'f', 'x'.repeat(4096), '', null]) {
+      expect(await constantTimeEqual(presented, 'fixture-admin-secret'), String(presented)).toBe(false);
+    }
+    expect(await constantTimeEqual('anything', '')).toBe(false);
+  });
+
+  it('compares fixed-size digests, so a wrong-length token takes the same path as a wrong token', async () => {
+    const digest = vi.spyOn(crypto.subtle, 'digest');
+    await constantTimeEqual('short', 'fixture-admin-secret');
+    await constantTimeEqual('fixture-admin-secreX', 'fixture-admin-secret');
+    expect(digest).toHaveBeenCalledTimes(4);
+    digest.mockRestore();
+  });
+});
+
+describe('Access signing-key cache (Phase 20 security backlog)', () => {
+  const teamDomain = 'cache.cloudflareaccess.com';
+  const audience = 'aud-tag';
+  const encode = (value: unknown) => btoa(JSON.stringify(value)).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+  const b64url = (buffer: ArrayBuffer) => btoa(String.fromCharCode(...new Uint8Array(buffer))).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+
+  async function signedToken(kid: string, now: number) {
+    const pair = await crypto.subtle.generateKey(
+      { name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' },
+      true, ['sign', 'verify'],
+    ) as CryptoKeyPair;
+    const jwk = await crypto.subtle.exportKey('jwk', pair.publicKey) as JsonWebKey;
+    const header = encode({ alg: 'RS256', kid });
+    const payload = encode({ aud: [audience], exp: Math.floor(now / 1000) + 3600, email: 'admin@example.com' });
+    const signature = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', pair.privateKey, new TextEncoder().encode(`${header}.${payload}`));
+    return { token: `${header}.${payload}.${b64url(signature)}`, key: { kid, kty: 'RSA', n: jwk.n, e: jwk.e } };
+  }
+
+  beforeEach(() => resetAccessKeyCache());
+
+  it('verifies a genuine token and reuses the fetched keys within the TTL', async () => {
+    const now = Date.now();
+    const { token, key } = await signedToken('k1', now);
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ keys: [key] }), { status: 200 })) as unknown as typeof fetch;
+    expect(await verifyAccessJwt(token, teamDomain, audience, fetchImpl, now)).toEqual({ ok: true, subject: 'admin@example.com' });
+    expect(await verifyAccessJwt(token, teamDomain, audience, fetchImpl, now + 5_000)).toEqual({ ok: true, subject: 'admin@example.com' });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    // After the TTL the keys are fetched again.
+    await verifyAccessJwt(token, teamDomain, audience, fetchImpl, now + ACCESS_KEYS_TTL_MS + 1);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it('refreshes once for a rotated key, but not faster than the minimum interval', async () => {
+    const now = Date.now();
+    const old = await signedToken('old', now);
+    const rotated = await signedToken('new', now);
+    let served = [old.key];
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ keys: served }), { status: 200 })) as unknown as typeof fetch;
+    expect((await verifyAccessJwt(old.token, teamDomain, audience, fetchImpl, now)).ok).toBe(true);
+    served = [old.key, rotated.key];
+    // Within the minimum interval an unknown key id does not reach upstream.
+    expect(await verifyAccessJwt(rotated.token, teamDomain, audience, fetchImpl, now + 1_000)).toMatchObject({ ok: false, reason: 'unknown_key' });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    // After it, one refresh picks up the rotated key.
+    expect((await verifyAccessJwt(rotated.token, teamDomain, audience, fetchImpl, now + ACCESS_KEYS_REFRESH_MIN_MS + 1)).ok).toBe(true);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not cache a failed key fetch', async () => {
+    const now = Date.now();
+    const { token, key } = await signedToken('k1', now);
+    let fail = true;
+    const fetchImpl = vi.fn(async () => (fail ? new Response('', { status: 500 }) : new Response(JSON.stringify({ keys: [key] }), { status: 200 }))) as unknown as typeof fetch;
+    expect(await verifyAccessJwt(token, teamDomain, audience, fetchImpl, now)).toMatchObject({ ok: false, reason: 'certs_unavailable' });
+    fail = false;
+    expect((await verifyAccessJwt(token, teamDomain, audience, fetchImpl, now + 1)).ok).toBe(true);
   });
 });

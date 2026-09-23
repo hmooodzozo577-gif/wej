@@ -124,7 +124,7 @@ that column below is, by definition, not a secret and must never be one.
 | `SHERPA_API_KEY` | Worker secret | **secret** | No visa provider; the Worker's `/api/visa/*` lookups answer `unknown`. The frontend no longer calls them (Phase 19): passport entry information comes from the official-source snapshot |
 | `SHERPA_BASE_URL` | Worker `[vars]` | host override for the sandbox | Production Sherpa host is used |
 | `TURNSTILE_SECRET_KEY` | Worker secret | **secret** | Reports and ratings are accepted without a challenge (today's state). Once set, verification fails closed (missing/rejected token, error, 5 s timeout) |
-| `EVENTS_RATE_LIMITER`, `RATINGS_RATE_LIMITER`, `FEEDBACK_RATE_LIMITER` | Worker bindings in `wrangler.toml` `[[ratelimits]]` | configuration, not secrets | Without them (local runs) there is no per-address edge limit; production declares all three |
+| `EVENTS_RATE_LIMITER`, `RATINGS_RATE_LIMITER`, `FEEDBACK_RATE_LIMITER`, `CITY_DESCRIPTIONS_RATE_LIMITER` | Worker bindings in `wrangler.toml` `[[ratelimits]]` | configuration, not secrets | Without them (local runs) there is no per-address edge limit; production declares all four |
 | `ADMIN_TOKEN` | Worker secret | **secret** | With no `ADMIN_ACCESS_AUD` either, `/api/admin/*` returns 503 and serves nothing |
 | `ADMIN_ACCESS_AUD` | Worker `[vars]` | Cloudflare Access application audience tag | Access enforcement is off; `ADMIN_TOKEN` is used instead |
 | `ADMIN_ACCESS_TEAM_DOMAIN` | Worker `[vars]` | e.g. `example.cloudflareaccess.com` | As above |

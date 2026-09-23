@@ -113,10 +113,37 @@ async function handleFlights(request: Request, env: Env, origin: string | null):
   }
 }
 
+// Phase 20 security backlog — every endpoint that reads a request body has a
+// ceiling, checked against the declared Content-Length before anything is
+// read. Each is well above what the site ever sends (the feedback ceiling
+// fits the largest accepted screenshot). Bodies sent without a declared
+// length are still bounded by each handler's own field limits.
+export const MAX_DECLARED_BODY_BYTES: Readonly<Record<string, number>> = {
+  '/api/events': 16 * 1024,
+  '/api/ratings': 32 * 1024,
+  '/api/feedback': 3_000_000,
+  '/api/cities/descriptions': 16 * 1024,
+  '/api/admin/feedback/status': 16 * 1024,
+  '/api/travel/flights': 4 * 1024,
+  '/api/visa/requirements': 4 * 1024,
+};
+
+export function declaredBodyTooLarge(request: Request, pathname: string): boolean {
+  const ceiling = MAX_DECLARED_BODY_BYTES[pathname];
+  if (!ceiling) return false;
+  const declared = Number(request.headers.get('Content-Length'));
+  return Number.isFinite(declared) && declared > ceiling;
+}
+
 export async function handleRequest(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const origin = request.headers.get('Origin');
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
+  if (declaredBodyTooLarge(request, url.pathname)) {
+    // The admin surface never answers cross-origin; everything else keeps
+    // its CORS header so the site can read the refusal.
+    return json({ error: 'payload_too_large' }, 413, url.pathname.startsWith('/api/admin/') ? null : origin);
+  }
   // The private admin surface owns its own authentication, so it is matched
   // BEFORE the public product endpoints — an admin path must never fall
   // through to a handler that does not check credentials.

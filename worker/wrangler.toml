@@ -51,3 +51,10 @@ simple = { limit = 10, period = 60 }
 name = "FEEDBACK_RATE_LIMITER"
 namespace_id = "1903"
 simple = { limit = 5, period = 60 }
+
+# Phase 20 security backlog — city descriptions can trigger outbound
+# Wikipedia lookups, so the endpoint gets its own per-address budget too.
+[[ratelimits]]
+name = "CITY_DESCRIPTIONS_RATE_LIMITER"
+namespace_id = "1904"
+simple = { limit = 60, period = 60 }
