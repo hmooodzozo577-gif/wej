@@ -4998,6 +4998,14 @@ html[dir='rtl'] .travel-route-band {
     background: linear-gradient(180deg, rgba(242, 238, 229, .96) 0%, rgba(242, 238, 229, .9) 46%, rgba(242, 238, 229, .84) 72%, rgba(242, 238, 229, .9) 100%);
   }
 
+  /* The Light note tag in the narrow cluster may wrap to two lines;
+     tighter padding keeps it a compact tag rather than a tall pill. */
+  [data-theme='light'] .hero-nearby-note {
+    padding: 1px 8px;
+    border-radius: 10px;
+    line-height: 1.35;
+  }
+
   /* Eyebrow above the headline, as an editorial kicker. */
   .home-hero-frame .hero-engine-label {
     margin: 0 0 10px;
