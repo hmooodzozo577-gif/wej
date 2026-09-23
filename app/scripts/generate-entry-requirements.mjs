@@ -32,6 +32,7 @@ import isoCodes from '../src/data/generated/isoCodes.json' with { type: 'json' }
 import {
   buildSnapshot,
   createNameResolver,
+  hasPhrase,
   htmlToLines,
   parseCanada,
   parseEuRegulation,
@@ -268,13 +269,12 @@ function loadCatalog() {
 }
 
 function verifySchengen(lines) {
-  const text = lines.join(' ');
   for (const phrase of [
     'The Schengen area is composed of 29 countries: 25 EU Member States and 4 non-EU countries (Iceland, Norway, Switzerland and Liechtenstein)',
     'Cyprus participates in the Schengen cooperation. Nevertheless, internal borders controls have not yet been abolished',
     'Ireland, on the other hand, is exceptionally allowed by the Schengen Protocol not to apply the Schengen rules',
   ]) {
-    if (!text.includes(phrase)) throw new Error(`Schengen area page: membership statement changed — "${phrase.slice(0, 60)}…" not found`);
+    if (!hasPhrase(lines, phrase)) throw new Error(`Schengen area page: membership statement changed — "${phrase.slice(0, 60)}…" not found`);
   }
   if (SCHENGEN.length !== 29) throw new Error('Schengen registry is not 29 states');
 }

@@ -220,7 +220,7 @@ function phraseKey(text) {
   return text.replace(/[’‘]/g, "'").replace(/\s+/g, ' ').toLowerCase();
 }
 
-function hasPhrase(lines, phrase) {
+export function hasPhrase(lines, phrase) {
   return phraseKey(lines.join(' ')).includes(phraseKey(phrase));
 }
 
