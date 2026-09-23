@@ -2024,24 +2024,6 @@ html[dir='rtl'] .hero-folio::before {
   z-index: 1;
 }
 
-.page-hero-ambient > .travel-route-how {
-  opacity: .3;
-}
-
-.purpose-grid-section {
-  position: relative;
-  overflow: hidden;
-}
-
-.purpose-grid-section > .container {
-  position: relative;
-  z-index: 1;
-}
-
-.purpose-grid-section > .travel-route-how {
-  opacity: .18;
-}
-
 .page-hero h1 {
   max-width: 16ch;
   font-size: clamp(2.6rem, 6vw, 5rem);
@@ -2081,34 +2063,12 @@ html[dir='rtl'] .page-hero h1 {
   padding: clamp(28px, 5vw, 54px) 24px 56px;
 }
 
-.quiz-wrap > .travel-route-quiz {
-  position: absolute;
-  inset: auto;
-  z-index: 0;
-  top: 4px;
-  left: 50%;
-  width: 100vw;
-  height: 90px;
-  transform: translateX(-50%);
-  overflow: visible;
-  pointer-events: none;
-  opacity: .16;
-  color: var(--gold);
-}
-
 .quiz-wrap > .quiz-top,
 .quiz-wrap > .progress-track,
 .quiz-wrap > .q-card,
 .quiz-wrap > .quiz-nav {
   position: relative;
   z-index: 1;
-}
-
-.route-plane-quiz {
-  offset-path: path('M -40 60 C 300 10 700 90 1000 30 S1280 70 1320 40');
-  offset-distance: 0%;
-  offset-rotate: auto;
-  animation: route-flight 46s linear infinite;
 }
 
 .quiz-nav {
@@ -2559,6 +2519,78 @@ html[dir='rtl'] .q-option.selected {
   color: #f7f3eb;
 }
 
+/* Light theme — the Home Hero, the recommendations note and the footer
+   are part of the warm-paper system, not dark panels carried over from
+   Dark mode. Only the photograph keeps its own darkness, and only where
+   copy sits on it. Scoped to [data-theme='light'] so Dark mode, which
+   uses these same components, is untouched. */
+[data-theme='light'] .home-hero-cinematic {
+  background: transparent;
+}
+
+[data-theme='light'] .home-hero-frame {
+  border: 8px solid var(--white);
+  outline: 1px solid color-mix(in srgb, var(--gold) 26%, transparent);
+  outline-offset: -1px;
+  background: var(--paper-2);
+  box-shadow: none;
+}
+
+[data-theme='light'] .home-hero-frame::after {
+  border-color: rgba(255, 214, 196, .5);
+}
+
+[data-theme='light'] .home-hero-scrim {
+  background:
+    linear-gradient(90deg, rgba(8, 22, 36, .88) 0%, rgba(8, 22, 36, .7) 38%, rgba(8, 22, 36, .34) 72%, rgba(8, 22, 36, .24) 100%),
+    linear-gradient(0deg, rgba(8, 22, 36, .72), transparent 42%);
+}
+
+html[dir='rtl'][data-theme='light'] .home-hero-scrim {
+  background:
+    linear-gradient(270deg, rgba(8, 22, 36, .88) 0%, rgba(8, 22, 36, .7) 38%, rgba(8, 22, 36, .34) 72%, rgba(8, 22, 36, .24) 100%),
+    linear-gradient(0deg, rgba(8, 22, 36, .72), transparent 42%);
+}
+
+[data-theme='light'] .hero-destination-badge {
+  color: var(--ink);
+  border-color: rgba(255, 253, 248, .7);
+  background: color-mix(in srgb, var(--white) 94%, transparent);
+  box-shadow: 0 14px 32px rgba(4, 14, 24, .26);
+}
+
+[data-theme='light'] .hero-destination-badge:hover,
+[data-theme='light'] .hero-destination-badge:focus-visible {
+  color: var(--ink);
+  border-color: var(--gold);
+}
+
+[data-theme='light'] .hero-destination-badge span { color: var(--muted); }
+[data-theme='light'] .hero-destination-badge svg,
+[data-theme='light'] .hero-destination-badge-pin { color: var(--gold); }
+
+[data-theme='light'] .disclaimer-bar {
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  border-inline-start: 3px solid var(--gold);
+  background: var(--white);
+  box-shadow: 0 10px 26px rgba(58, 42, 26, .06);
+}
+
+[data-theme='light'] .disclaimer-bar svg {
+  color: var(--gold);
+}
+
+[data-theme='light'] .footer {
+  color: var(--ink);
+  border-top: 2px solid var(--gold);
+  background: var(--paper-3);
+}
+
+[data-theme='light'] .footer small {
+  color: var(--muted);
+}
+
 [data-theme='dark'] .location-intro.detail-card,
 [data-theme='dark'] .q-card,
 [data-theme='dark'] .dest-card {
@@ -2934,6 +2966,7 @@ html[dir='rtl'] .home-hero-scrim {
   border-radius: 14px;
   background: rgba(5, 18, 31, .78);
   box-shadow: 0 14px 34px rgba(0, 0, 0, .28);
+  text-decoration: none;
   backdrop-filter: blur(10px);
   transition: transform var(--motion-normal) var(--motion-ease-out), border-color var(--motion-fast) ease;
 }
@@ -2970,26 +3003,6 @@ html[dir='rtl'] .home-hero-scrim {
 
 .route-two { opacity: .52; }
 .route-plane { fill: rgba(255, 225, 210, .62); }
-
-/* Explore/Destination previously rendered one motionless plane
-   (`route-plane-static`) with no matching animation rule anywhere in the
-   stylesheet — a real, confirmed-static decorative element. A first fix
-   gave it a small ~15px translate wobble; on a real device that read as
-   still-frozen (too little travel to register at a glance). It now flies
-   the same dashed route line already drawn in this variant (`route-one`),
-   the same technique already proven clearly visible on the Home hero —
-   slower here since this is a quieter, secondary context. */
-.route-plane-drift {
-  offset-path: path('M-70 105 C150 235 286 22 500 122 S870 262 1280 62');
-  offset-distance: 0%;
-  offset-rotate: auto;
-  animation: route-flight 26s linear infinite;
-  filter: drop-shadow(0 3px 5px rgba(3, 13, 23, .3));
-}
-
-.travel-route-explore .route-plane-drift {
-  animation: route-flight 22s linear infinite;
-}
 
 .purpose-grid { gap: 14px; }
 
@@ -3110,7 +3123,6 @@ html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translate
   box-shadow: 0 22px 56px rgba(7, 17, 29, .2), 0 0 0 1px rgba(230, 111, 67, .42);
 }
 
-.detail-hero .travel-route-decor { opacity: .25; }
 .detail-hero-inner { z-index: 3; }
 
 .surprise-card {
@@ -3126,7 +3138,6 @@ html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translate
 }
 
 .surprise-card > *:not(.travel-route-decor) { position: relative; z-index: 2; }
-.surprise-card .travel-route-decor { z-index: 1; opacity: .22; color: var(--gold); }
 .surprise-copy { align-self: center; max-width: 52ch; }
 .surprise-copy .display { font-size: clamp(1.8rem, 3vw, 2.7rem); }
 .surprise-copy p { margin-bottom: 12px; }
@@ -3180,8 +3191,6 @@ html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translate
   76% { transform: rotate(2deg); }
   100% { transform: rotate(-4deg); }
 }
-@keyframes plane-drift-one { from { translate: -6px 2px; } to { translate: 12px -7px; } }
-@keyframes plane-drift-two { from { translate: 7px -4px; } to { translate: -10px 6px; } }
 @keyframes surprise-compass-spin { 0% { transform: rotate(0deg); } 72% { transform: rotate(610deg); } 100% { transform: rotate(682deg); } }
 @keyframes quiz-compass-spin { to { transform: rotate(360deg); } }
 @keyframes quiz-enter-forward { from { opacity: .3; transform: translateX(22px); clip-path: inset(0 0 0 8%); } to { opacity: 1; transform: none; clip-path: inset(0); } }
@@ -3191,23 +3200,13 @@ html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translate
 @keyframes result-card-enter { from { opacity: .25; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
 @media (max-width: 980px) {
-  .home-hero-frame .hero-grid { grid-template-columns: 1fr; align-content: center; }
-  .home-hero-compass { position: absolute; inset-inline-end: 7vw; top: 15%; width: 168px; opacity: .72; }
-  .home-hero-frame .hero-copy { max-width: 620px; }
   .purpose-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 760px) {
-  .home-hero-cinematic { padding-block: 12px 40px; }
-  .home-hero-frame { min-height: 690px; border-radius: 18px; }
-  .home-hero-frame { height: auto; }
+  .surprise-card > .travel-route-surprise { display: none; }
+  .home-hero-frame { border-radius: 18px; }
   .home-hero-frame::after { inset: 10px; border-radius: 12px; }
-  .home-hero-frame .hero-grid { gap: 0; padding: 78px 25px 128px; }
-  .home-hero-frame .hero-copy h1 { max-width: 9ch; font-size: clamp(2.8rem, 14vw, 4.5rem); }
-  .home-hero-frame .hero-copy .lead { max-width: 36ch; }
-  .home-hero-compass { inset-inline-end: -18px; top: 28px; width: 134px; opacity: .54; }
-  .hero-destination-badge { inset-inline: 22px; bottom: 22px; min-width: 0; }
-  .home-hero-frame .hero-stats { grid-template-columns: repeat(3, 1fr); margin-top: 32px; }
   .home-hero-frame .hero-stat { min-width: 0; padding-inline: 8px; border-bottom: 0; }
   .home-hero-frame .hero-stat b { font-size: 1rem; }
   .home-hero-frame .hero-stat span { color: rgba(255, 249, 243, .84); font-size: .8rem; line-height: 1.45; }
@@ -3225,11 +3224,8 @@ html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translate
 }
 
 @media (max-width: 420px) {
-  .home-hero-frame { min-height: 720px; }
-  .home-hero-frame .hero-grid { padding-inline: 20px; }
   .home-hero-frame .hero-cta-row { align-items: stretch; }
   .home-hero-frame .hero-cta-row .btn { flex: 1 1 100%; justify-content: center; }
-  .hero-destination-badge { inset-inline: 17px; }
   .surprise-card { grid-template-columns: 70px minmax(0, 1fr); gap: 14px; }
   .surprise-compass { width: 70px; height: 70px; }
   .surprise-compass .compass-mark { width: 66px; height: 66px; }
@@ -3389,10 +3385,6 @@ html[dir='ltr'] .destination-page .detail-hero::after {
   box-shadow: 0 10px 28px rgba(0, 0, 0, .2);
   text-shadow: none;
   backdrop-filter: blur(10px);
-}
-
-.destination-page .detail-hero .travel-route-decor {
-  opacity: .2;
 }
 
 .destination-content-grid {
@@ -3642,7 +3634,6 @@ html[dir='ltr'] .destination-page .detail-hero::after {
 }
 
 .global-route-line-secondary { opacity: .58; }
-.global-plane { fill: currentColor; }
 .global-compass circle:last-of-type { stroke-dasharray: 2 7; }
 .global-compass path { fill: currentColor; opacity: .7; }
 
@@ -3670,6 +3661,7 @@ html[dir='ltr'] .destination-page .detail-hero::after {
   position: relative;
   isolation: isolate;
   contain: layout paint;
+  container: hero-stage / inline-size;
 }
 
 .home-hero-stage > .travel-route-decor {
@@ -4001,7 +3993,7 @@ html[dir='rtl'] .hero-vertical-tagline {
   offset-path: path('M90 700 C230 466 398 505 555 382 S875 150 1270 344');
   offset-distance: 100%;
   offset-rotate: reverse;
-  opacity: .38;
+  opacity: .6;
   animation: route-flight-secondary 21s linear infinite;
   filter: drop-shadow(0 3px 5px rgba(3, 13, 23, .3));
 }
@@ -4016,33 +4008,6 @@ html[dir='rtl'] .hero-vertical-tagline {
   z-index: 1;
 }
 
-.travel-route-how {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-  opacity: .4;
-  color: var(--gold);
-}
-
-.route-plane-how-a {
-  offset-path: path('M -40 40 C 250 130 520 10 800 90 S1180 150 1320 60');
-  offset-distance: 0%;
-  offset-rotate: auto;
-  animation: route-flight 27s linear infinite;
-}
-
-.route-plane-how-b {
-  offset-path: path('M 1320 170 C 1000 90 700 190 400 110 S 60 40 -40 130');
-  offset-distance: 100%;
-  offset-rotate: reverse;
-  opacity: .7;
-  animation: route-flight-secondary 35s linear infinite;
-}
-
 @keyframes route-flight {
   from { offset-distance: 0%; }
   to { offset-distance: 100%; }
@@ -4051,6 +4016,147 @@ html[dir='rtl'] .hero-vertical-tagline {
 @keyframes route-flight-secondary {
   from { offset-distance: 100%; }
   to { offset-distance: 0%; }
+}
+
+/* Flight bands — every secondary plane on the site (How-It-Works, the
+   Purpose and Explore page heads, the Surprise card, the Destination
+   photo, the Quiz header and the portrait Home Hero). Each band's box
+   keeps its viewBox's aspect ratio, so the plane is scaled uniformly and
+   never stretched; each sits only in open space, never behind a grid of
+   cards. The plane flies the dashed line drawn in the same band, fading
+   in at its origin and out past the band's edge, so it reads as a flight
+   passing through rather than a shape blinking into place. In RTL the
+   whole band mirrors, so flights follow the reading direction. */
+.travel-route-band {
+  position: absolute;
+  inset: auto;
+  z-index: 0;
+  height: auto;
+  aspect-ratio: 800 / 220;
+  overflow: visible;
+  color: var(--gold);
+}
+
+html[dir='rtl'] .travel-route-band {
+  transform: scaleX(-1);
+}
+
+.travel-route-band .travel-route-line { opacity: .34; }
+.travel-route-band .route-two { opacity: .26; }
+.travel-route-band .route-plane-mark { opacity: .66; stroke: none; }
+
+/* The inner end of a side band dissolves instead of starting abruptly
+   next to the copy it sits beside. */
+.travel-route-band:not(.travel-route-quiz, .travel-route-home-band) {
+  mask-image: linear-gradient(to right, transparent 0%, #000 26%);
+}
+
+.route-plane-band-a,
+.route-plane-band-b,
+.route-plane-quiz,
+.route-plane-home-top,
+.route-plane-home-bottom {
+  offset-distance: 0%;
+  offset-rotate: auto;
+  animation: route-flight-fade 18s linear infinite;
+}
+
+.route-plane-band-a { offset-path: path('M40 150 C200 70 380 180 560 100 S760 40 850 70'); }
+
+.route-plane-band-b {
+  offset-path: path('M850 176 C660 206 500 136 330 170 S130 204 30 156');
+  animation-duration: 24s;
+  animation-delay: -10s;
+}
+
+@keyframes route-flight-fade {
+  0% { offset-distance: 0%; opacity: 0; }
+  7% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+.home-how-section > .travel-route-band,
+.page-hero-ambient > .travel-route-band {
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  width: clamp(280px, 48%, 780px);
+}
+
+.surprise-card > .travel-route-surprise {
+  z-index: 1;
+  inset-block-start: 50%;
+  inset-inline-end: 0;
+  width: min(52%, 540px);
+  translate: 0 -50%;
+  transition: opacity var(--motion-normal) ease;
+}
+
+/* Once a destination is drawn, the result owns that column. */
+.surprise-card:has(.surprise-result) > .travel-route-surprise {
+  opacity: 0;
+}
+
+.detail-hero > .travel-route-destination {
+  z-index: 2;
+  inset-block-start: 3%;
+  inset-inline-end: 5%;
+  width: clamp(300px, 56%, 620px);
+  color: #fff6ef;
+  /* A soft dark halo keeps the white route legible over pale skies as
+     well as dark photos. */
+  filter: drop-shadow(0 1px 3px rgba(3, 13, 23, .55));
+}
+
+.travel-route-destination .travel-route-line { opacity: .7; }
+.travel-route-destination .route-plane-mark { opacity: 1; }
+
+.quiz-wrap > .travel-route-quiz {
+  inset-block-start: 6px;
+  left: 50%;
+  width: 100vw;
+  max-width: 1600px;
+  aspect-ratio: 1200 / 90;
+  translate: -50% 0;
+}
+
+.travel-route-quiz .travel-route-line { opacity: .2; }
+.travel-route-quiz .route-plane-mark { opacity: .42; }
+
+.route-plane-quiz {
+  offset-path: path('M-60 58 C220 20 460 76 700 42 S1080 20 1260 52');
+  animation-duration: 40s;
+}
+
+/* Portrait Home Hero bands: hidden until the portrait composition
+   (container query in the Hero section) swaps them in for the landscape
+   routes, which would otherwise cross the stacked copy. */
+.home-hero-stage > .travel-route-home-band {
+  display: none;
+  inset: auto 0;
+  z-index: 3;
+  width: 100%;
+  height: auto;
+  color: #ffd3c1;
+  opacity: 1;
+  will-change: auto;
+}
+
+.home-hero-stage > .travel-route-home-top { inset-block-start: 0; aspect-ratio: 1000 / 80; }
+.home-hero-stage > .travel-route-home-bottom { inset-block-end: 0; aspect-ratio: 1000 / 70; }
+.travel-route-home-band .travel-route-line { opacity: .5; }
+.travel-route-home-band .route-plane-mark { opacity: .9; }
+
+.route-plane-home-top {
+  offset-path: path('M-60 46 C180 18 400 64 620 36 S900 22 1060 44');
+  animation-duration: var(--motion-travel-slow);
+  filter: drop-shadow(0 3px 5px rgba(3, 13, 23, .35));
+}
+
+.route-plane-home-bottom {
+  offset-path: path('M1060 30 C820 54 600 16 380 40 S120 58 -60 30');
+  animation-duration: 21s;
+  animation-delay: -6s;
 }
 
 .section {
@@ -4296,57 +4402,224 @@ html[dir='rtl'] .hero-vertical-tagline {
   .explore-grid .meta-chip { padding: 4px 7px; font-size: .7rem; }
 }
 
-@media (max-width: 980px) {
+/* Portrait / narrow Home Hero — a composition of its own, not the
+   landscape Hero shrunk. Driven by the Hero stage's own width (container
+   query), so it follows the space the Hero actually has on any device and
+   orientation instead of a fixed "tablet = N px" frame height.
+   Two columns: the copy (title, label, lead, then the CTA cluster) and
+   a separate visual column — the catalog destination card as an upright
+   mini-card at the top, then the nearby note, its flourish and the
+   compass with its orbit labels, each with its own clearance. The stats
+   row keeps its place as the Hero's closing line, with the third stat
+   still inside it, well away from the card. */
+@container hero-stage (max-width: 930px) {
   .home-hero-frame {
-    height: 620px;
-    min-height: 620px;
+    height: auto;
+    min-height: 0;
   }
 
   .home-hero-frame .hero-grid {
-    grid-template-columns: 1fr;
-    padding: 64px 42px 108px;
+    height: auto;
+    grid-template-columns: minmax(0, 1fr) clamp(200px, 36cqi, 300px);
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-areas:
+      'title badge'
+      'label badge'
+      'lead visual'
+      'cta visual'
+      'stats stats';
+    align-items: start;
+    gap: 0 clamp(16px, 3.4cqi, 32px);
+    padding: clamp(40px, 7cqi, 60px) clamp(26px, 5.4cqi, 46px) clamp(30px, 5cqi, 44px);
+  }
+
+  .home-hero-frame .hero-copy {
+    display: contents;
+  }
+
+  .home-hero-frame .hero-copy h1 {
+    grid-area: title;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .home-hero-frame .hero-engine-label { grid-area: label; }
+  .home-hero-frame .hero-copy .lead { grid-area: lead; }
+  .home-hero-frame .hero-cta-cluster { grid-area: cta; align-self: end; }
+
+  /* Full row width, so the third stat keeps its place in the same row
+     as the other two wherever the copy allows it. */
+  .home-hero-frame .hero-stats {
+    grid-area: stats;
+    width: 100%;
   }
 
   .home-hero-compass-cluster {
-    position: absolute;
-    inset-block-start: 34px;
-    inset-inline-end: 34px;
-    width: 176px;
-    opacity: .9;
+    grid-area: visual;
+    align-self: start;
+    justify-self: stretch;
+    row-gap: clamp(46px, 7cqi, 58px);
+    width: auto;
+    padding-block: clamp(22px, 3.6cqi, 30px) 26px;
+  }
+
+  .hero-nearby-note {
+    justify-self: start;
+    margin: 0;
+    font-size: .86rem;
   }
 
   .home-hero-compass {
-    width: 152px;
+    justify-self: center;
+    width: clamp(132px, 21cqi, 184px);
   }
 
-  .hero-nearby-note { margin-inline-end: 0; font-size: .78rem; }
-  .hero-orbit-destination { max-width: 96px; font-size: .75rem; }
-  .hero-orbit-destination.orbit-2 { inset-inline-end: -42px; }
-  .hero-orbit-destination.orbit-4 { inset-inline-start: -42px; }
+  .hero-orbit-destination {
+    max-width: 104px;
+    font-size: .74rem;
+  }
+
+  .hero-orbit-destination.orbit-2 { inset-inline-end: -40px; }
+  .hero-orbit-destination.orbit-4 { inset-inline-start: -40px; }
+
   .hero-vertical-tagline { display: none; }
+
+  .home-hero-stage > .travel-route-home { display: none; }
+  .home-hero-stage > .travel-route-home-band { display: block; }
+
+  /* The catalog card becomes an upright editorial mini-card at the top
+     of the visual column: caption on top, the destination name set low,
+     and an orange hairline leading to the arrow. Its own region — well
+     clear of the orbit labels below it and of the stats row. */
+  .hero-destination-badge {
+    position: relative;
+    inset: auto;
+    grid-area: badge;
+    align-self: start;
+    justify-self: end;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr auto auto;
+    gap: 0 10px;
+    width: clamp(136px, 19cqi, 158px);
+    min-width: 0;
+    min-height: clamp(150px, 22cqi, 176px);
+    padding: 14px 15px 13px;
+  }
+
+  .hero-destination-badge span {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .hero-destination-badge strong {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    font-size: clamp(1.08rem, 2.6cqi, 1.28rem);
+    line-height: 1.25;
+  }
+
+  .hero-destination-badge-pin {
+    margin-top: .28em;
+  }
+
+  .hero-destination-badge::after {
+    content: '';
+    grid-column: 1;
+    grid-row: 4;
+    align-self: center;
+    height: 1px;
+    background: linear-gradient(to right, rgba(255, 149, 109, .78), rgba(255, 149, 109, 0));
+  }
+
+  html[dir='rtl'] .hero-destination-badge::after {
+    background: linear-gradient(to left, rgba(255, 149, 109, .78), rgba(255, 149, 109, 0));
+  }
+
+  .hero-destination-badge > svg {
+    grid-column: 2;
+    grid-row: 4;
+    align-self: center;
+  }
+}
+
+/* Phone widths: the visual column cannot sit beside a full-width copy
+   column, so the compass becomes a compact mark beside the title and the
+   catalog card becomes a full-width closing row under the stats. */
+@container hero-stage (max-width: 560px) {
+  .home-hero-frame .hero-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: none;
+    grid-template-areas:
+      'title visual'
+      'label label'
+      'lead lead'
+      'cta cta'
+      'stats stats'
+      'badge badge';
+    padding: 34px 20px 24px;
+  }
+
+  .home-hero-frame .hero-copy h1 {
+    font-size: clamp(2.3rem, 11cqi, 3.2rem);
+  }
+
+  .home-hero-compass-cluster {
+    align-self: start;
+    row-gap: 32px;
+    width: auto;
+    padding: 8px 0 14px;
+  }
+
+  .hero-nearby-note {
+    justify-self: center;
+    font-size: .74rem;
+  }
+
+  .hero-nearby-flourish { display: none; }
+
+  .home-hero-compass {
+    width: clamp(72px, 21cqi, 96px);
+  }
+
+  .hero-orbit-destination {
+    max-width: 76px;
+    padding: 3px 6px;
+    font-size: .7rem;
+    line-height: 1.25;
+  }
+
+  .hero-orbit-destination.orbit-1 { inset-block-start: -10px; }
+  .hero-orbit-destination.orbit-3 { inset-block-end: -10px; }
+
+  /* A compass this small has no room for side labels that do not cover
+     it or each other; the top and bottom nodes carry the idea alone. */
+  .hero-orbit-destination.orbit-2,
+  .hero-orbit-destination.orbit-4 { display: none; }
+
+  .hero-destination-badge {
+    justify-self: stretch;
+    grid-template-rows: auto auto;
+    gap: 2px 14px;
+    width: auto;
+    min-height: 0;
+    margin-top: 22px;
+    padding: 12px 14px;
+  }
+
+  .hero-destination-badge span { grid-column: 1; grid-row: 1; }
+  .hero-destination-badge strong { grid-column: 1; grid-row: 2; margin: 0; }
+  .hero-destination-badge::after { display: none; }
+
+  .hero-destination-badge > svg {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
 }
 
 @media (max-width: 760px) {
   .home-hero-cinematic { padding-block: 10px 34px; }
-  .home-hero-frame { height: 680px; min-height: 680px; }
-  .home-hero-frame .hero-grid { padding: 102px 20px 108px; }
-  .home-hero-frame .hero-copy h1 {
-    max-width: 54vw;
-    margin-inline-end: auto;
-    font-size: clamp(2.55rem, 12vw, 3.7rem);
-  }
-  .home-hero-frame .hero-engine-label { margin-top: 15px; }
-  .home-hero-frame .hero-copy .lead { line-height: 1.62; }
-  .home-hero-frame .hero-stats { margin-top: 24px; }
-  .home-hero-compass-cluster { inset-block-start: 14px; inset-inline-end: 4px; gap: 3px; width: 106px; }
-  .home-hero-compass { width: 82px; }
-  .hero-nearby-note { display: block; margin: 0; font-size: .75rem; }
-  .hero-orbit-destination { max-width: 78px; padding: 3px 6px; font-size: .75rem; line-height: 1.25; }
-  .hero-orbit-destination.orbit-1 { inset-block-start: -9px; }
-  .hero-orbit-destination.orbit-2 { inset-inline-end: -29px; }
-  .hero-orbit-destination.orbit-3 { inset-block-end: -9px; }
-  .hero-orbit-destination.orbit-4 { inset-inline-start: -29px; }
-  .hero-destination-badge { bottom: 16px; }
   .purpose-grid { gap: 10px; }
   .purpose-card,
   .purpose-card:nth-child(odd) { min-height: 100px; padding: 13px; }
@@ -4355,14 +4628,6 @@ html[dir='rtl'] .hero-vertical-tagline {
   .surprise-card { grid-template-columns: 64px minmax(0, 1fr); padding: 16px; }
   .surprise-compass { width: 62px; height: 62px; }
   .surprise-compass .compass-mark { width: 58px; height: 58px; }
-}
-
-@media (max-width: 420px) {
-  .home-hero-frame { height: 690px; min-height: 690px; }
-  .home-hero-frame .hero-grid { padding-inline: 17px; }
-  .home-hero-frame .hero-copy h1 { width: 196px; max-width: 196px !important; }
-  .home-hero-frame .hero-cta-row .btn { flex: 1 1 calc(50% - 6px); }
-  .home-hero-compass-cluster { opacity: .78; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -4375,6 +4640,14 @@ html[dir='rtl'] .hero-vertical-tagline {
     offset-distance: 62%;
     animation: none !important;
   }
+
+  /* Band planes rest mid-route, fully drawn, instead of at a faded or
+     off-edge path start. */
+  .route-plane-band-a { offset-distance: 58%; }
+  .route-plane-band-b { offset-distance: 42%; }
+  .route-plane-quiz { offset-distance: 30%; }
+  .route-plane-home-top { offset-distance: 40%; }
+  .route-plane-home-bottom { offset-distance: 56%; }
 
   .hero-orbit-destination {
     animation: none !important;

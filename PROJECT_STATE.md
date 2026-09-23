@@ -5,6 +5,50 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-23 (round 6, user acceptance repair)
+
+- State document version: 32. Phase 17 status: USER ACCEPTANCE REPAIR /
+  READY FOR FINAL USER REVIEW — not complete. Phase 18 NOT STARTED. Driven
+  by the user's Android-tablet production screenshots (authoritative).
+- **Portrait Home Hero recomposed (not scaled down).** The old fixed
+  620/680/690px frame heights and the absolutely positioned compass/badge
+  under `@media (max-width: 980/760/420px)` were deleted. `.home-hero-stage`
+  is now a `hero-stage` inline-size container; `@container hero-stage
+  (max-width: 930px)` lays the Hero out as a copy column (title, label,
+  lead, CTA) plus a visual column (catalog destination card as an upright
+  mini-card at the top, then the nearby note + flourish, then the centered
+  compass with its orbit labels), with the stats row as the closing line.
+  The third stat "أسئلة قليلة تحدد وجهتك" was NOT moved. A `≤560px` stage
+  sub-layout covers phones (compact compass beside the title; side orbit
+  labels hidden). BROWSER-VERIFIED 360–962px, AR/EN, light/dark: no
+  element/orbit overlaps in AR, no horizontal overflow.
+- **Light mode surfaces (theme-scoped `[data-theme='light']`, Dark
+  unchanged — computed values re-checked identical):** Hero band
+  `.home-hero-cinematic` #091827 → transparent (paper); `.home-hero-frame`
+  #0b1b2a + white-alpha border → 8px `var(--white)` cream mat + warm
+  outline; catalog card → paper mini-card; `.disclaimer-bar`
+  ("توصيات وجهتي…") `var(--ink)` → `var(--white)` with ink text and a
+  3px `var(--gold)` inline-start accent; `.footer` (the block directly
+  below it, `components/layout/Footer.tsx`) `var(--ink)` → `var(--paper-3)`
+  with ink text and a 2px gold top rule. The photograph and its text-side
+  scrim stay dark by design.
+- **Airplanes rebuilt.** Deleted: the static plane inside the site-wide
+  `TravelBackdrop` SVG pattern (it tiled motionless copies across every
+  page), the Purpose card-grid decor that peeked between cards, and the
+  stretched `how`/`explore`/`drift` variants. Every secondary plane now uses
+  one "flight band" system in `TravelRouteDecor.tsx`: a uniform-scale SVG
+  (box keeps the viewBox aspect ratio, so planes are never distorted)
+  placed only in open space, flying its own visible dashed route with a
+  fade in/out. Variants: `band` (How-It-Works, Purpose and Explore page
+  heads), `surprise`, `destination`, `quiz`, `home-portrait` (top/bottom
+  margin flights that replace the landscape routes in the portrait Hero).
+  Landscape Home Hero routes are unchanged (secondary plane opacity .38 →
+  .6). BROWSER-VERIFIED: every visible plane moves 33–175px per 2s and is
+  motionless under `prefers-reduced-motion`.
+- Verification: 948/948 frontend tests, `tsc -b`, oxlint (0), production
+  build; 200-combination Playwright matrix (5 pages × AR/EN × light/dark ×
+  5 viewports) with zero overflow and zero stopped planes.
+
 ### Current verified state — 2026-09-22 (round 3, repair pass)
 
 - State document version: 31. This round is a production-evidence-driven

@@ -68,7 +68,7 @@ export function Explore() {
   return (
     <>
       <section className="page-hero page-hero-ambient">
-        <TravelRouteDecor variant="how" />
+        <TravelRouteDecor variant="band" />
         <div className="container">
           <h1 className="display">{ex.title}</h1>
           <p>{ex.sub}</p>

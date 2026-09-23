@@ -132,7 +132,7 @@ export function SurpriseDestination({
 
   return (
     <section className="surprise-card" aria-labelledby="surprise-title">
-      <TravelRouteDecor variant="explore" />
+      <TravelRouteDecor variant="surprise" />
       <div className={`surprise-compass${spinning ? ' spinning' : ' landed'}`} aria-hidden="true">
         <CompassMark size={96} />
       </div>

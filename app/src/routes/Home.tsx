@@ -44,6 +44,7 @@ export function Home() {
         <div className="container">
           <div className="home-hero-stage">
             <TravelRouteDecor variant="home" />
+            <TravelRouteDecor variant="home-portrait" />
             <div className="home-hero-frame">
               <DestinationImage destination={featuredDestination} lang={lang} className="hero-folio-image" priority variant="hero" />
               <div className="home-hero-scrim" />
@@ -119,7 +120,7 @@ export function Home() {
       </section>
 
       <section className="section home-how-section" id="howSection">
-        <TravelRouteDecor variant="how" />
+        <TravelRouteDecor variant="band" />
         <div className="container">
           <div className="section-head center">
             <h2 className="display">{how.title}</h2>

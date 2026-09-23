@@ -21,14 +21,13 @@ export function PurposeSelect() {
   return (
     <>
       <section className="page-hero page-hero-ambient">
-        <TravelRouteDecor variant="how" />
+        <TravelRouteDecor variant="band" />
         <div className="container">
           <h1 className="display">{pu.title}</h1>
           <p>{pu.sub}</p>
         </div>
       </section>
-      <section className="section purpose-grid-section" style={{ paddingTop: 34 }}>
-        <TravelRouteDecor variant="how" />
+      <section className="section" style={{ paddingTop: 34 }}>
         <div className="container">
           <div className="purpose-grid" id="purposeGrid">
             {PURPOSES.map((p) => (
