@@ -18,7 +18,9 @@ export type ExploreSort =
   | 'cost-asc'
   | 'cost-desc'
   | 'nearest'
-  | 'farthest';
+  | 'farthest'
+  /** Phase 18 — offered only when a personalization profile exists. */
+  | 'personal';
 
 /** The two distance sorts are only meaningful with real location context —
  *  see Explore.tsx, which gates them on `state.location.coords`, and
@@ -115,4 +117,7 @@ export type AppAction =
   | { type: 'LOCATION_FAILED'; status: Exclude<LocationStatus, 'idle' | 'requesting' | 'granted'>; diagnostic?: LocationDiagnostic }
   | { type: 'LOCATION_RESOLVE_DIAGNOSTIC'; diagnostic: LocationDiagnostic }
   | { type: 'LOCATION_RESET' }
-  | { type: 'SET_PASSPORT'; countryCode: string | null };
+  | { type: 'SET_PASSPORT'; countryCode: string | null }
+  /** Phase 18 — "edit my preferences": replay a saved questionnaire with
+   *  its answers pre-selected. */
+  | { type: 'HYDRATE_QUIZ_FROM_PROFILE'; purpose: PurposeId; answers: Answers; path: string[] };

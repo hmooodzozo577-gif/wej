@@ -14,6 +14,7 @@ import { useVisaProviderActive } from '../visa/useVisaRequirements';
 import { waitForLocationSettle } from '../state/waitForLocationSettle';
 import { CompassMark } from '../components/CompassMark';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
+import { usePersonalization } from '../personalization/usePersonalization';
 
 const OPTIONAL_RESULTS_AFTER = 5;
 const ANSWER_TRANSITION_MS = 140;
@@ -51,6 +52,7 @@ export function Quiz() {
   // reports a configured provider, the step says the personalization is not
   // running rather than implying it is.
   const visaProviderActive = useVisaProviderActive();
+  const { saveFromQuiz } = usePersonalization();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const validPurpose = isPurposeId(purposeParam);
@@ -102,6 +104,9 @@ export function Quiz() {
       results: results.slice(0, 5).map((item) => ({ countryCode: item.dest.countryCode, score: item.score })),
     }, { path: `/quiz/${purposeParam}`, locale: lang });
     dispatch({ type: 'SET_RESULTS', results });
+    // Phase 18 — completing the questionnaire saves (or replaces) this
+    // browser's personalization profile: the answers and the order asked.
+    saveFromQuiz(purposeParam, answers, state.path);
     navigate('/results');
   };
 

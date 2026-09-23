@@ -126,6 +126,27 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return withoutLocationQuestions({ ...state, location: { status: 'idle', coords: null, diagnostic: null } });
     case 'SET_PASSPORT':
       return { ...state, passportCode: action.countryCode };
+    case 'HYDRATE_QUIZ_FROM_PROFILE': {
+      // Keep only questions that exist in the bank the traveller can be
+      // asked NOW — a location-dependent answer saved earlier is dropped
+      // when there is no location this visit, the same rule
+      // withoutLocationQuestions() applies.
+      const bank = effectiveQuestionBank(action.purpose, !!state.location.coords);
+      const askable = new Set(bank.map((question) => question.id));
+      const answers = Object.fromEntries(Object.entries(action.answers).filter(([id]) => askable.has(id)));
+      let path = action.path.filter((id) => askable.has(id) && answers[id] !== undefined);
+      if (!path.length) path = initialPath(action.purpose, !!state.location.coords);
+      return {
+        ...state,
+        purpose: action.purpose,
+        answers,
+        path,
+        qIndex: 0,
+        // The saved answers already passed the early-results checkpoint.
+        questionnaireCheckpointPassed: true,
+        results: null,
+      };
+    }
     default:
       return state;
   }
