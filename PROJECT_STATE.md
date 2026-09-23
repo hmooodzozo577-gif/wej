@@ -46,23 +46,39 @@ configuration, and current Git state outrank this document when they differ.
 
 ### Pre-Phase-18 rollback checkpoint
 
-- The commit that adds this section is the complete project immediately
-  before Phase 18. It is preserved remotely by BOTH:
-  - branch `backup/phase17-final-pre-phase18`
-  - annotated tag `phase17-final-pre-phase18`
-  Its exact hash is recorded in the commit that follows it and in the
-  Phase 18 report. Neither ref may ever be moved, amended or force-pushed.
+- **PRE_PHASE18_COMMIT = `4dc8018a554fb4b221e0cf0e8ae96ea18096c565`**
+  (tree `37f3e390987dee7afd8929761bcc6912c816db82`), created 2026-09-23.
+  This commit is the complete project immediately before Phase 18:
+  Phase 17 final acceptance fixes, 953/953 frontend tests, `tsc -b` clean,
+  oxlint 0, production build OK, deployed by GitHub Pages run
+  `35820019442` (success).
+- Preserved by:
+  - remote branch `backup/phase17-final-pre-phase18` → `4dc8018…`
+    (VERIFIED with `git ls-remote`).
+  - annotated tag `phase17-final-pre-phase18` → `4dc8018…`, created in the
+    session's clone. Pushing the tag was refused by the session's git
+    proxy (HTTP 403, policy denial on tag refs), so the tag is NOT on
+    GitHub yet; push it from any normal clone with
+    `git push origin phase17-final-pre-phase18` (or create it in the
+    GitHub UI at commit `4dc8018`). The remote branch alone is sufficient
+    for the rollback below.
+  Neither ref may ever be moved, amended or force-pushed. Phase 18 lives
+  only in later commits on `claude/marhaba-kxry8l`.
 - To remove Phase 18 completely (history-preserving, no force push):
   ```
-  git fetch origin --tags
+  git fetch origin backup/phase17-final-pre-phase18 claude/marhaba-kxry8l
   git checkout claude/marhaba-kxry8l
-  git restore --source=phase17-final-pre-phase18 --staged --worktree :/
-  git commit -m "Rollback: remove Phase 18, restore tree to phase17-final-pre-phase18"
-  git diff phase17-final-pre-phase18 HEAD --stat   # must print nothing
-  git push origin claude/marhaba-kxry8l            # redeploys Pages
+  git restore --source=4dc8018a554fb4b221e0cf0e8ae96ea18096c565 --staged --worktree :/
+  git commit -m "Rollback: remove Phase 18, restore tree to pre-Phase-18 checkpoint"
+  git diff 4dc8018a554fb4b221e0cf0e8ae96ea18096c565 HEAD --stat   # must print nothing
+  git push origin claude/marhaba-kxry8l                           # redeploys Pages
   ```
+  (`origin/backup/phase17-final-pre-phase18` or the tag may be used in
+  place of the hash; all three name the same commit.)
   `git restore` with a source also deletes files added after the
-  checkpoint, so Phase 18 code, tests, docs and config all disappear.
+  checkpoint, so Phase 18 code, tests, docs and config all disappear —
+  including this very paragraph's hash record, which is expected: the
+  refs above keep the checkpoint findable forever.
 - Browser storage after a rollback: Phase 18 stores the personalization
   profile in localStorage. After a rollback that key may remain in some
   users' browsers; the restored Phase 17 code never reads it, so it is
