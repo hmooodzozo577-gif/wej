@@ -33,9 +33,12 @@ persistent autonomous engineering operating contract for this project.
 - Preserve accepted UI designs. Do not change the visual design, layout, or
   interaction presentation of an existing screen unless the user explicitly
   requests that design change. Behavioral fixes must reuse the accepted UI.
-- Phase 14 (`app/src/engine/`) is the sole ranking authority. The interview is
-  deterministic and must not introduce ranking fields or weights that Phase 14
-  does not support.
+- Phase 14 (`app/src/engine/`) is the sole scoring and candidate-selection
+  authority. The interview is deterministic and must not introduce ranking
+  fields or weights that Phase 14 does not support. The Phase 18 Personal
+  Match layer (`app/src/personalization/`) never changes a Phase 14 score or
+  weight; it may only reorder within Phase 14's top 10 candidates, and its
+  number is always labelled separately from general suitability.
 - Israel (IL/ISR) exclusion is absolute across every effective path.
   Monaco (MC/MCO) is a valid destination.
 - Never fabricate a price (flight, hotel, accommodation) — real

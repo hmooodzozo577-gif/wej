@@ -5,11 +5,72 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-23 (Phase 18 personalization)
+
+- State document version: 34. **Phase 18 status: PERSONALIZATION READY
+  FOR USER ACCEPTANCE.** Phase 17 final acceptance fixes are deployed
+  (checkpoint below) and also await user acceptance. Phase 19 NOT STARTED —
+  do not begin it without an explicit user decision.
+- **What Phase 18 is**: anonymous, browser-local personalization. No
+  account, no server storage, no AI, no fingerprinting. Methodology,
+  formula and lifecycle: `app/src/personalization/README.md`
+  (methodology version `personal-match-1.0`).
+- **Three numbers, never merged**: *General suitability* ("مناسب لـ",
+  Country Intelligence, unchanged) · *Phase 14 match* (candidate selection
+  and baseline order, protected and unchanged) · *Personal Match*
+  ("XX% لك" / "XX% for you") — how well a country fits this traveller's
+  own answers. The UI always labels which one it shows.
+- **Ranking relationship**: Phase 14 still scores all countries and
+  selects the candidates; `refineRanking` reorders only within Phase 14's
+  top 10 (eligible first → Personal Match → visa convenience → Phase 14
+  score → id). No Phase 14 weight, score or test changed.
+- **Profile**: `wejhaty.personalization.v1` in localStorage =
+  `{schemaVersion 1, purpose, answers, path, createdAt, updatedAt}`.
+  Strict validation on read (invalid → first-visit behaviour), a tested
+  migration runner (`PROFILE_MIGRATIONS`, empty at v1), and graceful
+  failure when storage throws or is full. Never stored: coordinates,
+  passport, names or identifiers. Same browser/device only; no sync.
+- **Scoring rules**: only answered questions count; "no preference" is
+  neutral; data imputed in the recommendation dataset and distance
+  without a shared location are *unavailable* (lower coverage, never the
+  score); strength changes weight only; the land-border answer is the one
+  hard constraint (fails sort last, never hidden); a neutral prior keeps
+  one or two answers from ever showing a confident 100%; no evaluable
+  preference → no number at all.
+- **Surfaces**: Results (featured ring = Personal Match with confidence
+  and the labelled general suitability beside it; secondary cards
+  "XX% لك"; edit / reset / new trip; rebuilt from the profile after a
+  reload), Destination ("لماذا تناسبك هذه الوجهة؟" with factors grouped
+  positive / partial / weaker / not counted; without a profile the
+  invitation "اكتشف مدى توافقها معك" instead of a number; "مناسب لـ"
+  unchanged), Explore (per-card badge, "الأفضل لتفضيلاتك" sort that hides
+  nothing), Surprise (random pick among the 15 best-fitting eligible
+  countries with a profile, unchanged without), Home (quiet "متابعة
+  بتفضيلاتي السابقة" link for a returning traveller), and a reset
+  confirmation on the purpose page.
+- **Controls**: edit replays the saved questionnaire with the answers
+  pre-selected; reset removes only the profile key (theme, language and
+  other preferences untouched); a new trip keeps the saved profile until
+  a new questionnaire completes.
+- Verification: 996/996 frontend tests (43 in `app/src/personalization/`,
+  including a 400-profile × 194-country bounds sweep and UI tests for every
+  surface with and without a profile, AR and EN), `tsc -b`, oxlint 0,
+  build; Worker untouched. Playwright Phase 18 matrix — AR/EN ×
+  light/dark × 390/430/800×1280/1280×800/1440 over Results, Destination
+  (with and without a profile), Explore, Home and reset, plus the full
+  lifecycle (quiz → save → reload → edit → new trip → reset) and a
+  shared-location run proving coordinates never reach storage — 222 checks,
+  0 failures, and the same 222 under reduced motion, 0 failures.
+- Known limits: a location-based preference is unavailable after a
+  reload until location is shared again (coordinates are memory-only by
+  design); one profile per browser (completing a questionnaire for another
+  purpose replaces it); the rollback tag is local-only (see below).
+
 ### Current verified state — 2026-09-23 (Phase 17 final acceptance fixes)
 
-- State document version: 33. Phase 17 status: FINAL ACCEPTANCE FIXES
-  APPLIED / READY FOR USER REVIEW. This commit is the intended
-  PRE-PHASE-18 checkpoint (see "Pre-Phase-18 rollback checkpoint" below).
+- State document version 33 (superseded by 34 above). Phase 17 status:
+  FINAL ACCEPTANCE FIXES APPLIED / READY FOR USER REVIEW. This commit is
+  the PRE-PHASE-18 checkpoint (see "Pre-Phase-18 rollback checkpoint" below).
 - **Light Home Hero inverted, not lightened** (`[data-theme='light']` only;
   Dark unchanged): the navy scrim is replaced by a warm paper gradient
   (`rgba(242,238,229,…)`, i.e. `--paper`) rising from the TEXT side
@@ -706,7 +767,10 @@ server-side travel-provider integrations.
   dimensions, or weights. The visa layer is not an exception: it lives outside
   the engine, changes no weight and no match score, and may only reorder
   destinations whose Phase 14 scores are already within 3 points of each
-  other (see Passport and visa system).
+  other (see Passport and visa system). The Phase 18 Personal Match layer
+  (`app/src/personalization/`) is likewise outside the engine: it changes no
+  Phase 14 weight or score and only reorders within Phase 14's top 10
+  candidates; its number is always labelled apart from general suitability.
 - Israel (`IL`/`ISR`) is excluded from every effective catalog, routing,
   search, recommendation, image, and calculation path. Monaco (`MC`/`MCO`) is
   valid.
@@ -1516,6 +1580,10 @@ language switcher, and the full panel set above. Two things are still open:
 | Relative price-level data | `app/src/data/travelCostIndex.ts` |
 | Country -> Best Purposes grouping | `app/src/intelligence/bestSuitedFor.ts` |
 | Geolocation quiz-race bounded wait | `app/src/state/waitForLocationSettle.ts` |
+| Personalization (profile, storage, Personal Match, explanations) | `app/src/personalization/` |
+| Personal Match methodology doc | `app/src/personalization/README.md` |
+| Shared answer vocabulary (Phase 14 text + Personal Match text) | `app/src/engine/answerVocabulary.ts` |
+| Flight-path geometry for decorative planes | `app/src/components/flightPaths.ts` |
 
 ## Provider and external state
 
@@ -1606,8 +1674,10 @@ and production-verified. Current order:
    production responsive-image and bilingual/theme checks passed in addition
    to the existing 16-case browser matrix. Worker deployment was unnecessary
    because Worker code did not change.
-1. Obtain final user acceptance for Phase 17. Do not call the phase complete
-   and do not begin Phase 18 before that acceptance.
+1. Obtain user acceptance for the Phase 17 final fixes and for Phase 18
+   personalization. Do not call either complete before that acceptance, and
+   do not begin Phase 19 automatically. If the user asks to remove Phase 18,
+   follow "Pre-Phase-18 rollback checkpoint" exactly.
 2. Production-check rating persistence and optional R2 screenshot storage;
    ordinary Contact, Suggestion, and Site Bug D1 writes are already
    production-verified.
@@ -1644,7 +1714,7 @@ and production-verified. Current order:
    weaknesses are required for the remaining 164 countries. Note that city
    "known for" narrative is now covered by the Wikipedia description layer,
    so that part of this item is done.
-8. Reassess the roadmap with the user before Phase 18.
+8. Reassess the roadmap with the user before Phase 19.
 
 ## Handoff rule
 

@@ -16,7 +16,7 @@ Wejhaty helps a traveler move from broad preferences to a practical, explainable
 
 ## Positioning
 
-Wejhaty's distinguishing mechanism is a deterministic recommendation engine over a worldwide catalog, paired with transparent reasons and explicit uncertainty. The interview gathers only supported preferences; Phase 14 remains the sole ranking authority. Location may break otherwise-equal matches only when the traveler opts into proximity, and passport country is optional and used only for verified entry requirements.
+Wejhaty's distinguishing mechanism is a deterministic recommendation engine over a worldwide catalog, paired with transparent reasons and explicit uncertainty. The interview gathers only supported preferences; Phase 14 remains the sole scoring and candidate-selection authority, and the browser-local Personal Match layer (Phase 18) may only reorder within Phase 14's top candidates, always labelled separately from a country's general suitability. Location may break otherwise-equal matches only when the traveler opts into proximity, and passport country is optional and used only for verified entry requirements.
 
 ## Operating Context
 
