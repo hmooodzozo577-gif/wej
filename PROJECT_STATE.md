@@ -5,9 +5,73 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-23 (Phase 20 final repairs, RC2)
+
+- State document version: 38. **Status: PHASE 20 — FINAL WEJHATY /
+  WEJHATY v1.0.0 RC2 / TECHNICALLY VERIFIED / AWAITING USER ACCEPTANCE.**
+  Nothing is user-accepted or final. **Phase 21 (Admin post-launch
+  enhancements) NOT STARTED — it may begin only after the user explicitly
+  approves Phase 20**, and only after a `backup/phase20-final-pre-phase21`
+  checkpoint. Phase 14, the Country Suitability methodology, Personal Match
+  (`personal-match-1.0`), the catalog and the Israel exclusion are
+  unchanged. **Passport / entry information is FROZEN by user decision**
+  (34-destination snapshot, sources, UI, copy, privacy, freshness process
+  all unchanged; regression-tested only).
+- **Destination Match (bug fixed)**: on a destination page without a
+  profile, "اكتشف مدى توافقها معك" used to open the questionnaire and end
+  on the general Results. It now carries a transient destination-match
+  intent (React Router location state, `app/src/personalization/
+  quizIntent.ts`) through Purpose → Quiz and returns to that destination,
+  which shows its own Personal Match (computed for the country itself,
+  whatever its Phase 14 rank) and brings the section into view once
+  (instant under reduced motion). The profile is saved exactly as before;
+  the target is never stored (profile, storage, analytics, URL). Back from
+  Purpose returns to the destination; "change purpose" keeps the intent;
+  the Home/Purpose flow still ends on Results.
+- **Heading structure**: page sections, cards and purpose tiles moved from
+  h3 to h2 (Personal Match factor groups h4 → h3) with CSS selectors
+  extended so the rendering is unchanged (pixel-identical on Purpose and
+  Destination pages; identical computed styles on Results/Explore). axe
+  reports no violations of any kind on 7 pages × AR/EN × Light/Dark ×
+  phone/desktop (`heading-order` resolved).
+- **Explore performance**: measured root cause = style/layout of all 194
+  cards at once (11,599 nodes; flag SVGs are 57% of nodes, but turning them
+  into images made it worse, so that was reverted). Fix: `content-visibility:
+  auto` with a remembered 410 px placeholder on each card. Mobile (4× CPU,
+  median of 5): TBT 3.17 s → 1.42 s, FCP 3.43 s → 1.90 s, layout 1.55 s →
+  0.37 s. After scrolling, card positions and page height are identical to
+  before; nothing is hidden (find-in-page, keyboard and assistive tech
+  unaffected).
+- **Security backlog (behavior-neutral items resolved)**: admin token
+  compared as fixed-size SHA-256 digests (no length timing); Cloudflare
+  Access signing keys cached 10 min with a rate-limited refresh on unknown
+  key ids; screenshot bytes must be a real PNG/JPEG/WebP and are stored
+  under the type the bytes prove; declared-length body ceilings on every
+  body-reading endpoint (413); `/api/cities/descriptions` gets its own
+  per-address limit (60/min, `CITY_DESCRIPTIONS_RATE_LIMITER`).
+- **Browser coverage**: the manual `production-smoke.yml` now also runs real
+  Microsoft Edge (runner install) and real Safari on a macOS runner through
+  safaridriver (Worker hostname blocked in /etc/hosts, so no data is
+  written). iOS Safari and real screen readers remain UNVERIFIED.
+- **Release tagging**: `.github/workflows/create-release-tag.yml` creates an
+  annotated release tag from a GitHub runner (the development Git proxy
+  refuses tag pushes); it never moves an existing tag and only tags a
+  commit on the named release branch.
+- **Verification (local production build)**: frontend 1079/1079 (one full
+  run, `--maxWorkers=2`), Worker 245/245, `tsc`, oxlint, build and
+  `wrangler deploy --dry-run` (4 rate-limit bindings) clean. Browser QA
+  (Chromium): destination match 100/100 (AR/EN × Light/Dark × phone/
+  desktop, low-match country outside the top 10, back, reload), flows
+  46/46, edge 18/18, responsive 732/732, Phase 17 matrix 120/120, Phase 18
+  matrix 226/226, UA matrix 648/648, passport regression 8/8 contexts, axe
+  0 violations. Production results: see the RC2 record in
+  `/RELEASE_CANDIDATE.md`.
+- **Authoritative unresolved register**: "Unresolved register" section
+  below. Older notes that disagree with it are superseded.
+
 ### Current verified state — 2026-09-23 (Security audit Pass 2, approved fixes)
 
-- State document version: 37. **Status: PHASE 20 — FINAL WEJHATY /
+- State document version 37 (superseded by 38 above). **Status: PHASE 20 — FINAL WEJHATY /
   RELEASE CANDIDATE / AWAITING USER ACCEPTANCE**, now with the
   user-approved security Pass 2 fixes on top of `wejhaty-v1.0.0-rc1`
   (**WEJHATY SECURITY AUDIT — APPROVED PASS 2 FIXES COMPLETE**). Nothing
@@ -1786,6 +1850,9 @@ language switcher, and the full panel set above. Two things are still open:
 | City descriptions (browser) | `app/src/cities/cityDescriptionClient.ts` |
 | Admin auth and routing | `worker/src/admin.ts` |
 | Shared Worker rules (CORS origin, IL/ISR exclusion) | `worker/src/shared.ts` |
+| Questionnaire entry intent (destination match) | `app/src/personalization/quizIntent.ts` |
+| Release tagging (runner) | `.github/workflows/create-release-tag.yml` |
+| Real Safari smoke (macOS runner) | `app/scripts/safari-smoke.mjs` |
 | Public-write rate limits (bindings) | `worker/wrangler.toml` `[[ratelimits]]`, used in `worker/src/product.ts` |
 | City article title allowlist | `worker/src/generated/cityTitles.json` |
 | Production checks (site, Worker) | `app/scripts/production-smoke.mjs`, `app/scripts/worker-smoke.mjs`, `.github/workflows/production-smoke.yml` |
@@ -1893,32 +1960,51 @@ see "Non-negotiable product rules" above.)
 ## Roadmap gate and immediate backlog
 
 Phase 16 (AI API Integration) is CANCELLED/SKIPPED by product decision.
-Phase 19 (testing, optimization, hardening, passport entry information) is
-implemented; Phase 20 produced release candidate `wejhaty-v1.0.0-rc1`.
-Current order:
+Phase 19 is implemented; Phase 20 produced `wejhaty-v1.0.0-rc1` and then
+`wejhaty-v1.0.0-rc2` (Destination Match fix, heading structure, Explore
+performance, security backlog, Pass 2). Current order:
 
-1. **USER ACCEPTANCE GATE.** Obtain the user's acceptance of the release
-   candidate (Phase 17 visuals, Phase 18 personalization, Phase 19/20).
-   Do not call anything FINAL or USER-ACCEPTED before that, and do not
-   begin Phase 21. If the user asks to remove Phase 18, follow
-   "Pre-Phase-18 rollback checkpoint" exactly.
-2. **Security audit Pass 2 — approved fixes done** (see state v37). The
-   items the user deferred stay deferred; do not start them without a new
-   decision. Security is not "fully signed off": Turnstile is still off and
-   the deferred items remain.
-3. Enable "Allow GitHub Actions to create and approve pull requests" (repo
-   setting) so the weekly entry-requirements and monthly data refreshes can
-   open their PRs; until then merge their pushed branches manually.
-4. Thmanyah Arabic font: blocked by license; needs written web-embedding
-   permission from Thmanyah before any work.
-5. Entry-requirements coverage expansion (e.g. USA, Türkiye, Malaysia,
-   UAE, Japan) — only from official sources that permit automated access
-   and parse unambiguously; otherwise they stay "not covered".
-6. Production-check rating persistence and optional R2 screenshot storage;
-   configure admin access and, if abuse appears, the Turnstile keys.
-7. Performance: the main chunk still carries all flag SVGs and the full
-   datasets (see Phase 19 performance notes); lazy-loading them is the
-   next measurable win if load time becomes a priority.
+1. **PHASE 20 USER ACCEPTANCE GATE (RC2).** Obtain the user's explicit
+   acceptance (checklist in `/RELEASE_CANDIDATE.md`). Do not call anything
+   FINAL or USER-ACCEPTED before that. If the user asks to remove Phase 18,
+   follow "Pre-Phase-18 rollback checkpoint" exactly.
+2. **Phase 21 — Admin post-launch enhancements (Admin only).** Starts only
+   after that approval, from a `backup/phase20-final-pre-phase21` branch
+   and an annotated tag recorded with its commit and tree. Public site,
+   Phase 14, Phase 18 and Passport stay out of scope.
+3. The user decisions listed in the unresolved register below.
+
+## Unresolved register (authoritative, 2026-09-23)
+
+Every open item, one status each. Statuses: RESOLVED, DEFERRED, BLOCKED,
+FROZEN, USER-DECISION REQUIRED, UNVERIFIED.
+
+| ID | Item | Status | Reason | Next action | Owner | User decision? |
+|---|---|---|---|---|---|---|
+| U1 | Thmanyah Arabic font | BLOCKED | License text read in Phase 19 forbids hosting/embedding the files; the official page is unreachable from the development sandbox today, and search snippets from Thmanyah's help centre describe websites as a permitted use "under the license" — an ambiguity only Thmanyah can settle | Ask Thmanyah (Ask@thmanyah.com) for written confirmation of web embedding, or authorise a runner-based re-read of the license page | User | Yes |
+| U2 | Real Safari (macOS) and real Edge | See RC2 record | Now covered by `production-smoke.yml` (safari job, msedge engine) | Keep in every release smoke | Maintainer | No |
+| U3 | iOS Safari | UNVERIFIED | No iOS device or simulator in CI | Manual check on an iPhone (checklist in RC2 record) | User | No |
+| U4 | Real screen readers (VoiceOver, TalkBack, NVDA) | UNVERIFIED | Needs a person with assistive technology; automated semantics are clean (axe 0) | Manual checklist in RC2 record | User | No |
+| U5 | Traveler Budget 13.5c (SAR/day) | USER-DECISION REQUIRED | Candidate found: US State Department Foreign Per Diem Rates (public domain, monthly, lodging + meals per location, USD). It is a ceiling for official travellers, not a typical traveller budget | Decide whether to adopt it (with that caveat) or keep deferred; nothing is integrated | User | Yes |
+| U6 | Automatic PRs from data workflows | BLOCKED | Repository setting "Allow GitHub Actions to create and approve pull requests" is off | Settings → Actions → General → Workflow permissions → enable it | User | No |
+| U7 | Turnstile in production | DEFERRED — USER DECISION | Adds friction; code and fail-closed verification are ready; per-address limits are active | Decide; then set `TURNSTILE_SECRET_KEY` and the site key | User | Yes |
+| U8 | Paid travel/visa providers | DEFERRED | No credentials/contract; Worker provider path stays dormant | None until a provider decision | User | Yes |
+| U9 | Passport / entry information | FROZEN | User decision: no coverage, source, UI, copy or behaviour changes | Regression-test only | User | — |
+| U10 | Destination page "Edit my preferences" ends on general Results | USER-DECISION REQUIRED | Same intent question as the fixed CTA, but it changes an existing, accepted flow | Decide whether it should also return to the destination | User | Yes |
+| U11 | Main-site CSP | DEFERRED | GitHub Pages cannot send headers; a meta CSP is possible but can break images, fonts or the Worker if incomplete | Decide on a meta CSP after an inventory, or a host with headers | User | Yes |
+| U12 | GitHub Actions SHA pinning | DEFERRED | Needs the upstream actions' commit SHAs (outside this repository's scope) | Enable Dependabot for Actions or pin manually | Maintainer | No |
+| U13 | Streamed (undeclared-length) body limits | DEFERRED | Declared-length ceilings are enforced; a chunked body is still bounded by each handler's field limits | Revisit with a streaming reader if abuse appears | Maintainer | No |
+| U14 | Paid-provider limiters | DEFERRED | Providers dormant | Add with any provider activation | Maintainer | No |
+| U15 | Dependency advisory (previously judged unreachable) | DEFERRED | Not exploitable in current use | Re-check at the next dependency upgrade | Maintainer | No |
+| U16 | Slow-test policy | DEFERRED | Two heavy tests can exceed 5 s under full parallel load | Policy: run with `--maxWorkers=2`; never raise timeouts to hide contention | Maintainer | No |
+| U17 | Rate limiter precision | ACCEPTED LIMITATION | Cloudflare's limiter is approximate per location (~2× budget seen in production) | None | — | No |
+| U18 | Main bundle size (flags + datasets, ~620 kB gzip) | DEFERRED | Lazy-loading the datasets is a larger change | Measure and propose separately | Maintainer | Yes (scope) |
+| U19 | Dark hero "nearby" note contrast without its halo | DEFERRED | Dark mode kept unchanged by request | User decision if wanted | User | Yes |
+| U20 | Phase 21 (Admin) | NOT STARTED | Blocked on Phase 20 acceptance | Checkpoint, then Phase 21 | User | Yes |
+| R1 | heading-order (axe) | RESOLVED | h2 structure, visuals unchanged | — | — | — |
+| R2 | Explore mobile blocking time | RESOLVED | TBT 3.17 s → 1.42 s | — | — | — |
+| R3 | Admin token length timing; Access key cache; screenshot bytes; body ceilings; city-descriptions limit | RESOLVED | Phase 20 security backlog | — | — | — |
+| R4 | Destination Match returns to general Results | RESOLVED | Destination-match intent | — | — | — |
 
 ## Handoff rule
 

@@ -1,17 +1,71 @@
-# Wejhaty v1.0.0-rc1 — release candidate record
+# Wejhaty v1.0.0 — release candidate record
 
-Phase 20 record for release candidate `wejhaty-v1.0.0-rc1`. Status:
-**PHASE 20 — FINAL WEJHATY / RELEASE CANDIDATE / AWAITING USER
-ACCEPTANCE.** Nothing here is user-accepted or final until the user says
-so. Current truth lives in `PROJECT_STATE.md`; this file records what the
-candidate is, how it was checked, and what was left out.
+Status: **PHASE 20 — FINAL WEJHATY / WEJHATY v1.0.0 RC2 / TECHNICALLY
+VERIFIED / AWAITING USER ACCEPTANCE.** Nothing here is user-accepted or
+final until the user says so. Current truth lives in `PROJECT_STATE.md`
+(state v38 and its authoritative unresolved register); this file records
+what each candidate is, how it was checked and what the user is asked to
+review.
 
-Evidence labels: CODE-VERIFIED (read in the code), TEST-VERIFIED (automated
-tests), BROWSER-VERIFIED (driven in a real browser engine),
-PRODUCTION-VERIFIED (checked against the deployed site), USER-VERIFIED
-(confirmed by the user), UNVERIFIED, DEFERRED, BLOCKED.
+Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
+PRODUCTION-VERIFIED, USER-VERIFIED, UNVERIFIED, DEFERRED, BLOCKED, FROZEN.
 
-## 1. What the candidate is
+# RC2 — `wejhaty-v1.0.0-rc2` (current)
+
+## RC2.1 What it contains
+
+RC1 plus: the approved security Pass 2 fixes; the Destination Match fix
+(a destination's "اكتشف مدى توافقها معك" now returns to that destination
+with its Personal Match); section headings as h2 (no visual change); Explore
+performance (`content-visibility`); the behavior-neutral security backlog
+(constant-time digest compare, Access key cache, screenshot magic bytes,
+declared-body ceilings, city-descriptions limiter); release/Safari/Edge
+tooling; docs. Passport is FROZEN and unchanged. Phase 14, Country
+Suitability and Personal Match (`personal-match-1.0`) are unchanged.
+
+Snapshot: branch `release/wejhaty-v1.0.0-rc2` and annotated tag
+`wejhaty-v1.0.0-rc2` (created by `create-release-tag.yml`). RC1 stays
+untouched on `release/wejhaty-v1.0.0-rc1`. Exact commit, tree, deploy runs
+and smoke results: RC2.4 below.
+
+## RC2.2 User-acceptance checklist (for the user)
+
+Each item is AWAITING USER until confirmed.
+
+1. Home — Arabic and English, Light and Dark, phone and desktop.
+2. Light/Dark switching; the phone theme menu opens inside the screen.
+3. Questionnaire (a few purposes) and the general Results page.
+4. **Destination match**: open a destination WITHOUT saved preferences
+   (e.g. Japan) → "اكتشف مدى توافقها معك" → answer → you land back on
+   that destination with "التوافق معك NN%" and its explanation. Also try a
+   country that is not among your top results.
+5. Personal Match on Results, Destination and Explore.
+6. Explore: sorting (including personal sort), reset preferences, Surprise;
+   scrolling the full list on a phone should feel lighter than before.
+7. Destination pages in general.
+8. Passport — regression only (no feature changes): optional step, entry
+   panel for covered destinations, nothing kept after reload.
+9. Contact / suggestion / problem report, and ratings.
+10. Arabic and English wording; phone and desktop layouts.
+11. Optional manual checks we cannot automate: iPhone Safari (home,
+    destination match, Explore scroll) and a screen reader (VoiceOver or
+    TalkBack: page headings list, destination sections, forms).
+12. Decision: accept RC2, or list changes.
+
+## RC2.3 Decisions the user is asked for (not implemented)
+
+See the register in `PROJECT_STATE.md`: Thmanyah (U1), Traveler Budget
+source (U5), Turnstile (U7), "Edit my preferences" return target (U10),
+main-site CSP (U11), bundle lazy-loading scope (U18), Dark hero note (U19).
+
+## RC2.4 Integrity and production verification
+
+Filled in after the deploy and smoke runs of this candidate (see the
+commit that records them).
+
+# RC1 — `wejhaty-v1.0.0-rc1` (historical record)
+
+## RC1.1 What the candidate is
 
 - Branch `claude/marhaba-kxry8l` (deploy branch) and the snapshot branch
   `release/wejhaty-v1.0.0-rc1` at the same commit. A local tag of the same
@@ -23,7 +77,7 @@ PRODUCTION-VERIFIED (checked against the deployed site), USER-VERIFIED
   https://wejhaty-travel-worker.hmooodzozo577.workers.dev (unchanged by
   Phase 19/20).
 
-## 2. Product freeze (20.1)
+## RC1.2 Product freeze (20.1)
 
 In the candidate: the Phase 14 recommendation engine and weights, Country
 Suitability (7 purpose models), Phase 17 visuals, Phase 18 Personal Match
@@ -33,7 +87,7 @@ and Phase 19 passport entry information (official sources, information
 only). From here until acceptance, only fixes for acceptance findings and
 the user-approved security Pass 2 fixes go in. Phase 21 is not started.
 
-## 3. User-acceptance checklist (20.2) — for the user
+## RC1.3 User-acceptance checklist (20.2) — for the user
 
 Each item is AWAITING USER until the user confirms it.
 
@@ -52,7 +106,7 @@ Each item is AWAITING USER until the user confirms it.
 8. Arabic wording of the new passport and entry texts.
 9. Decision: accept the candidate, or list changes.
 
-## 4. Data verification (20.3)
+## RC1.4 Data verification (20.3)
 
 - Catalog: 194 destinations; IL/ISR excluded at load by
   `excludedCountries.ts` (the generated `basicCountries.json` source still
@@ -69,7 +123,7 @@ Each item is AWAITING USER until the user confirms it.
   themselves ran on GitHub's runner (logs in the workflow runs).
 - Personal Match version `personal-match-1.0` unchanged. CODE-VERIFIED.
 
-## 5. Production verification (20.4, 20.10)
+## RC1.5 Production verification (20.4, 20.10)
 
 - Pages deploy run 35893619205 (commit d607244): success. Deployed bundle
   `assets/index-ClIifV4P.js` / `assets/index-D5vePYB5.css` — the same
@@ -87,7 +141,7 @@ Each item is AWAITING USER until the user confirms it.
   cannot reach github.io directly; every production check runs on
   GitHub's runner.
 
-## 6. Security and privacy status (20.5)
+## RC1.6 Security and privacy status (20.5)
 
 - **Not signed off.** Security audit Pass 1's MEDIUM finding S1 is open:
   public write endpoints (ratings, feedback, `/api/events`) rely on a
@@ -113,7 +167,7 @@ Each item is AWAITING USER until the user confirms it.
   state v37. Security is still not "fully signed off": Turnstile is off and
   the items the user deferred remain.
 
-## 7. Accessibility sign-off (20.6)
+## RC1.7 Accessibility sign-off (20.6)
 
 Technical sign-off with known limitations, not a formal audit:
 - axe-core 4.13 over Home, Purpose, Quiz, Results, Explore and two
@@ -128,7 +182,7 @@ Technical sign-off with known limitations, not a formal audit:
 - Screen-reader use (VoiceOver/TalkBack/NVDA) and real-device zoom were not
   tested. UNVERIFIED.
 
-## 8. Performance baseline (20.7)
+## RC1.8 Performance baseline (20.7)
 
 Local production build, Chromium, median of 3 cold loads; mobile = 4× CPU
 and ~1.6 Mbps / 150 ms RTT. BROWSER-VERIFIED (lab numbers, not field data).
@@ -143,7 +197,7 @@ Phase 19 changed none of these beyond noise (main script +3.2 kB). The
 main cost is one 2.4 MB (≈620 kB gzip) script carrying every flag SVG and
 dataset, and Explore's ≈11,600 DOM nodes.
 
-## 9. Deferred register (20.12)
+## RC1.9 Deferred register (20.12) — superseded by the register in PROJECT_STATE.md
 
 | Item | Status | Why / what unblocks it |
 |---|---|---|
