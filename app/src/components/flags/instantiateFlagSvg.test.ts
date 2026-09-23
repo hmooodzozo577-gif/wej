@@ -47,10 +47,18 @@ describe('instantiateFlagSvg', () => {
         return `<svg${cleaned} width="100%" height="100%" preserveAspectRatio="xMidYMid ${fit}">`;
       });
     }
+    // The one deliberate difference (Phase 19): inner aria-label attributes
+    // are dropped, since ARIA forbids them on role-less <path>s.
+    const withoutInnerLabels = (svg: string) => svg.replace(/\saria-label="[^"]*"/g, '');
     for (const code of Object.keys(FLAG_SVG_RAW)) {
       expect(instantiateFlagSvg(FLAG_SVG_RAW[code], 'slice', 'uid1')).toBe(
-        originalInstantiate(FLAG_SVG_RAW[code], 'slice', 'uid1'),
+        withoutInnerLabels(originalInstantiate(FLAG_SVG_RAW[code], 'slice', 'uid1')),
       );
     }
+  });
+
+  it('drops aria-label from inner elements (San Marino labels the letters of its arms)', () => {
+    expect(FLAG_SVG_RAW.sm).toContain('aria-label=');
+    expect(instantiateFlagSvg(FLAG_SVG_RAW.sm, 'slice', 'x')).not.toContain('aria-label=');
   });
 });

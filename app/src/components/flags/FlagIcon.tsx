@@ -40,14 +40,15 @@ export function FlagChip({
 
   if (!code || !FLAG_SVG_RAW[code]) {
     return (
-      <span className="flag-fallback" style={sizeStyle}>
+      <span className="flag-fallback" style={sizeStyle} aria-hidden="true">
         {dest.nameEn.charAt(0)}
       </span>
     );
   }
   const svg = instantiateFlagSvg(FLAG_SVG_RAW[code], 'slice', uid);
   return (
-    <span className="flag-chip" style={sizeStyle} dangerouslySetInnerHTML={{ __html: svg }} />
+    // Decorative: every chip sits next to the country's written name.
+    <span className="flag-chip" style={sizeStyle} aria-hidden="true" dangerouslySetInnerHTML={{ __html: svg }} />
   );
 }
 

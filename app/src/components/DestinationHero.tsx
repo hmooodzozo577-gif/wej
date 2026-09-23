@@ -18,7 +18,7 @@
 // one maintainable place. It remains decorative to assistive technology
 // because the adjacent h1 and source disclosure identify the destination and
 // landmark without repeating the same announcement twice.
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { FlagSubject } from '../data/types';
 import { nameOf } from '../data/destinationText';
 import { useI18n } from '../state/hooks';
@@ -45,7 +45,11 @@ export function DestinationHero({
   edgeControls?: ReactNode;
 }) {
   const { lang } = useI18n();
-  const visual = d.countryCode ? DESTINATION_VISUALS[d.countryCode] : undefined;
+  // Phase 19 (19.9) — a photo that fails to load falls back to the same
+  // flag banner a country without a photo gets, instead of a broken image.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const known = d.countryCode ? DESTINATION_VISUALS[d.countryCode] : undefined;
+  const visual = known && failedSrc !== known.imagePath ? known : undefined;
 
   return (
     <div
@@ -70,6 +74,7 @@ export function DestinationHero({
           fetchPriority="high"
           decoding="async"
           style={{ objectPosition: visual.heroPosition }}
+          onError={() => setFailedSrc(visual.imagePath)}
         />
       ) : <FlagBanner dest={d} lang={lang} />}
       {visual ? <TravelRouteDecor variant="destination" /> : null}

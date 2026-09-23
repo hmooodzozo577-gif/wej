@@ -158,6 +158,9 @@ export function Quiz() {
   return (
     <div className="quiz-wrap">
       <TravelRouteDecor variant="quiz" />
+      {/* Phase 19 (19.5) — the page's level-one heading for assistive
+          technology; the visible question stays the h2 below. */}
+      <h1 className="visually-hidden">{purposeName}</h1>
       <div className="quiz-top">
         <span className="quiz-count">
           {t.quiz.question} {qIndex + 1} {t.quiz.of} {reachableQuestionCount} — {purposeName}
