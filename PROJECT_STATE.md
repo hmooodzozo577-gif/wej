@@ -5,10 +5,51 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-23 (Phase 18 user-acceptance refinement)
+
+- State document version: 35. **Phase 18 status: USER ACCEPTANCE
+  REFINEMENT — READY FOR USER REVIEW** (not user-accepted). Phase 19 NOT
+  STARTED. The Personal Match methodology (`personal-match-1.0`), Phase 14
+  and privacy are unchanged; this round is presentation only.
+- **Badges**: compact Personal Match badges show only `NN%` (no "لك");
+  the accessible name/tooltip is "التوافق معك NN%" / "Personal match NN%".
+  The label is "التوافق معك" / "Personal match" wherever a label is shown
+  (Results ring, Destination hero chip and section, Explore note).
+- **Explore**: sorts "التوافق معك: الأعلى أولًا" / "الأقل أولًا" (EN
+  "Personal match: Highest first / Lowest first"); with a profile and no
+  sort chosen in the visit the default is highest first
+  (`AppState.exploreSortChosen`); unscored countries and hard-requirement
+  misses never float up; ties keep the catalog order; nothing is hidden.
+  A secondary "إعادة تعيين التفضيلات" with an inline confirmation clears
+  only the profile (theme, language, filters kept), stays on Explore,
+  returns a personal sort to the general default and offers "اختبر
+  تفضيلاتك". The desktop toolbar gives the sort field room for its longest
+  option.
+- **Narrow Home Hero** (`@container hero-stage (max-width: 560px)`): its
+  own composition — eyebrow above a balanced two-line headline, lead, CTA
+  stack, a quiet text continuation link, then the whole compass (SVG now
+  sized to its box; it used to spill 70px out of a 74px box and was
+  clipped) with two orbit labels beside compact stacked stats, and a
+  one-line catalog teaser; vertical scrim, one route, no inner frame.
+  Frame height at 390px: 913 → 646px (AR), 957 → 672px (EN); ≥600px
+  containers and the desktop Hero are unchanged. Orbit labels grow away
+  from the dial, wrap to two balanced lines at most, hold still on phones
+  (the needle carries the motion) and are paper pills in Light.
+- Verification: 1015/1015 frontend tests (sorter over the full catalog,
+  reducer sort choice, badge/sort/reset UI in AR and EN, narrow-Hero
+  structure), `tsc -b`, oxlint 0, build (the existing >500 kB chunk
+  warning is unchanged). Playwright acceptance matrix 648 checks × normal
+  and reduced motion (AR/EN × light/dark × profile/none × 390, 430,
+  800×1280, 1280×800, 1440), Phase 18 regression 226, Phase 17 regression
+  120 × normal and reduced motion — 0 failures. Impeccable detector at
+  390px, before vs after: the clipped-compass state is gone, the nearby
+  note contrast improved (Light 1.1 → 4.4:1 median, still just under 4.5
+  at pixel level), no new findings.
+
 ### Current verified state — 2026-09-23 (Phase 18 personalization)
 
-- State document version: 34. **Phase 18 status: PERSONALIZATION READY
-  FOR USER ACCEPTANCE.** Phase 17 final acceptance fixes are deployed
+- State document version 34 (superseded by 35 above). **Phase 18 status
+  then: PERSONALIZATION READY FOR USER ACCEPTANCE.** Phase 17 final acceptance fixes are deployed
   (checkpoint below) and also await user acceptance. Phase 19 NOT STARTED —
   do not begin it without an explicit user decision.
 - **What Phase 18 is**: anonymous, browser-local personalization. No
@@ -18,7 +59,7 @@ configuration, and current Git state outrank this document when they differ.
 - **Three numbers, never merged**: *General suitability* ("مناسب لـ",
   Country Intelligence, unchanged) · *Phase 14 match* (candidate selection
   and baseline order, protected and unchanged) · *Personal Match*
-  ("XX% لك" / "XX% for you") — how well a country fits this traveller's
+  ("التوافق معك" / "Personal match") — how well a country fits this traveller's
   own answers. The UI always labels which one it shows.
 - **Ranking relationship**: Phase 14 still scores all countries and
   selects the candidates; `refineRanking` reorders only within Phase 14's
@@ -39,11 +80,11 @@ configuration, and current Git state outrank this document when they differ.
   preference → no number at all.
 - **Surfaces**: Results (featured ring = Personal Match with confidence
   and the labelled general suitability beside it; secondary cards
-  "XX% لك"; edit / reset / new trip; rebuilt from the profile after a
+  "NN%" badges; edit / reset / new trip; rebuilt from the profile after a
   reload), Destination ("لماذا تناسبك هذه الوجهة؟" with factors grouped
   positive / partial / weaker / not counted; without a profile the
   invitation "اكتشف مدى توافقها معك" instead of a number; "مناسب لـ"
-  unchanged), Explore (per-card badge, "الأفضل لتفضيلاتك" sort that hides
+  unchanged), Explore (per-card badge, Personal Match sorts that hide
   nothing), Surprise (random pick among the 15 best-fitting eligible
   countries with a profile, unchanged without), Home (quiet "متابعة
   بتفضيلاتي السابقة" link for a returning traveller), and a reset

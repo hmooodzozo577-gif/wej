@@ -56,3 +56,18 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** In the audit playbook's "verify each finding in context" step, name this case: for `analytic-gradient+alpha` contrast findings, read `background-color` and `background-image` of the ancestor chain (or sample rendered pixels) before accepting; also baseline the same URL without the feature under review to separate pre-existing findings from new ones.
 
 **Principle:** Triage automated findings against ground truth and against a baseline; report which findings the change introduced.
+
+### Observation 4: Scripted stylesheet edits must anchor on whole lines, then prove placement
+**Status:** OPEN
+
+**Date:** 2026-09-23
+**Session context:** Adding a new rule block to a large shared stylesheet with a scripted find-and-insert (first occurrence of a selector string).
+**Skill:** New skill candidate: safe scripted source edits (also relevant to impeccable's craft floor for CSS changes)
+**Type:** open-source
+**Phase/Area:** Implementation mechanics / CSS
+
+**Issue:** The anchor `.hero-continue-link {` also matched inside a longer, indented selector (`.home-hero-frame .hero-continue-link {`) within a container query, so the new block was spliced into the middle of that selector. CSS parsing tolerated it: the build, type-check and lint all passed, while two rules were silently corrupted (one selector gained a stray prefix, another escaped its container query). Only a structural test that sliced the container block and asserted its contents exposed it.
+
+**Suggested improvement:** When editing CSS (or any brace-structured source) by script: anchor on a full line including the leading newline and indentation, assert the anchor occurs exactly once, and after the edit verify placement structurally (e.g. the enclosing block's extent, or the rule's top-level position) rather than trusting a green build.
+
+**Principle:** A tolerant parser turns a mis-anchored edit into a silent regression. Uniqueness plus structural post-checks are cheap insurance; build success is not evidence of correct placement.
