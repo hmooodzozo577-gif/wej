@@ -82,6 +82,7 @@ function useEntryLookup(destinationCodes: string[]) {
 }
 
 function Shell({ title, passportEntry, lang, children, className }: { title: string; passportEntry: CatalogEntry | undefined; lang: Lang; children: ReactNode; className?: string }) {
+  const copy = ENTRY_COPY[lang];
   return (
     <section className={`detail-card entry-card${className ? ` ${className}` : ''}`} aria-label={title}>
       <h3 className="entry-title">
@@ -89,7 +90,7 @@ function Shell({ title, passportEntry, lang, children, className }: { title: str
       </h3>
       {passportEntry ? (
         <p className="entry-passport">
-          <FlagChip dest={passportEntry} width={20} height={15} /> {nameOf(passportEntry, lang)}
+          {copy.passportLabel}: <FlagChip dest={passportEntry} width={20} height={15} /> {nameOf(passportEntry, lang)}
         </p>
       ) : null}
       {children}
@@ -115,33 +116,43 @@ export function EntryRequirementsPanel({ destinations }: { destinations: Catalog
   }
 
   const checked = infos.map((info) => info.lastCheckedAt).filter((iso): iso is string => !!iso).sort()[0] ?? null;
+  // The long explanations are said once, under the list, not in every row.
+  const anyNoSource = infos.some((info) => info.status === 'no_source');
+  const anyNotListed = infos.some((info) => info.status === 'not_listed' && info.freshnessStatus !== 'stale');
+  const anyStale = infos.find((info) => info.freshnessStatus === 'stale');
   return (
     <Shell title={copy.title} passportEntry={passportEntry} lang={lang}>
       <ul className="entry-list">
         {infos.map((info) => {
           const destination = CATALOG_BY_CODE.get(info.destinationIso2)!;
-          const line = statusLine(info, copy);
+          const fresh = info.status === 'covered' && info.freshnessStatus === 'fresh';
+          const notes = fresh
+            ? [info.allowedStay, info.passportValidity, ...info.conditions, ...info.additionalRequirements]
+                .filter((note): note is NonNullable<typeof note> => !!note)
+                .map((note) => copy.notes[note])
+                .join(' · ')
+            : info.status === 'no_source'
+              ? copy.rowNoSource
+              : info.status === 'not_listed' && info.freshnessStatus !== 'stale'
+                ? copy.rowNotListed
+                : '';
           return (
             <li key={info.destinationIso2} className="entry-row">
               <span className="entry-dest">
                 <FlagChip dest={destination} width={20} height={15} /> {nameOf(destination, lang)}
               </span>
               <span className={`entry-status ${statusClass(info)}`}>{categoryLabel(info, copy)}</span>
-              {info.status === 'covered' && info.freshnessStatus === 'fresh' ? (
-                <span className="entry-notes">
-                  {[info.allowedStay, info.passportValidity, ...info.conditions, ...info.additionalRequirements]
-                    .filter((note): note is NonNullable<typeof note> => !!note)
-                    .map((note) => copy.notes[note])
-                    .join(' · ')}
-                </span>
-              ) : line && info.status !== 'own_country' ? (
-                <span className="entry-notes">{line}</span>
-              ) : null}
-              <SourceLinks sources={info.sources} lang={lang} copy={copy} />
+              <span className="entry-detail">
+                {notes ? <span className="entry-notes">{notes}</span> : null}
+                <SourceLinks sources={info.sources} lang={lang} copy={copy} />
+              </span>
             </li>
           );
         })}
       </ul>
+      {anyStale ? <p className="entry-state">{copy.stale(formatIsoDate(anyStale.lastCheckedAt ?? ''))}</p> : null}
+      {anyNotListed ? <p className="entry-state">{copy.notListed}</p> : null}
+      {anyNoSource ? <p className="entry-state">{copy.noSource}</p> : null}
       <p className="entry-meta">
         <Checked iso={checked} copy={copy} />
       </p>

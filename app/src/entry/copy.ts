@@ -15,6 +15,9 @@ export interface EntryCopy {
   conditionsLabel: string;
   additionalLabel: string;
   sourceLabel: string;
+  passportLabel: string;
+  rowNotListed: string;
+  rowNoSource: string;
   lastCheckedLabel: string;
   ownCountry: string;
   notListed: string;
@@ -57,6 +60,9 @@ export const ENTRY_COPY: Record<Lang, EntryCopy> = {
     conditionsLabel: 'شروط',
     additionalLabel: 'مطلوب أيضًا',
     sourceLabel: 'المصدر الرسمي',
+    passportLabel: 'جوازك',
+    rowNotListed: 'لا تذكر القائمة الرسمية جوازك.',
+    rowNoSource: 'لا يوجد مصدر رسمي مدعوم بعد.',
     lastCheckedLabel: 'آخر تحقق',
     ownCountry: 'هذه دولة جوازك.',
     notListed: 'لا يذكر المصدر الرسمي الذي نعتمده لهذه الوجهة جنسيةَ جوازك، لذلك لا نحدد حالة التأشيرة. تحقّق من المصدر الرسمي.',
@@ -95,6 +101,9 @@ export const ENTRY_COPY: Record<Lang, EntryCopy> = {
     conditionsLabel: 'Conditions',
     additionalLabel: 'Also required',
     sourceLabel: 'Official source',
+    passportLabel: 'Your passport',
+    rowNotListed: 'The official list does not include your passport.',
+    rowNoSource: 'No supported official source yet.',
     lastCheckedLabel: 'Last checked',
     ownCountry: 'This is your passport country.',
     notListed: 'The official source we use for this destination does not list your passport country, so we do not state a visa status. Check the official source.',
