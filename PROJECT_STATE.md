@@ -45,6 +45,10 @@ configuration, and current Git state outrank this document when they differ.
   390px, before vs after: the clipped-compass state is gone, the nearby
   note contrast improved (Light 1.1 → 4.4:1 median, still just under 4.5
   at pixel level), no new findings.
+- Deployed: `41d49ad` by GitHub Pages run `35852429133` (success).
+  Production verification: EGRESS_BLOCKED (this sandbox's proxy refuses
+  github.io, HTTP 403); verified on a local production build of the same
+  commit instead.
 
 ### Current verified state — 2026-09-23 (Phase 18 personalization)
 
