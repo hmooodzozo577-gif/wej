@@ -60,8 +60,20 @@ configuration, and current Git state outrank this document when they differ.
   unchanged (245/245 in RC2). Browser QA (Chromium): edit-from-destination
   80/80 (AR/EN × Light/Dark × phone/desktop, updated score, focus, reload,
   Results edit still on Results, nothing stored); destination match
-  100/100; local run of the production smoke 35/35. Production: see the
-  RC3 record in `/RELEASE_CANDIDATE.md`.
+  100/100; local run of the production smoke 35/35.
+- **Production (RC3, PRODUCTION-VERIFIED)**:
+  - Source `9caa3d5` (tree `2340036`). Branch `release/wejhaty-v1.0.0-rc3`
+    and annotated tag `wejhaty-v1.0.0-rc3` (tag object `9cdd83f`) verified
+    on origin.
+  - Remote tag `wejhaty-v1.0.0-rc1` (`a75fd2c` → `38c8292`) created.
+  - Pages run 35931995175 deployed bundle `index-B1HrrLGA.js` /
+    `index-BaNVZnjM.css`. The Worker is unchanged since RC2 (version
+    `2c26501e-…`).
+  - Smoke run 35932067278:
+    - browsers 122/122, including the edit-from-destination step;
+    - Worker 17/17;
+    - real Safari 26.6.2 14/14.
+  - Full integrity table: `/RELEASE_CANDIDATE.md` RC3.3.
 
 ### Current verified state — 2026-09-23 (Phase 20 final repairs, RC2)
 

@@ -42,8 +42,36 @@ Results.
 
 ## RC3.3 Integrity and production verification
 
-Filled in after this candidate's deploy and smoke runs, in the commit
-that records them.
+| Item | Value | Verified how |
+|---|---|---|
+| RC3 source commit | `9caa3d5bcd52fe5c3e9e1cf92bc1555c38602737` | `git rev-parse` |
+| RC3 tree | `23400363306757d82b02d3e410fb5a53a21ccbf7` | `git rev-parse 9caa3d5^{tree}` |
+| Branch `release/wejhaty-v1.0.0-rc3` | `9caa3d5…` | `git ls-remote` on origin |
+| Tag `wejhaty-v1.0.0-rc3` | annotated tag object `9cdd83f5327460b6ae9910b6bc11ec8f1085073c` → commit `9caa3d5…` | `git ls-remote` (`^{}` peel); `create-release-tag.yml` run 35932011605 |
+| RC1 tag (user decision) | `wejhaty-v1.0.0-rc1`: tag object `a75fd2c1b47287fbcd6d6b4ce83448649ce53d7f` → `38c8292…`, the RC1 branch commit | `git ls-remote`; run 35930180437 |
+| RC1 / RC2 preserved | `release/wejhaty-v1.0.0-rc1` at `38c8292…`; `release/wejhaty-v1.0.0-rc2` and tag `wejhaty-v1.0.0-rc2` at `c0beb58…` (unchanged) | `git ls-remote` |
+| Pages deploy | run 35931995175 (build job 107420455239, deploy job 107420595465), source `9caa3d5`: success | GitHub Actions |
+| Deployed bundle | `assets/index-B1HrrLGA.js`, `assets/index-BaNVZnjM.css`, the same as a local build with the same Vite variables | smoke output and local build |
+| Worker | not redeployed: no `worker/` change since RC2 (`git diff c0beb58 9caa3d5 -- worker` is empty). Version `2c26501e-8ecb-4907-9699-481d73db234d` | RC2 deploy log |
+| Production smoke | run 35932067278 (dispatched on `release/wejhaty-v1.0.0-rc3`) | job logs |
+
+Production smoke results (read-only; the Worker is blocked in the
+browsers and in /etc/hosts for Safari):
+
+- **Browsers, job 107420693800: 122/122 passed.** Engines: Playwright
+  Chromium, Firefox, Linux WebKit (not Safari) and real Microsoft Edge
+  152.0.4191.66. The job re-ran every RC2 check. It also checked the new
+  step: "Edit my preferences" on Japan returns to `/destination/japan`,
+  and the score moves 54% → 67% in every engine.
+- **Worker hardening, same job: 17/17 passed.**
+- **Real Safari 26.6.2 on macOS, job 107420694142: 14/14 passed.** This
+  includes the new edit step.
+
+Status: **PRODUCTION-VERIFIED** for the checks above. iOS Safari and real
+screen readers stay UNVERIFIED (manual).
+
+The commit that records this table touches documentation only and comes
+after `9caa3d5`. It does not trigger a Pages or Worker deploy.
 
 # RC2 — `wejhaty-v1.0.0-rc2` (historical record)
 
