@@ -11,6 +11,7 @@ import { useAppState } from '../state/hooks';
 import { Destination } from '../routes/Destination';
 import { PurposeSelect } from '../routes/PurposeSelect';
 import { Quiz } from '../routes/Quiz';
+import { Results } from '../routes/Results';
 import { RootLayout } from '../components/layout/RootLayout';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { landBorderQuestionId } from '../data/questionBanks';
@@ -199,6 +200,51 @@ describe('destination match flow', () => {
     const { container } = renderFlow('/destination/japan', memoryStorage(saved));
     expect(container.querySelector('.personal-match-value')).not.toBeNull();
     expect(screen.queryByRole('link', { name: new RegExp(PERSONAL_COPY.ar.noProfileCta) })).toBeNull();
+  });
+
+  it('"Edit my preferences" on a destination returns to that destination with its updated match', async () => {
+    const answers = { 'tourism-climate': 'cold', 'tourism-cost': 3 };
+    const before = createProfile('tourism', answers, Object.keys(answers))!;
+    const storage = memoryStorage(JSON.stringify(before));
+    const { container } = renderFlow('/destination/japan', storage);
+    const pc = PERSONAL_COPY.ar;
+
+    fireEvent.click(screen.getByRole('button', { name: pc.editPrefs }));
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toBe('/quiz/tourism'));
+    await completeQuestionnaire(container);
+
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toBe('/destination/japan'));
+    expect(screen.queryByText('RESULTS_PAGE')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: new RegExp(pc.whyHeading) })).toHaveFocus();
+    const after = JSON.parse(storage.data[PERSONALIZATION_STORAGE_KEY]!);
+    expect(after.answers).not.toEqual(before.answers);
+    const expected = computePersonalMatch(byId('japan'), normalizePreferences(after.purpose, after.answers));
+    expect(container.querySelector('.personal-match-value b')?.textContent).toBe(`${expected.score}%`);
+    expect(JSON.stringify(after)).not.toMatch(/japan|destinationMatch|quizIntent/i);
+  });
+
+  it('"Edit my preferences" on Results still ends on Results', async () => {
+    const answers = { 'tourism-climate': 'cold', 'tourism-cost': 3 };
+    const storage = memoryStorage(JSON.stringify(createProfile('tourism', answers, Object.keys(answers))));
+    const { container } = render(
+      <AppStateProvider>
+        <PersonalizationProvider storage={storage}>
+          <MemoryRouter initialEntries={['/results']}>
+            <Where />
+            <Routes>
+              <Route path="/quiz/:purpose" element={<Quiz />} />
+              <Route path="/results" element={<Results />} />
+              <Route path="/destination/:id" element={<p>DESTINATION_PAGE</p>} />
+            </Routes>
+          </MemoryRouter>
+        </PersonalizationProvider>
+      </AppStateProvider>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: PERSONAL_COPY.ar.editPrefs }));
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toBe('/quiz/tourism'));
+    await completeQuestionnaire(container);
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toBe('/results'));
+    expect(screen.queryByText('DESTINATION_PAGE')).not.toBeInTheDocument();
   });
 
   it('shows the match and the failed hard constraint for a country outside a land-border preference', async () => {

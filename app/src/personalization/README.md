@@ -59,6 +59,11 @@ Lifecycle:
   view once. The target destination is navigation intent only: it is never
   stored in the profile, in browser storage, in analytics or in the URL.
   From Home / Purpose (no intent) the questionnaire still ends on Results.
+- **Edit my preferences on a destination (Phase 20, user decision)** → the
+  destination page's "تعديل تفضيلاتي" replays the saved questionnaire with
+  the same transient destination-match intent, so it ends back on that
+  destination with its updated match. The same button on Results still
+  ends on Results.
 
 ## Signals (`signals.ts`)
 

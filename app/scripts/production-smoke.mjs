@@ -139,22 +139,33 @@ for (const engine of engineNames) {
   // returns to that destination with its Personal Match (Phase 20).
   {
     const { context, tab, errors } = await page({ width: 390, height: 844 }, 'light', 'ar');
+    const answerQuestionnaire = async (pick) => {
+      for (let i = 0; i < 25 && !(await tab.$('.quiz-passport')); i += 1) {
+        const now = await tab.$('.quiz-checkpoint .btn-primary');
+        if (now) { await now.click(); await tab.waitForTimeout(300); continue; }
+        const options = await tab.$$('.q-option');
+        if (options.length) { await options[Math.min(pick, options.length - 1)].click(); await tab.waitForTimeout(450); }
+      }
+      await tab.click('.quiz-passport .btn-ghost:last-child');
+    };
     await tab.goto(`${SITE}/destination/japan`, { waitUntil: 'networkidle' });
     await tab.click('.personal-match-card.is-empty a.btn');
     await tab.waitForURL(/\/purpose$/);
     await tab.click('.purpose-card');
     await tab.waitForURL(/\/quiz\//);
-    for (let i = 0; i < 25 && !(await tab.$('.quiz-passport')); i += 1) {
-      const now = await tab.$('.quiz-checkpoint .btn-primary');
-      if (now) { await now.click(); await tab.waitForTimeout(300); continue; }
-      const option = await tab.$('.q-option');
-      if (option) { await option.click(); await tab.waitForTimeout(450); }
-    }
-    await tab.click('.quiz-passport .btn-ghost:last-child');
+    await answerQuestionnaire(0);
     await tab.waitForURL(/\/destination\/japan$/, { timeout: 15000 }).catch(() => {});
     check(/\/destination\/japan$/.test(tab.url()), `${engine} destination match returns to Japan`, tab.url());
     const score = await tab.textContent('.personal-match-card:not(.is-empty) .personal-match-value b').catch(() => null);
     check(/^\d+%$/.test(score ?? ''), `${engine} destination match shows Japan's Personal Match`, String(score));
+    // "Edit my preferences" on the same page also returns to Japan.
+    await tab.click('.personal-match-actions .btn');
+    await tab.waitForURL(/\/quiz\//);
+    await answerQuestionnaire(2);
+    await tab.waitForURL(/\/destination\/japan$/, { timeout: 15000 }).catch(() => {});
+    check(/\/destination\/japan$/.test(tab.url()), `${engine} edit preferences returns to Japan`, tab.url());
+    const edited = await tab.textContent('.personal-match-card:not(.is-empty) .personal-match-value b').catch(() => null);
+    check(/^\d+%$/.test(edited ?? ''), `${engine} edit preferences shows Japan's updated match`, `${score} -> ${edited}`);
     check(errors.length === 0, `${engine} destination match without page errors`, errors.join(' | '));
     await context.close();
   }

@@ -84,9 +84,12 @@ export function PersonalMatchSection({ destination, match }: { destination: Cata
 
   const groups = groupFactors(match);
   const purposeName = t.purposes[profile.purpose].n;
+  // Editing from a destination page is also a destination-match flow: the
+  // questionnaire saves the new answers, then returns here with this
+  // country's updated match (Results' own "edit" still ends on Results).
   const edit = () => {
     dispatch({ type: 'HYDRATE_QUIZ_FROM_PROFILE', purpose: profile.purpose, answers: profile.answers, path: profile.path });
-    navigate(`/quiz/${profile.purpose}`);
+    navigate(`/quiz/${profile.purpose}`, { state: destinationMatchState(destination.id) });
   };
 
   return (

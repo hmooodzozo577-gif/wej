@@ -29,6 +29,23 @@ async function waitFor(predicate, timeout = 15000) {
   return false;
 }
 
+// Answers each question with option `pick` (or the last one) until the
+// questionnaire ends, then skips the optional passport step.
+async function answerQuestionnaire(pick) {
+  for (let step = 0; step < 25; step += 1) {
+    if (await js('return !!document.querySelector(".quiz-passport")')) break;
+    const clicked = await js(`
+      const now = document.querySelector('.quiz-checkpoint .btn-primary');
+      if (now) { now.click(); return true; }
+      const options = document.querySelectorAll('.q-option');
+      if (options.length) { options[Math.min(${Number(pick)}, options.length - 1)].click(); return true; }
+      return false;`);
+    if (!clicked) break;
+    await sleep(500);
+  }
+  await js('document.querySelector(".quiz-passport .btn-ghost:last-child")?.click()');
+}
+
 try {
   await driver.manage().window().setRect({ width: 1280, height: 900 });
   const version = (await driver.getCapabilities()).get('browserVersion');
@@ -53,21 +70,18 @@ try {
   check(await waitFor('() => location.pathname.endsWith("/purpose")'), 'purpose screen reached');
   await js('document.querySelector(".purpose-card").click()');
   await waitFor('() => location.pathname.includes("/quiz/")');
-  for (let step = 0; step < 25; step += 1) {
-    if (await js('return !!document.querySelector(".quiz-passport")')) break;
-    const clicked = await js(`
-      const now = document.querySelector('.quiz-checkpoint .btn-primary');
-      if (now) { now.click(); return true; }
-      const option = document.querySelector('.q-option');
-      if (option) { option.click(); return true; }
-      return false;`);
-    if (!clicked) break;
-    await sleep(500);
-  }
-  await js('document.querySelector(".quiz-passport .btn-ghost:last-child")?.click()');
+  await answerQuestionnaire(0);
   check(await waitFor('() => location.pathname.endsWith("/destination/japan")'), 'returns to Japan after the questionnaire');
   const score = await waitFor('() => /^\\d+%$/.test(document.querySelector(".personal-match-card:not(.is-empty) .personal-match-value b")?.textContent ?? "")');
   check(score, "shows Japan's Personal Match");
+
+  // "Edit my preferences" on the same page also returns to Japan.
+  await js('document.querySelector(".personal-match-actions .btn").click()');
+  check(await waitFor('() => location.pathname.includes("/quiz/")'), 'edit preferences opens the questionnaire');
+  await answerQuestionnaire(2);
+  check(await waitFor('() => location.pathname.endsWith("/destination/japan")'), 'edit preferences returns to Japan');
+  const edited = await waitFor('() => /^\\d+%$/.test(document.querySelector(".personal-match-card:not(.is-empty) .personal-match-value b")?.textContent ?? "")');
+  check(edited, "shows Japan's updated match");
   const stored = await js('return JSON.stringify(Object.keys(localStorage)) + JSON.stringify(Object.keys(sessionStorage))');
   check(!/passport/i.test(stored), 'no passport data in browser storage');
 } catch (error) {
