@@ -11,6 +11,8 @@ import { CompassMark } from '../components/CompassMark';
 import { FlagChip } from '../components/flags/FlagIcon';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
 import { HERO_DESTINATION_POOL, selectHeroOrbitDestinations, selectSessionHero } from '../home/heroDestination';
+import { usePersonalization } from '../personalization/usePersonalization';
+import { PERSONAL_COPY } from '../personalization/copy';
 
 export function Home() {
   const navigate = useNavigate();
@@ -22,6 +24,7 @@ export function Home() {
   const pu = t.purposes;
   const [featuredDestination] = useState(() => selectSessionHero(HERO_DESTINATION_POOL));
   const [orbitDestinations] = useState(() => selectHeroOrbitDestinations(HERO_DESTINATION_POOL, featuredDestination));
+  const { profile } = usePersonalization();
 
   // Ports the header's `go('how')` special case: land on Home, then smooth
   // -scroll to #howSection.
@@ -63,6 +66,13 @@ export function Home() {
                         {h.cta2} <Icon name="arrowEnd" size={16} />
                       </button>
                     </div>
+                    {/* Phase 18 — a quiet way back for a returning traveller;
+                        rendered only when this browser has a saved profile. */}
+                    {profile ? (
+                      <Link className="hero-continue-link" to="/results">
+                        {PERSONAL_COPY[lang].continuePrev} <Icon name="arrowEnd" size={14} />
+                      </Link>
+                    ) : null}
                   </div>
                   <div className="hero-stats">
                     <div className="hero-stat">

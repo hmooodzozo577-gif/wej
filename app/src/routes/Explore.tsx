@@ -7,6 +7,7 @@
 // etc.), so they now explicitly exclude non-recommendation-ready entries
 // rather than silently letting them through unfiltered or crashing on a
 // missing field.
+import { useMemo } from 'react';
 import { useAppState, useI18n } from '../state/hooks';
 import { costLabel } from '../data/destinationText';
 import { PURPOSES } from '../data/purposes';
@@ -17,10 +18,17 @@ import { Icon } from '../components/Icon';
 import { Select } from '../components/Select';
 import { LOCATION_DEPENDENT_SORTS, type ExploreFilters } from '../state/types';
 import { SurpriseDestination } from '../components/SurpriseDestination';
+import { usePersonalization } from '../personalization/usePersonalization';
+import { comparePersonal, personalMatchesFor } from '../personalization/personalMatch';
+import { PERSONAL_COPY } from '../personalization/copy';
+import { WORLD_CATALOG } from '../data/worldCatalog';
 import { filteredCatalog, sortCatalog } from '../data/exploreCatalog';
 import { trackEvent } from '../telemetry/productDataClient';
 import { useResolvedCountryCode } from '../geo/useResolvedCountryCode';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
+
+/** How many best-fitting countries a personalized Surprise draws from. */
+const SURPRISE_PERSONAL_POOL = 15;
 
 const CONTINENTS: Continent[] = ['Africa', 'Asia', 'Europe', 'MiddleEast', 'NAmerica', 'SouthAmerica', 'Oceania'];
 
@@ -38,13 +46,42 @@ export function Explore() {
   // hides the wrong country.
   const currentCountryCode = useResolvedCountryCode(state.location.coords);
   const filtered = filteredCatalog(state.explore);
+  // Phase 18 — with a saved profile, every country gets its Personal Match
+  // (deterministic, local). Nothing is hidden: the personal sort only
+  // reorders, and countries outside a hard constraint go last, not away.
+  const { preferences } = usePersonalization();
+  const pc = PERSONAL_COPY[lang];
+  const origin = state.location.coords;
+  const personalById = useMemo(
+    () => (preferences && preferences.signals.length ? personalMatchesFor(WORLD_CATALOG, preferences, { origin }) : null),
+    [preferences, origin],
+  );
+  const wantsPersonal = state.explore.sort === 'personal';
   // Item #7 — a distance sort saved in state before location was lost must
   // not keep claiming to sort by distance. Fall back to the default order.
-  const effectiveSort = !hasLocation && LOCATION_DEPENDENT_SORTS.includes(state.explore.sort) ? 'default' : state.explore.sort;
-  const list = sortCatalog(filtered, effectiveSort, lang, state.location.coords, currentCountryCode);
+  // Likewise a personal sort without a profile falls back to default.
+  const effectiveSort = wantsPersonal || (!hasLocation && LOCATION_DEPENDENT_SORTS.includes(state.explore.sort)) ? 'default' : state.explore.sort;
+  const sorted = sortCatalog(filtered, effectiveSort, lang, state.location.coords, currentCountryCode);
+  const personalActive = wantsPersonal && !!personalById;
+  const list = personalActive
+    ? [...sorted].sort((a, b) => comparePersonal(personalById.get(a.id), personalById.get(b.id)))
+    : sorted;
   const navigationIds = list.map((item) => item.id);
+  // Surprise becomes smart-random with a profile: a random pick from the
+  // traveller's best-fitting candidates (never always #1), otherwise the
+  // unchanged random pick from the visible list.
+  const surpriseCandidates = personalById
+    ? (() => {
+        const ranked = [...list]
+          .filter((item) => { const match = personalById.get(item.id); return match?.eligible && match.score !== null; })
+          .sort((a, b) => comparePersonal(personalById.get(a.id), personalById.get(b.id)))
+          .slice(0, SURPRISE_PERSONAL_POOL);
+        return ranked.length >= 3 ? ranked : list;
+      })()
+    : list;
 
   const sortOptions = [
+    ...(personalById ? [{ value: 'personal', label: pc.sortPersonal }] : []),
     { value: 'default', label: ex.sortDefault },
     { value: 'name-asc', label: ex.sortNameAsc },
     { value: 'name-desc', label: ex.sortNameDesc },
@@ -77,7 +114,7 @@ export function Explore() {
       <section className="section" style={{ paddingTop: 30 }}>
         <div className="container">
           <LocationPersonalize />
-          <SurpriseDestination candidates={list} lang={lang} strings={ex} origin={state.location.coords} />
+          <SurpriseDestination candidates={surpriseCandidates} lang={lang} strings={ex} origin={state.location.coords} />
           <div className="explore-toolbar">
             <div className="field">
               <label htmlFor="exSearch">{ex.search}</label>
@@ -95,7 +132,7 @@ export function Explore() {
               <Select
                 id="exSort"
                 labelledBy="exSortLabel"
-                value={effectiveSort}
+                value={personalActive ? 'personal' : effectiveSort}
                 icon={<Icon name="trending" size={15} />}
                 options={sortOptions}
                 onChange={(value) => setFilter('sort', value)}
@@ -154,7 +191,19 @@ export function Explore() {
           {list.length ? (
             <div className="explore-grid">
               {list.map((d, index) => (
-                <DestinationCard key={d.id} dest={d} lang={lang} t={t} navigation={{ source: 'explore', ids: navigationIds, index }} />
+                <DestinationCard
+                  key={d.id}
+                  dest={d}
+                  lang={lang}
+                  t={t}
+                  navigation={{ source: 'explore', ids: navigationIds, index }}
+                  {...(() => {
+                    const match = personalById?.get(d.id);
+                    return match && match.eligible && match.score !== null
+                      ? { personalScore: match.score, personalLabel: pc.forYou, personalAria: pc.scoreAria(match.score) }
+                      : {};
+                  })()}
+                />
               ))}
             </div>
           ) : (
