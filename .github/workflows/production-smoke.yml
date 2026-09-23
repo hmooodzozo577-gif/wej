@@ -15,9 +15,14 @@ on:
         description: 'Browser engines (comma-separated: chromium,firefox,webkit)'
         required: false
         default: 'chromium,firefox,webkit'
+      worker_checks:
+        description: 'Also check the Worker hardening (rate limits, CORS, input handling; writes no data)'
+        type: boolean
+        required: false
+        default: true
 
-permissions:
-  contents: read
+# No workflow-wide token scope; the job declares read-only access.
+permissions: {}
 
 jobs:
   smoke:
@@ -55,3 +60,8 @@ jobs:
             echo "::error::Unsupported engines list"; exit 1
           fi
           node scripts/production-smoke.mjs "$SITE" "$ENGINES"
+
+      - name: Check the Worker hardening (no data written)
+        if: ${{ !cancelled() && inputs.worker_checks }}
+        working-directory: app
+        run: node scripts/worker-smoke.mjs
