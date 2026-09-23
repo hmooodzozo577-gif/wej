@@ -4778,78 +4778,240 @@ html[dir='rtl'] .travel-route-band {
   }
 }
 
-/* Phone widths: the visual column cannot sit beside a full-width copy
-   column, so the compass becomes a compact mark beside the title and the
-   catalog card becomes a full-width closing row under the stats. */
+/* Narrow Home Hero — a composition of its own, not the desktop Hero
+   compressed. Driven by the Hero stage's own width (container query).
+   Reading order: eyebrow, headline, lead, the CTA stack with a quiet
+   saved-profile link, then one "instrument" row — the whole compass with
+   two orbit labels beside the three stats — and a one-line catalog
+   teaser. One route, no inner frame, a vertical scrim so the photograph
+   stays present without competing with the copy. */
 @container hero-stage (max-width: 560px) {
+  .home-hero-frame::after { display: none; }
+
   .home-hero-frame .hero-grid {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr);
     grid-template-rows: none;
     grid-template-areas:
-      'title visual'
       'label label'
+      'title title'
       'lead lead'
       'cta cta'
-      'stats stats'
+      'visual stats'
       'badge badge';
-    padding: 34px 20px 24px;
+    gap: 0 clamp(12px, 4cqi, 18px);
+    padding: clamp(30px, 9cqi, 36px) clamp(18px, 5.5cqi, 24px) clamp(16px, 5cqi, 22px);
+  }
+
+  html[dir] .home-hero-scrim {
+    background: linear-gradient(180deg, rgba(4, 16, 28, .93) 0%, rgba(4, 16, 28, .86) 46%, rgba(4, 16, 28, .62) 72%, rgba(4, 16, 28, .88) 100%);
+  }
+
+  html[dir][data-theme='light'] .home-hero-scrim {
+    background: linear-gradient(180deg, rgba(242, 238, 229, .96) 0%, rgba(242, 238, 229, .9) 46%, rgba(242, 238, 229, .84) 72%, rgba(242, 238, 229, .9) 100%);
+  }
+
+  /* Eyebrow above the headline, as an editorial kicker. */
+  .home-hero-frame .hero-engine-label {
+    margin: 0 0 10px;
+    padding-block-end: 5px;
+    font-size: .82rem;
   }
 
   .home-hero-frame .hero-copy h1 {
-    font-size: clamp(2.3rem, 11cqi, 3.2rem);
+    margin: 0;
+    font-size: clamp(2rem, 10.2cqi, 2.7rem);
+    line-height: 1.02;
+    text-wrap: balance;
   }
 
+  html[dir='rtl'] .home-hero-frame .hero-copy h1 { line-height: 1.2; }
+
+  .home-hero-frame .hero-copy .lead {
+    margin: 10px 0 0;
+    font-size: .92rem;
+    line-height: 1.62;
+  }
+
+  .home-hero-frame .hero-cta-cluster {
+    width: 100%;
+    margin-top: 14px;
+  }
+
+  .hero-journey-note {
+    margin: 0 6px 6px;
+    font-size: .92rem;
+  }
+
+  .home-hero-frame .hero-cta-row {
+    display: grid;
+    gap: 8px;
+  }
+
+  .home-hero-frame .hero-cta-row .btn {
+    justify-content: center;
+    width: 100%;
+    min-height: 46px;
+    padding-block: 11px;
+  }
+
+  .home-hero-frame .hero-cta-row .btn-ghost { min-height: 44px; }
+
+  /* The saved-profile way back reads as a continuation of the CTA stack,
+     not a third button: small, muted, the orange kept for the arrow. */
+  .home-hero-frame .hero-continue-link {
+    margin-top: 2px;
+    color: rgba(255, 249, 243, .8);
+    font-size: .82rem;
+    font-weight: 600;
+    text-decoration-color: rgba(255, 249, 243, .32);
+  }
+
+  .home-hero-frame .hero-continue-link svg { color: #ff956d; }
+
+  html[data-theme='light'] .home-hero-frame .hero-continue-link {
+    color: var(--ink-2);
+    text-decoration-color: color-mix(in srgb, var(--ink) 28%, transparent);
+    text-shadow: none;
+  }
+
+  html[data-theme='light'] .home-hero-frame .hero-continue-link svg { color: var(--gold); }
+
+  /* Instrument row: the compass, whole, beside the stats. */
   .home-hero-compass-cluster {
-    align-self: start;
-    row-gap: 32px;
-    width: auto;
-    padding: 8px 0 14px;
+    align-self: center;
+    justify-self: start;
+    row-gap: 30px;
+    width: clamp(108px, 31cqi, 132px);
+    margin-top: clamp(18px, 5cqi, 24px);
+    padding: 0 0 24px;
   }
 
   .hero-nearby-note {
     justify-self: center;
+    margin: 0;
     font-size: .74rem;
+    text-align: center;
   }
 
   .hero-nearby-flourish { display: none; }
 
   .home-hero-compass {
-    width: clamp(72px, 21cqi, 96px);
+    justify-self: center;
+    width: clamp(84px, 25cqi, 104px);
   }
 
+  .home-hero-compass .compass-mark {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Labels grow away from the dial — the top one upward, the bottom one
+     downward — and wrap onto at most two balanced lines, so even the
+     longest pool name ("المملكة العربية السعودية") never covers the dial
+     or spills out of its pill. On a phone the needle carries the motion;
+     the labels hold still beside the stats. */
   .hero-orbit-destination {
-    max-width: 76px;
-    padding: 3px 6px;
+    /* Sized to its text (the dial is narrower than the label may be),
+       wrapping only past 136px. */
+    width: max-content;
+    max-width: 136px;
+    padding: 2px 7px 2px 6px;
     font-size: .7rem;
     line-height: 1.25;
+    white-space: normal;
+    text-wrap: balance;
+    animation: none;
   }
 
-  .hero-orbit-destination.orbit-1 { inset-block-start: -10px; }
-  .hero-orbit-destination.orbit-3 { inset-block-end: -10px; }
+  /* In Light the row sits on the paper scrim, not the photograph: paper
+     pills with ink type instead of the dark glass made for a photo. */
+  html[data-theme='light'] .hero-orbit-destination {
+    color: var(--ink);
+    border-color: var(--line);
+    background: rgba(255, 253, 248, .94);
+    box-shadow: 0 4px 12px rgba(23, 36, 58, .1);
+    backdrop-filter: none;
+  }
 
-  /* A compass this small has no room for side labels that do not cover
-     it or each other; the top and bottom nodes carry the idea alone. */
+  .hero-orbit-destination.orbit-1 { inset-block: auto calc(100% - 8px); }
+  .hero-orbit-destination.orbit-3 { inset-block: calc(100% - 8px) auto; }
+
+  /* Side labels would cover the stats or leave the frame; the top and
+     bottom nodes carry the orbit idea alone at this width. */
   .hero-orbit-destination.orbit-2,
   .hero-orbit-destination.orbit-4 { display: none; }
 
-  .hero-destination-badge {
-    justify-self: stretch;
-    grid-template-rows: auto auto;
-    gap: 2px 14px;
-    width: auto;
-    min-height: 0;
-    margin-top: 22px;
-    padding: 12px 14px;
+  .home-hero-frame .hero-stats {
+    grid-area: stats;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-self: center;
+    width: 100%;
+    margin: clamp(18px, 5cqi, 24px) 0 0;
+    border-block: 0;
   }
 
-  .hero-destination-badge span { grid-column: 1; grid-row: 1; }
-  .hero-destination-badge strong { grid-column: 1; grid-row: 2; margin: 0; }
+  .home-hero-frame .hero-stat {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    padding: 8px 0;
+    border-inline-end: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .14);
+  }
+
+  .home-hero-frame .hero-stat:last-child { border-bottom: 0; }
+  .home-hero-frame .hero-stat b { font-size: 1rem; }
+
+  .home-hero-frame .hero-stat span,
+  .home-hero-frame .hero-stat-phrase span {
+    flex-basis: auto;
+    min-width: 0;
+    font-size: .78rem;
+    line-height: 1.35;
+  }
+
+  [data-theme='light'] .home-hero-frame .hero-stat { border-bottom-color: var(--line); }
+
+  /* The catalog card becomes a one-line editorial teaser. */
+  .hero-destination-badge {
+    justify-self: stretch;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto;
+    align-items: center;
+    gap: 0 10px;
+    width: auto;
+    min-height: 44px;
+    margin-top: 12px;
+    padding: 7px 12px;
+    border-radius: 10px;
+  }
+
+  .hero-destination-badge span {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: .72rem;
+  }
+
+  .hero-destination-badge strong {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: .95rem;
+    line-height: 1.3;
+  }
+
   .hero-destination-badge::after { display: none; }
 
   .hero-destination-badge > svg {
-    grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-column: 3;
+    grid-row: 1;
   }
+
+  /* One route at this width: the top flight stays, the bottom one goes. */
+  .home-hero-stage > .travel-route-home-bottom { display: none; }
 }
 
 @media (max-width: 760px) {
