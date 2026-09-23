@@ -1,8 +1,0 @@
-[
-  {"id": "eu-schengen-members", "url": "https://home-affairs.ec.europa.eu/policies/schengen/schengen-area_en", "anchor": "The Schengen area", "chars": 6000},
-  {"id": "eu-visa-policy-agreements", "url": "https://home-affairs.ec.europa.eu/policies/schengen/visa-policy_en", "anchor": "Visa policy", "chars": 14000},
-  {"id": "us-cbp-vwp-list", "url": "https://www.cbp.gov/travel/international-visitors/visa-waiver-program", "anchor": "Visa Waiver Program", "chars": 9000},
-  {"id": "us-cbp-vwp-countries", "url": "https://www.cbp.gov/travel/international-visitors/visa-waiver-program/requirements-eligibility-visa-waiver-program-esta", "anchor": "Andorra", "chars": 3000},
-  {"id": "ca-no-visa-section", "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/entry-requirements-country.html", "anchor": "Travellers who may be eligible for an eTA instead of a visa", "chars": 6000},
-  {"id": "my-visa-gz", "url": "https://www.imi.gov.my/index.php/en/main-services/visa/visa-requirement-by-country/", "gzip": true, "chars": 9000}
-]
