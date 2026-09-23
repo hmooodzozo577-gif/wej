@@ -439,7 +439,7 @@ a.btn {
   margin-top: 22px;
 }
 
-.destination-rating h3 {
+.destination-rating :is(h2, h3) {
   margin: 0 0 6px;
 }
 
@@ -2553,7 +2553,7 @@ html[dir='rtl'] .q-option.selected {
   align-items: end;
 }
 
-.destination-rating h3,
+.destination-rating :is(h2, h3),
 .destination-rating > p,
 .destination-rating .rating-required,
 .destination-rating .form-error {
@@ -3446,7 +3446,7 @@ html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translate
 }
 
 .destination-rating { padding: 18px 20px; gap: 6px 18px; }
-.destination-rating h3 { font-size: 1rem; line-height: 1.45; }
+.destination-rating :is(h2, h3) { font-size: 1rem; line-height: 1.45; }
 .destination-rating > p,
 .destination-rating .rating-required { font-size: .86rem; line-height: 1.5; }
 
@@ -4630,7 +4630,7 @@ html[dir='rtl'] .travel-route-band {
   margin-bottom: 14px;
 }
 
-.explore-location-card-idle h3 {
+.explore-location-card-idle :is(h2, h3) {
   margin: 0;
   font-size: .9rem;
   white-space: nowrap;
@@ -4798,7 +4798,7 @@ html[dir='rtl'] .travel-route-band {
 @media (min-width: 1180px) {
   .explore-grid { gap: 18px 14px; }
   .explore-grid .dest-body { padding: 14px 15px 15px; }
-  .explore-grid .dest-body h3 { font-size: 1rem; }
+  .explore-grid .dest-body :is(h2, h3) { font-size: 1rem; }
   .explore-grid .dest-why { font-size: .83rem; }
   .explore-grid .meta-chip { padding: 4px 7px; font-size: .7rem; }
 }
@@ -5322,7 +5322,7 @@ html[dir='rtl'] .travel-route-band {
   gap: 14px;
 }
 
-.personal-match-head h3 { margin-bottom: 4px; }
+.personal-match-head :is(h2, h3) { margin-bottom: 4px; }
 
 .personal-match-basis {
   margin: 0;
@@ -5387,7 +5387,8 @@ html[dir='rtl'] .travel-route-band {
   gap: 14px 22px;
 }
 
-.personal-factor-group h4 {
+.personal-factor-group h3 {
+  display: block;
   margin: 0 0 8px;
   padding-bottom: 6px;
   color: var(--ink);
@@ -5396,8 +5397,8 @@ html[dir='rtl'] .travel-route-band {
   font-weight: 800;
 }
 
-.personal-factor-group.is-positive h4 { border-bottom-color: color-mix(in srgb, var(--teal) 55%, var(--line)); }
-.personal-factor-group.is-negative h4 { border-bottom-color: color-mix(in srgb, var(--gold) 55%, var(--line)); }
+.personal-factor-group.is-positive h3 { border-bottom-color: color-mix(in srgb, var(--teal) 55%, var(--line)); }
+.personal-factor-group.is-negative h3 { border-bottom-color: color-mix(in srgb, var(--gold) 55%, var(--line)); }
 .personal-factor-group.is-unavailable { opacity: .78; }
 
 .personal-factor-group ul {
@@ -5530,3 +5531,7 @@ html[dir='rtl'] .travel-route-band {
   font-size: .9rem;
   font-weight: 700;
 }
+
+/* Phase 20 — a destination-match questionnaire returns to the Personal
+   Match section; keep its heading clear of the sticky navigation bar. */
+.personal-match-card { scroll-margin-top: 88px; }

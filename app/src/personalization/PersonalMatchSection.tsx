@@ -2,7 +2,8 @@
 // only with a saved profile; without one it offers the questionnaire
 // instead of inventing a personal score. General suitability ("مناسب لـ",
 // CountrySuitability) stays a separate section and is never replaced.
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import type { CatalogEntry } from '../data/types';
 import { Icon } from '../components/Icon';
 import { useAppState, useI18n } from '../state/hooks';
@@ -10,6 +11,7 @@ import { PERSONAL_COPY } from './copy';
 import { factorDetail, factorLabel, groupFactors } from './explain';
 import { usePersonalization } from './usePersonalization';
 import type { FactorResult, PersonalMatch } from './types';
+import { destinationMatchState, isPersonalMatchFocusState } from './quizIntent';
 
 /** Factor labels are written for use mid-sentence; as list headings the
  *  English ones start with a capital. */
@@ -22,7 +24,7 @@ function FactorList({ title, factors, tone, lang }: { title: string; factors: Fa
   const strength = PERSONAL_COPY[lang].strength;
   return (
     <div className={`personal-factor-group is-${tone}`}>
-      <h4>{title}</h4>
+      <h3>{title}</h3>
       <ul>
         {factors.map((factor) => (
           <li key={factor.questionId}>
@@ -42,17 +44,38 @@ export function PersonalMatchSection({ destination, match }: { destination: Cata
   const { lang, t } = useI18n();
   const { dispatch } = useAppState();
   const navigate = useNavigate();
+  const location = useLocation();
   const { profile } = usePersonalization();
   const pc = PERSONAL_COPY[lang];
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const hasMatch = !!profile && !!match;
+  const focusRequested = hasMatch && isPersonalMatchFocusState(location.state);
+
+  // Phase 20 — arriving from this destination's own questionnaire: bring the
+  // answer into view and move focus to its heading, once. Instant under
+  // reduced motion. The request is then dropped from history so a reload or
+  // Back does not repeat it.
+  useEffect(() => {
+    if (!focusRequested || !headingRef.current) return;
+    const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // The section (not the heading) is scrolled: its scroll-margin keeps it
+    // clear of the sticky navigation bar.
+    sectionRef.current?.scrollIntoView?.({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+    headingRef.current.focus({ preventScroll: true });
+    navigate(`${location.pathname}${location.search}`, { replace: true, state: null });
+  }, [focusRequested, location.pathname, location.search, navigate]);
 
   if (!profile || !match) {
     return (
       <section className="detail-card destination-section personal-match-card is-empty" aria-labelledby={`personal-match-${destination.id}`}>
-        <h3 id={`personal-match-${destination.id}`}>
+        <h2 id={`personal-match-${destination.id}`}>
           <Icon name="compass" size={18} /> {pc.noProfileTitle}
-        </h3>
+        </h2>
         <p>{pc.noProfileBody}</p>
-        <Link className="btn btn-gold btn-sm" to="/purpose">
+        {/* Phase 20 — "how well does THIS destination match me": the
+            questionnaire returns here and shows this country's match. */}
+        <Link className="btn btn-gold btn-sm" to="/purpose" state={destinationMatchState(destination.id)}>
           {pc.noProfileCta} <Icon name="arrowEnd" size={15} />
         </Link>
       </section>
@@ -67,11 +90,11 @@ export function PersonalMatchSection({ destination, match }: { destination: Cata
   };
 
   return (
-    <section className="detail-card destination-section personal-match-card" aria-labelledby={`personal-match-${destination.id}`}>
+    <section ref={sectionRef} className="detail-card destination-section personal-match-card" aria-labelledby={`personal-match-${destination.id}`}>
       <div className="personal-match-head">
-        <h3 id={`personal-match-${destination.id}`}>
+        <h2 id={`personal-match-${destination.id}`} ref={headingRef} tabIndex={-1}>
           <Icon name="compass" size={18} /> {pc.whyHeading}
-        </h3>
+        </h2>
         <p className="personal-match-basis">{pc.basedOn(purposeName)}</p>
       </div>
 

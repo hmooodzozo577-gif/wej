@@ -222,7 +222,7 @@ export function Explore() {
           ) : (
             <div className="empty-state">
               <Icon name="search" size={34} stroke={1.6} />
-              <h3>{ex.noResults}</h3>
+              <h2>{ex.noResults}</h2>
               <p>{ex.noResultsSub}</p>
               <button
                 type="button"

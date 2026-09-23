@@ -136,9 +136,9 @@ export function TravelInfo({ destination }: { destination: CatalogEntry }) {
     // location state/request behavior.
     return (
       <div className="detail-card travel-card">
-        <h3>
+        <h2>
           <Icon name="map" size={18} /> {tt.title}
-        </h3>
+        </h2>
         <p>{tt.needLocation}</p>
         <Link to="/explore" className="btn btn-ghost btn-sm" style={{ marginTop: 10 }}>
           {tt.setLocationCta}
@@ -151,9 +151,9 @@ export function TravelInfo({ destination }: { destination: CatalogEntry }) {
 
   return (
     <div className="detail-card travel-card">
-      <h3>
+      <h2>
         <Icon name="map" size={18} /> {tt.title}
-      </h3>
+      </h2>
       {info.kind === 'loading' ? <p>{tt.loading}</p> : null}
       {info.kind === 'estimate' ? (
         <>

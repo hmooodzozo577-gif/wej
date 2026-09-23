@@ -70,7 +70,7 @@ export function DestinationCard({
         <div className="dest-body-top">
           <span className="name-flag">
             <FlagChip dest={dest} width={24} height={18} />
-            <h3>{nameOf(dest, lang)}</h3>
+            <h2>{nameOf(dest, lang)}</h2>
           </span>
           {personalScore !== undefined && personalScore !== null ? (
             // Phase 18 acceptance: the badge shows only "NN%"; its meaning

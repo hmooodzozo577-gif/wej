@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { selectNextQuestion } from '../adaptive';
 import { Icon } from '../components/Icon';
 import { ProgressBar } from '../components/ProgressBar';
@@ -16,6 +16,7 @@ import { waitForLocationSettle } from '../state/waitForLocationSettle';
 import { CompassMark } from '../components/CompassMark';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
 import { usePersonalization } from '../personalization/usePersonalization';
+import { readDestinationMatchIntent, type PersonalMatchFocusState } from '../personalization/quizIntent';
 
 const OPTIONAL_RESULTS_AFTER = 5;
 const ANSWER_TRANSITION_MS = 140;
@@ -27,8 +28,14 @@ function isPurposeId(value: string | undefined): value is PurposeId {
 export function Quiz() {
   const { purpose: purposeParam } = useParams<{ purpose: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
+  // Phase 20 — opened from a destination page to see how THAT destination
+  // matches the traveller: the questionnaire ends back on that page instead
+  // of on the general results. Navigation intent only (see quizIntent.ts).
+  const intent = readDestinationMatchIntent(location.state);
+  const intentState = intent ? { quizIntent: intent } : undefined;
   const [advancing, setAdvancing] = useState(false);
   const [motionDirection, setMotionDirection] = useState<'forward' | 'back'>('forward');
   // Phase 16 workstream A — the geolocation/quiz race condition. See
@@ -72,7 +79,7 @@ export function Quiz() {
     [],
   );
 
-  if (!validPurpose) return <Navigate to="/purpose" replace />;
+  if (!validPurpose) return <Navigate to="/purpose" replace state={intentState} />;
   if (!purposeSynced) return null;
 
   const questions = effectiveQuestionBank(purposeParam, !!state.location.coords);
@@ -108,6 +115,13 @@ export function Quiz() {
     // Phase 18 — completing the questionnaire saves (or replaces) this
     // browser's personalization profile: the answers and the order asked.
     saveFromQuiz(purposeParam, answers, state.path);
+    if (intent) {
+      // The profile just saved is what the destination page scores against;
+      // its Personal Match is computed for that country whatever its rank.
+      const focus: PersonalMatchFocusState = { personalMatchFocus: true };
+      navigate(`/destination/${intent.destinationId}`, { state: focus });
+      return;
+    }
     navigate('/results');
   };
 
@@ -165,7 +179,7 @@ export function Quiz() {
         <span className="quiz-count">
           {t.quiz.question} {qIndex + 1} {t.quiz.of} {reachableQuestionCount} — {purposeName}
         </span>
-        <button type="button" className="btn btn-ghost btn-sm" onClick={() => navigate('/purpose')}>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={() => navigate('/purpose', { state: intentState })}>
           {t.quiz.changePurpose}
         </button>
       </div>

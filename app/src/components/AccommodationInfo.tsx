@@ -42,9 +42,9 @@ export function AccommodationInfo({ destination }: { destination: CatalogEntry }
 
   return (
     <div className="detail-card accommodation-card">
-      <h3>
+      <h2>
         <Icon name="tag" size={18} /> {at.title}
-      </h3>
+      </h2>
       <div className="info-grid">
         <div className="info-item">
           <div className="label">{at.costLabel}</div>

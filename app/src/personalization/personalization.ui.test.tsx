@@ -164,7 +164,7 @@ describe('Destination — Phase 18', () => {
 // Explore renders the full ~194-card grid; give jsdom real headroom (same
 // allowance as Explore.excludedCountries.test.tsx).
 const FULL_GRID_TIMEOUT = 90000;
-const firstCardName = (container: HTMLElement) => container.querySelector('.explore-grid .dest-card h3')?.textContent;
+const firstCardName = (container: HTMLElement) => container.querySelector('.explore-grid .dest-card h2')?.textContent;
 const sortBox = (lang: 'ar' | 'en' = 'ar') => screen.getByRole('combobox', { name: lang === 'ar' ? 'الترتيب' : 'Sort' });
 const chooseSort = (label: string, lang: 'ar' | 'en' = 'ar') => {
   fireEvent.click(sortBox(lang));

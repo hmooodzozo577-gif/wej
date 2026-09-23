@@ -67,7 +67,7 @@ export function DestinationRating({
 
   return (
     <section className="detail-card destination-rating" aria-labelledby="destination-rating-title">
-      <h3 id="destination-rating-title">{strings.title}</h3>
+      <h2 id="destination-rating-title">{strings.title}</h2>
       <p>{strings.body}</p>
 
       <StarRating value={score} onChange={setScore} label={strings.starsLabel} lang={lang} disabled={status === 'saving'} />

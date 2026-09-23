@@ -6,19 +6,24 @@ import { Icon } from '../components/Icon';
 import { trackEvent } from '../telemetry/productDataClient';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
 import { PERSONAL_COPY } from '../personalization/copy';
+import { readDestinationMatchIntent } from '../personalization/quizIntent';
 
 export function PurposeSelect() {
   const navigate = useNavigate();
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
   const pu = t.purposes;
+  const location = useLocation();
   // Phase 18 — confirms a "reset preferences" that led here.
-  const justReset = !!(useLocation().state as { personalizationReset?: boolean } | null)?.personalizationReset;
+  const justReset = !!(location.state as { personalizationReset?: boolean } | null)?.personalizationReset;
+  // Phase 20 — a destination page's "how well does it match me" flow passes
+  // through here; the intent is handed on to the questionnaire unchanged.
+  const intent = readDestinationMatchIntent(location.state);
 
   const startQuiz = (id: (typeof PURPOSES)[number]['id']) => {
     trackEvent('quiz_started', { purpose: id }, { path: '/purpose', locale: state.lang });
     dispatch({ type: 'START_QUIZ', purpose: id });
-    navigate(`/quiz/${id}`);
+    navigate(`/quiz/${id}`, intent ? { state: { quizIntent: intent } } : undefined);
   };
 
   return (
@@ -46,7 +51,7 @@ export function PurposeSelect() {
                 <div className="purpose-icon">
                   <Icon name={p.icon} size={22} />
                 </div>
-                <h3>{pu[p.id].n}</h3>
+                <h2>{pu[p.id].n}</h2>
                 <p>{pu[p.id].d}</p>
                 <Icon name="arrowEnd" size={17} className="purpose-arrow" />
               </button>

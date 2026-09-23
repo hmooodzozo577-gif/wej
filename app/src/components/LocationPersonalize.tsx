@@ -233,9 +233,9 @@ export function LocationPersonalize() {
 
   return (
     <div className={`detail-card explore-location-card${status === 'idle' ? ' explore-location-card-idle' : ''}`}>
-      <h3>
+      <h2>
         <Icon name="compass" size={18} /> {loc.title}
-      </h3>
+      </h2>
       {/* Fix (item #8): this subtitle used to render unconditionally, so
           Explore kept telling a user to "share your location" even after
           they had already granted it — on Home via LocationIntro, or here

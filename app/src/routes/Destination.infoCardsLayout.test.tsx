@@ -108,7 +108,7 @@ describe('Correction pass — info-cards container/grid split (both Destination 
     const { container } = renderAt('/destination/japan');
     const grid = container.querySelector('.overview-cards-grid');
     expect(grid).not.toBeNull();
-    const headings = Array.from(grid!.querySelectorAll(':scope > .detail-card > h3')).map((h) => h.textContent);
+    const headings = Array.from(grid!.querySelectorAll(':scope > .detail-card > h2')).map((h) => h.textContent);
     // DOM order remains Overview, Strengths, Weaknesses.
     expect(headings[0]).toContain('نظرة عامة');
     expect(headings.some((h) => h!.includes('نقاط القوة'))).toBe(true);

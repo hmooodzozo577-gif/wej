@@ -50,6 +50,15 @@ Lifecycle:
   effect until the new questionnaire is completed, then it is replaced.
 - **Reset preferences** → removes only this key and the quiz state derived
   from it. Theme, language and every other site preference are untouched.
+- **Destination match (Phase 20)** → on a destination page without a
+  profile, "اكتشف مدى توافقها معك" opens Purpose → Quiz with a transient
+  intent (`quizIntent.ts`) carried in React Router location state. The
+  questionnaire saves the profile exactly as usual, then returns to THAT
+  destination (not to the general results), which computes its Personal
+  Match directly — whatever its Phase 14 rank — and brings the section into
+  view once. The target destination is navigation intent only: it is never
+  stored in the profile, in browser storage, in analytics or in the URL.
+  From Home / Purpose (no intent) the questionnaire still ends on Results.
 
 ## Signals (`signals.ts`)
 

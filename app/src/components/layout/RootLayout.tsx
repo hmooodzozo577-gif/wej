@@ -2,18 +2,31 @@
 // header + routed view + footer, plus a scroll-to-top on every navigation
 // (the original's `go()` called `window.scrollTo({top:0, behavior:'smooth'})`
 // on every view change).
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { LocationIntro } from '../LocationIntro';
 import { ProductTelemetry } from '../../telemetry/ProductTelemetry';
 import { TravelBackdrop } from '../TravelBackdrop';
+import { isPersonalMatchFocusState } from '../../personalization/quizIntent';
 
 export function RootLayout() {
   const location = useLocation();
+  // Phase 20 — the end of a destination-match questionnaire lands on the
+  // destination's Personal Match section, which brings itself into view
+  // (PersonalMatchSection); scrolling to the top would undo that. Read
+  // through a ref: only a change of page may trigger the scroll, not the
+  // later clearing of that one-shot request.
+  const arrivingAtPersonalMatch = useRef(false);
+  // Layout effects run before passive ones in the same commit, so the
+  // scroll effect below always sees this navigation's value.
+  useLayoutEffect(() => {
+    arrivingAtPersonalMatch.current = isPersonalMatchFocusState(location.state);
+  });
 
   useEffect(() => {
+    if (arrivingAtPersonalMatch.current) return;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location.pathname]);
 

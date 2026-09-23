@@ -54,9 +54,9 @@ export function TravelCostIndexInfo({ destination }: { destination: CatalogEntry
 
   return (
     <div className="detail-card travel-cost-card">
-      <h3>
+      <h2>
         <Icon name="trending" size={18} /> {tc.title}
-      </h3>
+      </h2>
       {/* PRIMARY explanation (Travel Cost clarity fix): a plain-language
           "cheaper/pricier than the reference level, by about how much"
           sentence comes first — the raw index number and the raw

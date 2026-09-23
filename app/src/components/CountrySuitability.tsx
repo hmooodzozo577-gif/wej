@@ -185,9 +185,9 @@ export function CountrySuitability({ destination }: { destination: CatalogEntry 
 
   return (
     <div className="detail-card country-suitability-card">
-      <h3>
+      <h2>
         <Icon name="trending" size={18} /> {cs.title}
-      </h3>
+      </h2>
       <p className="suitability-intro">{cs.intro}</p>
       <ul className="suitability-list">
         {visibleEntries.map((entry) => (

@@ -74,9 +74,9 @@ function CountryInfoCard({
 
   return (
     <div className="detail-card destination-section country-info-section">
-      <h3>
+      <h2>
         <Icon name="globe" size={18} /> {dt.countryInfo}
-      </h3>
+      </h2>
       <div className="info-grid">
         <div className="info-item">
           <div className="label">{dt.officialName}</div>
@@ -320,9 +320,9 @@ export function Destination() {
               <PersonalMatchSection destination={d} match={personal} />
               {why || profile ? (
                 <div className="detail-card destination-section overview-card">
-                  <h3>
+                  <h2>
                     <Icon name="info" size={18} /> {dt.overview}
-                  </h3>
+                  </h2>
                   {why ? <p>{why}</p> : null}
                   {profile ? (
                     <div className="info-grid">
@@ -449,9 +449,9 @@ export function Destination() {
                 above the calmer information layout when present. */}
             {why ? (
               <div className="detail-card destination-section why-box">
-                <h3>
+                <h2>
                   <Icon name="bulb" size={18} /> {dt.why}
-                </h3>
+                </h2>
                 <p>{why}</p>
               </div>
             ) : null}
@@ -461,15 +461,15 @@ export function Destination() {
                 the single source for that decision-support information. */}
             <div className="overview-cards-grid">
               <div className="detail-card destination-section overview-card">
-                <h3>
+                <h2>
                   <Icon name="info" size={18} /> {dt.overview}
-                </h3>
+                </h2>
                 <p>{descOf(d, lang)}</p>
               </div>
               <div className="detail-card destination-section strengths-card">
-                <h3>
+                <h2>
                   <Icon name="check" size={18} /> {dt.strengths}
-                </h3>
+                </h2>
                 <div className="pill-list">
                   {strengthsOf(d, lang).map((s) => (
                     <span className="pill good" key={s}>
@@ -479,9 +479,9 @@ export function Destination() {
                 </div>
               </div>
               <div className="detail-card destination-section weaknesses-card">
-                <h3>
+                <h2>
                   <Icon name="info" size={18} /> {dt.weaknesses}
-                </h3>
+                </h2>
                 <div className="pill-list">
                   {weaknessesOf(d, lang).map((s) => (
                     <span className="pill warn" key={s}>

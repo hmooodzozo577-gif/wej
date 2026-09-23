@@ -43,9 +43,9 @@ export function TourismInsights({ destination }: { destination: CatalogEntry }) 
 
   return (
     <div className="detail-card tourism-insights-card">
-      <h3>
+      <h2>
         <Icon name="trending" size={18} /> {ti.title}
-      </h3>
+      </h2>
       <div className="info-grid">
         {latestArrivals ? (
           <div className="info-item">
