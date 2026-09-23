@@ -106,6 +106,7 @@ export function Select({
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const typeahead = useRef({ buffer: '', at: 0 });
 
@@ -170,6 +171,39 @@ export function Select({
     const room = window.innerHeight - rect.bottom;
     setDropUp(room < 240 && rect.top > room);
   }, [open, visible.length]);
+
+  // Phase 19 (19.3A) — keep the open list inside the viewport horizontally.
+  // The CSS anchors it to one edge of its control (both edges for form
+  // fields, the inline-end edge for the compact nav theme switch). Where
+  // that anchor would push it past a screen edge — the theme switch sits at
+  // the start edge of the phone menu, and its list is wider than its icon —
+  // the list is measured and shifted by exactly the overflow, so it stays
+  // aligned with the control whenever it fits and never leaves the screen.
+  // Collision-driven, not a fixed per-breakpoint offset.
+  useLayoutEffect(() => {
+    if (!open) return;
+    const place = () => {
+      const popover = popoverRef.current;
+      const root = rootRef.current;
+      if (!popover || !root) return;
+      popover.style.removeProperty('left');
+      popover.style.removeProperty('right');
+      popover.style.removeProperty('width');
+      const viewport = document.documentElement.clientWidth;
+      const rect = popover.getBoundingClientRect();
+      if (!viewport || !rect.width) return;
+      const gutter = 8;
+      if (rect.left >= gutter && rect.right <= viewport - gutter) return;
+      const width = Math.min(rect.width, viewport - gutter * 2);
+      const left = Math.min(Math.max(rect.left, gutter), viewport - gutter - width);
+      popover.style.left = `${left - root.getBoundingClientRect().left}px`;
+      popover.style.right = 'auto';
+      popover.style.width = `${width}px`;
+    };
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [open]);
 
   useEffect(() => {
     if (open && searchable) searchRef.current?.focus();
@@ -284,7 +318,7 @@ export function Select({
       </button>
 
       {open ? (
-        <div className={`wj-select-popover${dropUp ? ' drop-up' : ''}`}>
+        <div ref={popoverRef} className={`wj-select-popover${dropUp ? ' drop-up' : ''}`}>
           {searchable ? (
             <div className="wj-select-search">
               <Icon name="search" size={14} stroke={2.2} />

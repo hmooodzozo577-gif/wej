@@ -77,7 +77,7 @@ export function Home() {
                   <div className="hero-stats">
                     <div className="hero-stat">
                       <Icon name="globe" size={16} className="hero-stat-icon" />
-                      <b>{WORLD_CATALOG.length}+</b>
+                      <b>{WORLD_CATALOG.length}</b>
                       <span>{h.stat1l}</span>
                     </div>
                     <div className="hero-stat">

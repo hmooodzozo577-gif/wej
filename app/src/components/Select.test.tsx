@@ -191,3 +191,40 @@ describe('Select — searchable variant', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 });
+
+describe('Select — viewport collision (Phase 19, 19.3A)', () => {
+  function rect(left: number, width: number): DOMRect {
+    return { left, right: left + width, width, top: 0, bottom: 40, height: 40, x: left, y: 0, toJSON: () => ({}) } as DOMRect;
+  }
+
+  it('shifts an open list that would cross a screen edge back inside it', () => {
+    const clientWidth = vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(360);
+    const boxes = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+      // The list would open from x=300 and be 170px wide: 110px past a 360px screen.
+      if (this.classList.contains('wj-select-popover')) return this.style.left ? rect(8 + 300 - 290, 170) : rect(300, 170);
+      if (this.classList.contains('wj-select')) return rect(290, 52);
+      return rect(0, 0);
+    });
+    render(<Select aria-label="Theme" value="auto" options={OPTIONS} onChange={() => {}} />);
+    fireEvent.click(screen.getByRole('combobox'));
+    const popover = document.querySelector<HTMLElement>('.wj-select-popover')!;
+    // Right edge clamped to 360 - 8: left = 352 - 170 = 182, relative to the control at 290.
+    expect(popover.style.left).toBe('-108px');
+    expect(popover.style.right).toBe('auto');
+    expect(popover.style.width).toBe('170px');
+    clientWidth.mockRestore();
+    boxes.mockRestore();
+  });
+
+  it('leaves a list that already fits exactly where the stylesheet put it', () => {
+    const clientWidth = vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(1280);
+    const boxes = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => rect(400, 200));
+    render(<Select aria-label="Theme" value="auto" options={OPTIONS} onChange={() => {}} />);
+    fireEvent.click(screen.getByRole('combobox'));
+    const popover = document.querySelector<HTMLElement>('.wj-select-popover')!;
+    expect(popover.style.left).toBe('');
+    expect(popover.style.width).toBe('');
+    clientWidth.mockRestore();
+    boxes.mockRestore();
+  });
+});

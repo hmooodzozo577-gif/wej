@@ -2678,16 +2678,19 @@ html[dir='rtl'] .q-option.selected {
   display: none;
 }
 
+/* Phase 19 (19.3B) — a localized scrim, not a veil. The paper sits only
+   behind the copy column: it holds full strength across the text, falls
+   away within a short band past its edge, and is masked off above the
+   headline and below the stats, so the photograph keeps its own colour
+   across the whole visual side and at the top and bottom edges. */
 [data-theme='light'] .home-hero-scrim {
-  background:
-    linear-gradient(90deg, rgba(242, 238, 229, .97) 0%, rgba(242, 238, 229, .9) 32%, rgba(242, 238, 229, .58) 50%, rgba(242, 238, 229, .12) 66%, rgba(242, 238, 229, 0) 78%),
-    linear-gradient(0deg, rgba(242, 238, 229, .92), rgba(242, 238, 229, 0) 30%);
+  background: linear-gradient(90deg, rgba(242, 238, 229, .97) 0%, rgba(242, 238, 229, .95) 40%, rgba(242, 238, 229, .84) 49%, rgba(242, 238, 229, .34) 60%, rgba(242, 238, 229, 0) 69%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 15%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 15%, #000 91%, transparent 100%);
 }
 
 html[dir='rtl'][data-theme='light'] .home-hero-scrim {
-  background:
-    linear-gradient(270deg, rgba(242, 238, 229, .97) 0%, rgba(242, 238, 229, .9) 32%, rgba(242, 238, 229, .58) 50%, rgba(242, 238, 229, .12) 66%, rgba(242, 238, 229, 0) 78%),
-    linear-gradient(0deg, rgba(242, 238, 229, .92), rgba(242, 238, 229, 0) 30%);
+  background: linear-gradient(270deg, rgba(242, 238, 229, .97) 0%, rgba(242, 238, 229, .95) 40%, rgba(242, 238, 229, .84) 49%, rgba(242, 238, 229, .34) 60%, rgba(242, 238, 229, 0) 69%);
 }
 
 /* Copy on paper: ink type, the orange signature kept for the label, the
@@ -2730,16 +2733,32 @@ html[dir='rtl'][data-theme='light'] .home-hero-scrim {
   border-color: var(--line);
 }
 
-[data-theme='light'] .home-hero-frame .hero-stat span { color: var(--muted); }
+/* Phase 19 (19.5) — the stat captions sit where the paper meets the
+   photograph; muted grey measured 2.8–4.4:1 there, ink-2 keeps them
+   readable while the bold ink figures still lead. */
+[data-theme='light'] .home-hero-frame .hero-stat span { color: var(--ink-2); }
+
+/* The two orange editorial lines are small text over the scrim's edge;
+   one step deeper than --gold keeps them above 4.5:1 there. */
+[data-theme='light'] .home-hero-frame .hero-engine-label,
+[data-theme='light'] .home-hero-frame .hero-journey-note { color: #97401f; }
 [data-theme='light'] .home-hero-frame .hero-stat b,
 [data-theme='light'] .home-hero-frame .hero-stat-phrase span { color: var(--ink); }
 [data-theme='light'] .home-hero-frame .hero-stat-icon { color: var(--gold); }
 
 /* The nearby note sits on the photograph itself, bright or dark; a paper
    halo keeps the orange legible on either. */
+/* Phase 19 (19.5A) — the note sits on the photograph itself, bright or
+   dark, so a text halo could not guarantee its contrast. It becomes a
+   small paper tag, like the Light orbit labels it points to: orange on
+   paper at a fixed, measurable ratio. */
 [data-theme='light'] .hero-nearby-note {
+  padding: 3px 10px;
+  border-radius: 999px;
   color: var(--gold);
-  text-shadow: 0 0 2px rgba(255, 253, 248, .95), 0 0 10px rgba(255, 253, 248, .9), 0 0 18px rgba(255, 253, 248, .75);
+  background: rgba(255, 253, 248, .95);
+  box-shadow: 0 6px 16px rgba(23, 36, 58, .14);
+  text-shadow: none;
 }
 
 [data-theme='light'] .hero-nearby-flourish path { stroke: color-mix(in srgb, var(--gold) 80%, transparent); }
@@ -3095,10 +3114,14 @@ html[dir='rtl'] .home-hero-scrim {
   background: rgba(5, 18, 31, .68);
 }
 
+/* Phase 19 (19.5B) — the signature orange, taken to the depth at which
+   white text reads at 4.6:1 (the former #ec7549 gave 2.9:1). */
 .home-hero-frame .btn-gold {
-  background: #ec7549;
+  background: #c0532c;
   box-shadow: 0 12px 30px rgba(187, 66, 26, .28);
 }
+
+[data-theme='dark'] .btn-gold { background: #c0532c; }
 
 .home-hero-frame .hero-stats {
   width: min(100%, 620px);
@@ -4838,6 +4861,27 @@ html[dir='rtl'] .travel-route-band {
     justify-self: center;
     width: clamp(132px, 21cqi, 184px);
   }
+
+  /* Phase 19 (19.3C) — the dial scales with its box. It used to keep its
+     190px intrinsic size inside a 132–184px box, so it spilled past the
+     box and under the orbit labels anchored to that box's edges. */
+  .home-hero-compass .compass-mark {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Tablet copy runs down the text side and the stats span the full
+     width at the bottom, so the paper covers those two regions only. */
+  html[dir='ltr'][data-theme='light'] .home-hero-scrim,
+  html[dir='rtl'][data-theme='light'] .home-hero-scrim {
+    background:
+      linear-gradient(0deg, rgba(242, 238, 229, .93) 0%, rgba(242, 238, 229, .86) 13%, rgba(242, 238, 229, 0) 27%),
+      linear-gradient(var(--hero-scrim-angle, 90deg), rgba(242, 238, 229, .95) 0%, rgba(242, 238, 229, .9) 40%, rgba(242, 238, 229, .62) 53%, rgba(242, 238, 229, .16) 65%, rgba(242, 238, 229, 0) 74%);
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  html[dir='rtl'][data-theme='light'] .home-hero-scrim { --hero-scrim-angle: 270deg; }
 
   .hero-orbit-destination {
     max-width: 104px;

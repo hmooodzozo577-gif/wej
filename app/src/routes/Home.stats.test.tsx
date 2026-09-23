@@ -23,7 +23,10 @@ function renderHome() {
 describe('Home hero stat — destination count', () => {
   it('displays the real catalog size, not a hard-coded "30"', () => {
     renderHome();
-    expect(screen.getByText(`${WORLD_CATALOG.length}+`)).toBeInTheDocument();
+    // Phase 19 — the catalog is the complete country list, so the count is
+    // exact: no "+" suffix claiming more destinations than exist.
+    expect(screen.getByText(`${WORLD_CATALOG.length}`)).toBeInTheDocument();
+    expect(screen.queryByText(`${WORLD_CATALOG.length}+`)).not.toBeInTheDocument();
     expect(screen.queryByText('30+')).not.toBeInTheDocument();
     expect(screen.queryByText('٣٠+')).not.toBeInTheDocument();
   });
