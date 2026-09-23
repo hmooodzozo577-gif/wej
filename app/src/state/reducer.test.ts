@@ -37,3 +37,28 @@ describe('deterministic questionnaire reducer', () => {
     expect(appReducer(granted, { type: 'LOCATION_RESET' }).location).toEqual({ status: 'idle', coords: null, diagnostic: null });
   });
 });
+
+describe('Explore sort choice (Phase 18 acceptance)', () => {
+  it('marks a sort as explicitly chosen only when the sort itself changes', () => {
+    const filtered = appReducer(initialAppState, { type: 'SET_EXPLORE_FILTER', key: 'region', value: 'Europe' });
+    expect(filtered.exploreSortChosen).toBe(false);
+    const chosen = appReducer(filtered, { type: 'SET_EXPLORE_FILTER', key: 'sort', value: 'name-asc' });
+    expect(chosen.exploreSortChosen).toBe(true);
+    expect(chosen.explore.sort).toBe('name-asc');
+  });
+
+  it('returns to the automatic default sort without touching other filters', () => {
+    let state = appReducer(initialAppState, { type: 'SET_EXPLORE_FILTER', key: 'region', value: 'Asia' });
+    state = appReducer(state, { type: 'SET_EXPLORE_FILTER', key: 'sort', value: 'personal-asc' });
+    state = appReducer(state, { type: 'RESET_EXPLORE_SORT' });
+    expect(state.explore).toEqual({ ...initialAppState.explore, region: 'Asia', sort: 'default' });
+    expect(state.exploreSortChosen).toBe(false);
+  });
+
+  it('keeps Explore filters and sort through a questionnaire restart', () => {
+    let state = appReducer(initialAppState, { type: 'SET_EXPLORE_FILTER', key: 'sort', value: 'cost-asc' });
+    state = appReducer(state, { type: 'RESTART_ALL' });
+    expect(state.explore.sort).toBe('cost-asc');
+    expect(state.exploreSortChosen).toBe(true);
+  });
+});

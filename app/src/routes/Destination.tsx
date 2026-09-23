@@ -237,8 +237,14 @@ export function Destination() {
   const personal = preferences ? computePersonalMatch(d, preferences, { origin: state.location.coords }) : null;
   const why = !personal && resultItem && state.purpose ? buildWhyText(lang, state.purpose, resultItem.reasons, d, resultItem.score, state.answers) : null;
   const pc = PERSONAL_COPY[lang];
+  // The chip names the measure beside the number ("التوافق معك 91%"); the
+  // number itself is only "NN%", direction-isolated after Arabic text.
   const heroChip = personal && personal.score !== null && personal.eligible
-    ? { text: `${personal.score}% ${pc.forYou}`, aria: pc.scoreAria(personal.score) }
+    ? (
+      <div className="detail-match detail-match-personal" role="img" aria-label={pc.scoreAria(personal.score)}>
+        <span className="detail-match-label">{pc.personalMatch}</span> <b dir="ltr">{personal.score}%</b>
+      </div>
+    )
     : null;
 
   const goBackBasic = () => navigate(fromResults ? '/results' : '/explore');
@@ -268,9 +274,7 @@ export function Destination() {
             fallbackBackground={regionGradientCss(continent)}
             subContent={t.regionLabels[continent]}
             rightContent={
-              heroChip ? (
-                <div className="detail-match" aria-label={heroChip.aria}>{heroChip.text}</div>
-              ) : (
+              heroChip ?? (
                 <div className="detail-match detail-match-browse">
                   {matchScore !== null ? `${matchScore}% ${t.results.match}` : dt.browse}
                 </div>
@@ -374,9 +378,7 @@ export function Destination() {
             </>
           }
           rightContent={
-            heroChip ? (
-              <div className="detail-match" aria-label={heroChip.aria}>{heroChip.text}</div>
-            ) : matchScore !== null ? (
+            heroChip ?? (matchScore !== null ? (
               <div className="detail-match">
                 {matchScore}% {dt.match}
               </div>
@@ -384,7 +386,7 @@ export function Destination() {
               <div className="detail-match detail-match-browse">
                 {dt.browse}
               </div>
-            )
+            ))
           }
           edgeControls={
             <HeroEdgeControls current={d} navigation={navigation} lang={lang} previousLabel={dt.previousCountry} nextLabel={dt.nextCountry} />

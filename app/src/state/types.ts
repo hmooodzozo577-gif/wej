@@ -19,8 +19,12 @@ export type ExploreSort =
   | 'cost-desc'
   | 'nearest'
   | 'farthest'
-  /** Phase 18 — offered only when a personalization profile exists. */
-  | 'personal';
+  /** Phase 18 — offered only when a personalization profile exists;
+   *  'personal-desc' is Explore's default then (see Explore.tsx). */
+  | 'personal-desc'
+  | 'personal-asc';
+
+export const PERSONAL_SORTS: ExploreSort[] = ['personal-desc', 'personal-asc'];
 
 /** The two distance sorts are only meaningful with real location context —
  *  see Explore.tsx, which gates them on `state.location.coords`, and
@@ -80,6 +84,10 @@ export interface AppState {
   questionnaireCheckpointPassed: boolean;
   results: RankedResult[] | null;
   explore: ExploreFilters;
+  /** True once the traveller picks a sort themselves in this visit. Until
+   *  then, a saved personalization profile makes Explore default to
+   *  Personal Match, highest first; after it, their choice is respected. */
+  exploreSortChosen: boolean;
   location: LocationState;
   /** Item #12 — the optional, skippable PASSPORT country (ISO 3166-1
    *  alpha-2) the traveller would travel with.
@@ -112,6 +120,9 @@ export type AppAction =
   | { type: 'RESTART_ALL' }
   | { type: 'SET_EXPLORE_FILTER'; key: keyof ExploreFilters; value: string }
   | { type: 'RESET_EXPLORE_FILTERS' }
+  /** Back to the automatic default sort (e.g. after preferences are reset
+   *  while a Personal Match sort was active). */
+  | { type: 'RESET_EXPLORE_SORT' }
   | { type: 'LOCATION_REQUEST' }
   | { type: 'LOCATION_GRANTED'; coords: LocationCoords; diagnostic?: LocationDiagnostic }
   | { type: 'LOCATION_FAILED'; status: Exclude<LocationStatus, 'idle' | 'requesting' | 'granted'>; diagnostic?: LocationDiagnostic }

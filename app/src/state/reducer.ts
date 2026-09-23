@@ -11,6 +11,7 @@ export const initialAppState: AppState = {
   questionnaireCheckpointPassed: false,
   results: null,
   explore: { q: '', region: '', purpose: '', cost: '', sort: 'default' },
+  exploreSortChosen: false,
   location: { status: 'idle', coords: null, diagnostic: null },
   passportCode: null,
 };
@@ -108,9 +109,15 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         results: null,
       };
     case 'SET_EXPLORE_FILTER':
-      return { ...state, explore: { ...state.explore, [action.key]: action.value } };
+      return {
+        ...state,
+        explore: { ...state.explore, [action.key]: action.value },
+        exploreSortChosen: action.key === 'sort' ? true : state.exploreSortChosen,
+      };
     case 'RESET_EXPLORE_FILTERS':
-      return { ...state, explore: { q: '', region: '', purpose: '', cost: '', sort: 'default' } };
+      return { ...state, explore: { q: '', region: '', purpose: '', cost: '', sort: 'default' }, exploreSortChosen: false };
+    case 'RESET_EXPLORE_SORT':
+      return { ...state, explore: { ...state.explore, sort: 'default' }, exploreSortChosen: false };
     case 'LOCATION_REQUEST':
       return { ...state, location: { status: 'requesting', coords: null, diagnostic: null } };
     case 'LOCATION_GRANTED':

@@ -16,11 +16,13 @@ import { DestinationCard } from '../components/DestinationCard';
 import { LocationPersonalize } from '../components/LocationPersonalize';
 import { Icon } from '../components/Icon';
 import { Select } from '../components/Select';
-import { LOCATION_DEPENDENT_SORTS, type ExploreFilters } from '../state/types';
+import { LOCATION_DEPENDENT_SORTS, PERSONAL_SORTS, type ExploreFilters, type ExploreSort } from '../state/types';
 import { SurpriseDestination } from '../components/SurpriseDestination';
 import { usePersonalization } from '../personalization/usePersonalization';
 import { comparePersonal, personalMatchesFor } from '../personalization/personalMatch';
 import { PERSONAL_COPY } from '../personalization/copy';
+import { sortByPersonalMatch } from '../personalization/sortByPersonalMatch';
+import { ExplorePersonalBar } from '../personalization/ExplorePersonalBar';
 import { WORLD_CATALOG } from '../data/worldCatalog';
 import { filteredCatalog, sortCatalog } from '../data/exploreCatalog';
 import { trackEvent } from '../telemetry/productDataClient';
@@ -56,16 +58,21 @@ export function Explore() {
     () => (preferences && preferences.signals.length ? personalMatchesFor(WORLD_CATALOG, preferences, { origin }) : null),
     [preferences, origin],
   );
-  const wantsPersonal = state.explore.sort === 'personal';
+  // Phase 18 acceptance — with a profile and no sort chosen yet in this
+  // visit, Explore opens on Personal Match, highest first; once the
+  // traveller picks a sort, that choice is respected. Without a profile a
+  // personal sort cannot apply and falls back to the general default.
+  const requestedSort: ExploreSort = personalById
+    ? (state.exploreSortChosen ? state.explore.sort : 'personal-desc')
+    : (PERSONAL_SORTS.includes(state.explore.sort) ? 'default' : state.explore.sort);
   // Item #7 — a distance sort saved in state before location was lost must
   // not keep claiming to sort by distance. Fall back to the default order.
-  // Likewise a personal sort without a profile falls back to default.
-  const effectiveSort = wantsPersonal || (!hasLocation && LOCATION_DEPENDENT_SORTS.includes(state.explore.sort)) ? 'default' : state.explore.sort;
-  const sorted = sortCatalog(filtered, effectiveSort, lang, state.location.coords, currentCountryCode);
-  const personalActive = wantsPersonal && !!personalById;
-  const list = personalActive
-    ? [...sorted].sort((a, b) => comparePersonal(personalById.get(a.id), personalById.get(b.id)))
-    : sorted;
+  const shownSort: ExploreSort = !hasLocation && LOCATION_DEPENDENT_SORTS.includes(requestedSort) ? 'default' : requestedSort;
+  const personalDirection = shownSort === 'personal-desc' ? 'desc' : shownSort === 'personal-asc' ? 'asc' : null;
+  // The personal sorts reorder the baseline (default) order, which also
+  // settles ties between equal Personal Match scores.
+  const sorted = sortCatalog(filtered, personalDirection ? 'default' : shownSort, lang, state.location.coords, currentCountryCode);
+  const list = personalDirection && personalById ? sortByPersonalMatch(sorted, personalById, personalDirection) : sorted;
   const navigationIds = list.map((item) => item.id);
   // Surprise becomes smart-random with a profile: a random pick from the
   // traveller's best-fitting candidates (never always #1), otherwise the
@@ -81,7 +88,12 @@ export function Explore() {
     : list;
 
   const sortOptions = [
-    ...(personalById ? [{ value: 'personal', label: pc.sortPersonal }] : []),
+    ...(personalById
+      ? [
+          { value: 'personal-desc', label: pc.sortPersonalDesc },
+          { value: 'personal-asc', label: pc.sortPersonalAsc },
+        ]
+      : []),
     { value: 'default', label: ex.sortDefault },
     { value: 'name-asc', label: ex.sortNameAsc },
     { value: 'name-desc', label: ex.sortNameDesc },
@@ -132,7 +144,7 @@ export function Explore() {
               <Select
                 id="exSort"
                 labelledBy="exSortLabel"
-                value={personalActive ? 'personal' : effectiveSort}
+                value={shownSort}
                 icon={<Icon name="trending" size={15} />}
                 options={sortOptions}
                 onChange={(value) => setFilter('sort', value)}
@@ -185,6 +197,7 @@ export function Explore() {
               />
             </div>
           </div>
+          <ExplorePersonalBar />
           <div className="explore-count">
             {list.length} {ex.results}
           </div>
@@ -200,7 +213,7 @@ export function Explore() {
                   {...(() => {
                     const match = personalById?.get(d.id);
                     return match && match.eligible && match.score !== null
-                      ? { personalScore: match.score, personalLabel: pc.forYou, personalAria: pc.scoreAria(match.score) }
+                      ? { personalScore: match.score, personalAria: pc.scoreAria(match.score) }
                       : {};
                   })()}
                 />

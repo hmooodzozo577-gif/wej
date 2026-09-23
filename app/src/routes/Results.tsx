@@ -28,6 +28,7 @@ import { normalizePreferences } from '../personalization/signals';
 import { REFINEMENT_POOL_SIZE, refineRanking, type RefinedResult } from '../personalization/personalMatch';
 import { personalSummary } from '../personalization/explain';
 import { PERSONAL_COPY } from '../personalization/copy';
+import { useResetPreferences } from '../personalization/useResetPreferences';
 import type { Lang, PurposeId } from '../data/types';
 
 /** Ports the original's setInterval-based count-up for `.matchNum`:
@@ -69,7 +70,8 @@ export function Results() {
   const navigate = useNavigate();
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
-  const { profile, reset, persisted } = usePersonalization();
+  const { profile, persisted } = usePersonalization();
+  const resetAll = useResetPreferences();
   const pc = PERSONAL_COPY[lang as Lang];
   // Set by "reset preferences": the redirect below then carries the
   // confirmation to the purpose page (the reset itself removes this page's
@@ -130,8 +132,7 @@ export function Results() {
   };
   const resetPreferences = () => {
     setResetting(true);
-    reset();
-    dispatch({ type: 'RESTART_ALL' });
+    resetAll();
   };
 
   return (
@@ -227,7 +228,6 @@ export function Results() {
                 t={t}
                 matchScore={item.result.score}
                 personalScore={shown.personal ? shown.value : null}
-                personalLabel={pc.forYou}
                 personalAria={shown.personal ? pc.scoreAria(shown.value) : undefined}
                 whyText={whyOf(item)}
                 purpose={purpose}

@@ -77,8 +77,9 @@ export function PersonalMatchSection({ destination, match }: { destination: Cata
 
       {match.score !== null ? (
         <div className="personal-match-score">
+          <span className="personal-match-label">{pc.personalMatch}</span>
           <span className="personal-match-value" role="img" aria-label={pc.scoreAria(match.score)}>
-            <b>{match.score}%</b> {pc.forYou}
+            <b>{match.score}%</b>
           </span>
           {match.confidence ? <span className="personal-match-confidence">{pc.confidence[match.confidence]}</span> : null}
         </div>

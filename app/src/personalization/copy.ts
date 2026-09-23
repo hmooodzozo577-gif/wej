@@ -6,7 +6,8 @@ import type { Lang } from '../data/types';
 import type { FactorId, PersonalConfidence, SignalStrength } from './types';
 
 export interface PersonalCopy {
-  forYou: string;
+  /** The Personal Match label. Compact badges show only "NN%"; this label
+   *  sits beside them (or in their accessible name), never inside. */
   personalMatch: string;
   generalSuitability: (purposeName: string) => string;
   whyHeading: string;
@@ -26,7 +27,13 @@ export interface PersonalCopy {
   noProfileTitle: string;
   noProfileBody: string;
   noProfileCta: string;
-  sortPersonal: string;
+  sortPersonalDesc: string;
+  sortPersonalAsc: string;
+  exploreNote: string;
+  resetConfirm: string;
+  resetConfirmYes: string;
+  resetCancel: string;
+  retakeQuiz: string;
   constraintFailed: string;
   noSignals: string;
   methodNote: string;
@@ -36,8 +43,7 @@ export interface PersonalCopy {
 
 export const PERSONAL_COPY: Record<Lang, PersonalCopy> = {
   ar: {
-    forYou: 'لك',
-    personalMatch: 'توافقها معك',
+    personalMatch: 'التوافق معك',
     generalSuitability: (purposeName) => `الملاءمة العامة (${purposeName})`,
     whyHeading: 'لماذا تناسبك هذه الوجهة؟',
     basedOn: (purposeName) => `بحسب تفضيلاتك في «${purposeName}»`,
@@ -52,19 +58,25 @@ export const PERSONAL_COPY: Record<Lang, PersonalCopy> = {
     },
     strength: { strong: 'عامل حاسم', minor: 'عامل ثانوي' },
     editPrefs: 'تعديل تفضيلاتي',
-    resetPrefs: 'إعادة ضبط التفضيلات',
+    resetPrefs: 'إعادة تعيين التفضيلات',
     newTrip: 'بدء رحلة جديدة',
     continuePrev: 'متابعة بتفضيلاتي السابقة',
     savedLocally: 'تُحفظ تفضيلاتك على هذا المتصفح فقط، بلا حساب ولا مزامنة بين الأجهزة.',
-    resetDone: 'تمت إعادة ضبط تفضيلاتك.',
+    resetDone: 'تمت إعادة تعيين تفضيلاتك.',
     noProfileTitle: 'مدى توافقها معك',
     noProfileBody: 'أجب عن أسئلة قصيرة لنقيس توافق هذه الوجهة مع تفضيلاتك أنت، إلى جانب ملاءمتها العامة.',
     noProfileCta: 'اكتشف مدى توافقها معك',
-    sortPersonal: 'الأفضل لتفضيلاتك',
+    sortPersonalDesc: 'التوافق معك: الأعلى أولًا',
+    sortPersonalAsc: 'التوافق معك: الأقل أولًا',
+    exploreNote: 'النسبة على كل بطاقة هي التوافق معك، بحسب تفضيلاتك المحفوظة.',
+    resetConfirm: 'ستُحذف تفضيلاتك المحفوظة من هذا المتصفح فقط.',
+    resetConfirmYes: 'تأكيد الإعادة',
+    resetCancel: 'إلغاء',
+    retakeQuiz: 'اختبر تفضيلاتك',
     constraintFailed: 'خارج شرط الوصول البري الذي اخترته',
     noSignals: 'لم تحدد تفضيلات كافية لحساب توافق شخصي لهذه الوجهة.',
-    methodNote: 'نسبة «لك» تقيس توافق الوجهة مع تفضيلاتك أنت فقط، أما الملاءمة العامة فتقيس مناسبة الدولة لهذا الغرض لأي مسافر. كلتاهما تقدير.',
-    scoreAria: (score) => `توافق شخصي ${score} بالمئة`,
+    methodNote: 'نسبة «التوافق معك» تقيس توافق الوجهة مع تفضيلاتك أنت فقط، أما الملاءمة العامة فتقيس مناسبة الدولة لهذا الغرض لأي مسافر. كلتاهما تقدير.',
+    scoreAria: (score) => `التوافق معك ${score}%`,
     factor: {
       climate: 'المناخ',
       budget: 'الميزانية',
@@ -84,8 +96,7 @@ export const PERSONAL_COPY: Record<Lang, PersonalCopy> = {
     },
   },
   en: {
-    forYou: 'for you',
-    personalMatch: 'How well it fits you',
+    personalMatch: 'Personal match',
     generalSuitability: (purposeName) => `General suitability (${purposeName})`,
     whyHeading: 'Why this destination suits you',
     basedOn: (purposeName) => `Based on your preferences for “${purposeName}”`,
@@ -108,11 +119,17 @@ export const PERSONAL_COPY: Record<Lang, PersonalCopy> = {
     noProfileTitle: 'How well it fits you',
     noProfileBody: 'Answer a few short questions to see how well this destination fits your own preferences, alongside its general suitability.',
     noProfileCta: 'See how well it fits you',
-    sortPersonal: 'Best for your preferences',
+    sortPersonalDesc: 'Personal match: Highest first',
+    sortPersonalAsc: 'Personal match: Lowest first',
+    exploreNote: 'The percentage on each card is your personal match, from your saved preferences.',
+    resetConfirm: 'Your saved preferences will be removed from this browser only.',
+    resetConfirmYes: 'Confirm reset',
+    resetCancel: 'Cancel',
+    retakeQuiz: 'Take the quiz again',
     constraintFailed: 'Outside your reach-by-land requirement',
     noSignals: 'Not enough stated preferences to compute a personal match for this destination.',
-    methodNote: 'The “for you” percentage measures how well a destination fits only your own preferences; general suitability measures how suitable the country is for this purpose for any traveller. Both are estimates.',
-    scoreAria: (score) => `Personal match ${score} percent`,
+    methodNote: '“Personal match” measures how well a destination fits only your own preferences; general suitability measures how suitable the country is for this purpose for any traveller. Both are estimates.',
+    scoreAria: (score) => `Personal match ${score}%`,
     factor: {
       climate: 'climate',
       budget: 'budget',

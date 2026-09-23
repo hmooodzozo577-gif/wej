@@ -27,7 +27,6 @@ export function DestinationCard({
   purpose,
   navigation,
   personalScore,
-  personalLabel,
   personalAria,
 }: {
   dest: CatalogEntry;
@@ -38,11 +37,11 @@ export function DestinationCard({
   whyText?: string;
   purpose?: PurposeId;
   navigation?: DestinationNavigation;
-  /** Phase 18 — the traveller's Personal Match ("XX% لك"). When present it
-   *  replaces the plain match pill; always shown with its label so it can
-   *  never be mistaken for general suitability. */
+  /** Phase 18 — the traveller's Personal Match. When present it replaces
+   *  the plain match pill. The badge shows only "NN%"; `personalAria`
+   *  ("التوافق معك NN%") names it for assistive technology and as a
+   *  tooltip, and the surrounding page labels it. */
   personalScore?: number | null;
-  personalLabel?: string;
   personalAria?: string;
 }) {
   const fromResults = matchScore !== undefined;
@@ -74,8 +73,10 @@ export function DestinationCard({
             <h3>{nameOf(dest, lang)}</h3>
           </span>
           {personalScore !== undefined && personalScore !== null ? (
-            <span className="match-pill personal-pill" aria-label={personalAria}>
-              {personalScore}% <small>{personalLabel}</small>
+            // Phase 18 acceptance: the badge shows only "NN%"; its meaning
+            // (Personal Match) is in the accessible name and the tooltip.
+            <span className="match-pill personal-pill" role="img" aria-label={personalAria} title={personalAria}>
+              {personalScore}%
             </span>
           ) : matchScore !== undefined ? <span className="match-pill">{matchScore}%</span> : null}
         </div>

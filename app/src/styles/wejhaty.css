@@ -34,8 +34,10 @@ a.btn {
   background: var(--paper-2);
 }
 
+/* The sort field (2nd) gets room for its longest option — "Personal match:
+   Highest first" — so the chosen direction is never cut off. */
 .explore-toolbar {
-  grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(150px, 1fr));
+  grid-template-columns: minmax(200px, 1.45fr) minmax(272px, 1.45fr) repeat(3, minmax(140px, 1fr));
 }
 
 .surprise-card {
@@ -4955,11 +4957,6 @@ html[dir='rtl'] .travel-route-band {
   row-gap: 6px;
 }
 
-.match-pill.personal-pill small {
-  color: var(--muted);
-  font-size: .72rem;
-  font-weight: 700;
-}
 
 /* Destination — "Why this destination suits you". */
 .personal-match-card {
@@ -4981,6 +4978,20 @@ html[dir='rtl'] .travel-route-band {
   align-items: baseline;
   gap: 6px 14px;
 }
+
+.personal-match-label {
+  color: var(--ink-2);
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+/* Destination Hero chip: the measure's name beside the bare number. */
+.detail-match-personal .detail-match-label {
+  font-weight: 600;
+  opacity: .9;
+}
+
+.detail-match-personal b { font-weight: 800; }
 
 .personal-match-value {
   color: var(--ink);
@@ -5075,6 +5086,60 @@ html[dir='rtl'] .travel-route-band {
 .personal-match-card.is-empty .btn { justify-self: start; min-height: 44px; }
 
 /* Home — a returning traveller's quiet way back. */
+/* Explore — personalization line: a quiet note and a secondary reset,
+   never styled like a primary or destructive action. */
+.explore-personal-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin: 4px 0 14px;
+  padding: 8px 0;
+  border-block: 1px solid var(--line);
+}
+
+.explore-personal-note,
+.explore-personal-status {
+  display: inline-flex;
+  flex: 1 1 260px;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  color: var(--muted);
+  font-size: .86rem;
+  line-height: 1.5;
+}
+
+.explore-personal-note svg,
+.explore-personal-status svg { flex: 0 0 auto; color: var(--gold); }
+
+.explore-personal-status { color: var(--ink-2); font-weight: 700; }
+.explore-personal-status:focus { outline: none; }
+.explore-personal-status:focus-visible { outline: 2px solid color-mix(in srgb, var(--gold) 60%, transparent); outline-offset: 3px; }
+
+.explore-personal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.explore-personal-bar .btn-sm { min-height: 44px; }
+
+.explore-personal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--gold);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 4px;
+}
+
 .hero-continue-link {
   display: inline-flex;
   align-items: center;

@@ -9,7 +9,7 @@ recommendation engine. No account, no server storage, no AI.
 | --- | --- | --- | --- |
 | **General suitability** ("مناسب لـ") | How suitable is this country for this purpose, for anyone? | `intelligence/` (Phase 15 WS3) | No |
 | **Phase 14 match** | Candidate selection and baseline order for the quiz | `engine/` (protected, unchanged) | Answers + fixed purpose component |
-| **Personal Match** ("XX% لك") | How well does this country fit *this traveller's own* stated preferences? | this module | Yes |
+| **Personal Match** ("التوافق معك" / "Personal match") | How well does this country fit *this traveller's own* stated preferences? | this module | Yes |
 
 The UI shows General suitability and Personal Match, always labelled. The
 Phase 14 score keeps deciding which countries are candidates and their
@@ -120,6 +120,24 @@ Match → visa convenience (when a passport and provider data exist) →
 Phase 14 score → id. Phase 14's scores and weights are carried through
 untouched. Countries outside Phase 14's top 10 are never promoted into the
 results.
+
+## Presentation rules (acceptance refinement)
+
+- Compact badges (Explore cards, secondary Results cards) show only
+  `NN%`. The measure is named in their accessible name and tooltip
+  ("التوافق معك NN%" / "Personal match NN%") and by the surrounding page
+  (Explore note, Results label). Larger surfaces show the label beside
+  the number (Destination hero chip, "Why this destination suits you").
+- Explore sorts (`sortByPersonalMatch.ts`, presentation only):
+  "التوافق معك: الأعلى أولًا" / "الأقل أولًا". With a profile and no sort
+  chosen yet in the visit, Explore opens on highest first; a chosen sort is
+  respected. Groups in both directions: eligible scored → scored but
+  outside the hard requirement → no evaluable score. Ties keep the
+  baseline catalog order. Sorting never hides a country.
+- Reset (`useResetPreferences.ts`) is shared by Results and Explore:
+  removes only the profile key and the questionnaire state, and returns a
+  Personal Match sort to Explore's general default. Explore confirms it
+  inline and stays on the page.
 
 ## Explanations (`explain.ts`, `copy.ts`)
 
