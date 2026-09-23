@@ -63,10 +63,15 @@ configuration, and current Git state outrank this document when they differ.
   matrix 648/648 (normal and reduced motion). axe: no critical or serious
   violation; `heading-order` (moderate — h1 followed by h3 card titles on
   Purpose, Explore and Destination) remains.
-- **Browsers**: Chromium verified locally. Firefox and WebKit (Playwright's
-  Linux build — the Safari engine, not Safari) run only through the
-  manual `production-smoke.yml` workflow on GitHub's runner; real Safari,
-  iOS Safari and Edge are not verified.
+- **Production (PRODUCTION-VERIFIED)**: Pages deploy of d607244 succeeded
+  (bundle `index-ClIifV4P.js`, identical to the locally verified build).
+  `production-smoke.yml` (manual, read-only, Worker requests blocked) ran
+  against the live site from GitHub's runner: 78/78 checks in Chromium,
+  Firefox and WebKit. The Worker was not redeployed in Phase 19/20.
+- **Browsers**: Chromium verified locally and in production; Firefox and
+  WebKit (Playwright's Linux build — the Safari engine, not Safari) only
+  through the production smoke run. Real Safari, iOS Safari and Edge are
+  not verified.
 - **Performance (19.6, before = 64ea036, after = this state; median of 3
   cold loads, mobile = 4× CPU + ~1.6 Mbps/150 ms)**: no regression within
   measurement noise. Main script 621.6 → 624.8 kB transferred (+0.5%, the

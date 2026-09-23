@@ -71,10 +71,21 @@ Each item is AWAITING USER until the user confirms it.
 
 ## 5. Production verification (20.4, 20.10)
 
-Filled from the Pages deploy and the `production-smoke.yml` run of this
-candidate — see `PROJECT_STATE.md`, current state, for the recorded
-result. The development sandbox cannot reach github.io directly, so the
-check runs on GitHub's runner.
+- Pages deploy run 35893619205 (commit d607244): success. Deployed bundle
+  `assets/index-ClIifV4P.js` / `assets/index-D5vePYB5.css` — the same
+  hashes as the locally verified build.
+- `production-smoke.yml` run 35893809271 against the live site from
+  GitHub's runner: **78/78 checks passed** in Chromium, Firefox and WebKit
+  (Playwright's Linux WebKit, not Safari) — current bundle and CSS, lazy
+  entry snapshot served without IL, "194", no horizontal overflow, CTA
+  `#c0532c` in AR/EN × Light/Dark × phone/desktop, phone theme menu inside
+  the viewport, and the passport flow (partial-coverage notice, five entry
+  rows, cleared on reload, nothing stored or sent). Worker requests were
+  blocked in the browser, so the run wrote no production data.
+  PRODUCTION-VERIFIED.
+- The Worker was not redeployed by Phase 19/20. The development sandbox
+  cannot reach github.io directly; every production check runs on
+  GitHub's runner.
 
 ## 6. Security and privacy status (20.5)
 
