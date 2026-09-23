@@ -60,8 +60,46 @@ main-site CSP (U11), bundle lazy-loading scope (U18), Dark hero note (U19).
 
 ## RC2.4 Integrity and production verification
 
-Filled in after the deploy and smoke runs of this candidate (see the
-commit that records them).
+| Item | Value | Verified how |
+|---|---|---|
+| RC2 source commit | `c0beb5805c806999ef57ee6a50586b433e34fcbf` | `git rev-parse` |
+| RC2 tree | `d648a0181d195dadd3fe1989264d2d114cf2932a` | `git rev-parse c0beb58^{tree}` |
+| Branch `release/wejhaty-v1.0.0-rc2` | `c0beb58…` | `git ls-remote` on origin |
+| Tag `wejhaty-v1.0.0-rc2` | annotated tag object `ab7f190eae3320c749ec5e6217d19f83b2c22013` → commit `c0beb58…`, tagger github-actions[bot] | `git ls-remote` (`^{}` peel) and the GitHub tag API; created by `create-release-tag.yml` run 35929296268 |
+| RC1 preserved | branch `release/wejhaty-v1.0.0-rc1` still at `38c8292…` (unchanged) | `git ls-remote` |
+| Pages deploy | run 35929247150 (build job 107411645020, deploy job 107411773371), source `c0beb58`: success | GitHub Actions |
+| Deployed bundle | `assets/index-CLs2fRsE.js`, `assets/index-BaNVZnjM.css` — identical to a local build of `c0beb58` with the same Vite variables | smoke output and local build |
+| Worker deploy | run 35929247157, source `c0beb58`: success. Version `2c26501e-8ecb-4907-9699-481d73db234d`. Bindings: D1, R2 and 4 rate limiters (events 120, ratings 10, feedback 5, city descriptions 60 per 60 s) | deploy log |
+| Production smoke | run 35929343828 (dispatched on `release/wejhaty-v1.0.0-rc2`) | job logs |
+
+Production smoke results (read-only: Worker requests blocked in the
+browser; the Safari job blocks the Worker hostname in /etc/hosts):
+
+- Browsers (job 107411955850): **114/114 passed** in Playwright Chromium,
+  Firefox, WebKit (Linux WebKit — not Safari) and real Microsoft Edge
+  152.0.4191.66: bundle and CSS, lazy entry snapshot without IL, "194", no
+  horizontal overflow, CTA `rgb(192, 83, 44)` in AR/EN × Light/Dark ×
+  390/1440 px, phone theme menu inside the viewport, Passport regression
+  (partial-coverage notice, five entry rows, gone after reload, never
+  stored or sent), and the destination match (Japan → questionnaire → back
+  on `/destination/japan` showing "54%", no page errors).
+- Worker hardening (same job): **17/17 passed** — CORS, malformed paths,
+  untrusted city title, and per-address 429 with `Retry-After: 60` on
+  feedback, ratings and events, with no 2xx (nothing stored).
+- Real Safari 26.6.2 on macOS (job 107411956216): **11/11 passed** — home,
+  "194", CTA colour, no overflow, RTL, Explore 194 cards, destination match
+  back on Japan with its score, no passport data in storage.
+
+Status: **PRODUCTION-VERIFIED** for the checks above. Not covered here:
+iOS Safari and real screen readers (manual, UNVERIFIED); the new Worker
+checks (body ceilings, screenshot bytes, key cache, city-descriptions
+limit) are TEST-VERIFIED and deploy-verified (binding present), not
+exercised against production, to avoid writing or abusing production.
+
+The commit that records this table is documentation only and comes after
+`c0beb58`, so the deploy branch head differs from the RC2 source by docs
+alone; it does not trigger a Pages or Worker deploy (their path filters
+cover `app/**` and `worker/**`).
 
 # RC1 — `wejhaty-v1.0.0-rc1` (historical record)
 

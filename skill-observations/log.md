@@ -86,3 +86,33 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** In verification scripts, express a privacy assertion as the sensitive value or field shape (e.g. a passport/nationality key with a string value, or the chosen country's code) rather than a substring, and list the known-benign events it must allow. For lab metrics, wait until the metric entry exists (with a timeout) instead of a fixed delay, and treat a missing value as a failed measurement, never as 0.
 
 **Principle:** A check that matches on vocabulary rather than meaning produces both false alarms and blind spots; a missing measurement must never be recorded as a result.
+
+### Observation 6: Reverting an experiment must not revert unrelated uncommitted work in the same file
+**Status:** OPEN
+
+**Date:** 2026-09-23
+**Session context:** A performance experiment (rendering flags as images) touched two component files that already carried uncommitted, unrelated edits (a heading-level change). The experiment was reverted with a whole-file checkout.
+**Skill:** New skill candidate: safe scripted source edits (same candidate as Observation 4); relevant to any workflow that runs throwaway experiments in a dirty working tree
+**Type:** open-source
+**Phase/Area:** Implementation mechanics / version control
+
+**Issue:** The whole-file checkout restored the committed version and silently dropped the earlier uncommitted heading change in one of the files. It was noticed and restored by hand; the test suite did not cover that element's tag, so it would not have caught the loss.
+
+**Suggested improvement:** Before starting an experiment in a dirty tree, save it as its own patch (or commit/stash the unrelated work first), and revert the experiment by reversing that patch, never by checking out whole files. After any revert, diff the file against the intended state.
+
+**Principle:** A revert should undo exactly one change. Whole-file restores in a dirty tree undo everything, and green tests are no proof that nothing else was lost.
+
+### Observation 7: Markup-level changes guarded by computed styles, not pixel diffs, when the page has live imagery
+**Status:** OPEN
+
+**Date:** 2026-09-23
+**Session context:** Promoting section headings from h3 to h2 for a correct heading order, with the requirement of no visual change.
+**Skill:** impeccable (audit/harden: accessibility fixes that must not change the design); playwright-skill (verification scripts)
+**Type:** open-source
+**Phase/Area:** Accessibility / verification
+
+**Issue:** Element-type selectors (`.card h3`) stopped matching after the tag change; the fix was `:is(h2, h3)` (same specificity), plus `:where(:not(...))` to keep one unrelated h2 from matching a broadened rule. Screenshot diffs on pages with remote images differed even between two runs of the same build, so they could not prove "no visual change".
+
+**Suggested improvement:** For tag-level accessibility fixes, extend selectors with `:is()` to preserve specificity, and prove visual neutrality by comparing computed styles and box geometry of the affected elements between the old and new build; use pixel diffs only on pages without nondeterministic imagery, after a same-build noise baseline.
+
+**Principle:** Establish the noise floor of a visual check before trusting it; when it is noisy, compare the properties that the change can actually affect.

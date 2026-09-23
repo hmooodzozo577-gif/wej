@@ -64,8 +64,16 @@ configuration, and current Git state outrank this document when they differ.
   desktop, low-match country outside the top 10, back, reload), flows
   46/46, edge 18/18, responsive 732/732, Phase 17 matrix 120/120, Phase 18
   matrix 226/226, UA matrix 648/648, passport regression 8/8 contexts, axe
-  0 violations. Production results: see the RC2 record in
-  `/RELEASE_CANDIDATE.md`.
+  0 violations.
+- **Production (RC2, PRODUCTION-VERIFIED)**: source `c0beb58` (tree
+  `d648a01`), branch `release/wejhaty-v1.0.0-rc2` and annotated tag
+  `wejhaty-v1.0.0-rc2` (tag object `ab7f190`) verified on origin; Pages run
+  35929247150 (bundle `index-CLs2fRsE.js` / `index-BaNVZnjM.css`, same as the
+  local build); Worker run 35929247157, version `2c26501e-8ecb-4907-9699-
+  481d73db234d`, 4 rate limiters bound. Smoke run 35929343828: browsers
+  114/114 (Chromium, Firefox, Linux WebKit, real Edge 152), Worker 17/17,
+  real Safari 26.6.2 (macOS) 11/11, including the destination match. Full
+  integrity table: `/RELEASE_CANDIDATE.md` RC2.4.
 - **Authoritative unresolved register**: "Unresolved register" section
   below. Older notes that disagree with it are superseded.
 
@@ -1982,7 +1990,7 @@ FROZEN, USER-DECISION REQUIRED, UNVERIFIED.
 | ID | Item | Status | Reason | Next action | Owner | User decision? |
 |---|---|---|---|---|---|---|
 | U1 | Thmanyah Arabic font | BLOCKED | License text read in Phase 19 forbids hosting/embedding the files; the official page is unreachable from the development sandbox today, and search snippets from Thmanyah's help centre describe websites as a permitted use "under the license" — an ambiguity only Thmanyah can settle | Ask Thmanyah (Ask@thmanyah.com) for written confirmation of web embedding, or authorise a runner-based re-read of the license page | User | Yes |
-| U2 | Real Safari (macOS) and real Edge | See RC2 record | Now covered by `production-smoke.yml` (safari job, msedge engine) | Keep in every release smoke | Maintainer | No |
+| U2 | Real Safari (macOS) and real Edge | RESOLVED (PRODUCTION-VERIFIED) | Smoke run 35929343828: Safari 26.6.2 11/11, Edge 152 all checks passed | Keep in every release smoke | Maintainer | No |
 | U3 | iOS Safari | UNVERIFIED | No iOS device or simulator in CI | Manual check on an iPhone (checklist in RC2 record) | User | No |
 | U4 | Real screen readers (VoiceOver, TalkBack, NVDA) | UNVERIFIED | Needs a person with assistive technology; automated semantics are clean (axe 0) | Manual checklist in RC2 record | User | No |
 | U5 | Traveler Budget 13.5c (SAR/day) | USER-DECISION REQUIRED | Candidate found: US State Department Foreign Per Diem Rates (public domain, monthly, lodging + meals per location, USD). It is a ceiling for official travellers, not a typical traveller budget | Decide whether to adopt it (with that caveat) or keep deferred; nothing is integrated | User | Yes |
