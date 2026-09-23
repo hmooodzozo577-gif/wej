@@ -5,6 +5,69 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-23 (Phase 17 final acceptance fixes)
+
+- State document version: 33. Phase 17 status: FINAL ACCEPTANCE FIXES
+  APPLIED / READY FOR USER REVIEW. This commit is the intended
+  PRE-PHASE-18 checkpoint (see "Pre-Phase-18 rollback checkpoint" below).
+- **Light Home Hero inverted, not lightened** (`[data-theme='light']` only;
+  Dark unchanged): the navy scrim is replaced by a warm paper gradient
+  (`rgba(242,238,229,…)`, i.e. `--paper`) rising from the TEXT side
+  (inline-start: right in Arabic, left in English) plus a paper rise from
+  the bottom, dissolving into the photograph. The Round 6 8px white mat,
+  outline and inner orange frame are removed — no frame. Copy is ink
+  (`--ink`/`--ink-2`), label/notes/stat icons stay orange (`--gold`),
+  the ghost CTA and stats use light-theme borders, routes turn orange.
+- **Light Destination Hero**: paper radial + bottom gradient from the
+  text corner (bottom inline-start) replaces the navy scrim; ink title
+  and metadata; the upper photograph is untouched. The browse/match chip
+  lost its inline white style (class `detail-match-browse`) so it themes.
+- **Light Results featured card** (`.top-pick`): paper surface, ink text,
+  light score ring/rank badge/tags, orange CTA and top rule; the match
+  percentage stays outside the image. Dark keeps the navy card.
+- **Planes — full-route rule**: every plane now runs one linear
+  `offset-distance: 0% → 100%` cycle of a path that begins and ends beyond
+  a clipped edge; the Round 6 opacity-fade keyframes and band edge masks
+  (which made planes appear mid-route) are deleted, and the Home secondary
+  plane's path is written in its travel direction (no reversed keyframes).
+  Paths live in `app/src/components/flightPaths.ts`; each context has its
+  own composition: Explore header two wide edge-to-edge routes, Surprise
+  one small plane + compass, Quiz two faint planes (both on screen at
+  load via negative delays), Destination one route across the upper sky,
+  How It Works / Purpose ambient swoops in the open side. Reduced motion
+  stops every plane at a visible route point. BROWSER-VERIFIED by a
+  25-point full-cycle audit (hidden at 0% and 100%, one contiguous
+  visible run) at 1440/800/390px; TEST-VERIFIED by
+  `TravelRouteDecor.test.tsx`.
+- Verification: 953/953 frontend tests, `tsc -b`, oxlint 0, build;
+  Playwright 120-check matrix (Home, Purpose, Explore, Quiz, Results,
+  Destination × AR/EN × light/dark × 390/430/800/1280/1440) plus the same
+  120 checks under reduced motion — 0 failures.
+
+### Pre-Phase-18 rollback checkpoint
+
+- The commit that adds this section is the complete project immediately
+  before Phase 18. It is preserved remotely by BOTH:
+  - branch `backup/phase17-final-pre-phase18`
+  - annotated tag `phase17-final-pre-phase18`
+  Its exact hash is recorded in the commit that follows it and in the
+  Phase 18 report. Neither ref may ever be moved, amended or force-pushed.
+- To remove Phase 18 completely (history-preserving, no force push):
+  ```
+  git fetch origin --tags
+  git checkout claude/marhaba-kxry8l
+  git restore --source=phase17-final-pre-phase18 --staged --worktree :/
+  git commit -m "Rollback: remove Phase 18, restore tree to phase17-final-pre-phase18"
+  git diff phase17-final-pre-phase18 HEAD --stat   # must print nothing
+  git push origin claude/marhaba-kxry8l            # redeploys Pages
+  ```
+  `git restore` with a source also deletes files added after the
+  checkpoint, so Phase 18 code, tests, docs and config all disappear.
+- Browser storage after a rollback: Phase 18 stores the personalization
+  profile in localStorage. After a rollback that key may remain in some
+  users' browsers; the restored Phase 17 code never reads it, so it is
+  inert. The checkpoint is not modified to clean it.
+
 ### Current verified state — 2026-09-23 (round 6, user acceptance repair)
 
 - State document version: 32. Phase 17 status: USER ACCEPTANCE REPAIR /

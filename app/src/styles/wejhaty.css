@@ -2521,35 +2521,101 @@ html[dir='rtl'] .q-option.selected {
 
 /* Light theme — the Home Hero, the recommendations note and the footer
    are part of the warm-paper system, not dark panels carried over from
-   Dark mode. Only the photograph keeps its own darkness, and only where
-   copy sits on it. Scoped to [data-theme='light'] so Dark mode, which
-   uses these same components, is untouched. */
+   Dark mode. Scoped to [data-theme='light'] so Dark mode, which uses these
+   same components, is untouched.
+
+   The Hero inverts Dark mode's logic rather than lightening it: instead
+   of a navy scrim rising from the text side, warm paper rises from the
+   text side and dissolves into the photograph, so the copy sits on the
+   page itself and the image reads as part of it. No frame, no mat — the
+   paper edge of the gradient meets the paper of the page. The gradient
+   always starts on the TEXT side (inline-start): right in Arabic, left
+   in English. */
 [data-theme='light'] .home-hero-cinematic {
   background: transparent;
 }
 
 [data-theme='light'] .home-hero-frame {
-  border: 8px solid var(--white);
-  outline: 1px solid color-mix(in srgb, var(--gold) 26%, transparent);
-  outline-offset: -1px;
-  background: var(--paper-2);
+  border: 0;
+  background: var(--paper);
   box-shadow: none;
 }
 
 [data-theme='light'] .home-hero-frame::after {
-  border-color: rgba(255, 214, 196, .5);
+  display: none;
 }
 
 [data-theme='light'] .home-hero-scrim {
   background:
-    linear-gradient(90deg, rgba(8, 22, 36, .88) 0%, rgba(8, 22, 36, .7) 38%, rgba(8, 22, 36, .34) 72%, rgba(8, 22, 36, .24) 100%),
-    linear-gradient(0deg, rgba(8, 22, 36, .72), transparent 42%);
+    linear-gradient(90deg, rgba(242, 238, 229, .97) 0%, rgba(242, 238, 229, .9) 32%, rgba(242, 238, 229, .58) 50%, rgba(242, 238, 229, .12) 66%, rgba(242, 238, 229, 0) 78%),
+    linear-gradient(0deg, rgba(242, 238, 229, .92), rgba(242, 238, 229, 0) 30%);
 }
 
 html[dir='rtl'][data-theme='light'] .home-hero-scrim {
   background:
-    linear-gradient(270deg, rgba(8, 22, 36, .88) 0%, rgba(8, 22, 36, .7) 38%, rgba(8, 22, 36, .34) 72%, rgba(8, 22, 36, .24) 100%),
-    linear-gradient(0deg, rgba(8, 22, 36, .72), transparent 42%);
+    linear-gradient(270deg, rgba(242, 238, 229, .97) 0%, rgba(242, 238, 229, .9) 32%, rgba(242, 238, 229, .58) 50%, rgba(242, 238, 229, .12) 66%, rgba(242, 238, 229, 0) 78%),
+    linear-gradient(0deg, rgba(242, 238, 229, .92), rgba(242, 238, 229, 0) 30%);
+}
+
+/* Copy on paper: ink type, the orange signature kept for the label, the
+   editorial note and the stat icons. */
+[data-theme='light'] .home-hero-frame .hero-copy { color: var(--ink); }
+
+[data-theme='light'] .home-hero-frame .hero-copy h1 {
+  color: var(--ink);
+  text-shadow: none;
+}
+
+[data-theme='light'] .home-hero-frame .hero-engine-label {
+  color: var(--gold);
+  border-bottom-color: color-mix(in srgb, var(--gold) 60%, transparent);
+}
+
+[data-theme='light'] .home-hero-frame .hero-copy .lead { color: var(--ink-2); }
+
+[data-theme='light'] .home-hero-frame .hero-journey-note {
+  color: var(--gold);
+  border-bottom-color: color-mix(in srgb, var(--gold) 55%, transparent);
+  text-shadow: none;
+}
+
+[data-theme='light'] .home-hero-frame .btn-ghost {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 30%, transparent);
+  background: color-mix(in srgb, var(--white) 70%, transparent);
+}
+
+[data-theme='light'] .home-hero-frame .btn-ghost:hover {
+  border-color: var(--ink);
+  background: var(--white);
+}
+
+[data-theme='light'] .home-hero-frame .hero-stats { border-top-color: var(--line); }
+
+[data-theme='light'] .home-hero-frame .hero-stat {
+  color: var(--muted);
+  border-color: var(--line);
+}
+
+[data-theme='light'] .home-hero-frame .hero-stat span { color: var(--muted); }
+[data-theme='light'] .home-hero-frame .hero-stat b,
+[data-theme='light'] .home-hero-frame .hero-stat-phrase span { color: var(--ink); }
+[data-theme='light'] .home-hero-frame .hero-stat-icon { color: var(--gold); }
+
+/* The nearby note sits on the photograph itself, bright or dark; a paper
+   halo keeps the orange legible on either. */
+[data-theme='light'] .hero-nearby-note {
+  color: var(--gold);
+  text-shadow: 0 0 2px rgba(255, 253, 248, .95), 0 0 10px rgba(255, 253, 248, .9), 0 0 18px rgba(255, 253, 248, .75);
+}
+
+[data-theme='light'] .hero-nearby-flourish path { stroke: color-mix(in srgb, var(--gold) 80%, transparent); }
+
+/* Routes cross both the paper side and the photograph, so they take the
+   page's own orange rather than the pale tint made for a dark scrim. */
+[data-theme='light'] .home-hero-stage > .travel-route-home,
+[data-theme='light'] .home-hero-stage > .travel-route-home-band {
+  color: var(--gold);
 }
 
 [data-theme='light'] .hero-destination-badge {
@@ -3117,6 +3183,56 @@ html[dir='rtl'] .top-pick:hover .top-pick-cta svg,
 html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translateX(-4px); }
 .top-pick-cta svg { transition: transform var(--motion-fast) ease; }
 
+/* Light theme — the featured result as a true paper card. It stays the
+   most important card on the page through its size, photograph, score
+   ring, top orange rule and spacing, not by being a navy block among
+   light cards. Dark mode keeps the navy card above. */
+[data-theme='light'] .top-pick {
+  color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--gold) 26%, var(--line));
+  border-top: 3px solid var(--gold);
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(169, 72, 40, .07), transparent 55%),
+    var(--white);
+  box-shadow: 0 22px 54px rgba(58, 42, 26, .11);
+}
+
+[data-theme='light'] .top-pick:hover,
+[data-theme='light'] .top-pick:focus-visible {
+  box-shadow: 0 28px 64px rgba(58, 42, 26, .17);
+}
+
+[data-theme='light'] .top-pick h2 { color: var(--ink); }
+[data-theme='light'] .top-pick .why { color: var(--ink-2); }
+[data-theme='light'] .top-pick .results-method-note { color: var(--muted); }
+[data-theme='light'] .top-pick .top-pick-media .destination-card-image { filter: none; }
+
+[data-theme='light'] .top-pick .rank-badge {
+  color: var(--gold);
+  border-color: color-mix(in srgb, var(--gold) 38%, transparent);
+  background: color-mix(in srgb, var(--gold) 9%, var(--white));
+}
+
+[data-theme='light'] .top-pick .mini-tag {
+  color: var(--ink-2);
+  border-color: var(--line);
+  background: var(--paper-3);
+}
+
+[data-theme='light'] .top-pick .match-ring {
+  background: conic-gradient(var(--gold) calc(var(--match) * 1%), rgba(23, 36, 58, .1) 0);
+  box-shadow: 0 8px 20px rgba(58, 42, 26, .12);
+}
+
+[data-theme='light'] .top-pick .match-ring-inner { background: var(--white); }
+[data-theme='light'] .top-pick .match-ring .matchNum { color: var(--ink); }
+[data-theme='light'] .top-pick .top-pick-score-label { color: var(--muted); }
+
+[data-theme='light'] .top-pick .top-pick-cta {
+  color: var(--gold);
+  border-top-color: var(--line);
+}
+
 .detail-hero {
   border-radius: var(--hero-radius);
   box-shadow: 0 22px 56px rgba(7, 17, 29, .2), 0 0 0 1px rgba(230, 111, 67, .42);
@@ -3591,6 +3707,79 @@ html[dir='ltr'] .destination-page .detail-hero::after {
   }
 }
 
+/* Light theme — Destination Hero. Same principle as the Home Hero: paper
+   rises from where the copy sits (the bottom, strongest at the text's
+   inline-start corner) and dissolves into the photograph, instead of the
+   Dark theme's navy scrim. The upper photograph stays untouched, so the
+   image keeps its colour and its focal point. Dark mode is unchanged. */
+[data-theme='light'] .destination-page .detail-hero {
+  background-color: var(--paper);
+  box-shadow: 0 22px 60px rgba(58, 42, 26, .14);
+}
+
+html[data-theme='light'] .destination-page .detail-hero::after {
+  background:
+    radial-gradient(ellipse 78% 92% at 0% 100%, rgba(242, 238, 229, .9) 0%, rgba(242, 238, 229, .62) 42%, rgba(242, 238, 229, 0) 74%),
+    linear-gradient(0deg, rgba(242, 238, 229, .96) 0%, rgba(242, 238, 229, .82) 22%, rgba(242, 238, 229, .3) 44%, rgba(242, 238, 229, 0) 62%);
+}
+
+html[dir='rtl'][data-theme='light'] .destination-page .detail-hero::after {
+  background:
+    radial-gradient(ellipse 78% 92% at 100% 100%, rgba(242, 238, 229, .9) 0%, rgba(242, 238, 229, .62) 42%, rgba(242, 238, 229, 0) 74%),
+    linear-gradient(0deg, rgba(242, 238, 229, .96) 0%, rgba(242, 238, 229, .82) 22%, rgba(242, 238, 229, .3) 44%, rgba(242, 238, 229, 0) 62%);
+}
+
+[data-theme='light'] .destination-page .detail-hero-inner {
+  color: var(--ink);
+  text-shadow: none;
+}
+
+[data-theme='light'] .destination-page .detail-hero h1 {
+  color: var(--ink);
+  text-shadow: none;
+}
+
+[data-theme='light'] .destination-page .detail-hero .sub {
+  color: var(--ink-2);
+  text-shadow: none;
+}
+
+[data-theme='light'] .destination-page .name-flag .flag-chip,
+[data-theme='light'] .destination-page .name-flag .flag-fallback {
+  border-color: var(--line);
+  box-shadow: 0 6px 16px rgba(58, 42, 26, .14);
+}
+
+[data-theme='light'] .destination-page .detail-match {
+  border-color: color-mix(in srgb, var(--gold) 40%, transparent);
+  background: var(--gold);
+}
+
+/* The neutral "browsing / match" chip: translucent on the Dark photo
+   scrim, a paper chip with ink text over the Light paper gradient. */
+.detail-match.detail-match-browse {
+  color: #fff;
+  background: rgba(255, 255, 255, .16);
+}
+
+[data-theme='light'] .destination-page .detail-match.detail-match-browse {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--gold) 34%, var(--line));
+  background: color-mix(in srgb, var(--white) 82%, transparent);
+  box-shadow: 0 8px 20px rgba(58, 42, 26, .1);
+}
+
+[data-theme='light'] .destination-page .hero-photo-attribution > summary { color: var(--ink-2); }
+[data-theme='light'] .destination-page .hero-photo-attribution-body { color: var(--muted); }
+[data-theme='light'] .destination-page .hero-photo-attribution-body a { color: var(--gold); }
+
+@media (max-width: 620px) {
+  html[data-theme='light'] .destination-page .detail-hero::after,
+  html[dir='rtl'][data-theme='light'] .destination-page .detail-hero::after {
+    background: linear-gradient(0deg, rgba(242, 238, 229, .97) 0%, rgba(242, 238, 229, .86) 34%, rgba(242, 238, 229, .3) 56%, rgba(242, 238, 229, 0) 74%);
+  }
+}
+
 /* Phase 17 final acceptance pass — compact atlas proportions, an unclipped
    travel route, data-backed compass labels, and theme-safe public forms. */
 :root {
@@ -3987,13 +4176,14 @@ html[dir='rtl'] .hero-vertical-tagline {
 
 /* A second, quieter live plane on the route's other path — slower, more
    translucent, and travelling the opposite way so it reads as a distinct
-   background signal rather than a duplicate of the primary plane. */
+   background signal rather than a duplicate of the primary plane. Its path
+   is written in its direction of travel, so it too runs 0% → 100%. */
 .route-plane-secondary-moving {
-  offset-path: path('M90 700 C230 466 398 505 555 382 S875 150 1270 344');
-  offset-distance: 100%;
-  offset-rotate: reverse;
+  offset-path: path('M1270 344 C875 150 712 259 555 382 C398 505 230 466 90 700');
+  offset-distance: 0%;
+  offset-rotate: auto;
   opacity: .6;
-  animation: route-flight-secondary 21s linear infinite;
+  animation: route-flight 21s linear infinite;
   filter: drop-shadow(0 3px 5px rgba(3, 13, 23, .3));
 }
 
@@ -4012,26 +4202,22 @@ html[dir='rtl'] .hero-vertical-tagline {
   to { offset-distance: 100%; }
 }
 
-@keyframes route-flight-secondary {
-  from { offset-distance: 100%; }
-  to { offset-distance: 0%; }
-}
-
-/* Flight bands — every secondary plane on the site (How-It-Works, the
-   Purpose and Explore page heads, the Surprise card, the Destination
-   photo, the Quiz header and the portrait Home Hero). Each band's box
-   keeps its viewBox's aspect ratio, so the plane is scaled uniformly and
-   never stretched; each sits only in open space, never behind a grid of
-   cards. The plane flies the dashed line drawn in the same band, fading
-   in at its origin and out past the band's edge, so it reads as a flight
-   passing through rather than a shape blinking into place. In RTL the
-   whole band mirrors, so flights follow the reading direction. */
+/* Flight bands — every plane outside the landscape Home Hero. Each band is
+   scaled uniformly (`slice`), so planes keep their shape at every width.
+   Every route begins and ends beyond a clipped edge (its section, card,
+   photo or the viewport), and every cycle is one full linear traversal,
+   0% → 100%: a plane is seen entering, crossing and leaving — never
+   appearing or fading out mid-route. Negative delays only choose where
+   each plane is when the page loads, so none looks missing. Each context
+   has its own composition: wide exploratory routes in the Explore header,
+   one compact plane in Surprise, two faint distant planes in Quiz, one
+   photographic route on a Destination, ambient swoops beside the How It
+   Works and Purpose headings. In RTL a band mirrors, so flights follow the
+   reading direction. */
 .travel-route-band {
   position: absolute;
   inset: auto;
   z-index: 0;
-  height: auto;
-  aspect-ratio: 800 / 220;
   overflow: visible;
   color: var(--gold);
 }
@@ -4042,53 +4228,82 @@ html[dir='rtl'] .travel-route-band {
 
 .travel-route-band .travel-route-line { opacity: .34; }
 .travel-route-band .route-two { opacity: .26; }
-.travel-route-band .route-plane-mark { opacity: .66; stroke: none; }
+.travel-route-band .route-plane-mark { opacity: .72; stroke: none; }
 
-/* The inner end of a side band dissolves instead of starting abruptly
-   next to the copy it sits beside. */
-.travel-route-band:not(.travel-route-quiz, .travel-route-home-band) {
-  mask-image: linear-gradient(to right, transparent 0%, #000 26%);
-}
-
-.route-plane-band-a,
-.route-plane-band-b,
-.route-plane-quiz,
-.route-plane-home-top,
-.route-plane-home-bottom {
+.travel-route-band .route-plane {
   offset-distance: 0%;
   offset-rotate: auto;
-  animation: route-flight-fade 18s linear infinite;
+  animation: route-flight 20s linear infinite;
 }
 
-.route-plane-band-a { offset-path: path('M40 150 C200 70 380 180 560 100 S760 40 850 70'); }
-
-.route-plane-band-b {
-  offset-path: path('M850 176 C660 206 500 136 330 170 S130 204 30 156');
-  animation-duration: 24s;
-  animation-delay: -10s;
-}
-
-@keyframes route-flight-fade {
-  0% { offset-distance: 0%; opacity: 0; }
-  7% { opacity: 1; }
-  92% { opacity: 1; }
-  100% { offset-distance: 100%; opacity: 0; }
-}
-
-.home-how-section > .travel-route-band,
-.page-hero-ambient > .travel-route-band {
+/* How It Works — ambient, in the open side beside the heading. */
+.home-how-section > .travel-route-how {
   inset-block-start: 0;
   inset-inline-end: 0;
-  width: clamp(280px, 48%, 780px);
+  width: clamp(300px, 52%, 760px);
+  height: clamp(150px, 16vw, 230px);
 }
 
+.travel-route-band .route-plane-how-a {
+  offset-path: path('M790 150 C640 190 500 140 420 90 S300 10 240 -50');
+  animation-duration: 19s;
+  animation-delay: -7s;
+}
+
+.travel-route-band .route-plane-how-b {
+  offset-path: path('M470 -50 C500 40 580 90 660 110 S760 140 800 190');
+  animation-duration: 26s;
+  animation-delay: -16s;
+}
+
+/* Purpose page head — one quiet swoop. */
+.page-hero-ambient > .travel-route-purpose {
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  width: clamp(280px, 50%, 720px);
+  height: clamp(150px, 16vw, 230px);
+}
+
+.travel-route-band .route-plane-purpose {
+  offset-path: path('M300 -50 C340 90 460 190 580 160 S720 60 790 40');
+  animation-duration: 20s;
+  animation-delay: -8s;
+}
+
+/* Explore page head — two long, wide routes across the whole header. */
+.page-hero-ambient > .travel-route-explore {
+  inset-block-start: 0;
+  inset-inline: 0;
+  width: 100%;
+  height: clamp(150px, 15.3vw, 220px);
+}
+
+.travel-route-band .route-plane-explore-a {
+  offset-path: path('M-80 50 C220 20 470 64 720 40 S1130 60 1290 104 S1440 150 1520 132');
+  animation-duration: 24s;
+  animation-delay: -9s;
+}
+
+.travel-route-band .route-plane-explore-b {
+  offset-path: path('M1520 196 C1250 212 1010 170 860 150 S700 70 560 40 S240 16 -80 30');
+  animation-duration: 33s;
+  animation-delay: -21s;
+}
+
+/* Surprise — one small plane on a short internal route. */
 .surprise-card > .travel-route-surprise {
   z-index: 1;
-  inset-block-start: 50%;
+  inset-block: 0;
   inset-inline-end: 0;
-  width: min(52%, 540px);
-  translate: 0 -50%;
+  width: min(55%, 640px);
+  height: 100%;
   transition: opacity var(--motion-normal) ease;
+}
+
+.travel-route-band .route-plane-surprise {
+  offset-path: path('M650 118 C520 140 420 110 340 76 S210 20 170 -40');
+  animation-duration: 15s;
+  animation-delay: -6s;
 }
 
 /* Once a destination is drawn, the result owns that column. */
@@ -4096,35 +4311,52 @@ html[dir='rtl'] .travel-route-band {
   opacity: 0;
 }
 
+/* Destination — one route across the photograph's upper sky, clear of
+   the title and the previous/next controls. A soft dark halo keeps the
+   white route legible over pale skies as well as dark photos. */
 .detail-hero > .travel-route-destination {
   z-index: 2;
-  inset-block-start: 3%;
-  inset-inline-end: 5%;
-  width: clamp(300px, 56%, 620px);
+  inset-block-start: 0;
+  inset-inline: 0;
+  width: 100%;
+  height: 44%;
   color: #fff6ef;
-  /* A soft dark halo keeps the white route legible over pale skies as
-     well as dark photos. */
   filter: drop-shadow(0 1px 3px rgba(3, 13, 23, .55));
 }
 
 .travel-route-destination .travel-route-line { opacity: .7; }
 .travel-route-destination .route-plane-mark { opacity: 1; }
 
+.travel-route-band .route-plane-destination {
+  offset-path: path('M1280 150 C1020 170 820 90 620 70 S240 60 -80 20');
+  animation-duration: 22s;
+  animation-delay: -9s;
+}
+
+/* Quiz — two faint, distant planes in the header/progress band. */
 .quiz-wrap > .travel-route-quiz {
-  inset-block-start: 6px;
+  inset-block-start: 4px;
   left: 50%;
   width: 100vw;
   max-width: 1600px;
-  aspect-ratio: 1200 / 90;
+  height: clamp(64px, 7.6vw, 110px);
   translate: -50% 0;
 }
 
-.travel-route-quiz .travel-route-line { opacity: .2; }
-.travel-route-quiz .route-plane-mark { opacity: .42; }
+.travel-route-quiz .travel-route-line { opacity: .18; }
+.travel-route-quiz .route-plane-mark { opacity: .48; }
+.travel-route-quiz .route-plane-quiz-b .route-plane-mark { opacity: .34; }
 
-.route-plane-quiz {
-  offset-path: path('M-60 58 C220 20 460 76 700 42 S1080 20 1260 52');
-  animation-duration: 40s;
+.travel-route-band .route-plane-quiz-a {
+  offset-path: path('M-80 34 C200 14 460 52 700 30 S1060 16 1280 38');
+  animation-duration: 36s;
+  animation-delay: -16s;
+}
+
+.travel-route-band .route-plane-quiz-b {
+  offset-path: path('M1280 70 C1000 82 760 58 520 72 S160 86 -80 66');
+  animation-duration: 50s;
+  animation-delay: -29s;
 }
 
 /* Portrait Home Hero bands: hidden until the portrait composition
@@ -4146,16 +4378,17 @@ html[dir='rtl'] .travel-route-band {
 .travel-route-home-band .travel-route-line { opacity: .5; }
 .travel-route-home-band .route-plane-mark { opacity: .9; }
 
-.route-plane-home-top {
+.travel-route-band .route-plane-home-top {
   offset-path: path('M-60 46 C180 18 400 64 620 36 S900 22 1060 44');
   animation-duration: var(--motion-travel-slow);
+  animation-delay: -5s;
   filter: drop-shadow(0 3px 5px rgba(3, 13, 23, .35));
 }
 
-.route-plane-home-bottom {
+.travel-route-band .route-plane-home-bottom {
   offset-path: path('M1060 30 C820 54 600 16 380 40 S120 58 -60 30');
   animation-duration: 21s;
-  animation-delay: -6s;
+  animation-delay: -9s;
 }
 
 .section {
@@ -4636,17 +4869,24 @@ html[dir='rtl'] .travel-route-band {
   }
 
   .route-plane-secondary-moving {
-    offset-distance: 62%;
+    offset-distance: 38%;
     animation: none !important;
   }
 
-  /* Band planes rest mid-route, fully drawn, instead of at a faded or
-     off-edge path start. */
-  .route-plane-band-a { offset-distance: 58%; }
-  .route-plane-band-b { offset-distance: 42%; }
-  .route-plane-quiz { offset-distance: 30%; }
-  .route-plane-home-top { offset-distance: 40%; }
-  .route-plane-home-bottom { offset-distance: 56%; }
+  /* With motion reduced, every band plane rests at a visible point on
+     its drawn route instead of its off-edge start. */
+  .travel-route-band .route-plane-how-a,
+  .travel-route-band .route-plane-explore-a,
+  .travel-route-band .route-plane-quiz-a,
+  .travel-route-band .route-plane-home-top { offset-distance: 42%; }
+
+  .travel-route-band .route-plane-how-b,
+  .travel-route-band .route-plane-explore-b,
+  .travel-route-band .route-plane-quiz-b,
+  .travel-route-band .route-plane-home-bottom,
+  .travel-route-band .route-plane-purpose,
+  .travel-route-band .route-plane-surprise,
+  .travel-route-band .route-plane-destination { offset-distance: 55%; }
 
   .hero-orbit-destination {
     animation: none !important;

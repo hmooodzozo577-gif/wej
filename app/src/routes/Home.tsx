@@ -120,7 +120,7 @@ export function Home() {
       </section>
 
       <section className="section home-how-section" id="howSection">
-        <TravelRouteDecor variant="band" />
+        <TravelRouteDecor variant="how" />
         <div className="container">
           <div className="section-head center">
             <h2 className="display">{how.title}</h2>

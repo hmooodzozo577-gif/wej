@@ -255,7 +255,7 @@ export function Destination() {
             fallbackBackground={regionGradientCss(continent)}
             subContent={t.regionLabels[continent]}
             rightContent={
-              <div className="detail-match" style={{ background: 'rgba(255,255,255,0.16)', color: '#fff' }}>
+              <div className="detail-match detail-match-browse">
                 {matchScore !== null ? `${matchScore}% ${t.results.match}` : dt.browse}
               </div>
             }
@@ -361,7 +361,7 @@ export function Destination() {
                 {matchScore}% {dt.match}
               </div>
             ) : (
-              <div className="detail-match" style={{ background: 'rgba(255,255,255,0.16)', color: '#fff' }}>
+              <div className="detail-match detail-match-browse">
                 {dt.browse}
               </div>
             )

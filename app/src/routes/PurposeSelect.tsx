@@ -21,7 +21,7 @@ export function PurposeSelect() {
   return (
     <>
       <section className="page-hero page-hero-ambient">
-        <TravelRouteDecor variant="band" />
+        <TravelRouteDecor variant="purpose-header" />
         <div className="container">
           <h1 className="display">{pu.title}</h1>
           <p>{pu.sub}</p>
