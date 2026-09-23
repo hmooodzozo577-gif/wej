@@ -45,6 +45,21 @@ export function compactCitySummary(value: string): string {
   return `${clean.slice(0, lastSpace > 0 ? lastSpace : CITY_SUMMARY_BUDGET).trim()}…`;
 }
 
+/** Security Pass 2 (optional item) — a "read more" link is rendered only
+ *  when it is an HTTPS Wikipedia article URL, which is all the Worker ever
+ *  returns. Anything else (another host, another scheme, a malformed value)
+ *  is dropped, so the page never links wherever an answer happens to say. */
+export function safeWikipediaUrl(value: unknown): string | null {
+  if (typeof value !== 'string' || value.length > 2048) return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:' || url.username || url.password || url.port) return null;
+    return /^(?:[a-z]{2,3}(?:-[a-z]+)?\.)?(?:m\.)?wikipedia\.org$/.test(url.hostname) ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Per-page-load memo. Reopening a city card, or coming back to a country
  *  during the same visit, must not ask again — the answer cannot have
  *  changed, and the Worker is a guest of the API behind it.
@@ -89,7 +104,11 @@ export async function lookupCityDescriptions(
       // Only a verified description is kept. Every other status means the
       // card shows facts alone, so there is nothing to store.
       if (description && description.status === 'ok' && description.summary) {
-        result.set(description.cityName, { ...description, summary: compactCitySummary(toLatinDigits(description.summary)) });
+        result.set(description.cityName, {
+          ...description,
+          summary: compactCitySummary(toLatinDigits(description.summary)),
+          sourceUrl: safeWikipediaUrl(description.sourceUrl),
+        });
       }
     }
     memo.set(memoKey, result);

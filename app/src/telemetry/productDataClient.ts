@@ -55,19 +55,32 @@ function hasForbiddenKey(value: unknown): boolean {
 
 interface ProductContext { path: string; locale: Lang; countryCode?: string }
 
+/** Security Pass 2 (E1) — the longest a write (event, rating, report) may
+ *  wait for the Worker, response body included. A Worker that never answers
+ *  must not leave a form spinning forever: the request is aborted and the
+ *  caller gets the same `ok: false` as any other failure, so its existing
+ *  error state (and the traveller's retry) takes over. There is no automatic
+ *  retry — a rating or report must never be submitted twice. */
+export const WRITE_TIMEOUT_MS = 15_000;
+
 async function post(path: string, body: Record<string, unknown>): Promise<{ ok: boolean; data?: Record<string, unknown> }> {
   if (!WORKER_BASE_URL) return { ok: false };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), WRITE_TIMEOUT_MS);
   try {
     const result = await fetch(`${WORKER_BASE_URL}${path}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
       keepalive: path === '/api/events',
+      signal: controller.signal,
     });
     const data = await result.json().catch(() => undefined) as Record<string, unknown> | undefined;
     return { ok: result.ok, data };
   } catch {
     return { ok: false };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
