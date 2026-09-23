@@ -1,0 +1,57 @@
+name: Production smoke test
+
+# Phase 20 — read-only check of the deployed GitHub Pages site from a
+# GitHub-hosted runner (the development sandbox cannot reach github.io).
+# Manual dispatch only. The script blocks every Worker request inside the
+# browser, so a run writes nothing to production data.
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: 'Site URL to check'
+        required: false
+        default: 'https://hmooodzozo577-gif.github.io/wej'
+      engines:
+        description: 'Browser engines (comma-separated: chromium,firefox,webkit)'
+        required: false
+        default: 'chromium,firefox,webkit'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright (runner only, not a project dependency)
+        working-directory: app
+        run: |
+          npm install --no-save --no-package-lock playwright@1
+          npx playwright install --with-deps chromium firefox webkit
+
+      - name: Run the smoke test
+        working-directory: app
+        env:
+          SITE: ${{ inputs.site }}
+          ENGINES: ${{ inputs.engines }}
+        run: |
+          case "$SITE" in
+            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            *) echo "::error::Unsupported site URL"; exit 1 ;;
+          esac
+          if ! printf '%s' "$ENGINES" | grep -Eq '^(chromium|firefox|webkit)(,(chromium|firefox|webkit))*$'; then
+            echo "::error::Unsupported engines list"; exit 1
+          fi
+          node scripts/production-smoke.mjs "$SITE" "$ENGINES"
