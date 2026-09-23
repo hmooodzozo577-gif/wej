@@ -17,9 +17,9 @@
 // needs no D1 binding, no external fetch, and no secret — a lookup into
 // an in-memory Map built once at module load.
 import detailSnapshot from './generated/countryIntelligenceDetail.json';
+import { isExcludedCountry } from './shared';
 
 const COUNTRY_RE = /^[A-Z]{2}$/;
-const EXCLUDED_COUNTRIES = new Set(['IL']);
 
 interface ComponentScore {
   factor: string;
@@ -66,13 +66,21 @@ export async function handleIntelligenceRequest(
   if (!match) return null;
   if (request.method !== 'GET') return json({ error: 'method_not_allowed', message: 'Use GET.' }, 405);
 
-  const countryCode = decodeURIComponent(match[1]!).toUpperCase();
-  const purpose = decodeURIComponent(match[2]!);
+  // A malformed percent-escape (e.g. "%E0%A4%A") makes decodeURIComponent
+  // throw; that is a bad request, not a server error.
+  let countryCode: string;
+  let purpose: string;
+  try {
+    countryCode = decodeURIComponent(match[1]!).toUpperCase();
+    purpose = decodeURIComponent(match[2]!);
+  } catch {
+    return json({ error: 'invalid_request', message: 'Malformed path encoding.' }, 400);
+  }
 
   if (!COUNTRY_RE.test(countryCode)) {
     return json({ error: 'invalid_request', message: 'countryCode must be a 2-letter uppercase ISO code.' }, 400);
   }
-  if (EXCLUDED_COUNTRIES.has(countryCode)) {
+  if (isExcludedCountry(countryCode)) {
     return json({ error: 'not_found', message: 'No intelligence data for this country.' }, 404);
   }
   if (!VALID_PURPOSES.has(purpose)) {

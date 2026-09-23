@@ -32,7 +32,9 @@
 // major cities of X". A city with no verified article simply has no
 // description.
 import cityCoordinates from './generated/cityCoordinates.json';
+import cityTitles from './generated/cityTitles.json';
 import type { D1DatabaseLike } from './product';
+import { isExcludedCountry } from './shared';
 
 export interface CityDescriptionEnv {
   PRODUCT_DB?: D1DatabaseLike;
@@ -110,6 +112,18 @@ export function referenceCoordinates(countryCode: string, cityName: string): [nu
   const table = cityCoordinates as unknown as Record<string, number[]>;
   const entry = table[`${countryCode}|${normalizeCityKey(cityName)}`];
   return entry && entry.length === 2 ? [entry[0]!, entry[1]!] : null;
+}
+
+/** Security Pass 2 (S2) — the article titles this Worker may look up for a
+ *  featured city: its English name and, where one exists, its Arabic name,
+ *  both from the same generated data as the coordinates
+ *  (generated/cityTitles.json). A client-supplied title outside this list is
+ *  refused, so a request cannot choose which article gets verified and
+ *  cached for a real city. Null when the city is not one of ours. */
+export function trustedTitles(countryCode: string, cityName: string): readonly string[] | null {
+  const table = cityTitles as unknown as Record<string, string[]>;
+  const entry = table[`${countryCode}|${normalizeCityKey(cityName)}`];
+  return Array.isArray(entry) && entry.length > 0 ? entry : null;
 }
 
 /** Cuts an extract to whole sentences inside the length budget. Never cuts
@@ -287,6 +301,10 @@ export async function resolveCityDescription(
   // Not one of our featured cities: this endpoint is not a general-purpose
   // Wikipedia proxy, so there is nothing to look up.
   if (!reference) return emptyDescription(cityName, countryCode, lang, 'no_article');
+  // Only a title from the trusted list is ever fetched. Anything else is
+  // answered without a network call and without touching the cache.
+  const titles = trustedTitles(countryCode, cityName);
+  if (!titles || !titles.includes(title.trim())) return emptyDescription(cityName, countryCode, lang, 'no_article');
 
   const key = `${countryCode}|${normalizeCityKey(cityName)}|${lang}`;
   const db = env.PRODUCT_DB;
@@ -312,8 +330,9 @@ export async function resolveCityDescription(
   // prose is never displayed; it can contribute coordinates only after an
   // exact Wikidata-entity match in addVerifiedCoordinateFallback().
   const [payload, coordinateCompanion] = await Promise.all([
-    fetchSummary(lang, title),
-    lang === 'ar' ? fetchSummary('en', cityName) : Promise.resolve(null),
+    fetchSummary(lang, title.trim()),
+    // The companion is always the trusted English name, never client text.
+    lang === 'ar' ? fetchSummary('en', titles[0]!) : Promise.resolve(null),
   ]);
   if (payload === null) return emptyDescription(cityName, countryCode, lang, 'unavailable');
   // Missing inline coordinates is normal for Arabic summaries. If the
@@ -370,7 +389,7 @@ export function validateDescriptionRequest(body: unknown): { lang: 'ar' | 'en'; 
   const input = body as Record<string, unknown>;
   const lang = input.lang === 'ar' || input.lang === 'en' ? input.lang : null;
   if (!lang) problems.push('lang');
-  const countryCode = typeof input.countryCode === 'string' && COUNTRY_RE.test(input.countryCode) && input.countryCode !== 'IL'
+  const countryCode = typeof input.countryCode === 'string' && COUNTRY_RE.test(input.countryCode) && !isExcludedCountry(input.countryCode)
     ? input.countryCode
     : null;
   if (!countryCode) problems.push('countryCode');

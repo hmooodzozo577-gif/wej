@@ -190,9 +190,16 @@ export async function handleAdminRequest(
 
   if (url.pathname === '/api/admin/feedback/status') {
     if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+    // Security Pass 2 (S3) — a state-changing admin call accepts JSON only.
+    // Requiring the media type rules out a cross-site form post (a "simple"
+    // request that skips CORS preflight) ever reaching this handler.
+    const mediaType = (request.headers.get('Content-Type') ?? '').split(';')[0]!.trim().toLowerCase();
+    if (mediaType !== 'application/json') return json({ error: 'unsupported_media_type' }, 415);
     let body: Record<string, unknown>;
     try {
-      body = await request.json() as Record<string, unknown>;
+      const parsed: unknown = await request.json();
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return json({ error: 'invalid_request' }, 400);
+      body = parsed as Record<string, unknown>;
     } catch {
       return json({ error: 'invalid_request' }, 400);
     }

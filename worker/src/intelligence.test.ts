@@ -79,4 +79,12 @@ describe('handleIntelligenceRequest', () => {
     expect(lookupSuitabilityDetail('ZZ', 'tourism')).toBeNull();
     expect(lookupSuitabilityDetail('SA', 'skydiving')).toBeNull();
   });
+
+  it('answers a malformed percent-escape with 400, not a server error (Security Pass 2, E2)', async () => {
+    for (const path of ['/api/intelligence/%E0%A4%A/tourism', '/api/intelligence/SA/%E0%A4%A', '/api/intelligence/%/tourism']) {
+      const response = await handleIntelligenceRequest(get(path), json);
+      expect(response!.status, path).toBe(400);
+      expect(((await response!.json()) as { error: string }).error).toBe('invalid_request');
+    }
+  });
 });

@@ -105,6 +105,11 @@ const normalize = normalizeCityKey;
 const round4 = (value) => Math.round(value * 1e4) / 1e4;
 const output = {};
 const coordinateIndex = {};
+// Security Pass 2 (S2) — the article titles the Worker may look up for each
+// city, taken from this same trusted data (the English name, and the Arabic
+// name where one exists). The Worker refuses any other client-supplied title,
+// so a request cannot steer which article gets verified and cached.
+const titleIndex = {};
 
 for (const country of catalog) {
   const sourceCountry = countryByIso2.get(country.countryCode);
@@ -159,7 +164,11 @@ for (const country of catalog) {
     // encyclopedia article is about this city and not a namesake. It is
     // written to the Worker, never to the app bundle, so no coordinate of
     // any kind crosses the wire from the browser.
-    if (coords) coordinateIndex[`${country.countryCode}|${normalize(nameEn)}`] = [round4(coords.lat), round4(coords.lng)];
+    if (coords) {
+      const cityKey = `${country.countryCode}|${normalize(nameEn)}`;
+      coordinateIndex[cityKey] = [round4(coords.lat), round4(coords.lng)];
+      titleIndex[cityKey] = [...new Set([nameEn, selected.at(-1).nameAr])];
+    }
   };
 
   if (capital) add(capitalRow?.city ?? capital, capitalRow, true);
@@ -186,6 +195,8 @@ const workerDataDir = path.join(scriptDir, '..', '..', 'worker', 'src', 'generat
 fs.mkdirSync(workerDataDir, { recursive: true });
 fs.writeFileSync(path.join(workerDataDir, 'cityCoordinates.json'), `${JSON.stringify(coordinateIndex, null, 0)}\n`);
 console.log(`Wrote ${Object.keys(coordinateIndex).length} city coordinates for the Worker's article-match check.`);
+fs.writeFileSync(path.join(workerDataDir, 'cityTitles.json'), `${JSON.stringify(titleIndex, null, 0)}\n`);
+console.log(`Wrote ${Object.keys(titleIndex).length} city title allowlist entries for the Worker.`);
 
 console.log(
   `Wrote featured cities for ${Object.keys(output).length} countries — ${cityCount} cities, ${withFacts} with at least one sourced distinguishing fact.`,

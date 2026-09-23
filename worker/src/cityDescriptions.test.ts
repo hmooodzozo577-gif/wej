@@ -17,8 +17,11 @@ import {
   referenceCoordinates,
   resolveCityDescription,
   trimToSentences,
+  trustedTitles,
   validateDescriptionRequest,
 } from './cityDescriptions';
+import cityTitles from './generated/cityTitles.json';
+import cityCoordinates from './generated/cityCoordinates.json';
 
 const json = (body: unknown, status: number) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -360,5 +363,81 @@ describe('the HTTP endpoint', () => {
     const request = new Request('https://w.dev/api/cities/descriptions', { method: 'POST', body: 'not json' });
     const response = await handleCityDescriptionRequest(request, {}, json);
     expect(response!.status).toBe(400);
+  });
+});
+
+describe('the trusted title allowlist (Security Pass 2, S2)', () => {
+  const originalFetch = globalThis.fetch;
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    vi.restoreAllMocks();
+  });
+  beforeEach(() => {
+    globalThis.fetch = vi.fn(async () => new Response(JSON.stringify(summaryPayload()), { status: 200 })) as typeof fetch;
+  });
+
+  it('lists exactly the cities the coordinate index knows, from the same generated data', () => {
+    expect(Object.keys(cityTitles).sort()).toEqual(Object.keys(cityCoordinates).sort());
+    for (const [key, titles] of Object.entries(cityTitles as Record<string, string[]>)) {
+      expect(key.startsWith('IL|'), key).toBe(false);
+      expect(titles.length, key).toBeGreaterThan(0);
+      expect(titles.length, key).toBeLessThanOrEqual(2);
+      // The first title is always the English name the key was built from.
+      expect(`${key.slice(0, 2)}|${normalizeCityKey(titles[0]!)}`).toBe(key);
+    }
+  });
+
+  it('gives a featured city its English and Arabic names, and nothing for other places', () => {
+    expect(trustedTitles('JP', 'Tokyo')).toEqual(['Tokyo', 'طوكيو']);
+    expect(trustedTitles('JP', 'tokyo')).toEqual(['Tokyo', 'طوكيو']);
+    expect(trustedTitles('JP', 'Somewhere That Does Not Exist')).toBeNull();
+    expect(trustedTitles('IL', 'Jerusalem')).toBeNull();
+  });
+
+  it('refuses a client-chosen title without calling upstream or writing the cache', async () => {
+    const run = vi.fn(async () => undefined);
+    const db = {
+      prepare: () => ({
+        bind: () => ({ first: async () => null, run, all: async () => ({ results: [] }) }),
+        first: async () => null,
+        run,
+        all: async () => ({ results: [] }),
+      }),
+    };
+    for (const title of ['Shibuya', 'Tokyo Tower', 'Tokyo_(disambiguation)', 'Special:Random', '../Tokyo', 'Paris']) {
+      const result = await resolveCityDescription({ PRODUCT_DB: db as never }, 'JP', 'Tokyo', 'en', title);
+      expect(result.status, title).toBe('no_article');
+      expect(result.summary, title).toBeNull();
+    }
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+    expect(run).not.toHaveBeenCalled();
+  });
+
+  it('still accepts the trusted English and Arabic titles', async () => {
+    expect((await resolveCityDescription({}, 'JP', 'Tokyo', 'en', 'Tokyo')).status).toBe('ok');
+    const calls: string[] = [];
+    globalThis.fetch = vi.fn(async (request: RequestInfo | URL) => {
+      const url = String(request instanceof Request ? request.url : request);
+      calls.push(url);
+      return new Response(JSON.stringify(summaryPayload({ wikibase_item: 'Q1490' })), { status: 200 });
+    }) as typeof fetch;
+    // A differently spelled city name still resolves to the same city, and
+    // the English coordinate companion uses the trusted name, not the input.
+    const result = await resolveCityDescription({}, 'JP', 'TOKYO', 'ar', 'طوكيو');
+    expect(result.status).toBe('ok');
+    expect(calls.some((url) => url.startsWith('https://en.wikipedia.org/api/rest_v1/page/summary/Tokyo?'))).toBe(true);
+    expect(calls.some((url) => url.includes('TOKYO'))).toBe(false);
+  });
+
+  it('answers a refused title over the HTTP route as a normal no-article result', async () => {
+    const response = await handleCityDescriptionRequest(new Request('https://w.dev/api/cities/descriptions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lang: 'en', countryCode: 'JP', cities: [{ name: 'Tokyo', title: 'Tokyo Tower' }] }),
+    }), {}, json);
+    expect(response!.status).toBe(200);
+    const body = await response!.json() as { descriptions: { status: string }[] };
+    expect(body.descriptions[0]!.status).toBe('no_article');
+    expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 });

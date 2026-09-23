@@ -11,13 +11,12 @@ import { handleVisaRequest, type VisaEnv } from './visa';
 import { handleCityDescriptionRequest, type CityDescriptionEnv } from './cityDescriptions';
 import { handleIntelligenceRequest } from './intelligence';
 import { handleAdminRequest, type AdminEnv } from './admin';
+import { ALLOWED_ORIGIN, isAllowedOrigin } from './shared';
 
 export type Env = AmadeusEnv & ProductEnv & VisaEnv & CityDescriptionEnv & AdminEnv;
 
-const ALLOWED_ORIGIN = 'https://hmooodzozo577-gif.github.io';
-
 function corsHeaders(origin: string | null): HeadersInit {
-  if (origin !== ALLOWED_ORIGIN) return {};
+  if (!isAllowedOrigin(origin)) return {};
   return {
     'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',

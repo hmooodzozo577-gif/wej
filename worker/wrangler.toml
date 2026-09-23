@@ -30,3 +30,24 @@ crons = ["17 2 * * *"]
 # which stores each value encrypted in Cloudflare's platform and injects
 # it into `env` at runtime only; neither is ever written to this file,
 # this repository, or any build output.
+
+# Security Pass 2 (S1) — per-endpoint abuse limits for the public write
+# endpoints, enforced at Cloudflare's edge by the Workers Rate Limiting API.
+# Keyed in src/product.ts on the connecting IP address (CF-Connecting-IP),
+# never on the client-generated session id. Budgets are per address per
+# 60 seconds; a limited request gets 429 with Retry-After. The namespace ids
+# are account-local labels, not secrets.
+[[ratelimits]]
+name = "EVENTS_RATE_LIMITER"
+namespace_id = "1901"
+simple = { limit = 120, period = 60 }
+
+[[ratelimits]]
+name = "RATINGS_RATE_LIMITER"
+namespace_id = "1902"
+simple = { limit = 10, period = 60 }
+
+[[ratelimits]]
+name = "FEEDBACK_RATE_LIMITER"
+namespace_id = "1903"
+simple = { limit = 5, period = 60 }

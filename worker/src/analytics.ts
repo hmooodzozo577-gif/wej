@@ -18,6 +18,7 @@
 //     operator because they asked for it; it is never mined or classified.
 import type { D1DatabaseLike } from './product';
 import countryIntelligenceSnapshot from './generated/countryIntelligenceDetail.json';
+import { isExcludedCountry } from './shared';
 
 export interface AnalyticsFilters {
   from: string | null;
@@ -57,7 +58,7 @@ export function parseFilters(url: URL): AnalyticsFilters {
     locale: locale === 'ar' || locale === 'en' ? locale : null,
     device: device && DEVICES.has(device) ? device : null,
     purpose: purpose && PURPOSES.has(purpose) ? purpose : null,
-    country: country && COUNTRY_RE.test(country) && country !== 'IL' ? country : null,
+    country: country && COUNTRY_RE.test(country) && !isExcludedCountry(country) ? country : null,
     minRating: rating('minRating'),
     maxRating: rating('maxRating'),
   };

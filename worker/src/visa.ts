@@ -25,6 +25,8 @@
 // input is a passport COUNTRY (ISO 3166-1 alpha-2), which is what every one
 // of these providers actually keys on.
 
+import { isExcludedCountry } from './shared';
+
 /** Wejhaty's canonical entry-requirement vocabulary. Deliberately coarse:
  *  it is the most a recommendation product can honestly say, and it maps
  *  onto every provider's own taxonomy without pretending to more precision
@@ -80,10 +82,8 @@ export interface VisaEnv {
 
 const ISO2_RE = /^[A-Z]{2}$/;
 
-/** Israel stays excluded from every effective path, including this one — a
- *  visa lookup is a destination path like any other. */
-const EXCLUDED_DESTINATIONS = new Set(['IL']);
-
+// Israel stays excluded from every effective path, including this one — a
+// visa lookup is a destination path like any other (see shared.ts).
 export function validateVisaLookup(body: unknown): string[] {
   if (typeof body !== 'object' || body === null || Array.isArray(body)) {
     return ['Request body must be a JSON object.'];
@@ -96,7 +96,7 @@ export function validateVisaLookup(body: unknown): string[] {
   if (typeof value.destinationCode !== 'string' || !ISO2_RE.test(value.destinationCode)) {
     errors.push('destinationCode must be a 2-letter uppercase ISO 3166-1 alpha-2 code.');
   }
-  if (typeof value.destinationCode === 'string' && EXCLUDED_DESTINATIONS.has(value.destinationCode)) {
+  if (typeof value.destinationCode === 'string' && isExcludedCountry(value.destinationCode)) {
     errors.push('destinationCode is not part of the effective catalog.');
   }
   if (value.purpose !== undefined && typeof value.purpose !== 'string') {

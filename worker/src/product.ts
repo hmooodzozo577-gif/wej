@@ -1,3 +1,5 @@
+import { isAllowedOrigin, isExcludedCountry } from './shared';
+
 export interface D1Result<T = unknown> { results?: T[]; success?: boolean }
 export interface D1Statement {
   bind(...values: unknown[]): D1Statement;
@@ -11,11 +13,22 @@ export interface R2BucketLike {
   delete(keys: string | string[]): Promise<unknown>;
 }
 
+/** The Workers Rate Limiting API binding (wrangler.toml `[[ratelimits]]`). */
+export interface RateLimiterLike {
+  limit(options: { key: string }): Promise<{ success: boolean }>;
+}
+
 export interface ProductEnv {
   PRODUCT_DB?: D1DatabaseLike;
   FEEDBACK_SCREENSHOTS?: R2BucketLike;
   TURNSTILE_SECRET_KEY?: string;
-  ADMIN_TOKEN?: string;
+  // Security Pass 2 (S1) — one limiter per public write endpoint, each with
+  // its own budget in wrangler.toml.
+  EVENTS_RATE_LIMITER?: RateLimiterLike;
+  RATINGS_RATE_LIMITER?: RateLimiterLike;
+  FEEDBACK_RATE_LIMITER?: RateLimiterLike;
+  // ADMIN_TOKEN is not read here: the admin surface and its credentials
+  // belong to AdminEnv in admin.ts (Security Pass 2, I10).
 }
 
 const SESSION_RE = /^[A-Za-z0-9_-]{16,80}$/;
@@ -25,10 +38,75 @@ const FORBIDDEN_KEYS = new Set(['lat', 'lng', 'latitude', 'longitude', 'coordina
 const FEEDBACK_TYPES = new Set(['wrong_info', 'image', 'bug', 'suggestion', 'results', 'translation', 'other']);
 const RATING_REASONS = new Set(['relevant', 'easy_to_understand', 'unexpected', 'missing_info', 'other']);
 
-function response(body: unknown, status: number, origin: string | null): Response {
-  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  if (origin === 'https://hmooodzozo577-gif.github.io') headers['Access-Control-Allow-Origin'] = origin;
+function response(body: unknown, status: number, origin: string | null, extraHeaders: Record<string, string> = {}): Response {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', ...extraHeaders };
+  if (isAllowedOrigin(origin)) headers['Access-Control-Allow-Origin'] = origin;
   return new Response(JSON.stringify(body), { status, headers });
+}
+
+// ---------------------------------------------------------------------------
+// Security Pass 2 (S1) — abuse control that does not trust the client.
+//
+// Each public write endpoint has its own Workers Rate Limiting binding,
+// keyed on the connecting IP address Cloudflare reports (CF-Connecting-IP),
+// never on the client-generated sessionId (a client can mint a new one per
+// request). The IP is only the limiter's in-memory key at Cloudflare's edge:
+// it is not stored in D1, not logged and not returned. The older
+// per-session D1 caps stay as a second, finer layer.
+//
+// A missing binding (local runs, tests) means no edge limit; a limiter that
+// throws lets the request through rather than taking analytics, ratings and
+// reports down with it — the per-session caps still apply behind it.
+// ---------------------------------------------------------------------------
+type WritePath = '/api/events' | '/api/ratings' | '/api/feedback';
+const LIMITER_FOR: Record<WritePath, 'EVENTS_RATE_LIMITER' | 'RATINGS_RATE_LIMITER' | 'FEEDBACK_RATE_LIMITER'> = {
+  '/api/events': 'EVENTS_RATE_LIMITER',
+  '/api/ratings': 'RATINGS_RATE_LIMITER',
+  '/api/feedback': 'FEEDBACK_RATE_LIMITER',
+};
+/** Seconds a limited client is told to wait: the limiters' 60-second window. */
+export const RATE_LIMIT_RETRY_AFTER_SECONDS = 60;
+
+/** The address Cloudflare saw the request come from. Clients cannot set
+ *  this header through Cloudflare; when it is absent (a local runtime) every
+ *  such request shares one bucket. */
+export function clientAddressOf(request: Request): string {
+  const address = request.headers.get('CF-Connecting-IP')?.trim();
+  return address && address.length <= 64 ? address : 'unknown';
+}
+
+export async function withinRateLimit(env: ProductEnv, path: WritePath, request: Request): Promise<boolean> {
+  const limiter = env[LIMITER_FOR[path]];
+  if (!limiter) return true;
+  try {
+    const { success } = await limiter.limit({ key: `${path}|${clientAddressOf(request)}` });
+    return success !== false;
+  } catch {
+    return true;
+  }
+}
+
+/** Analytics events are small (an event name, a path and a handful of
+ *  properties). Anything larger is refused before it is parsed. */
+export const MAX_EVENT_BODY_BYTES = 16 * 1024;
+const MAX_EVENT_PROPERTIES_LENGTH = 4_000;
+
+async function boundedBodyOf(request: Request, maxBytes: number): Promise<Record<string, unknown> | null | 'too_large'> {
+  const declared = Number(request.headers.get('Content-Length'));
+  if (Number.isFinite(declared) && declared > maxBytes) return 'too_large';
+  let raw: string;
+  try {
+    raw = await request.text();
+  } catch {
+    return null;
+  }
+  if (new TextEncoder().encode(raw).byteLength > maxBytes) return 'too_large';
+  try {
+    const value: unknown = JSON.parse(raw);
+    return typeof value === 'object' && value !== null && !Array.isArray(value) ? value as Record<string, unknown> : null;
+  } catch {
+    return null;
+  }
 }
 
 async function bodyOf(request: Request): Promise<Record<string, unknown> | null> {
@@ -56,12 +134,12 @@ function hasForbiddenKey(value: unknown): boolean {
     FORBIDDEN_KEYS.has(key.toLowerCase().replace(/[^a-z]/g, '')) || hasForbiddenKey(child));
 }
 
-function safeProperties(value: unknown): string | null {
+function safeProperties(value: unknown, maxLength = 12_000): string | null {
   if (value === undefined) return '{}';
   if (!value || typeof value !== 'object' || hasForbiddenKey(value)) return null;
   try {
     const serialized = JSON.stringify(value);
-    return serialized.length <= 12_000 ? serialized : null;
+    return serialized.length <= maxLength ? serialized : null;
   } catch {
     return null;
   }
@@ -73,7 +151,7 @@ function sessionIdOf(body: Record<string, unknown>) {
 
 function edgeCountryOf(request: Request): string | null {
   const country = (request as Request & { cf?: { country?: unknown } }).cf?.country;
-  return typeof country === 'string' && COUNTRY_RE.test(country) && country !== 'IL' ? country : null;
+  return typeof country === 'string' && COUNTRY_RE.test(country) && !isExcludedCountry(country) ? country : null;
 }
 
 async function upsertSession(db: D1DatabaseLike, body: Record<string, unknown>, request: Request) {
@@ -97,17 +175,19 @@ async function upsertSession(db: D1DatabaseLike, body: Record<string, unknown>, 
 }
 
 async function handleEvent(request: Request, env: ProductEnv, origin: string | null) {
-  const body = await bodyOf(request);
+  const parsed = await boundedBodyOf(request, MAX_EVENT_BODY_BYTES);
+  if (parsed === 'too_large') return response({ error: 'payload_too_large' }, 413, origin);
+  const body = parsed;
   const sessionId = body && sessionIdOf(body);
   const name = body && text(body.name, 64);
   const path = body && text(body.path, 240);
-  const properties = body && safeProperties(body.properties);
+  const properties = body && safeProperties(body.properties, MAX_EVENT_PROPERTIES_LENGTH);
   if (!body || !sessionId || !name || !EVENT_RE.test(name) || !path || !path.startsWith('/') || properties === null) {
     return response({ error: 'invalid_request' }, 400, origin);
   }
   const countryCode = body.countryCode === undefined || body.countryCode === null
     ? null
-    : typeof body.countryCode === 'string' && COUNTRY_RE.test(body.countryCode) && body.countryCode !== 'IL' ? body.countryCode : undefined;
+    : typeof body.countryCode === 'string' && COUNTRY_RE.test(body.countryCode) && !isExcludedCountry(body.countryCode) ? body.countryCode : undefined;
   if (countryCode === undefined) return response({ error: 'invalid_request' }, 400, origin);
   await upsertSession(env.PRODUCT_DB!, body, request);
   await env.PRODUCT_DB!.prepare(`INSERT INTO events
@@ -121,7 +201,7 @@ function validCountryItems(value: unknown, withUseful: boolean) {
   return value.every((item) => {
     if (!item || typeof item !== 'object') return false;
     const record = item as Record<string, unknown>;
-    if (typeof record.countryCode !== 'string' || !COUNTRY_RE.test(record.countryCode) || record.countryCode === 'IL') return false;
+    if (typeof record.countryCode !== 'string' || !COUNTRY_RE.test(record.countryCode) || isExcludedCountry(record.countryCode)) return false;
     return withUseful ? typeof record.useful === 'boolean' : typeof record.score === 'number' && record.score >= 0 && record.score <= 100;
   });
 }
@@ -162,7 +242,7 @@ async function handleRating(request: Request, env: ProductEnv, origin: string | 
   // A destination rating is about exactly one country, and the IL exclusion
   // is absolute here as on every other path.
   if (kind === 'destination') {
-    if (typeof countryCode !== 'string' || !COUNTRY_RE.test(countryCode) || countryCode === 'IL') {
+    if (typeof countryCode !== 'string' || !COUNTRY_RE.test(countryCode) || isExcludedCountry(countryCode)) {
       return response({ error: 'invalid_request' }, 400, origin);
     }
   } else if (countryCode !== undefined) {
@@ -203,16 +283,31 @@ async function handleRating(request: Request, env: ProductEnv, origin: string | 
   return response({ saved: true }, 201, origin);
 }
 
-async function verifyTurnstile(token: string | null, secret: string | undefined): Promise<boolean> {
+/** Outbound limit for the Turnstile check, so a slow verifier cannot hold
+ *  a request open. */
+export const TURNSTILE_TIMEOUT_MS = 5000;
+const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+
+/** Turnstile stays OPTIONAL: with no secret configured (today's state) the
+ *  check is skipped. Once a secret exists it fails closed — a missing token,
+ *  a rejected token, a non-2xx answer, a malformed body, a network error and
+ *  a timeout are all "not verified". Only `success: true` passes. */
+export async function verifyTurnstile(
+  token: string | null,
+  secret: string | undefined,
+  fetchImpl: typeof fetch = fetch,
+  timeoutMs = TURNSTILE_TIMEOUT_MS,
+): Promise<boolean> {
   if (!secret) return true;
   if (!token) return false;
   const form = new FormData();
   form.set('secret', secret);
   form.set('response', token);
   try {
-    const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
-    const data = await result.json() as { success?: boolean };
-    return data.success === true;
+    const result = await fetchImpl(TURNSTILE_VERIFY_URL, { method: 'POST', body: form, signal: AbortSignal.timeout(timeoutMs) });
+    if (!result.ok) return false;
+    const data: unknown = await result.json();
+    return !!data && typeof data === 'object' && (data as { success?: unknown }).success === true;
   } catch {
     return false;
   }
@@ -242,7 +337,7 @@ async function handleFeedback(request: Request, env: ProductEnv, origin: string 
   const screenshot = body ? decodeScreenshot(body.screenshotDataUrl) : undefined;
   const countryCode = body?.countryCode === undefined || body?.countryCode === null || body?.countryCode === ''
     ? null
-    : typeof body.countryCode === 'string' && COUNTRY_RE.test(body.countryCode) && body.countryCode !== 'IL' ? body.countryCode : undefined;
+    : typeof body.countryCode === 'string' && COUNTRY_RE.test(body.countryCode) && !isExcludedCountry(body.countryCode) ? body.countryCode : undefined;
   if (!body || !sessionId || !type || !FEEDBACK_TYPES.has(type) || !message || !path || !path.startsWith('/') ||
       email === undefined || (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) || countryCode === undefined || screenshot === undefined) {
     return response({ error: 'invalid_request' }, 400, origin);
@@ -302,8 +397,13 @@ export async function handleProductRequest(request: Request, env: ProductEnv, or
   // /admin and /api/admin/* are served by admin.ts, which owns
   // authentication for the whole private surface.
   if (!['/api/events', '/api/ratings', '/api/feedback'].includes(path)) return null;
-  if (!env.PRODUCT_DB) return response({ error: 'product_data_unavailable' }, 503, origin);
   if (request.method !== 'POST') return response({ error: 'method_not_allowed' }, 405, origin);
+  // Limited before anything else is done for the request — including the
+  // database check, so the budget holds whatever the storage state.
+  if (!await withinRateLimit(env, path as WritePath, request)) {
+    return response({ error: 'rate_limited' }, 429, origin, { 'Retry-After': String(RATE_LIMIT_RETRY_AFTER_SECONDS) });
+  }
+  if (!env.PRODUCT_DB) return response({ error: 'product_data_unavailable' }, 503, origin);
   if (path === '/api/events') return handleEvent(request, env, origin);
   if (path === '/api/ratings') return handleRating(request, env, origin);
   return handleFeedback(request, env, origin);

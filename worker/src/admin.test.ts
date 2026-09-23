@@ -158,6 +158,30 @@ describe('admin routing', () => {
     expect(response!.status).toBe(503);
   });
 
+  it('requires a JSON content type on the status update (Security Pass 2, S3)', async () => {
+    const send = (headers: Record<string, string>, body = JSON.stringify({ referenceId: 'WJH-1', status: 'resolved' })) =>
+      handleAdminRequest(new Request('https://w.dev/api/admin/feedback/status', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer fixture-admin-secret', ...headers },
+        body,
+      }), env(), json);
+
+    // A cross-site form post arrives as a "simple" request without a
+    // preflight; none of these may reach the update.
+    for (const contentType of ['text/plain', 'application/x-www-form-urlencoded', 'multipart/form-data; boundary=x', 'application/jsonp']) {
+      const response = await send({ 'Content-Type': contentType });
+      expect(response!.status, contentType).toBe(415);
+      expect(await response!.json()).toEqual({ error: 'unsupported_media_type' });
+    }
+    expect((await send({}))!.status).toBe(415);
+    // Parameters and letter case do not matter; the media type does.
+    expect([200, 404]).toContain((await send({ 'Content-Type': 'Application/JSON; charset=utf-8' }))!.status);
+    // A JSON body that is not an object is a bad request, not a crash.
+    for (const body of ['null', '[]', '"x"', '{bad']) {
+      expect((await send({ 'Content-Type': 'application/json' }, body))!.status, body).toBe(400);
+    }
+  });
+
   it('only accepts a status from the allowed set', async () => {
     const post = (body: unknown) => handleAdminRequest(new Request('https://w.dev/api/admin/feedback/status', {
       method: 'POST',
