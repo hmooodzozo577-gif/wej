@@ -51,13 +51,24 @@ configuration, and current Git state outrank this document when they differ.
   1069/1070 in the full parallel run — the one failure is the known
   400-profile Personal Match test timing out under load (passes alone,
   17/17; that code is untouched; raising test timeouts is deferred by the
-  user). Production results are recorded below the deferred items.
+  user). Production results follow below.
 - **Still open / deferred by the user**: production Turnstile keys, paid
   provider limits, dependency upgrades, CSV parsing, constant-time length
   handling, the Access JWK cache, a CSP for the main site, action SHA
   pinning, screenshot magic-byte checks, request-body stream limits, test
   timeout increases. `/api/cities/descriptions` (bounded to 12 allowlisted
   cities, edge- and D1-cached) has no per-address limit of its own.
+- **Production (PRODUCTION-VERIFIED)**: Worker deploy run 35895787074
+  (version c1c42ff4) bound D1, R2 and the three rate limiters; Pages
+  deploy run 35895787097 succeeded with the per-job permissions.
+  `production-smoke.yml` run 35896010401 from GitHub's runner: site 78/78
+  in Chromium, Firefox and WebKit, and Worker 17/17 — malformed escape →
+  400, CORS only for the Pages origin, untrusted city title refused, and
+  429 + `Retry-After: 60` on all three write endpoints with nothing stored
+  (invalid bodies only). The live limiter engaged after 12/22/242 requests
+  against budgets of 5/10/120: Cloudflare's Rate Limiting API counts per
+  location and is approximate, so the effective ceiling is roughly double
+  the configured budget — still a hard per-address cap, unlike before.
 
 ### Current verified state — 2026-09-23 (Phase 19 hardening + Phase 20 release candidate)
 
