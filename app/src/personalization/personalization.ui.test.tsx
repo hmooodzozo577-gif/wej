@@ -71,6 +71,8 @@ describe('Results — Phase 18', () => {
     const { container } = renderAt('/results', memoryStorage(true));
     expect(screen.getByText('توافقها معك')).toBeInTheDocument();
     expect(container.querySelector('.top-pick-general')?.textContent).toMatch(/^الملاءمة العامة \(سياحة وإجازة\): \d+%$/);
+    // Isolated so the number reads "63%" like the ring and pills, not "%63".
+    expect(container.querySelector('.top-pick-general b')?.getAttribute('dir')).toBe('ltr');
     const pills = [...container.querySelectorAll('.results-grid .personal-pill')].map((pill) => pill.textContent);
     expect(pills).toHaveLength(4);
     for (const pill of pills) expect(pill).toMatch(/^\d+% لك$/);

@@ -191,7 +191,10 @@ export function Results() {
                 ) : null}
                 {firstGeneral !== null ? (
                   <span className="top-pick-general">
-                    {pc.generalSuitability(purposeName)}: <b>{firstGeneral}%</b>
+                    {/* dir: after Arabic text the digits would otherwise take
+                        Arabic-number direction and render as "%63", unlike
+                        the ring and pills beside it. */}
+                    {pc.generalSuitability(purposeName)}: <b dir="ltr">{firstGeneral}%</b>
                   </span>
                 ) : null}
               </span>

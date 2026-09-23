@@ -152,7 +152,7 @@ export function personalSummary(match: PersonalMatch, prefs: NormalizedPreferenc
   } else {
     body = positives.length ? ` ${name} fits you on ${joinList(positives, 'en')}` : ` ${name} only partly fits your preferences`;
     body += negatives.length
-      ? `; ${joinList(negatives, 'en')} ${negatives.length > 1 ? 'are' : 'is'} a weaker fit for what you chose.`
+      ? `; it is a weaker fit on ${joinList(negatives, 'en')}.`
       : '.';
   }
   const constraint = match.eligible ? '' : ` ${copy.constraintFailed}.`;

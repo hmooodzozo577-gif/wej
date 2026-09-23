@@ -4947,6 +4947,14 @@ html[dir='rtl'] .travel-route-band {
   border-color: color-mix(in srgb, var(--gold) 34%, var(--line));
 }
 
+/* "47% for you" is wider than the plain match pill: beside a long one-word
+   country name on a narrow card it drops under the name instead of
+   overflowing the card. No effect whenever both fit on one line. */
+.dest-body-top {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+
 .match-pill.personal-pill small {
   color: var(--muted);
   font-size: .72rem;
@@ -5079,11 +5087,17 @@ html[dir='rtl'] .travel-route-band {
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
   text-underline-offset: 4px;
+  transition: color 160ms ease;
 }
 
 .hero-continue-link:hover,
 .hero-continue-link:focus-visible { color: #fff9f3; }
-[data-theme='light'] .home-hero-frame .hero-continue-link { color: var(--gold); }
+/* At phone widths the link runs onto the photograph; the same paper halo
+   as the nearby note keeps it legible on a bright patch. */
+[data-theme='light'] .home-hero-frame .hero-continue-link {
+  color: var(--gold);
+  text-shadow: 0 0 2px rgba(255, 253, 248, .95), 0 0 10px rgba(255, 253, 248, .9), 0 0 18px rgba(255, 253, 248, .75);
+}
 [data-theme='light'] .home-hero-frame .hero-continue-link:hover,
 [data-theme='light'] .home-hero-frame .hero-continue-link:focus-visible { color: var(--ink); }
 
