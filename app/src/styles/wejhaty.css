@@ -2973,14 +2973,22 @@ html[dir='rtl'] .home-hero-scrim {
 
 /* Explore/Destination previously rendered one motionless plane
    (`route-plane-static`) with no matching animation rule anywhere in the
-   stylesheet — a real, confirmed-static decorative element. Give it a
-   slow, quiet drift so every visible decorative plane on the site moves. */
+   stylesheet — a real, confirmed-static decorative element. A first fix
+   gave it a small ~15px translate wobble; on a real device that read as
+   still-frozen (too little travel to register at a glance). It now flies
+   the same dashed route line already drawn in this variant (`route-one`),
+   the same technique already proven clearly visible on the Home hero —
+   slower here since this is a quieter, secondary context. */
 .route-plane-drift {
-  animation: plane-drift-one 12s ease-in-out infinite alternate;
+  offset-path: path('M-70 105 C150 235 286 22 500 122 S870 262 1280 62');
+  offset-distance: 0%;
+  offset-rotate: auto;
+  animation: route-flight 26s linear infinite;
+  filter: drop-shadow(0 3px 5px rgba(3, 13, 23, .3));
 }
 
 .travel-route-explore .route-plane-drift {
-  animation: plane-drift-two 15s ease-in-out infinite alternate;
+  animation: route-flight 22s linear infinite;
 }
 
 .purpose-grid { gap: 14px; }
@@ -3771,9 +3779,14 @@ html[dir='rtl'] .hero-editorial-note {
    row (like the numeric stats' label) left the icon alone on the first
    row with visible empty space beside it. Keep icon + phrase on one row,
    vertically centered, and give the phrase the numeric stats' bold weight
-   so the three cells read as one family. */
+   so the three cells read as one family. It stays the third stat, in the
+   same row as the other two whenever it fits; when it doesn't, it wraps
+   like any flex item — no forced full-row takeover, no relocation. The
+   trailing divider border is dropped since, as the last stat, it never
+   actually separates it from a fourth item — only ever a stray mark. */
 .home-hero-frame .hero-stat-phrase {
   flex-wrap: nowrap;
+  border-inline-end: 0;
 }
 
 .home-hero-frame .hero-stat-phrase span {
@@ -3783,30 +3796,6 @@ html[dir='rtl'] .hero-editorial-note {
   font-weight: 700;
   font-size: .92rem;
   line-height: 1.3;
-}
-
-/* At mid-range container widths (the Hero's two-column grid with a still-
-   fairly-narrow copy column — e.g. large-Android-tablet portrait) the
-   three stats no longer all fit on one content-sized line, and the
-   phrase stat was dropping to an orphan second row while still carrying
-   the divider line meant for a same-row neighbour, leaving a stray
-   fragment. A container query (sized off the stats row's own available
-   width, not a guessed viewport breakpoint) turns that same drop into an
-   intentional layout: the phrase stat spans the full row on its own,
-   under a clean horizontal divider instead of a dangling vertical one. */
-.home-hero-frame .hero-stats {
-  container-type: inline-size;
-  container-name: hero-stats;
-}
-
-@container hero-stats (max-width: 640px) {
-  .home-hero-frame .hero-stat-phrase {
-    flex: 1 1 100%;
-    border-inline-end: 0;
-    border-block-start: 1px solid var(--line);
-    margin-top: 2px;
-    padding-top: 17px;
-  }
 }
 
 html[dir='rtl'] .home-hero-frame .hero-stat-phrase span {

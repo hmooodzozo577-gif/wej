@@ -56,7 +56,7 @@ export function TravelRouteDecor({ variant = 'home' }: { variant?: 'home' | 'exp
           </g>
         </>
       ) : (
-        <g className="route-plane route-plane-drift" transform="translate(500 122) rotate(8)">
+        <g className="route-plane route-plane-drift">
           <path className="route-plane-mark" d={PLANE_SILHOUETTE} />
         </g>
       )}
