@@ -8,7 +8,7 @@
 // most developer networks cannot reach these hosts, and the browser never
 // fetches them at all — the traveller's passport choice stays on the device.
 //
-// Fetch safety (Phase 19 P3/P8):
+// Fetch safety (Phase 19 P3/P8), implemented in lib/entryRequirementsFetch.mjs:
 //   - every URL comes from SOURCES below; nothing is user- or page-supplied
 //   - HTTPS only; hosts must be on ALLOWED_HOSTS
 //   - redirects are followed manually, at most MAX_REDIRECTS, and only to
@@ -42,6 +42,7 @@ import {
   parseUk,
   validateSnapshot,
 } from './lib/entryRequirementsIngest.mjs';
+import { createSafeFetcher } from './lib/entryRequirementsFetch.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT = path.resolve(__dirname, '../src/data/generated/entryRequirements.json');
@@ -147,7 +148,7 @@ const SOURCES = [
   },
 ];
 
-const ALLOWED_HOSTS = new Set([
+const ALLOWED_HOSTS = [
   'www.gov.uk',
   'publications.europa.eu',
   'home-affairs.ec.europa.eu',
@@ -155,87 +156,15 @@ const ALLOWED_HOSTS = new Set([
   'www.ica.gov.sg',
   'visa.visitsaudi.com',
   'www.immigration.gov.mv',
-]);
+];
 
-function assertAllowed(url) {
-  if (url.protocol !== 'https:') throw new Error(`refusing non-HTTPS URL ${url.href}`);
-  if (!ALLOWED_HOSTS.has(url.hostname)) throw new Error(`refusing host outside the allowlist: ${url.hostname}`);
-}
-
-async function readCapped(response) {
-  const reader = response.body.getReader();
-  const chunks = [];
-  let total = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    total += value.byteLength;
-    if (total > MAX_BYTES) {
-      await reader.cancel();
-      throw new Error(`response exceeded ${MAX_BYTES} bytes`);
-    }
-    chunks.push(value);
-  }
-  return Buffer.concat(chunks).toString('utf8');
-}
-
-async function safeFetch(startUrl, { accept = 'text/html,application/json', acceptLanguage } = {}) {
-  let url = new URL(startUrl);
-  for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
-    assertAllowed(url);
-    const response = await fetch(url, {
-      redirect: 'manual',
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-      headers: { 'User-Agent': USER_AGENT, Accept: accept, ...(acceptLanguage ? { 'Accept-Language': acceptLanguage } : {}) },
-    });
-    if (response.status >= 300 && response.status < 400) {
-      const location = response.headers.get('location');
-      if (!location) throw new Error(`redirect without Location from ${url.href}`);
-      const next = new URL(location, url);
-      // Allowlisted host announced over http: ask for the same resource
-      // over TLS instead of following the cleartext hop.
-      if (next.protocol === 'http:' && ALLOWED_HOSTS.has(next.hostname)) next.protocol = 'https:';
-      url = next;
-      continue;
-    }
-    if (!response.ok) throw new Error(`HTTP ${response.status} from ${url.href}`);
-    return { body: await readCapped(response), finalUrl: url.href };
-  }
-  throw new Error(`more than ${MAX_REDIRECTS} redirects from ${startUrl}`);
-}
-
-/** Minimal robots.txt check for `User-agent: *` groups (RFC 9309): a 4xx
- *  robots.txt means no restrictions; a 5xx or network failure means the
- *  host is treated as fully disallowed. */
-const robotsCache = new Map();
-async function assertRobotsAllow(url) {
-  const origin = `${url.protocol}//${url.host}`;
-  if (!robotsCache.has(origin)) {
-    let rules = [];
-    try {
-      const response = await fetch(`${origin}/robots.txt`, { signal: AbortSignal.timeout(TIMEOUT_MS), headers: { 'User-Agent': USER_AGENT, Accept: '*/*' } });
-      if (response.status >= 500) throw new Error(`robots.txt ${response.status}`);
-      if (response.ok) {
-        let applies = false;
-        for (const raw of (await response.text()).split('\n')) {
-          const line = raw.replace(/#.*/, '').trim();
-          const [key, ...rest] = line.split(':');
-          const value = rest.join(':').trim();
-          if (/^user-agent$/i.test(key)) applies = value === '*';
-          else if (applies && /^disallow$/i.test(key) && value) rules.push(value);
-        }
-      }
-    } catch (error) {
-      throw new Error(`robots.txt for ${origin} unavailable (${error.message}); treating as disallowed`);
-    }
-    robotsCache.set(origin, rules);
-  }
-  const target = url.pathname + url.search;
-  for (const rule of robotsCache.get(origin)) {
-    const pattern = new RegExp(`^${rule.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\\\$$/, '$')}`);
-    if (pattern.test(target)) throw new Error(`robots.txt of ${origin} disallows ${target} (${rule})`);
-  }
-}
+const { safeFetch, assertRobotsAllow } = createSafeFetcher({
+  allowedHosts: ALLOWED_HOSTS,
+  timeoutMs: TIMEOUT_MS,
+  maxBytes: MAX_BYTES,
+  maxRedirects: MAX_REDIRECTS,
+  userAgent: USER_AGENT,
+});
 
 async function loadSource(source) {
   const url = new URL(source.fetchUrl);

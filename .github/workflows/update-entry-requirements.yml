@@ -20,6 +20,7 @@ on:
     paths:
       - 'app/scripts/generate-entry-requirements.mjs'
       - 'app/scripts/lib/entryRequirementsIngest.mjs'
+      - 'app/scripts/lib/entryRequirementsFetch.mjs'
       - '.github/workflows/update-entry-requirements.yml'
 
 permissions:
@@ -55,7 +56,7 @@ jobs:
 
       - name: Run parser tests (fixtures only, no network)
         working-directory: app
-        run: npx vitest run scripts/lib/entryRequirementsIngest.test.mjs
+        run: npx vitest run scripts/lib/entryRequirementsIngest.test.mjs scripts/lib/entryRequirementsFetch.test.mjs
 
       # The only network-touching step. Exits non-zero on any fetch,
       # parse or validation failure and then leaves the committed snapshot

@@ -60,23 +60,23 @@ describe('the passport step sits between the questionnaire and the results', () 
   // asserted against the copy, in both languages, so a future rewrite that
   // drops one of them fails here rather than in production.
   describe('item #5 — the explanation is complete and does not overclaim', () => {
-    it('shows the purpose line and the current-provider line on the step itself', async () => {
+    it('shows the purpose line, the entry-information line and the partial-coverage line', async () => {
       const { container } = renderQuiz();
       await answerUntilCheckpoint(container);
       fireEvent.click(screen.getByText(I18N.ar.quiz.showResultsNow));
       await screen.findByText(I18N.ar.passport.title);
 
       expect(screen.getByText(I18N.ar.passport.purposeNote)).toBeInTheDocument();
-      // No provider is configured in the test environment, so the honest
-      // "not switched on yet" line is the one that must render.
-      expect(screen.getByText(I18N.ar.passport.providerInactiveNote)).toBeInTheDocument();
-      expect(screen.queryByText(I18N.ar.passport.providerActiveNote)).not.toBeInTheDocument();
+      expect(screen.getByText(I18N.ar.passport.entryNote)).toBeInTheDocument();
+      // Phase 19 P17 — coverage is partial and the step says so, with the
+      // count read from the snapshot itself.
+      expect(await screen.findByText(/التغطية جزئية: \d+ وجهة حاليًا/)).toBeInTheDocument();
     });
 
     for (const lang of ['ar', 'en'] as const) {
       it(`says it is optional, entry-requirement-scoped, not location, and number-free (${lang})`, () => {
         const p = I18N[lang].passport;
-        const all = `${p.title} ${p.body} ${p.purposeNote} ${p.providerInactiveNote} ${p.privacyNote}`;
+        const all = `${p.title} ${p.body} ${p.purposeNote} ${p.entryNote} ${p.privacyNote}`;
 
         const optional = lang === 'ar' ? ['اختياري', 'تخطي'] : ['Optional', 'skip'];
         const entry = lang === 'ar' ? ['متطلبات الدخول', 'التأشيرة'] : ['entry', 'visa'];
@@ -89,15 +89,17 @@ describe('the passport step sits between the questionnaire and the results', () 
         }
       });
 
-      it(`does not claim the passport changes recommendations while no provider is live (${lang})`, () => {
+      it(`says the passport is information only and stays on the device (${lang})`, () => {
         const p = I18N[lang].passport;
-        const shownToday = `${p.body} ${p.purposeNote} ${p.providerInactiveNote} ${p.privacyNote}`;
-        // The only line allowed to say the ordering is affected is the one
-        // that renders once a provider actually reports itself configured.
-        const claims = lang === 'ar' ? 'تقديم الوجهة الأسهل' : 'order';
-        expect(p.providerActiveNote.includes(claims)).toBe(true);
-        const inactive = lang === 'ar' ? 'لا يغيّر اختيارك ترتيب التوصيات' : 'does not change your recommendations';
-        expect(shownToday.includes(inactive)).toBe(true);
+        // Phase 19 P15 — no ranking effect, stated plainly.
+        const noRanking = lang === 'ar' ? 'لا يغيّر اختيارك ترتيب التوصيات' : 'does not change the order of your recommendations';
+        expect(p.entryNote.includes(noRanking)).toBe(true);
+        // P14 — the lookup is local; the copy must not promise less.
+        const local = lang === 'ar' ? 'ولا تُرسل إلى خوادمنا' : 'never sent to our servers';
+        expect(p.privacyNote.includes(local)).toBe(true);
+        // Nothing may claim that the passport reorders or rescores anything.
+        const overclaim = lang === 'ar' ? ['تقديم الوجهة الأسهل', 'يرفع'] : ['orders the closer', 'boosts'];
+        for (const phrase of overclaim) expect(`${p.body} ${p.purposeNote} ${p.entryNote} ${p.privacyNote}`.includes(phrase)).toBe(false);
       });
     }
   });

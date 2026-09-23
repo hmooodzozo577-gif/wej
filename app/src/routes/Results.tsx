@@ -19,9 +19,7 @@ import { buildWhyText, rankDestinations } from '../engine';
 import { DestinationImage } from '../components/DestinationImage';
 import { QUESTION_BANKS } from '../data/questionBanks';
 import { ResultRating } from '../components/ResultRating';
-import { VisaRequirementNote } from '../components/VisaRequirementNote';
-import { useVisaRequirements } from '../visa/useVisaRequirements';
-import { visaConvenienceRank } from '../visa/types';
+import { EntryRequirementsPanel } from '../entry/EntryRequirements';
 import { getCountrySuitability } from '../data/countryIntelligence';
 import { usePersonalization } from '../personalization/usePersonalization';
 import { normalizePreferences } from '../personalization/signals';
@@ -62,10 +60,6 @@ function generalSuitabilityOf(countryCode: string, purpose: PurposeId): number |
   return entry && !entry.insufficientData ? entry.score : null;
 }
 
-function sameOrder(a: RefinedResult[], b: RefinedResult[]): boolean {
-  return a.length === b.length && a.every((item, index) => item.result.dest.id === b[index]?.result.dest.id);
-}
-
 export function Results() {
   const navigate = useNavigate();
   const { state, dispatch } = useAppState();
@@ -90,19 +84,12 @@ export function Results() {
   const preferences = useMemo(() => (purpose ? normalizePreferences(purpose, answers) : null), [purpose, answers]);
 
   // Hooks must run unconditionally (same order every render), so everything
-  // the visa hook and the count-up need is derived defensively before the
-  // guard below.
+  // the count-up needs is derived defensively before the guard below.
+  // Phase 19 (P15): the passport is information only — it plays no part in
+  // this order. Entry requirements are shown below the results instead.
   const rankedTop = (phase14Results ?? []).slice(0, REFINEMENT_POOL_SIZE);
-  const { requirements, providerConfigured } = useVisaRequirements(
-    state.passportCode,
-    rankedTop.map((item) => item.dest.countryCode),
-    purpose ?? undefined,
-  );
   const origin = state.location.coords;
-  const visaRank = (result: (typeof rankedTop)[number]) =>
-    state.passportCode && requirements.size ? visaConvenienceRank(requirements.get(result.dest.countryCode)?.category ?? 'unknown') : 0;
-  const refined = preferences ? refineRanking(rankedTop, preferences, { origin }, visaRank) : [];
-  const refinedWithoutVisa = preferences ? refineRanking(rankedTop, preferences, { origin }) : [];
+  const refined = preferences ? refineRanking(rankedTop, preferences, { origin }) : [];
   const top5 = refined.slice(0, 5);
   const firstDisplay = top5[0] ? displayScore(top5[0]) : { value: 0, personal: false };
   const animatedMatch = useCountUp(firstDisplay.value);
@@ -112,7 +99,6 @@ export function Results() {
   }
 
   const r = t.results;
-  const visaChangedOrder = !sameOrder(refined.slice(0, 5), refinedWithoutVisa.slice(0, 5));
   const proximityQuestion = QUESTION_BANKS[purpose].find((question) => question.kind === 'proximity');
   const proximityRequested = !!(proximityQuestion && Number(answers[proximityQuestion.id]) > 0);
   const proximityUsed = top5.some((item) => item.personal.factors.some((factor) => factor.kind === 'near' && factor.fit !== null));
@@ -237,19 +223,10 @@ export function Results() {
           })}
         </div>
 
-        {/* Item #12E — passport-specific entry requirements for the top
-            pick, with provider and check date, or an honest statement of
-            why there are none. The passport question itself now lives in
-            the questionnaire, before these results exist. */}
-        <div className="detail-card visa-card">
-          <VisaRequirementNote
-            requirement={requirements.get(first.result.dest.countryCode)}
-            providerConfigured={providerConfigured}
-            strings={t.visa}
-          />
-          {!state.passportCode ? <p className="city-data-note">{t.visa.noPassport}</p> : null}
-          {visaChangedOrder ? <p className="city-data-note">{t.visa.reorderNote}</p> : null}
-        </div>
+        {/* Phase 19 — entry requirements for the traveller's passport, from
+            official sources, for these same destinations. Renders nothing
+            when no passport was chosen (the question stays optional). */}
+        <EntryRequirementsPanel destinations={top5.map((item) => item.result.dest)} />
         <ResultRating results={top5.map((item) => item.result)} lang={lang} strings={r} />
 
         <div className="results-actions">

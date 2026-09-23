@@ -47,6 +47,7 @@ import { usePersonalization } from '../personalization/usePersonalization';
 import { computePersonalMatch } from '../personalization/personalMatch';
 import { PersonalMatchSection } from '../personalization/PersonalMatchSection';
 import { PERSONAL_COPY } from '../personalization/copy';
+import { EntryRequirementsCard } from '../entry/EntryRequirements';
 
 // Phase 11 Step 1 — compact, build-time Country Information card. Shared by
 // both the basic-country branch and the full-destination branch below, so
@@ -339,6 +340,10 @@ export function Destination() {
                   of inside it. */}
               <CountrySuitability destination={d} />
 
+              {/* Phase 19 — entry requirements for the passport chosen in
+                  this session, from official sources; nothing without one. */}
+              <EntryRequirementsCard destination={d} />
+
               <OptionalPlanningInfo destination={d} dt={dt} />
 
               {/* Item #13B — usable from every entry path (recommendations,
@@ -492,6 +497,8 @@ export function Destination() {
                 detail, so it renders ABOVE that collapsed toggle instead
                 of inside it. */}
             <CountrySuitability destination={d} />
+
+            <EntryRequirementsCard destination={d} />
 
             <OptionalPlanningInfo destination={d} dt={dt} />
 

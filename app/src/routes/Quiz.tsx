@@ -10,7 +10,8 @@ import { rankDestinations } from '../engine';
 import { useAppState, useI18n } from '../state/hooks';
 import { trackEvent } from '../telemetry/productDataClient';
 import { PassportSelect } from '../components/PassportSelect';
-import { useVisaProviderActive } from '../visa/useVisaRequirements';
+import { useEntrySnapshot } from '../entry/useEntrySnapshot';
+import { EntryCoverageNote } from '../entry/EntryRequirements';
 import { waitForLocationSettle } from '../state/waitForLocationSettle';
 import { CompassMark } from '../components/CompassMark';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
@@ -45,13 +46,13 @@ export function Quiz() {
     stateRef.current = state;
   }, [state]);
   // Item #12D — the passport question is the LAST step of the questionnaire,
-  // not a card below the results. It has to be answerable while the ranking
-  // is still being decided; below the results it could not affect anything.
+  // so the entry information is ready the moment the results appear. Since
+  // Phase 19 the passport is information only: it never affects the ranking.
   const [passportStep, setPassportStep] = useState(false);
-  // Acceptance item #5 — asked once, fails closed: until a Worker actually
-  // reports a configured provider, the step says the personalization is not
-  // running rather than implying it is.
-  const visaProviderActive = useVisaProviderActive();
+  // Phase 19 — the entry-requirements snapshot starts loading when the
+  // passport step appears (it is needed on Results next), and supplies the
+  // step's coverage line, so the claim is read from the data itself.
+  const entrySnapshot = useEntrySnapshot(passportStep);
   const { saveFromQuiz } = usePersonalization();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -172,14 +173,12 @@ export function Quiz() {
           <h2 className="q-text">{t.passport.title}</h2>
           <p>{t.passport.body}</p>
           {/* Acceptance item #5 — the explanation, in the order a traveller
-              needs it: what the answer is FOR, what it does to the results
-              right now (which today is nothing, because no provider is
-              live), and what we never ask for. The middle line is driven by
-              the Worker's real provider state, not by a hard-coded claim. */}
+              needs it: what the answer is FOR, what it does (official-source
+              entry information after the results; never the ranking), how
+              much is covered, and what we never ask for. */}
           <p className="passport-why">{t.passport.purposeNote}</p>
-          <p className="passport-why">
-            {visaProviderActive ? t.passport.providerActiveNote : t.passport.providerInactiveNote}
-          </p>
+          <p className="passport-why">{t.passport.entryNote}</p>
+          {entrySnapshot.status === 'ready' ? <EntryCoverageNote snapshot={entrySnapshot.snapshot} lang={lang} /> : null}
           <PassportSelect />
           <p className="city-data-note">{t.passport.privacyNote}</p>
           <div className="quiz-checkpoint-actions">

@@ -23,7 +23,7 @@ export const EN: I18nDict = {
   },
   results: {
     ...base.results,
-    visaGeneralNote: 'General reference only, not personalized to your nationality. Check visa requirements with the official source before travel.',
+    visaGeneralNote: 'General reference only, not personalized to your nationality; check visa requirements with the official source before travel.',
     proximityTieBreak: 'Proximity to your current location was included because you said distance matters.',
     proximityUnavailable: 'You said proximity matters, but location was unavailable, so distance did not affect these results.',
     recommendationMethodNote: 'Match percentages are estimates calculated from your answers and sourced international indicators. Missing values use dataset medians and do not guarantee a travel experience.',
@@ -121,7 +121,7 @@ export const EN: I18nDict = {
   detail: {
     ...base.detail,
     visa: 'Visa information',
-    visaGeneralNote: 'General reference only, not personalized to your nationality. Wejhaty does not have verified per-nationality visa data; check visa requirements with the official source before travel.',
+    visaGeneralNote: 'General reference only, not personalized to your nationality; check visa requirements with the official source before travel.',
     capital: 'Capital',
     notRecommendationReady:
       'Core country information and the indicators used in recommendations are available for this destination.',
@@ -232,8 +232,7 @@ export const EN: I18nDict = {
     title: 'Passport (optional)',
     body: 'Optional — choose the country that issued the passport you will travel with.',
     purposeNote: 'We use only the passport country, to check entry and visa requirements for each destination. This is not your location: where you are now and which passport you hold are two different things, and neither is guessed from the other.',
-    providerInactiveNote: 'Live entry-requirement data is not switched on yet, so your choice does not change your recommendations today. It is kept for this session so the check works the moment the data source is live.',
-    providerActiveNote: 'Entry-requirement data is live, so your passport country is used to check requirements and, where destinations score alike, to order the closer-to-reach one first. It never changes a destination\u2019s suitability score.',
+    entryNote: 'After your results, we show entry requirements for your passport from official government sources, with the source link and last-checked date. Your choice does not change the order of your recommendations or any match percentage.',
     label: 'Which passport will you travel with?',
     placeholder: 'Choose a passport country…',
     searchPlaceholder: 'Search for a country…',
@@ -241,26 +240,9 @@ export const EN: I18nDict = {
     clear: 'Clear selection',
     skip: 'Skip',
     continueCta: 'Show my results',
-    privacyNote: 'We never ask for, see, or store a passport number — only the issuing country, and only for this session. You can skip this step, and skipping never marks any destination down.',
+    privacyNote: 'We never ask for, see, or store a passport number — only the issuing country, which stays on your device for this session only and is never sent to our servers. You can skip this step, and skipping never marks any destination down.',
   },
-  visa: {
-    title: 'Entry requirements',
-    categories: {
-      visaFree: 'No visa required in advance',
-      visaOnArrival: 'Visa on arrival',
-      eVisa: 'eVisa',
-      authorizationRequired: 'Electronic travel authorization required',
-      embassyVisaRequired: 'Visa required in advance from an embassy or consulate',
-      unknown: 'Not available',
-    },
-    providerLabel: 'Source',
-    checkedAtLabel: 'Checked',
-    changeNote: 'Entry requirements change. This is a reference, not a guarantee of entry or of visa approval — check the official source before booking or travelling.',
-    unavailable: 'No entry-requirement data is available for this destination with this passport.',
-    noProvider: 'The visa data service is not enabled yet, so no passport-specific entry requirements are shown.',
-    reorderNote: 'Your passport only reordered results whose match scores were already close; no match percentage changed.',
-    noPassport: 'You did not choose a passport, so entry requirements did not affect these results.',
-  },
+
   // Phase 13.6 — Full Travel Integration. Like location above, not part
   // of the original wejhaty.html copy.
   travel: {

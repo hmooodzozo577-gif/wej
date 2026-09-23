@@ -681,12 +681,11 @@ export interface PassportStrings {
   /** Acceptance item #5 — what the passport country IS for, in plain words:
    *  entry and visa requirements, not the traveller's current location. */
   purposeNote: string;
-  /** Shown while NO live entry-requirement provider is active, which is the
-   *  current production state. It must say that the personalization is not
-   *  running yet, so the step never implies an effect it does not have. */
-  providerInactiveNote: string;
-  /** Shown instead of providerInactiveNote once a provider is live. */
-  providerActiveNote: string;
+  /** Phase 19 — what choosing a passport does now that official-source
+   *  entry information is live: information after the results, never a
+   *  change to their order or scores. Coverage is stated separately, from
+   *  the snapshot itself (entry/EntryRequirements.tsx). */
+  entryNote: string;
   label: string;
   placeholder: string;
   searchPlaceholder: string;
@@ -696,34 +695,6 @@ export interface PassportStrings {
   continueCta: string;
   /** What is and is not done with the answer. */
   privacyNote: string;
-}
-
-/** Item #12E — how an entry requirement is presented. Every string here is
- *  written to avoid promising entry, approval, an open border, or legal
- *  eligibility beyond what the provider actually said. */
-export interface VisaStrings {
-  title: string;
-  categories: {
-    visaFree: string;
-    visaOnArrival: string;
-    eVisa: string;
-    authorizationRequired: string;
-    embassyVisaRequired: string;
-    unknown: string;
-  };
-  providerLabel: string;
-  checkedAtLabel: string;
-  /** The standing caveat: requirements change and must be re-checked. */
-  changeNote: string;
-  /** Shown when a provider answered but had no usable answer. */
-  unavailable: string;
-  /** Shown when no provider is configured at all — a different fact from a
-   *  failed lookup, and the traveller is told which it is. */
-  noProvider: string;
-  /** Shown only when the passport choice actually changed the order. */
-  reorderNote: string;
-  /** Shown on the results page when no passport was given. */
-  noPassport: string;
 }
 
 /** Phase 13.6 — Full Travel Integration strings. Like LocationStrings,
@@ -1023,7 +994,6 @@ export interface I18nDict {
   locationIntro: LocationIntroStrings;
   destinationRating: DestinationRatingStrings;
   passport: PassportStrings;
-  visa: VisaStrings;
   travel: TravelStrings;
   accommodation: AccommodationStrings;
   travelCost: TravelCostStrings;
