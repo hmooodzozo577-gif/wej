@@ -44,7 +44,10 @@ jobs:
                   if item.get('lang'): headers['Accept-Language'] = item['lang']
                   req = urllib.request.Request(item['url'], headers=headers)
                   with urllib.request.urlopen(req, timeout=30) as res:
-                      raw = res.read(3_000_000).decode('utf-8', 'replace')
+                      body = res.read(3_000_000)
+                      if body[:2] == b'\x1f\x8b':
+                          import gzip; body = gzip.decompress(body)
+                      raw = body.decode('utf-8', 'replace')
                       print(f"STATUS {res.status} FINAL {res.geturl()} BYTES {len(raw)}")
               except Exception as e:
                   print(f"ERROR {type(e).__name__}: {e}")
@@ -72,7 +75,10 @@ jobs:
               text = re.sub(r'\n\s*\n+', '\n', text)
               anchor = item.get('anchor')
               if anchor and anchor in text:
-                  text = text[text.index(anchor):]
+                  # Prefer the LAST navigation-free occurrence: menus repeat
+                  # page titles near the top.
+                  idx = [m.start() for m in re.finditer(re.escape(anchor), text)]
+                  text = text[idx[-1] if len(idx) > 1 and item.get('lastAnchor') else idx[0]:]
               text = text[: item.get('chars', 6000)]
               for line in text.split('\n'):
                   line = line.strip()
