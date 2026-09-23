@@ -1,0 +1,150 @@
+name: Update Entry Requirements
+
+# Phase 19 — passport entry information. Weekly (entry rules change more
+# often than the annual datasets) + manual dispatch + whenever the parser
+# itself changes. Fetches the fixed registry of official government pages
+# in app/scripts/generate-entry-requirements.mjs, validates the result, and
+# proposes the new snapshot as a pull request. Never pushes to
+# claude/marhaba-kxry8l directly: a human reviews every change to what the
+# product says about visas.
+#
+# Two jobs so the job that runs `npm ci` and touches the network holds only
+# a read-only token, and the job that can write (push a branch, open a PR)
+# runs no package scripts and fetches nothing but the artifact.
+on:
+  schedule:
+    - cron: '0 4 * * 1' # 04:00 UTC every Monday
+  workflow_dispatch: {}
+  push:
+    branches: [claude/marhaba-kxry8l]
+    paths:
+      - 'app/scripts/generate-entry-requirements.mjs'
+      - 'app/scripts/lib/entryRequirementsIngest.mjs'
+      - '.github/workflows/update-entry-requirements.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: entry-requirements-update
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      propose: ${{ steps.decide.outputs.propose }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Run parser tests (fixtures only, no network)
+        working-directory: app
+        run: npx vitest run scripts/lib/entryRequirementsIngest.test.mjs
+
+      # The only network-touching step. Exits non-zero on any fetch,
+      # parse or validation failure and then leaves the committed snapshot
+      # untouched, so nothing later in this workflow runs.
+      - name: Generate entry requirements snapshot
+        working-directory: app
+        run: node scripts/generate-entry-requirements.mjs
+
+      # Propose a PR when the requirements changed, or when the committed
+      # snapshot's "last checked" date is 14+ days old (the UI treats data
+      # older than 45 days as stale and falls back to the official links).
+      - name: Decide whether to propose the snapshot
+        id: decide
+        working-directory: app
+        run: |
+          node --input-type=module -e "
+            import fs from 'node:fs';
+            import { execSync } from 'node:child_process';
+            const strip = (s) => { const o = JSON.parse(s); delete o.generatedAt; for (const v of Object.values(o.sources)) { delete v.checkedAt; } return JSON.stringify(o); };
+            const file = 'src/data/generated/entryRequirements.json';
+            let committed = null;
+            try { committed = execSync('git show HEAD:app/' + file, { encoding: 'utf8' }); } catch {}
+            const fresh = fs.readFileSync(file, 'utf8');
+            const changed = !committed || strip(committed) !== strip(fresh);
+            const ageDays = committed ? (Date.now() - Date.parse(JSON.parse(committed).generatedAt)) / 86400000 : Infinity;
+            const propose = changed || ageDays >= 14;
+            console.log('changed=' + changed + ' committedAgeDays=' + ageDays.toFixed(1) + ' propose=' + propose);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'propose=' + propose + '\n');
+          "
+
+      - name: Upload snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: entry-requirements-snapshot
+          path: app/src/data/generated/entryRequirements.json
+          retention-days: 14
+
+  propose:
+    needs: generate
+    if: needs.generate.outputs.propose == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download snapshot
+        uses: actions/download-artifact@v4
+        with:
+          name: entry-requirements-snapshot
+          path: app/src/data/generated
+
+      - name: Commit and push the snapshot to a new branch
+        id: push_branch
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          BRANCH="update-entry-requirements-${RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add app/src/data/generated/entryRequirements.json
+          git commit -m "chore: update entry requirements snapshot"
+          git push origin "$BRANCH"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Open a pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.push_branch.outputs.branch }}
+        run: |
+          set +e
+          pr_output=$(gh pr create \
+            --base claude/marhaba-kxry8l \
+            --head "$BRANCH" \
+            --title "chore: update entry requirements snapshot" \
+            --body "Automated refresh of the passport entry-requirements snapshot from the official sources listed in app/scripts/generate-entry-requirements.mjs, validated by its parser tests and snapshot checks before this PR was opened. The generate job's log lists every table value for review. Merge normally once reviewed." 2>&1)
+          pr_status=$?
+          echo "$pr_output"
+          if [ "$pr_status" -eq 0 ]; then
+            echo "Snapshot: SUCCEEDED. Branch: PUSHED. Pull request: OPENED."
+            exit 0
+          fi
+          if echo "$pr_output" | grep -qi "not permitted to create or approve pull requests"; then
+            echo "::error::The validated snapshot was pushed to branch '$BRANCH', but PR creation is blocked by a repository setting (Settings -> Actions -> General -> Workflow permissions -> 'Allow GitHub Actions to create and approve pull requests'). Open the PR from that branch manually."
+            exit 1
+          fi
+          echo "::error::Branch '$BRANCH' was pushed, but PR creation failed for an unrecognised reason (see output above)."
+          exit 1
