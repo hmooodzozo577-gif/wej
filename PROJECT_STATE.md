@@ -5,9 +5,79 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-24 (Phase 20 final, RC4)
+
+- State document version: 40. **Status: PHASE 20 — FINAL WEJHATY /
+  WEJHATY v1.0.0 RC4 / TECHNICALLY VERIFIED / USER ACCEPTANCE PENDING.**
+  The user authorised continuing into Phase 21 (Admin) after RC4 without
+  marking Phase 20 user-accepted. Phase 14, Personal Match
+  (`personal-match-1.0`), Passport (FROZEN: `app/src/entry/` unchanged since
+  RC3), canonical data and the IL/ISR exclusion are unchanged. **Thmanyah
+  font: CANCELLED by the user** — the license-reader workflow was removed
+  and typography is unchanged.
+- **U19 fixed — Dark hero "nearby" note**: a feathered navy backplate
+  (`[data-theme='dark'] .hero-nearby-note::before`, the hero scrim tone at
+  0.7 alpha, box-shadow feather, static, absolutely positioned) sits only
+  behind the words. Measured under the glyphs on all 22 hero photos × AR/EN
+  × 390/800/1280/1440 (176 states): before, the worst photo read 1.06:1
+  without the halo and 1.26:1 with it, and 13 of 22 photos failed at
+  1280/1440. After, every state passes. The lowest per-photo median is
+  6.39:1 and the lowest 10th percentile 6.02:1 (Japan, EN, 1280). The
+  only sub-4.5 pixels are where the compass orbit's dashed ring crosses the
+  letters — a pre-existing overlap, not the background. No element box
+  moves, Light is pixel-identical, and normal and reduced motion are
+  unchanged.
+- **Content-Security-Policy (meta, built by `app/build/
+  contentSecurityPolicy.ts`)**:
+  - Scripts: 'self', the hashed inline theme bootstrap and Turnstile's
+    origin. No 'unsafe-inline' or 'unsafe-eval' for scripts.
+  - Network: `connect-src` allows the site, the configured Worker and
+    Turnstile.
+  - Also set: `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`.
+  - Styles keep 'unsafe-inline', because the flag and icon SVGs are
+    injected markup.
+  - Limits: a meta policy cannot set frame-ancestors, report-uri or
+    sandbox, so it gives no framing protection.
+  - Verified: 0 violations across flows, edge cases and 732 responsive
+    checks. Negative controls work: an injected inline script and a fetch
+    to a foreign host are both refused.
+- **CI actions pinned** to the commit SHAs their tags resolved to in this
+  repository's own run logs, cross-checked with the upstream tags (all are
+  GitHub-owned `actions/*`; there are no third-party actions).
+- **Chunked request bodies bounded**: a body without Content-Length is read
+  under the same per-endpoint ceiling (`readBoundedBody`) and refused with
+  413 once over it. No handler buffers an unbounded body.
+- **Performance measured (no change needed)**: Home FCP 1.09 s / TBT 585 ms,
+  Destination TBT 621 ms and Explore TBT 1.39 s, all on a phone with 4× CPU
+  throttle. The main chunk (634 kB gzip) is mostly React and the shared
+  catalog data every route needs. Route splitting would save a fraction of
+  Home's 518 ms of script, and it risks the scroll and focus navigation
+  logic, so it stays deferred.
+- **Kept deferred (evidence-based)**: Traveler Budget 13.5c (no suitable
+  source — per-diem ceilings are not traveller budgets); Turnstile
+  (server-side limits active); paid-provider limiters (providers dormant);
+  csv-parse advisory (dev-only, transitive, not imported; production
+  `npm audit` clean).
+- **Auto-PR**: still blocked by the repository setting. The last attempt
+  (run 34580108011, 2026-09-11) failed with "GitHub Actions is not
+  permitted to create or approve pull requests". To fix: Settings →
+  Actions → General → Workflow permissions → allow GitHub Actions to
+  create and approve pull requests. This session cannot change repository
+  settings.
+- **Verification (local production build)**:
+  - Unit tests: frontend 1084/1084 in 100 files (`--maxWorkers=2`); Worker
+    247/247. `tsc -b`, oxlint, build and `wrangler deploy --dry-run` are
+    clean.
+  - Browser checks: responsive 732/732, flows 46/46, edge cases 18/18,
+    Phase 17 matrix 120/120 (normal and reduced motion), Phase 18 matrix
+    226/226, UA matrix 648/648, Destination Match 100/100, edit from a
+    destination 80/80, axe 0 violations, Passport regression 8/8 contexts.
+  - The CSP-aware local production smoke passes 41/41.
+  - Production results: see the RC4 record in `/RELEASE_CANDIDATE.md`.
+
 ### Current verified state — 2026-09-23 (Phase 20 user decisions, RC3)
 
-- State document version: 39. **Status: PHASE 20 — FINAL WEJHATY /
+- State document version 39 (superseded by 40 above). **Status then: PHASE 20 — FINAL WEJHATY /
   WEJHATY v1.0.0 RC3 / TECHNICALLY VERIFIED / AWAITING USER ACCEPTANCE.**
   The user will review the candidate manually before final acceptance.
   Phase 21 NOT STARTED (still gated on explicit Phase 20 approval). Phase
@@ -1930,7 +2000,8 @@ language switcher, and the full panel set above. Two things are still open:
 | Shared Worker rules (CORS origin, IL/ISR exclusion) | `worker/src/shared.ts` |
 | Questionnaire entry intent (destination match) | `app/src/personalization/quizIntent.ts` |
 | Release tagging (runner) | `.github/workflows/create-release-tag.yml` |
-| Font license re-read (runner, read-only) | `.github/workflows/read-font-license.yml` |
+| Content-Security-Policy (build-time meta) | `app/build/contentSecurityPolicy.ts` |
+| VoiceOver smoke (macOS runner) | `app/scripts/voiceover-smoke.mjs` |
 | Real Safari smoke (macOS runner) | `app/scripts/safari-smoke.mjs` |
 | Public-write rate limits (bindings) | `worker/wrangler.toml` `[[ratelimits]]`, used in `worker/src/product.ts` |
 | City article title allowlist | `worker/src/generated/cityTitles.json` |
@@ -2043,7 +2114,7 @@ Phase 19 is implemented; Phase 20 produced `wejhaty-v1.0.0-rc1`,
 `wejhaty-v1.0.0-rc2` and then `wejhaty-v1.0.0-rc3` (user decisions) (Destination Match fix, heading structure, Explore
 performance, security backlog, Pass 2). Current order:
 
-1. **PHASE 20 USER ACCEPTANCE GATE (RC3).** Obtain the user's explicit
+1. **PHASE 20 USER ACCEPTANCE (RC4) — pending; Phase 21 proceeds in parallel by user authorisation.** Obtain the user's explicit
    acceptance (checklist in `/RELEASE_CANDIDATE.md`). Do not call anything
    FINAL or USER-ACCEPTED before that. If the user asks to remove Phase 18,
    follow "Pre-Phase-18 rollback checkpoint" exactly.

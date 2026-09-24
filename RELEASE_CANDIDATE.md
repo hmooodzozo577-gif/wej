@@ -1,16 +1,48 @@
 # Wejhaty v1.0.0 — release candidate record
 
-Status: **PHASE 20 — FINAL WEJHATY / WEJHATY v1.0.0 RC3 / TECHNICALLY
-VERIFIED / AWAITING USER ACCEPTANCE.** Nothing here is user-accepted or
+Status: **PHASE 20 — FINAL WEJHATY / WEJHATY v1.0.0 RC4 / TECHNICALLY
+VERIFIED / USER ACCEPTANCE PENDING.** Nothing here is user-accepted or
 final until the user says so. Current truth lives in `PROJECT_STATE.md`
-(state v39 and its authoritative unresolved register); this file records
+(state v40 and its authoritative unresolved register); this file records
 what each candidate is, how it was checked and what the user is asked to
 review.
 
 Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
 PRODUCTION-VERIFIED, USER-VERIFIED, UNVERIFIED, DEFERRED, BLOCKED, FROZEN.
 
-# RC3 — `wejhaty-v1.0.0-rc3` (current)
+# RC4 — `wejhaty-v1.0.0-rc4` (current)
+
+## RC4.1 What it contains
+
+RC3 plus:
+
+- **U19**: the Dark hero "nearby" note gets a feathered navy backplate.
+  Every hero photo now reads at least 6:1 at the 10th percentile, up
+  from 1.26:1.
+- **CSP**: a Content-Security-Policy meta tag. Scripts are limited to the
+  site, the hashed theme bootstrap and Turnstile, with no `unsafe-eval`.
+- **Worker**: chunked request bodies are bounded (413 over the ceiling).
+- **CI**: actions are pinned to verified SHAs; there are new iOS
+  Simulator and VoiceOver smoke jobs, and the smoke checks CSP.
+- **Removed**: the Thmanyah license-reader workflow (topic cancelled).
+
+No product behaviour, copy, ranking, Personal Match or Passport change.
+The RC1, RC2 and RC3 branches and tags stay untouched.
+
+## RC4.2 User-acceptance checklist
+
+Use the RC2.2 checklist, including item 4b from RC3.2. Also check:
+
+- Home in Dark mode, on a bright photo (reload until a snowy or
+  cloudy destination appears): "وجهات أقرب إليك" is readable on a soft
+  dark backing. Light mode is unchanged.
+
+## RC4.3 Integrity and production verification
+
+Filled in after this candidate's deploy and smoke runs, in the commit
+that records them.
+
+# RC3 — `wejhaty-v1.0.0-rc3` (historical record)
 
 ## RC3.1 What it contains
 
