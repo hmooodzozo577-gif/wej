@@ -37,6 +37,10 @@ check(home.status === 200, 'home page responds 200', String(home.status));
 const script = /assets\/index-[\w-]+\.js/.exec(home.body)?.[0];
 const style = /assets\/index-[\w-]+\.css/.exec(home.body)?.[0];
 console.log(`deployed bundle: ${script} ${style}`);
+// Phase 20 — the Content-Security-Policy ships as a meta tag (Pages sends no headers).
+const csp = /<meta http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(home.body)?.[1] ?? '';
+check(/script-src 'self' 'sha256-/.test(csp) && !/unsafe-eval/.test(csp) && !/script-src[^;]*unsafe-inline/.test(csp),
+  'Content-Security-Policy meta: hashed inline script only, no unsafe-eval', csp ? 'present' : 'missing');
 const js = script ? await text(`${SITE}/${script}`) : { status: 0, body: '' };
 const css = style ? await text(`${SITE}/${style}`) : { status: 0, body: '' };
 check(css.body.includes('#c0532c') || css.body.includes('#C0532C'), 'CSS carries the accessible CTA orange');
@@ -58,6 +62,11 @@ for (const engine of engineNames) {
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
     await context.addInitScript((value) => localStorage.setItem('wejhaty.theme', value), theme);
     await context.route(`https://${WORKER_HOST}/**`, (route) => route.abort());
+    // Every CSP violation on any page this context opens is recorded.
+    await context.addInitScript(() => {
+      window.__cspViolations = [];
+      document.addEventListener('securitypolicyviolation', (event) => window.__cspViolations.push(`${event.violatedDirective} ${event.blockedURI}`));
+    });
     const tab = await context.newPage();
     const errors = [];
     const passportLeaks = [];
@@ -91,6 +100,8 @@ for (const engine of engineNames) {
     const cta = await tab.evaluate(() => getComputedStyle(document.querySelector('.home-hero-frame .btn-gold')).backgroundColor);
     check(cta === 'rgb(192, 83, 44)', `${where} CTA background`, cta);
     check(errors.length === 0, `${where} no page errors`, errors.join(' | '));
+    const violations = await tab.evaluate(() => window.__cspViolations ?? []);
+    check(violations.length === 0, `${where} no Content-Security-Policy violations`, violations.join(' | '));
     await context.close();
   }
 
@@ -167,6 +178,8 @@ for (const engine of engineNames) {
     const edited = await tab.textContent('.personal-match-card:not(.is-empty) .personal-match-value b').catch(() => null);
     check(/^\d+%$/.test(edited ?? ''), `${engine} edit preferences shows Japan's updated match`, `${score} -> ${edited}`);
     check(errors.length === 0, `${engine} destination match without page errors`, errors.join(' | '));
+    const flowViolations = await tab.evaluate(() => window.__cspViolations ?? []);
+    check(flowViolations.length === 0, `${engine} destination match without Content-Security-Policy violations`, flowViolations.join(' | '));
     await context.close();
   }
   } catch (error) {

@@ -48,6 +48,27 @@ const call = (path, init = {}) => fetch(`${WORKER}${path}`, { ...init, headers: 
   check(response.status === 200 && body.descriptions?.[0]?.status === 'no_article', 'untrusted city title is refused', `${response.status} ${body.descriptions?.[0]?.status}`);
 }
 
+// Body ceilings (Phase 20): an oversized body is refused with 413 before it
+// is read, whether its length is declared or it arrives chunked. The flights
+// endpoint stores nothing, so these two requests write no data.
+{
+  const oversized = 'x'.repeat(8 * 1024);
+  const declared = await call('/api/travel/flights', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: SITE_ORIGIN },
+    body: oversized,
+  });
+  check(declared.status === 413, 'declared oversized body answers 413', String(declared.status));
+  const stream = new ReadableStream({ start(controller) { controller.enqueue(new TextEncoder().encode(oversized)); controller.close(); } });
+  const chunked = await call('/api/travel/flights', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: SITE_ORIGIN },
+    body: stream,
+    duplex: 'half',
+  });
+  check(chunked.status === 413, 'chunked oversized body (no Content-Length) answers 413', String(chunked.status));
+}
+
 // Edge rate limits (S1): invalid bodies are refused with 400 before any
 // write, until the address is over the endpoint's budget and gets 429. The
 // Rate Limiting API counts per Cloudflare location and is eventually

@@ -9,13 +9,13 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag name, e.g. wejhaty-v1.0.0-rc2'
+        description: 'Tag name, e.g. wejhaty-v1.0.0-rc2 or a checkpoint such as wejhaty-phase20-rc4-pre-phase21'
         required: true
       sha:
         description: 'Full 40-character commit SHA to tag'
         required: true
       branch:
-        description: 'Release branch that must contain the commit, e.g. release/wejhaty-v1.0.0-rc2'
+        description: 'Release or backup branch that must contain the commit, e.g. release/wejhaty-v1.0.0-rc2'
         required: true
       message:
         description: 'Annotation message'
@@ -37,9 +37,9 @@ jobs:
     steps:
       - name: Validate inputs
         run: |
-          printf '%s' "$TAG" | grep -Eq '^wejhaty-v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$' || { echo "::error::Unexpected tag name"; exit 1; }
+          printf '%s' "$TAG" | grep -Eq '^wejhaty-(v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?|phase[0-9]+-[a-z0-9-]+)$' || { echo "::error::Unexpected tag name"; exit 1; }
           printf '%s' "$SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "::error::SHA must be 40 lowercase hex characters"; exit 1; }
-          printf '%s' "$BRANCH" | grep -Eq '^release/wejhaty-v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$' || { echo "::error::Unexpected branch name"; exit 1; }
+          printf '%s' "$BRANCH" | grep -Eq '^(release/wejhaty-v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?|backup/phase[0-9]+-[a-z0-9-]+)$' || { echo "::error::Unexpected branch name"; exit 1; }
           [ "${#MESSAGE}" -le 200 ] || { echo "::error::Message too long"; exit 1; }
 
       - name: Checkout
