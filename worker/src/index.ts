@@ -116,8 +116,8 @@ async function handleFlights(request: Request, env: Env, origin: string | null):
 // Phase 20 security backlog — every endpoint that reads a request body has a
 // ceiling, checked against the declared Content-Length before anything is
 // read. Each is well above what the site ever sends (the feedback ceiling
-// fits the largest accepted screenshot). Bodies sent without a declared
-// length are still bounded by each handler's own field limits.
+// fits the largest accepted screenshot). A body sent without a declared
+// length is read under the same ceiling (readBoundedBody).
 export const MAX_DECLARED_BODY_BYTES: Readonly<Record<string, number>> = {
   '/api/events': 16 * 1024,
   '/api/ratings': 32 * 1024,
@@ -127,6 +127,32 @@ export const MAX_DECLARED_BODY_BYTES: Readonly<Record<string, number>> = {
   '/api/travel/flights': 4 * 1024,
   '/api/visa/requirements': 4 * 1024,
 };
+
+/** Reads a body sent without a declared length (chunked), stopping as soon
+ *  as it passes the endpoint's ceiling instead of buffering it whole.
+ *  Returns null when the body is too large. */
+export async function readBoundedBody(body: ReadableStream<Uint8Array>, ceiling: number): Promise<Uint8Array<ArrayBuffer> | null> {
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > ceiling) {
+      await reader.cancel().catch(() => undefined);
+      return null;
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(new ArrayBuffer(total));
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return bytes;
+}
 
 export function declaredBodyTooLarge(request: Request, pathname: string): boolean {
   const ceiling = MAX_DECLARED_BODY_BYTES[pathname];
@@ -139,10 +165,17 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
   const url = new URL(request.url);
   const origin = request.headers.get('Origin');
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
-  if (declaredBodyTooLarge(request, url.pathname)) {
-    // The admin surface never answers cross-origin; everything else keeps
-    // its CORS header so the site can read the refusal.
-    return json({ error: 'payload_too_large' }, 413, url.pathname.startsWith('/api/admin/') ? null : origin);
+  // The admin surface never answers cross-origin; everything else keeps
+  // its CORS header so the site can read the refusal.
+  const tooLarge = () => json({ error: 'payload_too_large' }, 413, url.pathname.startsWith('/api/admin/') ? null : origin);
+  if (declaredBodyTooLarge(request, url.pathname)) return tooLarge();
+  // Phase 20 — a body with no declared length (chunked) is read here under
+  // the same ceiling, so no handler ever buffers an unbounded body.
+  const ceiling = MAX_DECLARED_BODY_BYTES[url.pathname];
+  if (ceiling && request.body && !request.headers.has('Content-Length')) {
+    const bytes = await readBoundedBody(request.body, ceiling);
+    if (!bytes) return tooLarge();
+    request = new Request(request.url, { method: request.method, headers: request.headers, body: bytes });
   }
   // The private admin surface owns its own authentication, so it is matched
   // BEFORE the public product endpoints — an admin path must never fall

@@ -1,7 +1,7 @@
 // Phase 20 security backlog — behavior-neutral hardening: declared body-size
 // ceilings, screenshot magic bytes, and the city-descriptions limiter.
 import { describe, expect, it, vi } from 'vitest';
-import { declaredBodyTooLarge, handleRequest, MAX_DECLARED_BODY_BYTES, type Env } from './index';
+import { declaredBodyTooLarge, handleRequest, MAX_DECLARED_BODY_BYTES, readBoundedBody, type Env } from './index';
 import { detectImageType, handleProductRequest, type ProductEnv, type RateLimiterLike } from './product';
 import { handleCityDescriptionRequest } from './cityDescriptions';
 
@@ -30,6 +30,40 @@ describe('declared body-size ceilings', () => {
     expect(declaredBodyTooLarge(at('/api/intelligence/SA/tourism', 10_000_000), '/api/intelligence/SA/tourism')).toBe(false);
     // The feedback ceiling fits the largest screenshot the form accepts.
     expect(MAX_DECLARED_BODY_BYTES['/api/feedback']).toBeGreaterThan(2_800_000 + 20_000);
+  });
+});
+
+describe('bodies without a declared length', () => {
+  const streamOf = (chunks: Uint8Array[]) => new ReadableStream<Uint8Array>({
+    start(controller) { for (const chunk of chunks) controller.enqueue(chunk); controller.close(); },
+  });
+  const chunked = (path: string, chunks: Uint8Array[]) => new Request(`https://w.example${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: ORIGIN },
+    body: streamOf(chunks),
+    duplex: 'half',
+  } as RequestInit);
+
+  it('refuses a chunked body over the ceiling with 413, without buffering it whole', async () => {
+    const big = new Uint8Array(4 * 1024).fill(0x20);
+    let pulled = 0;
+    const endless = new ReadableStream<Uint8Array>({ pull(controller) { pulled += 1; controller.enqueue(big); } });
+    expect(await readBoundedBody(endless, 16 * 1024)).toBeNull();
+    expect(pulled).toBeLessThanOrEqual(6);
+    const response = await handleRequest(chunked('/api/travel/flights', [big, big]), {} as Env);
+    expect(response.status).toBe(413);
+    expect(await response.json()).toEqual({ error: 'payload_too_large' });
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBe(ORIGIN);
+  });
+
+  it('passes a chunked body under the ceiling to the handler unchanged', async () => {
+    const encoder = new TextEncoder();
+    const response = await handleRequest(chunked('/api/travel/flights', [encoder.encode('{"origin":'), encoder.encode('"RUH"}')]), {} as Env);
+    const body = await response.json() as { error: string; fields?: unknown[] };
+    // Validation ran on the parsed body (it did not fail as unreadable JSON).
+    expect(response.status).toBe(400);
+    expect(body.error).toBe('invalid_request');
+    expect(Array.isArray(body.fields)).toBe(true);
   });
 });
 
