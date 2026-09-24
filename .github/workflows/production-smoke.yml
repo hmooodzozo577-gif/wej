@@ -189,10 +189,10 @@ jobs:
               xcrun simctl spawn "$UDID" defaults write "$domain" "$key" -bool YES || true
             done
           done
-          # Open Mobile Safari once so it is running (and registered for
+          # Launch Mobile Safari once so it is running (and registered for
           # remote automation) before the WebDriver session asks for it.
-          # about:blank only: nothing from the site loads here.
-          xcrun simctl openurl "$UDID" about:blank || true
+          # Nothing from the site loads here.
+          xcrun simctl launch "$UDID" com.apple.mobilesafari || true
           sleep 10
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
 

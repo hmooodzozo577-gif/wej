@@ -25,14 +25,25 @@ execFileSync('open', ['-a', 'Safari', `${SITE}/destination/japan`]);
 await sleep(10000);
 await voiceOver.start();
 try {
-  // Guidepup's documented way into Safari's web content: bring Safari to
-  // the front, interact with the web area, start from its first item.
+  // Getting VoiceOver's cursor into Safari's web content. Earlier runs
+  // (interact + jump to the left edge) left it on the browser chrome, where
+  // every "next heading" answers "Heading not found". Tab moves keyboard
+  // focus into the page and the VoiceOver cursor follows it; if the first
+  // search still finds nothing, VO + Command + ] jumps to the page's first
+  // web spot. Each step's announcement is printed for diagnosis.
   await macOSActivate('Safari');
   await sleep(1500);
-  await voiceOver.interact();
-  await voiceOver.perform(voiceOver.keyboardCommands.jumpToLeftEdge);
+  await voiceOver.press('Tab');
+  await sleep(1200);
+  console.log(`After Tab: ${await voiceOver.lastSpokenPhrase()}`);
+  await voiceOver.perform(voiceOver.keyboardCommands.findNextHeading);
+  await sleep(900);
+  if (/not found/i.test(await voiceOver.lastSpokenPhrase())) {
+    await voiceOver.perform(voiceOver.keyboardCommands.moveToNextAutoWebSpot);
+    await sleep(1200);
+    console.log(`After web spot: ${await voiceOver.lastSpokenPhrase()}`);
+  }
   await voiceOver.clearSpokenPhraseLog();
-  await sleep(1000);
   const heard = [];
   for (let step = 0; step < 14; step += 1) {
     await voiceOver.perform(voiceOver.keyboardCommands.findNextHeading);
