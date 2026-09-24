@@ -154,6 +154,13 @@ jobs:
           xcrun simctl boot "$UDID"
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl list devices | grep "$UDID"
+          # Safari's WebDriver needs Remote Automation (Settings > Safari >
+          # Advanced) on the device; it is off on a fresh simulator.
+          for domain in com.apple.mobilesafari com.apple.WebUI; do
+            for key in RemoteAutomationEnabled WebKitRemoteAutomationEnabled WebKitDeveloperExtras; do
+              xcrun simctl spawn "$UDID" defaults write "$domain" "$key" -bool YES || true
+            done
+          done
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
 
       - name: Install the WebDriver client (runner only, not a project dependency)
@@ -172,16 +179,30 @@ jobs:
           esac
           node scripts/safari-smoke.mjs "$SITE"
 
-      - name: Screenshot of the simulator
+      - name: Screenshot of Home and a destination in Mobile Safari
         if: ${{ always() && steps.sim.outputs.udid }}
-        run: xcrun simctl io "${{ steps.sim.outputs.udid }}" screenshot ios-safari.png
+        env:
+          SITE: ${{ inputs.site }}
+          UDID: ${{ steps.sim.outputs.udid }}
+        run: |
+          case "$SITE" in
+            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            *) echo "::error::Unsupported site URL"; exit 1 ;;
+          esac
+          SITE="${SITE%/}"
+          xcrun simctl openurl "$UDID" "$SITE/"
+          sleep 25
+          xcrun simctl io "$UDID" screenshot ios-safari-home.png
+          xcrun simctl openurl "$UDID" "$SITE/destination/japan"
+          sleep 20
+          xcrun simctl io "$UDID" screenshot ios-safari-destination.png
 
       - name: Keep the screenshot
         if: ${{ always() && steps.sim.outputs.udid }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: ios-safari-screenshot
-          path: ios-safari.png
+          name: ios-safari-screenshots
+          path: ios-safari-*.png
           retention-days: 7
 
   # Real VoiceOver on a macOS runner (Guidepup drives it): moves through a
@@ -210,7 +231,9 @@ jobs:
 
       - name: Install Guidepup (runner only, not a project dependency)
         working-directory: app
-        run: npm install --no-save --no-package-lock @guidepup/guidepup@0.34.0
+        run: |
+          npm install --no-save --no-package-lock @guidepup/guidepup@0.34.0
+          npx --yes @guidepup/setup@0.25.3 install
 
       - name: Run the VoiceOver smoke test
         working-directory: app
