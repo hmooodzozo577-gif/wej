@@ -103,10 +103,19 @@ jobs:
         with:
           node-version: 22
 
-      - name: Block the Worker and enable safaridriver
+      - name: Block the Worker (IPv4 and IPv6) and prove it is unreachable
         run: |
-          echo "127.0.0.1 wejhaty-travel-worker.hmooodzozo577.workers.dev" | sudo tee -a /etc/hosts
-          sudo safaridriver --enable
+          printf '127.0.0.1 wejhaty-travel-worker.hmooodzozo577.workers.dev\n::1 wejhaty-travel-worker.hmooodzozo577.workers.dev\n' | sudo tee -a /etc/hosts
+          sudo dscacheutil -flushcache
+          sudo killall -HUP mDNSResponder || true
+          sleep 2
+          if curl -sS --max-time 8 -o /dev/null https://wejhaty-travel-worker.hmooodzozo577.workers.dev/api/intelligence/SA/tourism; then
+            echo "::error::The Worker is still reachable; stopping so this run cannot write production data."; exit 1
+          fi
+          echo "Worker unreachable from this runner, as intended."
+
+      - name: Enable safaridriver
+        run: sudo safaridriver --enable
 
       - name: Install the WebDriver client (runner only, not a project dependency)
         working-directory: app
@@ -142,10 +151,19 @@ jobs:
         with:
           node-version: 22
 
-      - name: Block the Worker and enable safaridriver
+      - name: Block the Worker (IPv4 and IPv6) and prove it is unreachable
         run: |
-          echo "127.0.0.1 wejhaty-travel-worker.hmooodzozo577.workers.dev" | sudo tee -a /etc/hosts
-          sudo safaridriver --enable
+          printf '127.0.0.1 wejhaty-travel-worker.hmooodzozo577.workers.dev\n::1 wejhaty-travel-worker.hmooodzozo577.workers.dev\n' | sudo tee -a /etc/hosts
+          sudo dscacheutil -flushcache
+          sudo killall -HUP mDNSResponder || true
+          sleep 2
+          if curl -sS --max-time 8 -o /dev/null https://wejhaty-travel-worker.hmooodzozo577.workers.dev/api/intelligence/SA/tourism; then
+            echo "::error::The Worker is still reachable; stopping so this run cannot write production data."; exit 1
+          fi
+          echo "Worker unreachable from this runner, as intended."
+
+      - name: Enable safaridriver
+        run: sudo safaridriver --enable
 
       - name: Boot an iPhone simulator
         id: sim
@@ -224,10 +242,19 @@ jobs:
         with:
           node-version: 22
 
-      - name: Block the Worker and prepare VoiceOver
+      - name: Block the Worker (IPv4 and IPv6) and prove it is unreachable
         run: |
-          echo "127.0.0.1 wejhaty-travel-worker.hmooodzozo577.workers.dev" | sudo tee -a /etc/hosts
-          npx --yes @guidepup/setup@0.25.3 setup --ci
+          printf '127.0.0.1 wejhaty-travel-worker.hmooodzozo577.workers.dev\n::1 wejhaty-travel-worker.hmooodzozo577.workers.dev\n' | sudo tee -a /etc/hosts
+          sudo dscacheutil -flushcache
+          sudo killall -HUP mDNSResponder || true
+          sleep 2
+          if curl -sS --max-time 8 -o /dev/null https://wejhaty-travel-worker.hmooodzozo577.workers.dev/api/intelligence/SA/tourism; then
+            echo "::error::The Worker is still reachable; stopping so this run cannot write production data."; exit 1
+          fi
+          echo "Worker unreachable from this runner, as intended."
+
+      - name: Prepare VoiceOver
+        run: npx --yes @guidepup/setup@0.25.3 setup --ci
 
       - name: Install Guidepup (runner only, not a project dependency)
         working-directory: app

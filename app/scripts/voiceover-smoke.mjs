@@ -3,12 +3,13 @@
 // Real VoiceOver reads a destination page in real Safari; the test walks
 // the page by headings (VO + Command + H) and checks what VoiceOver
 // actually announces. The Worker hostname is blocked in /etc/hosts first,
-// and this page sends nothing, so the run writes no production data.
+// and the job proves it unreachable before Safari opens, so the run
+// writes no production data.
 // It is a smoke test of the heading structure, not a full audit.
 //
 // Usage: node scripts/voiceover-smoke.mjs [siteUrl]
 import { execFileSync } from 'node:child_process';
-import { voiceOver } from '@guidepup/guidepup';
+import { macOSActivate, voiceOver } from '@guidepup/guidepup';
 
 const SITE = (process.argv[2] || 'https://hmooodzozo577-gif.github.io/wej').replace(/\/$/, '');
 let checks = 0;
@@ -24,7 +25,14 @@ execFileSync('open', ['-a', 'Safari', `${SITE}/destination/japan`]);
 await sleep(10000);
 await voiceOver.start();
 try {
-  await sleep(3000);
+  // Guidepup's documented way into Safari's web content: bring Safari to
+  // the front, interact with the web area, start from its first item.
+  await macOSActivate('Safari');
+  await sleep(1500);
+  await voiceOver.interact();
+  await voiceOver.perform(voiceOver.keyboardCommands.jumpToLeftEdge);
+  await voiceOver.clearSpokenPhraseLog();
+  await sleep(1000);
   const heard = [];
   for (let step = 0; step < 14; step += 1) {
     await voiceOver.perform(voiceOver.keyboardCommands.findNextHeading);

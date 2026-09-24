@@ -58,17 +58,21 @@ try {
   const capabilities = await driver.getCapabilities();
   console.log(`${NAME} ${capabilities.get('browserVersion')} on ${capabilities.get('platformName')}`);
 
-  await driver.get(`${SITE}/`);
-  check(await waitFor('() => !!document.querySelector(".hero-stat b")'), 'home renders');
-  // The questionnaire below would send anonymous events: only continue
-  // when this browser cannot reach the Worker (blocked in /etc/hosts).
+  // Any site page sends anonymous events, so first prove — from a blank page,
+  // before the site is ever loaded — that this browser cannot reach the
+  // Worker (blocked in /etc/hosts). no-cors: any response at all means
+  // reachable; only a network failure means blocked.
+  await driver.get('about:blank');
   const worker = await driver.executeAsyncScript(
     `const done = arguments[arguments.length - 1];
-     fetch(arguments[0] + '/api/intelligence/SA/tourism').then(() => done('reachable'), () => done('blocked'));`,
+     fetch(arguments[0] + '/api/intelligence/SA/tourism', { mode: 'no-cors' }).then(() => done('reachable'), () => done('blocked'));`,
     WORKER,
   );
-  check(worker === 'blocked', 'Worker blocked, so the run writes no production data', worker);
-  if (worker !== 'blocked') throw new Error('Worker reachable: interactive checks skipped');
+  check(worker === 'blocked', 'Worker blocked before the site loads, so the run writes no production data', worker);
+  if (worker !== 'blocked') throw new Error('Worker reachable: the site was not opened');
+
+  await driver.get(`${SITE}/`);
+  check(await waitFor('() => !!document.querySelector(".hero-stat b")'), 'home renders');
   check((await js('return document.querySelector(".hero-stat b")?.textContent.trim()')) === '194', 'hero stat reads 194');
   const cta = await js('return getComputedStyle(document.querySelector(".home-hero-frame .btn-gold")).backgroundColor');
   check(cta === 'rgb(192, 83, 44)', 'CTA background', cta);
