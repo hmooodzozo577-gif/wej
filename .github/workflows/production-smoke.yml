@@ -35,6 +35,11 @@ on:
         type: boolean
         required: false
         default: true
+      admin_checks:
+        description: 'Also check the private admin surface (read-only, no credentials, writes no data)'
+        type: boolean
+        required: false
+        default: true
 
 # No workflow-wide token scope; the job declares read-only access.
 permissions: {}
@@ -83,6 +88,11 @@ jobs:
         if: ${{ !cancelled() && inputs.worker_checks }}
         working-directory: app
         run: node scripts/worker-smoke.mjs
+
+      - name: Check the admin surface (read-only, no credentials)
+        if: ${{ !cancelled() && inputs.admin_checks }}
+        working-directory: app
+        run: node scripts/admin-smoke.mjs
 
   # Real Safari (macOS desktop) through Apple's safaridriver. The Worker's
   # hostname is mapped to 127.0.0.1 first, so nothing reaches production
@@ -179,6 +189,11 @@ jobs:
               xcrun simctl spawn "$UDID" defaults write "$domain" "$key" -bool YES || true
             done
           done
+          # Open Mobile Safari once so it is running (and registered for
+          # remote automation) before the WebDriver session asks for it.
+          # about:blank only: nothing from the site loads here.
+          xcrun simctl openurl "$UDID" about:blank || true
+          sleep 10
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
 
       - name: Install the WebDriver client (runner only, not a project dependency)
@@ -254,7 +269,16 @@ jobs:
           echo "Worker unreachable from this runner, as intended."
 
       - name: Prepare VoiceOver
-        run: npx --yes @guidepup/setup@0.25.3 setup --ci
+        # Environment setup drives System Settings through UI automation and
+        # can time out on a slow runner ("Failed to enable Do not disturb").
+        # Setup alone is retried, at most three times; the test never is.
+        run: |
+          for attempt in 1 2 3; do
+            if npx --yes @guidepup/setup@0.25.3 setup --ci; then exit 0; fi
+            echo "VoiceOver setup attempt $attempt failed; retrying"
+            sleep 20
+          done
+          exit 1
 
       - name: Install Guidepup (runner only, not a project dependency)
         working-directory: app

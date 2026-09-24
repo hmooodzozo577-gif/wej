@@ -23,9 +23,25 @@ const check = (ok, label, detail = '') => {
 };
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const driver = IOS_UDID
-  ? await new Builder().withCapabilities({ browserName: 'safari', platformName: 'iOS', 'safari:useSimulator': true, 'safari:deviceUDID': IOS_UDID }).build()
-  : await new Builder().forBrowser('safari').build();
+// Creating the session is environment setup, not a check: on a slow macOS
+// runner the simulator's Safari can take longer to register for remote
+// automation than safaridriver waits ("RWIApplication" timeout). Only
+// SessionNotCreated is retried, at most three attempts; every check below
+// runs exactly once.
+async function createDriver() {
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      return IOS_UDID
+        ? await new Builder().withCapabilities({ browserName: 'safari', platformName: 'iOS', 'safari:useSimulator': true, 'safari:deviceUDID': IOS_UDID }).build()
+        : await new Builder().forBrowser('safari').build();
+    } catch (error) {
+      if (error?.name !== 'SessionNotCreatedError' || attempt === 3) throw error;
+      console.log(`session not created (attempt ${attempt}): ${error.message.split('\n')[0]}; retrying`);
+      await sleep(15000);
+    }
+  }
+}
+const driver = await createDriver();
 const js = (script, ...args) => driver.executeScript(script, ...args);
 async function waitFor(predicate, timeout = 15000) {
   const end = Date.now() + timeout;
