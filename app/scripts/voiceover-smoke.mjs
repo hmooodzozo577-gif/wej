@@ -36,16 +36,20 @@ try {
   await voiceOver.press('Tab');
   await sleep(1200);
   console.log(`After Tab: ${await voiceOver.lastSpokenPhrase()}`);
+  // The first search is part of the walk (it reaches the page's h1), so
+  // its announcement is kept rather than cleared.
+  const heard = [];
   await voiceOver.perform(voiceOver.keyboardCommands.findNextHeading);
   await sleep(900);
-  if (/not found/i.test(await voiceOver.lastSpokenPhrase())) {
+  const first = await voiceOver.lastSpokenPhrase();
+  if (/not found/i.test(first)) {
     await voiceOver.perform(voiceOver.keyboardCommands.moveToNextAutoWebSpot);
     await sleep(1200);
     console.log(`After web spot: ${await voiceOver.lastSpokenPhrase()}`);
+  } else {
+    heard.push(first);
   }
-  await voiceOver.clearSpokenPhraseLog();
-  const heard = [];
-  for (let step = 0; step < 14; step += 1) {
+  for (let step = heard.length; step < 14; step += 1) {
     await voiceOver.perform(voiceOver.keyboardCommands.findNextHeading);
     await sleep(900);
     heard.push(await voiceOver.lastSpokenPhrase());
