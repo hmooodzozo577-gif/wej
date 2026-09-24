@@ -8,6 +8,18 @@
         "value": "cubic-bezier(.34, 1.56, .64, 1)",
         "createdAt": "2026-09-17T12:09:29.601Z",
         "reason": "Pre-existing Surprise Me flag-reel landing animation, unrelated to Phase 16 work; PROJECT_STATE.md documents this reel as restored-from-git-history, accepted behavior ('settles with one restrained pop') and explicitly protects it from redesign without explicit user instruction."
+      },
+      {
+        "rule": "design-system-font",
+        "value": "roboto",
+        "createdAt": "2026-09-24T01:49:30.111Z",
+        "reason": "System fallback in the private /admin page's font stack (pre-existing since RC4); no web font is loaded; DESIGN.md governs the public site"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "sfmono-regular",
+        "createdAt": "2026-09-24T01:49:30.124Z",
+        "reason": "macOS system monospace fallback for IDs/codes in the private /admin page; no web font is loaded"
       }
     ]
   }
