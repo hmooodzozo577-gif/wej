@@ -98,6 +98,11 @@ persistent autonomous engineering operating contract for this project.
   unless the user explicitly reopens the topic.
 - Do not start a new roadmap phase (e.g. Phase 17) without an explicit,
   current task instruction to do so.
+- WEJHATY v1.0.0 (tag `wejhaty-v1.0.0`, 2026-09-24) is the user-accepted
+  release and is frozen: change accepted behaviour only for an explicit
+  task. Never move, delete, rewrite or force-push a release or checkpoint
+  ref (`release/wejhaty-*`, `backup/*`, `wejhaty-*` tags); a later release
+  gets new refs.
 - Use available environment-specific testing/review tools when useful
   for the task at hand — a generic agent should not assume access to
   any particular vendor's local skill/tool system (e.g. Claude Code's

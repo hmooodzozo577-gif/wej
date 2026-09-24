@@ -5,12 +5,117 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-24 (WEJHATY v1.0.0 — FINAL RELEASE)
+
+- State document version: 42. **Status: WEJHATY v1.0.0 — FINAL RELEASE.
+  PHASE 20 — FINAL WEJHATY USER-ACCEPTED. PHASE 21 — ADMIN POST-LAUNCH
+  ENHANCEMENTS USER-ACCEPTED.** The user manually tested and accepted RC4
+  (Phase 20) and the Phase 21 admin. Release date: 2026-09-24. The
+  release is frozen: no phase is open, and any change to accepted
+  behaviour needs an explicit new task from the user.
+- **Release commit**: the commit that records this state on
+  `claude/marhaba-kxry8l`. Branch `release/wejhaty-v1.0.0`, annotated tag
+  `wejhaty-v1.0.0` and checkpoint branch `backup/wejhaty-v1.0.0-final`
+  point at it (read its SHA and tree from Git; a commit cannot contain its
+  own hash). It changes documentation only, on top of `3535c02` (tree
+  `80252601bbc40ebb25e14534897245b3bcc808ad`).
+- **Contents**: the accepted RC4 app (`bfddf89`), the accepted Phase 21
+  admin (Worker code `10d58ee`), and the smoke-script, documentation and
+  configuration commits after them. Since RC4, `app/` changed only in QA
+  scripts (`app/scripts/`) and one test file
+  (`app/src/data/adminCatalog.sync.test.ts`); `app/src/engine/`,
+  `app/src/entry/` and `app/src/personalization/` are unchanged. A
+  production-configured build of the release source is byte-identical to
+  the RC4 build: 398 files, equal sha256 each (`assets/index-DPgukpUn.js`
+  `a26ddb895d6f1f83fccaa9a4ceafdfed46dac3e00288d7cd0893e8e231ac6980`,
+  `assets/index-CaHEFjNR.css`
+  `6b97c7c853a8ba2d104b6c0d4d7e9fa3d7d12efb2b1620be7b339322c3c341ff`,
+  `index.html`
+  `a28997c40c90940138724ff3e8aaa3ea86701983475d9d5ed5365895f9728dfe`).
+  `worker/` is identical to `10d58ee`.
+- **Production alignment (no redeploy needed)**:
+  - GitHub Pages: run 35944163602 built `66b230e`, whose `app/` tree is
+    the release's. Artifact 10785868655, zip sha256
+    `335c99bb855dfd888c519ce6c3fa49c3085754c20f7a5e522c140bc396170be7`.
+    The live site serves `assets/index-DPgukpUn.js` and
+    `assets/index-CaHEFjNR.css` (smoke run 35946079472).
+  - Cloudflare Worker: version `b1c2815a-5557-41fd-a3d8-025af15524ff`,
+    deployed from `10d58ee` by run 35942253435. The release's `worker/` is
+    that source; `wrangler deploy --dry-run` reports the same upload
+    (3215.15 KiB, gzip 227.62 KiB).
+  - The release commit touches no deploy path (`app/**`, `worker/**` or a
+    deploy workflow), so it triggers no deployment.
+- **Final gates on the release source**: frontend 1085/1085 tests in 101
+  files (`--maxWorkers=2`), `tsc -b` 0 errors, oxlint 0, production build
+  OK; Worker 273/273 tests in 16 files, `tsc` 0 errors,
+  `wrangler deploy --dry-run` OK. No test weakened, no timeout raised.
+- **Final production smoke** (run 35946079472, read-only, all 4 jobs
+  succeeded):
+  - Chromium, Firefox, WebKit, Edge: 143/143. Covers Home, Purpose, Quiz,
+    Results, Explore, Destination, Destination Match, Edit my preferences
+    back to the same destination (Japan 54% → 67%), the theme menu,
+    Arabic/English, Light/Dark, 390/1440 px, deep links, lazy chunks, the
+    CSP meta (hashed inline script, no `unsafe-eval`), 0 CSP violations,
+    0 page errors, passport neither stored nor sent. Worker requests are
+    aborted, so no data is written.
+  - Worker: 19/19 non-writing checks (intelligence 200, malformed 400,
+    CORS, 413 for declared and chunked bodies, 429 budgets with
+    `Retry-After`, nothing stored).
+  - Admin: 15/15. `/admin` shell 200 with its CSP, no framing,
+    `no-store`, Phase 21 dashboard live, no credential in the page; every
+    admin data path and the status change return 401 to anonymous and
+    wrong-token callers.
+  - Desktop Safari 26.6.2 (macOS) 15/15; iOS Simulator Mobile Safari 26.5
+    (iPhone 17 Pro) 15/15 after one bounded WebDriver session retry; real
+    VoiceOver (macOS) + Safari 4/4. Every macOS job proved the Worker
+    unreachable over IPv4 and IPv6 before opening the site.
+  - Authorised admin read paths were not exercised in production from the
+    agent environment (it holds no admin credential, by design). They are
+    covered by the user's acceptance and by the local real-Worker QA in
+    state v41.
+- **Unchanged protections**: Phase 14 scoring, Personal Match
+  `personal-match-1.0`, Passport (FROZEN), Thmanyah (CANCELLED, not
+  reopened), IL/ISR exclusion, location privacy, Security Audit Pass 2
+  controls.
+- **Known constraint**: one admin analytics request runs 48 D1 queries
+  against a guard of 50 (the Free-plan per-invocation cap). Accepted as
+  released; optimisation is DEFERRED / FUTURE OPTIMIZATION (register
+  U22). Admin metric semantics are frozen with the release.
+- **Rollback points** (never move, delete or force-push any of them):
+
+  | Point | Refs | Commit |
+  |---|---|---|
+  | v1.0.0 final | `release/wejhaty-v1.0.0`, `backup/wejhaty-v1.0.0-final`, tag `wejhaty-v1.0.0` | the release commit |
+  | Phase 21 complete | `backup/phase21-admin-complete`, tag `wejhaty-phase21-admin-complete` | `30c054e` |
+  | RC4 / pre-Phase-21 | `release/wejhaty-v1.0.0-rc4`, tag `wejhaty-v1.0.0-rc4`; `backup/phase20-rc4-pre-phase21`, tag `wejhaty-phase20-rc4-pre-phase21` | `bfddf89` |
+  | RC3 | `release/wejhaty-v1.0.0-rc3`, tag `wejhaty-v1.0.0-rc3` | `9caa3d5` |
+  | RC2 | `release/wejhaty-v1.0.0-rc2`, tag `wejhaty-v1.0.0-rc2` | `c0beb58` |
+  | RC1 | `release/wejhaty-v1.0.0-rc1`, tag `wejhaty-v1.0.0-rc1` | `38c8292` |
+  | Pre-Phase-19 | `backup/phase18-refinement-pre-phase19` | `64ea036` |
+  | Pre-Phase-18 | `backup/phase17-final-pre-phase18` | `4dc8018` |
+
+  Rollback (history-preserving, no force push; the deploy workflows do
+  the rest):
+  ```
+  git fetch origin --tags claude/marhaba-kxry8l
+  git checkout claude/marhaba-kxry8l
+  git restore --source=<tag or branch> --staged --worktree :/
+  git commit -m "Rollback: restore tree to <tag or branch>"
+  git diff <tag or branch> HEAD --stat   # must print nothing
+  git push origin claude/marhaba-kxry8l  # app/** redeploys Pages, worker/** redeploys the Worker
+  ```
+  To return only the Worker to its pre-Phase-21 admin (the public site is
+  the same either way; Phase 21 added no D1 migration), restore just
+  `worker/` from `wejhaty-phase20-rc4-pre-phase21`
+  (`git restore --source=wejhaty-phase20-rc4-pre-phase21 --staged --worktree -- worker/`),
+  then commit and push as above.
+
 ### Current verified state — 2026-09-24 (Phase 21 Admin, on top of RC4)
 
-- State document version: 41. **Status: PHASE 20 — FINAL WEJHATY /
+- State document version 41 (superseded by 42 above). **Status then: PHASE 20 — FINAL WEJHATY /
   WEJHATY v1.0.0 RC4 / TECHNICALLY VERIFIED / USER ACCEPTANCE PENDING.
   PHASE 21 (ADMIN POST-LAUNCH ENHANCEMENTS) — IMPLEMENTED, DEPLOYED,
-  TECHNICALLY VERIFIED.** Nothing is marked user-accepted. The public site
+  TECHNICALLY VERIFIED.** Nothing was marked user-accepted then. The public site
   is byte-identical to RC4: a production-configured build of this commit
   emits the same `index-DPgukpUn.js` / `index-CaHEFjNR.css` as the RC4 tag.
   RC1–RC4 branches and tags are untouched. Pre-Phase-21 checkpoint:
@@ -2213,49 +2318,52 @@ see "Non-negotiable product rules" above.)
 
 ## Roadmap gate and immediate backlog
 
-Phase 16 (AI API Integration) is CANCELLED/SKIPPED by product decision.
-Phase 19 is implemented; Phase 20 produced `wejhaty-v1.0.0-rc1` … `-rc4`;
-Phase 21 (Admin) is implemented and deployed on top of RC4. Current order:
+**WEJHATY v1.0.0 is released (2026-09-24).** Phase 20 (RC4) and Phase 21
+(Admin) are USER-ACCEPTED; Phase 16 (AI) stays CANCELLED. No phase is
+open, and none starts without an explicit, current instruction from the
+user.
 
-1. **PHASE 20 USER ACCEPTANCE (RC4) — pending.** Obtain the user's
-   explicit acceptance (checklist in `/RELEASE_CANDIDATE.md`). Do not call
-   anything FINAL or USER-ACCEPTED before that. If the user asks to remove
-   Phase 18, follow "Pre-Phase-18 rollback checkpoint" exactly; to undo
-   Phase 21, return the Worker to `wejhaty-phase20-rc4-pre-phase21`.
-2. Phase 21 operator review of `/admin` (optional; see the Phase 21
-   record in `/RELEASE_CANDIDATE.md`).
-3. The open items in the register below; none needs work until its
-   trigger (a source, a setting, a provider, a device) exists.
+1. The release is frozen. Product behaviour, Phase 14, Personal Match,
+   Passport (FROZEN), admin metric semantics and the accepted visual
+   identity change only through an explicit new task.
+2. The items in the register below wait for their trigger (a source, a
+   repository setting, a provider, a device, abuse, retention). None
+   blocks the release.
+3. Roll back only with the refs and the procedure in state v42.
 
-## Unresolved register (authoritative, 2026-09-24)
+## Final known-limitations register (authoritative, WEJHATY v1.0.0, 2026-09-24)
 
-Every open item, one status each. Statuses: RESOLVED, DEFERRED, BLOCKED,
-CANCELLED, FROZEN, UNVERIFIED.
+One status per item. Statuses: RESOLVED, DEFERRED, BLOCKED, FROZEN,
+CANCELLED, UNVERIFIED. Open items first; resolved items stay resolved and
+are listed for traceability only.
 
 | ID | Item | Status | Reason / evidence | Next action | Owner |
 |---|---|---|---|---|---|
-| U1 | Thmanyah Arabic font | CANCELLED BY USER | User decision in the final completion pass; license-reader workflow removed, typography unchanged | None — do not research or add it again | User |
-| U2 | Real desktop Safari (macOS) and real Edge | RESOLVED (PRODUCTION-VERIFIED) | Safari 26.6.2 15/15 with the Worker proven blocked (runs 35939069990, 35942408513); Edge in every ubuntu smoke | Keep in every release smoke | Maintainer |
-| U3 | iOS Safari | UNVERIFIED — PHYSICAL/REAL IOS SAFARI ENVIRONMENT UNAVAILABLE | iOS Simulator Mobile Safari 26.5 (iPhone 17 Pro, WebDriver) passes 15/15 with the Worker proven blocked (runs 35938066714, 35942408513); a simulator is not a physical iPhone and no device is available here | Manual check on a real iPhone (RC2 checklist) | User |
-| U4a | Real screen reader: VoiceOver (macOS) + Safari | RESOLVED (PRODUCTION-VERIFIED) | Real VoiceOver driven by Guidepup on a hosted Mac, Worker proven blocked: announces "heading level 1 اليابان" and 10 level-2 section headings on the Japan page, 4/4 (run 35944167490) | Keep in the release smoke | Maintainer |
-| U4b | Other real screen readers (VoiceOver on iPhone, TalkBack, NVDA, JAWS) | UNVERIFIED — REAL SCREEN READER | No device or Windows/Android screen reader here; automated semantics are clean (axe 0) and macOS VoiceOver passes | Manual checklist in the RC2 record | User |
-| U5 | Traveler Budget 13.5c (SAR/day) | DEFERRED — NO SUITABLE SOURCE | No legitimate traveller-budget source; per-diem ceilings for officials are not traveller budgets and are not used | Reopen only with a verified source | User |
-| U6 | Automatic PRs from data workflows | BLOCKED — REPOSITORY SETTING | "GitHub Actions is not permitted to create or approve pull requests" (run 34580108011) | Settings → Actions → General → Workflow permissions → allow Actions to create and approve pull requests | User |
-| U7 | Turnstile in production | DEFERRED — SERVER-SIDE RATE LIMITING CURRENTLY ACTIVE | Per-address limits on every write path; Turnstile code and fail-closed verification ready | Enable if abuse appears | User |
-| U8 | Paid travel/visa providers | DEFERRED UNTIL PROVIDER ACTIVATION | No credentials/contract; provider path dormant | Provider decision | User |
-| U9 | Passport / entry information | FROZEN | User decision: regression-only | Regression-test only | User |
+| U9 | Passport / entry information | FROZEN | User decision: regression-only; `app/src/entry/` unchanged since RC4; the smoke proves the passport is neither stored nor sent | Regression-test only | User |
+| U1 | Thmanyah Arabic font | CANCELLED | User decision; license-reader workflow removed, typography unchanged | None — do not research or add it again | User |
+| U5 | Traveler Budget 13.5c (SAR/day) | DEFERRED | No legitimate traveller-budget source; per-diem ceilings for officials are not traveller budgets and are not used | Reopen only with a verified source | User |
+| U7 | Turnstile in production | DEFERRED | Server-side per-address rate limiting is active on every write path; Turnstile code and fail-closed verification are ready | Enable if abuse appears | User |
+| U8 | Paid travel/visa providers | DEFERRED | No credentials or contract; provider path dormant | Provider decision | User |
+| U14 | Paid-provider limiters | DEFERRED | Providers dormant | Add with any provider activation | Maintainer |
+| U6 | Automatic PRs from data workflows | BLOCKED | Repository setting. Latest check: run 35884386660 (2026-09-23) failed with "GitHub Actions is not permitted to create or approve pull requests". Its data branches (`update-*`) stay on origin unmerged | Settings → Actions → General → Workflow permissions → allow Actions to create and approve pull requests | User |
+| U3 | Physical iPhone (real iOS Safari) | UNVERIFIED | No physical device here. iOS Simulator Mobile Safari 26.5 passes 15/15 (run 35946079472); a simulator is not a physical iPhone | Manual check on a real iPhone (RC2 checklist) | User |
+| U4b | Other real screen readers (VoiceOver on iPhone, TalkBack, NVDA, JAWS) | UNVERIFIED | No device or Windows/Android screen reader here; axe 0 violations and macOS VoiceOver passes | Manual checklist in the RC2 record | User |
+| U22 | Admin D1 query budget: 48 queries per analytics request, guard 50 | DEFERRED / FUTURE OPTIMIZATION | Within the Free-plan per-invocation cap and guarded by `worker/src/admin.test.ts`; not optimised during sign-off so accepted admin semantics stay unchanged | Consolidate queries before adding any admin metric that needs D1 | Maintainer |
+| U21 | Historic anonymous QA events from early macOS smoke runs | DEFERRED TO RETENTION | A handful of Safari/desktop/US sessions (2026-09-23 22:38 – 2026-09-24 00:24 UTC); not deleted (deleting production rows is destructive); the 90-day retention job removes them by about 2026-12-23 | None — retention removes them | Maintainer |
+| U15 | csv-parse dependency advisory | DEFERRED | Dev-only, transitive, not imported; production `npm audit` clean | Re-check at the next dependency upgrade | Maintainer |
+| U17 | Rate limiter precision | DEFERRED | Cloudflare's limiter is approximate per location (~2× budget seen); platform behaviour | Revisit only if abuse appears | Maintainer |
+| U18 | Main bundle size (~634 kB gzip) | DEFERRED | Measured: Home FCP 1.09 s, TBT 585 ms (4× CPU); route splitting risks scroll/focus behaviour | Revisit with a dataset lazy-load plan | Maintainer |
+| P20 | Phase 20 — Final Wejhaty (RC4) | RESOLVED | USER-ACCEPTED 2026-09-24; released as `wejhaty-v1.0.0` | — | User |
+| P21 | Phase 21 — Admin post-launch enhancements | RESOLVED | USER-ACCEPTED 2026-09-24; Worker `b1c2815a`; released as `wejhaty-v1.0.0` | — | User |
+| U2 | Real desktop Safari (macOS) and real Edge | RESOLVED | Safari 26.6.2 15/15 and Edge in every release smoke (run 35946079472) | Keep in every release smoke | Maintainer |
+| U4a | Real VoiceOver (macOS) + Safari | RESOLVED | 4/4: "heading level 1 اليابان" and 10 level-2 headings (runs 35944167490, 35946079472) | Keep in the release smoke | Maintainer |
 | U10 | Destination "Edit my preferences" | RESOLVED | Returns to the same destination with its updated match | — | — |
 | U11 | Main-site CSP | RESOLVED | Build-time meta CSP, no `unsafe-eval`, hashed inline script; 0 violations; no framing protection claimed (meta cannot set frame-ancestors) | — | — |
 | U12 | GitHub Actions SHA pinning | RESOLVED | Every action pinned to the SHA its tag resolved to in this repository's run logs | Re-pin on upgrades | Maintainer |
 | U13 | Undeclared-length (chunked) body limits | RESOLVED | `readBoundedBody` enforces the per-endpoint ceiling; production smoke 413 checks | — | — |
-| U14 | Paid-provider limiters | DEFERRED UNTIL PROVIDER ACTIVATION | Providers dormant | Add with any provider activation | Maintainer |
-| U15 | csv-parse dependency advisory | DEFERRED / NOT PRODUCTION-REACHABLE | Dev-only, transitive, not imported; production `npm audit` clean | Re-check at the next dependency upgrade | Maintainer |
 | U16 | Slow-test policy | RESOLVED | Suites run with `--maxWorkers=2`; timeouts are never raised to hide contention | — | Maintainer |
-| U17 | Rate limiter precision | DEFERRED | Cloudflare's limiter is approximate per location (~2× budget seen); platform behaviour, not fixable in code | Revisit only if abuse appears | Maintainer |
-| U18 | Main bundle size (~634 kB gzip) | DEFERRED | Measured: Home FCP 1.09 s, TBT 585 ms (4× CPU); no low-risk split; route splitting risks scroll/focus behaviour | Revisit with a dataset lazy-load plan | Maintainer |
 | U19 | Dark hero "nearby" note contrast | RESOLVED | Feathered backplate; all 176 states pass, lowest P10 6.02:1 | — | — |
-| U20 | Phase 21 (Admin) | RESOLVED | Deployed (Worker `b1c2815a`); tests, local-runtime QA, axe and production admin smoke clean; see state v41 | Optional operator review | User |
-| U21 | Anonymous events written by early macOS smoke runs | DEFERRED | A handful of Safari/desktop/US sessions (2026-09-23 22:38 – 2026-09-24 00:24 UTC); not deleted; expire under the 90-day retention job by about 2026-12-23 | None — retention removes them | Maintainer |
+| U20 | Phase 21 (Admin) delivery | RESOLVED | See P21 | — | — |
 | R1 | heading-order (axe) | RESOLVED | h2 structure, visuals unchanged | — | — |
 | R2 | Explore mobile blocking time | RESOLVED | TBT 3.17 s → 1.42 s | — | — |
 | R3 | Admin token timing; Access key cache; screenshot bytes; body ceilings; city-descriptions limit | RESOLVED | Phase 20 security backlog | — | — |

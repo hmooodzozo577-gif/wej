@@ -1,17 +1,55 @@
-# Wejhaty v1.0.0 — release candidate record
+# Wejhaty v1.0.0 — release record
 
-Status: **PHASE 20 — FINAL WEJHATY / WEJHATY v1.0.0 RC4 / TECHNICALLY
-VERIFIED / USER ACCEPTANCE PENDING. PHASE 21 (ADMIN) — DEPLOYED,
-TECHNICALLY VERIFIED.** Nothing here is user-accepted or
-final until the user says so. Current truth lives in `PROJECT_STATE.md`
-(state v41 and its authoritative unresolved register); this file records
-what each candidate is, how it was checked and what the user is asked to
-review.
+Status: **WEJHATY v1.0.0 — FINAL RELEASE (2026-09-24). PHASE 20 — FINAL
+WEJHATY USER-ACCEPTED. PHASE 21 — ADMIN POST-LAUNCH ENHANCEMENTS
+USER-ACCEPTED.** Current truth lives in `PROJECT_STATE.md` (state v42 and
+its final known-limitations register); this file records what the release
+and each earlier candidate are, and how they were checked.
 
 Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
-PRODUCTION-VERIFIED, USER-VERIFIED, UNVERIFIED, DEFERRED, BLOCKED, FROZEN.
+PRODUCTION-VERIFIED, USER-VERIFIED, USER-ACCEPTED, UNVERIFIED, DEFERRED,
+BLOCKED, FROZEN.
 
-# RC4 — `wejhaty-v1.0.0-rc4` (current)
+# v1.0.0 — `wejhaty-v1.0.0` (final release)
+
+## v1.0.0.1 What it is
+
+The user-accepted RC4 app plus the user-accepted Phase 21 admin, with the
+documentation, smoke-script and configuration commits made after them.
+No product change was made for the release: the release commit changes
+documentation only.
+
+| Item | Value |
+|---|---|
+| User acceptance | Phase 20 (RC4) USER-ACCEPTED; Phase 21 (Admin) USER-ACCEPTED — 2026-09-24 |
+| Release commit | the commit that adds this section (a file cannot contain its own commit hash; read it from the refs below) |
+| Branch | `release/wejhaty-v1.0.0` → release commit |
+| Tag | `wejhaty-v1.0.0` (annotated) → release commit |
+| Final checkpoint | `backup/wejhaty-v1.0.0-final` → release commit |
+| Parent | `3535c02` (tree `80252601bbc40ebb25e14534897245b3bcc808ad`) |
+| App source | build-identical to RC4 `bfddf89`: 398 files, equal sha256 each; `assets/index-DPgukpUn.js`, `assets/index-CaHEFjNR.css` |
+| Worker source | `worker/` identical to `10d58ee` |
+| Pages deploy | run 35944163602 (`66b230e`, same `app/` tree), artifact 10785868655 — not redeployed for the release |
+| Worker deploy | run 35942253435 — version `b1c2815a-5557-41fd-a3d8-025af15524ff` — not redeployed for the release |
+| Tests | frontend 1085/1085, Worker 273/273; `tsc`, oxlint, build and `wrangler deploy --dry-run` clean |
+| Production smoke | run 35946079472 — Chromium/Firefox/WebKit/Edge 143/143 (0 CSP violations), Worker 19/19, admin 15/15, desktop Safari 15/15, iOS Simulator Mobile Safari 15/15, real VoiceOver 4/4; read-only |
+
+## v1.0.0.2 Known limitations
+
+See the final known-limitations register in `PROJECT_STATE.md`. In short:
+Passport FROZEN; Thmanyah CANCELLED; Traveler Budget, Turnstile and paid
+providers DEFERRED; automatic data PRs BLOCKED by a repository setting; a
+physical iPhone and other screen readers UNVERIFIED; the admin D1 budget
+(48 of 50 queries) DEFERRED / FUTURE OPTIMIZATION; historic anonymous QA
+events DEFERRED TO RETENTION.
+
+## v1.0.0.3 Rollback
+
+Refs and the history-preserving procedure are in `PROJECT_STATE.md`
+state v42 ("Rollback points"). No release, candidate or checkpoint ref is
+ever moved, deleted or force-pushed.
+
+# RC4 — `wejhaty-v1.0.0-rc4` (USER-ACCEPTED; basis of v1.0.0)
 
 ## RC4.1 What it contains
 
@@ -66,7 +104,7 @@ removes them automatically by about 2026-12-23. Every macOS job now
 blocks IPv4 and IPv6, flushes DNS and stops unless the Worker is proven
 unreachable before the site opens.
 
-# Phase 21 — Admin post-launch enhancements (on top of RC4)
+# Phase 21 — Admin post-launch enhancements (on top of RC4; USER-ACCEPTED)
 
 Admin only: the public site is byte-identical to RC4 (same
 `index-DPgukpUn.js` / `index-CaHEFjNR.css` from a production-configured

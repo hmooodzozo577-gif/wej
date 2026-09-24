@@ -64,6 +64,10 @@ Wejhaty's distinguishing mechanism is a deterministic recommendation engine over
 4. Ask for location, passport country, and feedback only when their value is clear and participation remains optional.
 5. Give Arabic, English, mobile, tablet, accessibility, and performance equal release weight.
 
+## Release Status
+
+Wejhaty v1.0.0 was released on 2026-09-24 (tag `wejhaty-v1.0.0`): Phase 20 (the public product) and Phase 21 (the operator dashboard) are user-accepted. The accepted product, including the Phase 17–20 visual identity, is frozen; any change to accepted behaviour, scoring, Personal Match, the frozen Passport feature or the visual identity needs an explicit new task. Current status and known limitations live in `PROJECT_STATE.md`.
+
 ## Operator Dashboard
 
 The private `/admin` dashboard is a separate, Operate-mode surface for the product owner, not for travellers. It favours exact definitions over decoration: every figure states what it counts, over what denominator and window, and where it misleads (`/ADMIN_METRICS.md`). It is bilingual (Arabic RTL and English), labels every data value in the operator's language, stays desktop-first while remaining usable on a phone, and never shows a coordinate, an IP address, a fingerprint or passport data. Changes to it must not change the public site.
