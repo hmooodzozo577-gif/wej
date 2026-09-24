@@ -74,6 +74,26 @@ persistent autonomous engineering operating contract for this project.
   numbers go through `app/src/data/format.ts`; new localized content
   loaded from generated JSON goes through `deepLatinDigits`.
 - Preserve Arabic + English parity; Arabic stays the default language.
+- Admin dashboard (`/admin`): every number it shows is defined once in
+  `worker/src/adminMetrics.ts` (definition, numerator, denominator, unit,
+  window, source, interpretation, limitation, in Arabic and English);
+  regenerate `/ADMIN_METRICS.md` with
+  `UPDATE_ADMIN_METRICS_DOC=1 npx vitest run src/adminMetrics.test.ts`
+  (from `worker/`). A data value shown in the dashboard gets a label in
+  both languages — never a raw English code in the Arabic UI. When the
+  questionnaire or Explore's vocabulary changes, regenerate the admin
+  catalog with `UPDATE_ADMIN_CATALOG=1 npx vitest run
+  src/data/adminCatalog.sync.test.ts` (from `app/`). Test analytics SQL
+  against the real schema (`worker/src/testing/sqliteD1.ts`), keep an
+  analytics request within 50 D1 queries, and run admin browser QA against
+  wrangler's local mode with the synthetic seed
+  (`worker/scripts/admin-qa-seed.mjs`) — never against production data.
+- Production smoke tests must not write production data. A real-browser job
+  that cannot intercept requests blocks the Worker for every address family
+  (IPv4 and IPv6), flushes DNS and proves the Worker unreachable BEFORE the
+  site is opened; a guard that runs after the first page load is not a
+  guard. Environment setup may be retried a bounded number of times; a
+  check never is.
 - Cancelled roadmap features (see `PROJECT_STATE.md`) stay cancelled
   unless the user explicitly reopens the topic.
 - Do not start a new roadmap phase (e.g. Phase 17) without an explicit,

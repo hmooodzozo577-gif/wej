@@ -64,6 +64,10 @@ Wejhaty's distinguishing mechanism is a deterministic recommendation engine over
 4. Ask for location, passport country, and feedback only when their value is clear and participation remains optional.
 5. Give Arabic, English, mobile, tablet, accessibility, and performance equal release weight.
 
+## Operator Dashboard
+
+The private `/admin` dashboard is a separate, Operate-mode surface for the product owner, not for travellers. It favours exact definitions over decoration: every figure states what it counts, over what denominator and window, and where it misleads (`/ADMIN_METRICS.md`). It is bilingual (Arabic RTL and English), labels every data value in the operator's language, stays desktop-first while remaining usable on a phone, and never shows a coordinate, an IP address, a fingerprint or passport data. Changes to it must not change the public site.
+
 ## Accessibility & Inclusion
 
 Phase 17 must preserve semantic HTML, keyboard operation, visible focus, labelled controls, announced validation and async states, adequate contrast, reduced-motion support, readable Arabic and English typography, and touch targets appropriate for mobile and tablet use.

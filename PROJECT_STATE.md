@@ -5,9 +5,107 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Current verified state — 2026-09-24 (Phase 21 Admin, on top of RC4)
+
+- State document version: 41. **Status: PHASE 20 — FINAL WEJHATY /
+  WEJHATY v1.0.0 RC4 / TECHNICALLY VERIFIED / USER ACCEPTANCE PENDING.
+  PHASE 21 (ADMIN POST-LAUNCH ENHANCEMENTS) — IMPLEMENTED, DEPLOYED,
+  TECHNICALLY VERIFIED.** Nothing is marked user-accepted. The public site
+  is byte-identical to RC4: a production-configured build of this commit
+  emits the same `index-DPgukpUn.js` / `index-CaHEFjNR.css` as the RC4 tag.
+  RC1–RC4 branches and tags are untouched. Pre-Phase-21 checkpoint:
+  `backup/phase20-rc4-pre-phase21` + annotated tag
+  `wejhaty-phase20-rc4-pre-phase21` (tag object `40f774d`, commit
+  `bfddf89`, tree `7469ce0826cf2b58598380dee15004d169b9a31f`).
+- **Phase 21 checkpoint (21.24)**: branch `backup/phase21-admin-complete`
+  and annotated tag `wejhaty-phase21-admin-complete` point at the commit
+  that records this state (read its SHA from Git; a commit cannot contain
+  its own hash).
+- **Metric dictionary (21.2)**: `worker/src/adminMetrics.ts` defines every
+  admin number once — Arabic and English label, definition, numerator,
+  denominator, unit, aggregation, time window, technical source,
+  interpretation and limitation (66 metrics). The dashboard shows the
+  entry under "How is this counted?" / «كيف يُحتسب؟» beside each figure and
+  table; `/ADMIN_METRICS.md` is generated from it by
+  `worker/src/adminMetrics.test.ts` (which also fails if the page uses a
+  metric or translation key that does not exist, or if a metric is never
+  shown).
+- **Questionnaire funnel (21.5–21.6)**: one row per question of the chosen
+  purpose, in questionnaire order, by its live Arabic/English wording
+  (generated `worker/src/generated/adminCatalog.json`, kept in sync with
+  `app/src/data/questionBanks.ts` by `app/src/data/adminCatalog.sync.test.ts`)
+  and its ID, with the position it was asked at (mean and range), sessions,
+  answer events (changed answers and retakes), sessions that went on to
+  results, sessions that stopped after it, sessions still answering, and
+  drop-off. Drop-off semantics: a session's latest answer with no results
+  after it; "stopped" once the session is idle for 30 minutes, "still
+  answering" before that. Every questionnaire session falls in exactly one
+  of four outcomes (finished / stopped / still answering / picked a purpose
+  and answered nothing); retakes, restarts and purpose changes are counted
+  separately. Completion is completed ÷ questionnaire sessions (any
+  questionnaire action), so it can no longer exceed 100% when a
+  questionnaire is reopened from "Edit my preferences". Limitation, stated
+  in the dictionary: questions are logged when answered, not when shown, so
+  the exact screen a person left on is the one after their last answer.
+- **Data labels (21.7, 21.11–21.15)**: no raw English value in the Arabic
+  dashboard. Rating kinds, arrival sources, location states, themes,
+  locales, browsers, city-description results, checkpoint choices and
+  Explore's own filter/sort/region/cost labels (taken from the public
+  i18n) render as labels; countries show their localized name
+  (`Intl.DisplayNames`) with the ISO code beside it. Measured on the same
+  synthetic data: the RC4 dashboard showed 30 raw English values in Arabic
+  table cells, Phase 21 shows none.
+- **Location (21.12)**: tables report events and distinct sessions as
+  separate columns (the old permission table labelled event counts as
+  sessions); stages show stage number, accuracy mode and result; no
+  coordinate, IP or fingerprint exists anywhere in the queries.
+- **Feedback center and report workflow (21.8–21.9)**: screenshot filter
+  and count, rating comments with a kind filter, type breakdown; the
+  screenshot storage key no longer leaves the Worker (only
+  `has_screenshot`). Status saves disable Save while pending, keep the
+  dialog open with the error on failure, announce success in a live
+  region and return focus to the report's Open button.
+- **Country data admin (21.10)**: the Country Intelligence panel shows the
+  dataset and methodology files, the generation date with its age in days,
+  and per purpose the methodology version, countries with enough data,
+  mean coverage and high-confidence count, each with its definition (60%
+  coverage threshold; high confidence = ≥90% coverage and ≤3-year data
+  age). "Sample" is defined where it appears (performance samples = full
+  page loads that reported timing).
+- **Drill-downs, accessibility, responsive (21.4, 21.17, 21.18)**: overview
+  figures link to their tab (focus moves to its heading); country rows can
+  narrow the whole dashboard; tables are keyboard-scrollable regions with
+  hidden captions and `scope` headers; numbers and ranges are LTR-isolated
+  inside Arabic; an RTL overflow from hidden captions was fixed.
+- **Security regression (21.16)**: auth, CSP (`script-src 'unsafe-inline'`
+  only for the self-contained page, `connect-src 'self'`,
+  `frame-ancestors 'none'`), Access/JWT and token handling are unchanged;
+  new query parameters are whitelisted and bound; lookups are
+  prototype-safe; no HTML sink. Still 48 D1 queries per analytics request
+  (guarded at ≤ 50, the Free-plan per-invocation cap).
+- **Verification**:
+  - Unit tests: Worker 273/273 (including 16 real-SQL funnel tests on
+    Node's SQLite with every migration, and the metric/translation
+    reference checks); frontend 1085/1085 (`--maxWorkers=2`). `tsc`,
+    oxlint, build and `wrangler deploy --dry-run` clean.
+  - Admin QA (`app/scripts/admin-visual-check.mjs`) against the real Worker
+    in wrangler's local mode over a synthetic seed
+    (`worker/scripts/admin-qa-seed.mjs`, never production): Arabic and
+    English × 1440/1280/1024/390 × 9 tabs, definitions closed and open —
+    0 overflow, 0 raw keys, 0 Latin leaks in Arabic, axe 0 violations; flows
+    (keyboard definitions, drill-down focus, purpose selector, country
+    filter, screenshot filter, failed and successful status save) clean.
+  - Production: Worker version `b1c2815a-5557-41fd-a3d8-025af15524ff`
+    (run 35942253435), Pages run 35942253427. Smoke run 35942408513:
+    public regression 143/143 on Chromium/Firefox/WebKit/Edge with 0 CSP
+    violations; admin smoke 15/15 (shell live with its CSP; every data path
+    401 without valid credentials); desktop Safari 15/15; iOS Simulator
+    Mobile Safari 15/15. Real VoiceOver (macOS) 4/4 in run 35944167490. All
+    macOS jobs prove the Worker unreachable before opening the site.
+
 ### Current verified state — 2026-09-24 (Phase 20 final, RC4)
 
-- State document version: 40. **Status: PHASE 20 — FINAL WEJHATY /
+- State document version 40 (superseded by 41 above). **Status then: PHASE 20 — FINAL WEJHATY /
   WEJHATY v1.0.0 RC4 / TECHNICALLY VERIFIED / USER ACCEPTANCE PENDING.**
   The user authorised continuing into Phase 21 (Admin) after RC4 without
   marking Phase 20 user-accepted. Phase 14, Personal Match
@@ -1833,8 +1931,9 @@ round is itself deployed and verified, is **Phase 17 — UI/UX Evolution**
   Report workflow statuses (new/triaged/in_progress/resolved/declined) and
   report types are translated as UI labels while the value sent to the API
   stays the fixed English enum code, the same pattern already used for the
-  device/purpose filters. Country codes, dates, reference IDs and other
-  underlying data values are deliberately left untranslated. A traveller's
+  device/purpose filters. Since Phase 21 data values are labelled too
+  (see the v41 state above); only reference IDs, dates, question IDs,
+  JavaScript error names and file names stay as they are. A traveller's
   own free-text report/comment gets `dir="auto"` rather than inheriting the
   page's direction, so an English report does not right-align inside the
   Arabic dashboard — found and fixed during this round's RTL visual QA.
@@ -2009,6 +2108,11 @@ language switcher, and the full panel set above. Two things are still open:
 | Analytics queries | `worker/src/analytics.ts` |
 | Admin dashboard UI | `worker/src/adminPage.ts` |
 | Admin dashboard i18n dictionary | `worker/src/adminI18n.ts` |
+| Admin metric dictionary (single definition of every admin number) | `worker/src/adminMetrics.ts` → generated `/ADMIN_METRICS.md` |
+| Admin question/Explore vocabulary (generated from the public app) | `worker/src/generated/adminCatalog.json` ← `app/src/data/adminCatalog.sync.test.ts` |
+| Real-schema SQL test adapter (Node SQLite, all migrations) | `worker/src/testing/sqliteD1.ts` |
+| Admin QA: local synthetic seed + browser check | `worker/scripts/admin-qa-seed.mjs`, `app/scripts/admin-visual-check.mjs` |
+| Production admin smoke (read-only, no credentials) | `app/scripts/admin-smoke.mjs` |
 | Turnstile (shared) | `app/src/telemetry/turnstile.ts` |
 | Rating forms | `app/src/components/ResultRating.tsx`, `DestinationRating.tsx` |
 | Travel Worker | `worker/` |
@@ -2110,51 +2214,52 @@ see "Non-negotiable product rules" above.)
 ## Roadmap gate and immediate backlog
 
 Phase 16 (AI API Integration) is CANCELLED/SKIPPED by product decision.
-Phase 19 is implemented; Phase 20 produced `wejhaty-v1.0.0-rc1`,
-`wejhaty-v1.0.0-rc2` and then `wejhaty-v1.0.0-rc3` (user decisions) (Destination Match fix, heading structure, Explore
-performance, security backlog, Pass 2). Current order:
+Phase 19 is implemented; Phase 20 produced `wejhaty-v1.0.0-rc1` … `-rc4`;
+Phase 21 (Admin) is implemented and deployed on top of RC4. Current order:
 
-1. **PHASE 20 USER ACCEPTANCE (RC4) — pending; Phase 21 proceeds in parallel by user authorisation.** Obtain the user's explicit
-   acceptance (checklist in `/RELEASE_CANDIDATE.md`). Do not call anything
-   FINAL or USER-ACCEPTED before that. If the user asks to remove Phase 18,
-   follow "Pre-Phase-18 rollback checkpoint" exactly.
-2. **Phase 21 — Admin post-launch enhancements (Admin only).** Starts only
-   after that approval, from a `backup/phase20-final-pre-phase21` branch
-   and an annotated tag recorded with its commit and tree. Public site,
-   Phase 14, Phase 18 and Passport stay out of scope.
-3. The user decisions listed in the unresolved register below.
+1. **PHASE 20 USER ACCEPTANCE (RC4) — pending.** Obtain the user's
+   explicit acceptance (checklist in `/RELEASE_CANDIDATE.md`). Do not call
+   anything FINAL or USER-ACCEPTED before that. If the user asks to remove
+   Phase 18, follow "Pre-Phase-18 rollback checkpoint" exactly; to undo
+   Phase 21, return the Worker to `wejhaty-phase20-rc4-pre-phase21`.
+2. Phase 21 operator review of `/admin` (optional; see the Phase 21
+   record in `/RELEASE_CANDIDATE.md`).
+3. The open items in the register below; none needs work until its
+   trigger (a source, a setting, a provider, a device) exists.
 
-## Unresolved register (authoritative, 2026-09-23)
+## Unresolved register (authoritative, 2026-09-24)
 
 Every open item, one status each. Statuses: RESOLVED, DEFERRED, BLOCKED,
-FROZEN, USER-DECISION REQUIRED, UNVERIFIED.
+CANCELLED, FROZEN, UNVERIFIED.
 
-| ID | Item | Status | Reason | Next action | Owner | User decision? |
-|---|---|---|---|---|---|---|
-| U1 | Thmanyah Arabic font | BLOCKED | Runner re-read (run 35930271981): self-hosting or uploading the font files is forbidden (license; help centre Q23), web use only inside a compiled/packaged/obfuscated product, no modification, no hosted font service (Q8) | Written permission from Thmanyah (Ask@thmanyah.com / help-centre chat), or wordmark-only artwork; user chooses | User | Yes |
-| U2 | Real Safari (macOS) and real Edge | RESOLVED (PRODUCTION-VERIFIED) | Smoke run 35929343828: Safari 26.6.2 11/11, Edge 152 all checks passed | Keep in every release smoke | Maintainer | No |
-| U3 | iOS Safari | UNVERIFIED | No iOS device or simulator in CI | Manual check on an iPhone (checklist in RC2 record) | User | No |
-| U4 | Real screen readers (VoiceOver, TalkBack, NVDA) | UNVERIFIED | Needs a person with assistive technology; automated semantics are clean (axe 0) | Manual checklist in RC2 record | User | No |
-| U5 | Traveler Budget 13.5c (SAR/day) | DEFERRED — USER DECISION (2026-09-23) | User chose to keep it deferred. Candidate on file: US State Department Foreign Per Diem Rates (a ceiling for official travellers) | None until the user reopens it | User | — |
-| U6 | Automatic PRs from data workflows | BLOCKED | Repository setting "Allow GitHub Actions to create and approve pull requests" is off | Settings → Actions → General → Workflow permissions → enable it | User | No |
-| U7 | Turnstile in production | DEFERRED — USER DECISION (2026-09-23: keep off) | Adds friction; code and fail-closed verification are ready; per-address limits are active | None until the user reopens it | User | — |
-| U8 | Paid travel/visa providers | DEFERRED | No credentials/contract; Worker provider path stays dormant | None until a provider decision | User | Yes |
-| U9 | Passport / entry information | FROZEN | User decision: no coverage, source, UI, copy or behaviour changes | Regression-test only | User | — |
-| U10 | Destination page "Edit my preferences" | RESOLVED (user decision 2026-09-23) | Now returns to the same destination with its updated match; Results' edit unchanged | — | — | — |
-| U11 | Main-site CSP | DEFERRED — USER DECISION (2026-09-23) | GitHub Pages cannot send headers; a meta CSP needs a full inventory | None until the user reopens it | User | — |
-| U12 | GitHub Actions SHA pinning | DEFERRED | Needs the upstream actions' commit SHAs (outside this repository's scope) | Enable Dependabot for Actions or pin manually | Maintainer | No |
-| U13 | Streamed (undeclared-length) body limits | DEFERRED | Declared-length ceilings are enforced; a chunked body is still bounded by each handler's field limits | Revisit with a streaming reader if abuse appears | Maintainer | No |
-| U14 | Paid-provider limiters | DEFERRED | Providers dormant | Add with any provider activation | Maintainer | No |
-| U15 | Dependency advisory (previously judged unreachable) | DEFERRED | Not exploitable in current use | Re-check at the next dependency upgrade | Maintainer | No |
-| U16 | Slow-test policy | DEFERRED | Two heavy tests can exceed 5 s under full parallel load | Policy: run with `--maxWorkers=2`; never raise timeouts to hide contention | Maintainer | No |
-| U17 | Rate limiter precision | ACCEPTED LIMITATION | Cloudflare's limiter is approximate per location (~2× budget seen in production) | None | — | No |
-| U18 | Main bundle size (flags + datasets, ~634 kB gzip) | DEFERRED — USER DECISION (2026-09-23: no further optimisation) | Lazy-loading the datasets is a larger change | None until the user reopens it | User | — |
-| U19 | Dark hero "nearby" note contrast | USER-DECISION REQUIRED | Measured: 13 of 22 hero photos below 4.5:1 at 1280/1440 even with the halo (worst 1.26:1, Japan); phone passes | User decides whether to change it | User | Yes |
-| U20 | Phase 21 (Admin) | NOT STARTED | Blocked on Phase 20 acceptance | Checkpoint, then Phase 21 | User | Yes |
-| R1 | heading-order (axe) | RESOLVED | h2 structure, visuals unchanged | — | — | — |
-| R2 | Explore mobile blocking time | RESOLVED | TBT 3.17 s → 1.42 s | — | — | — |
-| R3 | Admin token length timing; Access key cache; screenshot bytes; body ceilings; city-descriptions limit | RESOLVED | Phase 20 security backlog | — | — | — |
-| R4 | Destination Match returns to general Results | RESOLVED | Destination-match intent | — | — | — |
+| ID | Item | Status | Reason / evidence | Next action | Owner |
+|---|---|---|---|---|---|
+| U1 | Thmanyah Arabic font | CANCELLED BY USER | User decision in the final completion pass; license-reader workflow removed, typography unchanged | None — do not research or add it again | User |
+| U2 | Real desktop Safari (macOS) and real Edge | RESOLVED (PRODUCTION-VERIFIED) | Safari 26.6.2 15/15 with the Worker proven blocked (runs 35939069990, 35942408513); Edge in every ubuntu smoke | Keep in every release smoke | Maintainer |
+| U3 | iOS Safari | UNVERIFIED — PHYSICAL/REAL IOS SAFARI ENVIRONMENT UNAVAILABLE | iOS Simulator Mobile Safari 26.5 (iPhone 17 Pro, WebDriver) passes 15/15 with the Worker proven blocked (runs 35938066714, 35942408513); a simulator is not a physical iPhone and no device is available here | Manual check on a real iPhone (RC2 checklist) | User |
+| U4a | Real screen reader: VoiceOver (macOS) + Safari | RESOLVED (PRODUCTION-VERIFIED) | Real VoiceOver driven by Guidepup on a hosted Mac, Worker proven blocked: announces "heading level 1 اليابان" and 10 level-2 section headings on the Japan page, 4/4 (run 35944167490) | Keep in the release smoke | Maintainer |
+| U4b | Other real screen readers (VoiceOver on iPhone, TalkBack, NVDA, JAWS) | UNVERIFIED — REAL SCREEN READER | No device or Windows/Android screen reader here; automated semantics are clean (axe 0) and macOS VoiceOver passes | Manual checklist in the RC2 record | User |
+| U5 | Traveler Budget 13.5c (SAR/day) | DEFERRED — NO SUITABLE SOURCE | No legitimate traveller-budget source; per-diem ceilings for officials are not traveller budgets and are not used | Reopen only with a verified source | User |
+| U6 | Automatic PRs from data workflows | BLOCKED — REPOSITORY SETTING | "GitHub Actions is not permitted to create or approve pull requests" (run 34580108011) | Settings → Actions → General → Workflow permissions → allow Actions to create and approve pull requests | User |
+| U7 | Turnstile in production | DEFERRED — SERVER-SIDE RATE LIMITING CURRENTLY ACTIVE | Per-address limits on every write path; Turnstile code and fail-closed verification ready | Enable if abuse appears | User |
+| U8 | Paid travel/visa providers | DEFERRED UNTIL PROVIDER ACTIVATION | No credentials/contract; provider path dormant | Provider decision | User |
+| U9 | Passport / entry information | FROZEN | User decision: regression-only | Regression-test only | User |
+| U10 | Destination "Edit my preferences" | RESOLVED | Returns to the same destination with its updated match | — | — |
+| U11 | Main-site CSP | RESOLVED | Build-time meta CSP, no `unsafe-eval`, hashed inline script; 0 violations; no framing protection claimed (meta cannot set frame-ancestors) | — | — |
+| U12 | GitHub Actions SHA pinning | RESOLVED | Every action pinned to the SHA its tag resolved to in this repository's run logs | Re-pin on upgrades | Maintainer |
+| U13 | Undeclared-length (chunked) body limits | RESOLVED | `readBoundedBody` enforces the per-endpoint ceiling; production smoke 413 checks | — | — |
+| U14 | Paid-provider limiters | DEFERRED UNTIL PROVIDER ACTIVATION | Providers dormant | Add with any provider activation | Maintainer |
+| U15 | csv-parse dependency advisory | DEFERRED / NOT PRODUCTION-REACHABLE | Dev-only, transitive, not imported; production `npm audit` clean | Re-check at the next dependency upgrade | Maintainer |
+| U16 | Slow-test policy | RESOLVED | Suites run with `--maxWorkers=2`; timeouts are never raised to hide contention | — | Maintainer |
+| U17 | Rate limiter precision | DEFERRED | Cloudflare's limiter is approximate per location (~2× budget seen); platform behaviour, not fixable in code | Revisit only if abuse appears | Maintainer |
+| U18 | Main bundle size (~634 kB gzip) | DEFERRED | Measured: Home FCP 1.09 s, TBT 585 ms (4× CPU); no low-risk split; route splitting risks scroll/focus behaviour | Revisit with a dataset lazy-load plan | Maintainer |
+| U19 | Dark hero "nearby" note contrast | RESOLVED | Feathered backplate; all 176 states pass, lowest P10 6.02:1 | — | — |
+| U20 | Phase 21 (Admin) | RESOLVED | Deployed (Worker `b1c2815a`); tests, local-runtime QA, axe and production admin smoke clean; see state v41 | Optional operator review | User |
+| U21 | Anonymous events written by early macOS smoke runs | DEFERRED | A handful of Safari/desktop/US sessions (2026-09-23 22:38 – 2026-09-24 00:24 UTC); not deleted; expire under the 90-day retention job by about 2026-12-23 | None — retention removes them | Maintainer |
+| R1 | heading-order (axe) | RESOLVED | h2 structure, visuals unchanged | — | — |
+| R2 | Explore mobile blocking time | RESOLVED | TBT 3.17 s → 1.42 s | — | — |
+| R3 | Admin token timing; Access key cache; screenshot bytes; body ceilings; city-descriptions limit | RESOLVED | Phase 20 security backlog | — | — |
+| R4 | Destination Match returns to general Results | RESOLVED | Destination-match intent | — | — |
 
 ## Handoff rule
 

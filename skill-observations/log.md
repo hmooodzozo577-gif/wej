@@ -116,3 +116,33 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** For tag-level accessibility fixes, extend selectors with `:is()` to preserve specificity, and prove visual neutrality by comparing computed styles and box geometry of the affected elements between the old and new build; use pixel diffs only on pages without nondeterministic imagery, after a same-build noise baseline.
 
 **Principle:** Establish the noise floor of a visual check before trusting it; when it is noisy, compare the properties that the change can actually affect.
+
+### Observation 8: A "must not write production data" guard has to run, and be proven, before the first page load
+**Status:** OPEN
+
+**Date:** 2026-09-24
+**Session context:** Real-browser release smoke tests (desktop Safari, iOS Simulator, VoiceOver) on hosted macOS runners against the live site, with the analytics backend blocked through `/etc/hosts`.
+**Skill:** playwright-skill (and any production smoke / browser-automation workflow)
+**Type:** open-source
+**Phase/Area:** Production verification / data hygiene
+
+**Issue:** Only the IPv4 name was mapped, so the backend stayed reachable over IPv6, and the in-page guard ran after the site had already loaded. A few runs wrote anonymous analytics events to production before the guard reported the leak.
+
+**Suggested improvement:** Block every address family (IPv4 and IPv6), flush the resolver cache, then prove the block from the shell (a request that must fail) and again from inside the browser on a blank page — all before opening the site. Treat a successful probe as a hard stop. Retry flaky environment setup (simulator registration, UI-automation prerequisites) with a small bounded loop, but never retry an assertion.
+
+**Principle:** A safety guard that runs after the risky action is a report, not a guard. Prove the protective state first, then act.
+
+### Observation 9: Test analytics SQL against the real schema, and run dashboard QA against the real runtime with synthetic data
+**Status:** OPEN
+
+**Date:** 2026-09-24
+**Session context:** Rebuilding an admin analytics dashboard (funnel semantics, drop-off, distinct-session counts) on Cloudflare D1.
+**Skill:** New skill candidate: analytics-dashboard verification (metric dictionary + real-schema SQL tests + local-runtime QA)
+**Type:** open-source
+**Phase/Area:** Testing / data correctness
+
+**Issue:** The existing tests used a fake database that only recorded SQL text, so they could prove what a query asked for but not what it answered; a hand-written JSON stub drove the visual QA. Neither could catch a wrong denominator or a label that counted events while saying sessions (both existed).
+
+**Suggested improvement:** Apply every migration to an in-memory SQLite (Node's built-in `node:sqlite`) and assert metric values for named journeys; keep one metric dictionary (definition, numerator, denominator, window, limitation) as the single source for labels, docs and tests; run browser QA against the real runtime in local mode (`wrangler dev --local`) over a deterministic synthetic seed. Keep a guard on per-request query count when the platform caps it.
+
+**Principle:** A metric is only defined once it has a numerator, a denominator and a window written down — and it is only tested once a real query engine has computed it.

@@ -1,9 +1,10 @@
 # Wejhaty v1.0.0 — release candidate record
 
 Status: **PHASE 20 — FINAL WEJHATY / WEJHATY v1.0.0 RC4 / TECHNICALLY
-VERIFIED / USER ACCEPTANCE PENDING.** Nothing here is user-accepted or
+VERIFIED / USER ACCEPTANCE PENDING. PHASE 21 (ADMIN) — DEPLOYED,
+TECHNICALLY VERIFIED.** Nothing here is user-accepted or
 final until the user says so. Current truth lives in `PROJECT_STATE.md`
-(state v40 and its authoritative unresolved register); this file records
+(state v41 and its authoritative unresolved register); this file records
 what each candidate is, how it was checked and what the user is asked to
 review.
 
@@ -39,8 +40,55 @@ Use the RC2.2 checklist, including item 4b from RC3.2. Also check:
 
 ## RC4.3 Integrity and production verification
 
-Filled in after this candidate's deploy and smoke runs, in the commit
-that records them.
+| Item | Value |
+|---|---|
+| Commit | `bfddf89476e67a2f11eed498d5801c943100ad8a` |
+| Tree | `7469ce0826cf2b58598380dee15004d169b9a31f` |
+| Branch | `release/wejhaty-v1.0.0-rc4` → `bfddf89` |
+| Tag | `wejhaty-v1.0.0-rc4` (annotated, tag object `348b48b`) → `bfddf89` |
+| Checkpoint before Phase 21 | `backup/phase20-rc4-pre-phase21` + tag `wejhaty-phase20-rc4-pre-phase21` (tag object `40f774d`) → `bfddf89` |
+| Pages deploy | run 35937978186 — `index-DPgukpUn.js` / `index-CaHEFjNR.css`, identical to the local production build |
+| Worker deploy | run 35937978254 — version `0867e58d-ddf4-4653-a94c-682fa36f3ded` |
+| Production smoke | run 35938066714: Chromium/Firefox/WebKit/Edge PASS; iOS Simulator Mobile Safari 15/15 PASS |
+| Desktop Safari | first attempt stopped by its own guard; after the IPv4+IPv6 block fix, 15/15 PASS (runs 35939069990 and 35942408513) |
+| VoiceOver | 4/4 on real macOS VoiceOver after the setup fixes (see the Phase 21 record below) |
+
+**Production data note (disclosure).** Before the Worker block was proven
+for both address families, some macOS real-browser runs loaded the site
+while the Worker was still reachable over IPv6: the RC2 and RC3 desktop
+Safari runs (about 2026-09-23 22:38 and 23:09 UTC), a trial VoiceOver run
+(about 23:58 UTC), and the RC4 desktop Safari home load and VoiceOver
+destination load (about 2026-09-24 00:22–00:24 UTC). They probably wrote
+a handful of anonymous analytics events (sessions with browser Safari,
+device desktop, edge country US). Nothing was deleted — deleting
+production rows is a destructive change — and the 90-day retention job
+removes them automatically by about 2026-12-23. Every macOS job now
+blocks IPv4 and IPv6, flushes DNS and stops unless the Worker is proven
+unreachable before the site opens.
+
+# Phase 21 — Admin post-launch enhancements (on top of RC4)
+
+Admin only: the public site is byte-identical to RC4 (same
+`index-DPgukpUn.js` / `index-CaHEFjNR.css` from a production-configured
+build). Details: `PROJECT_STATE.md` state v41 and `ADMIN_METRICS.md`.
+
+| Item | Value |
+|---|---|
+| Code commit | `10d58ee` (smoke retries in `871b0c6`) |
+| Worker deploy | run 35942253435 — version `b1c2815a-5557-41fd-a3d8-025af15524ff` |
+| Pages deploy | run 35942253427 (unchanged bundle) |
+| Public regression | run 35942408513 — Chromium, Firefox, WebKit, Edge: 143/143 checks, 0 CSP violations (Worker requests aborted, no data written) |
+| Admin smoke | run 35942408513 — 15/15: `/admin` 200 with its CSP, no framing, no-store, Phase 21 dashboard live; every admin data path 401 for anonymous and wrong-token callers; status change without credentials 401 |
+| Desktop Safari 26.6.2 | run 35942408513 — 15/15, Worker proven blocked first |
+| iOS Simulator Mobile Safari 26.5 (iPhone 17 Pro) | run 35942408513 — 15/15, Worker proven blocked first |
+| Real VoiceOver (macOS) + Safari | run 35944167490 — 4/4: "heading level 1 اليابان", 10 level-2 section headings, Worker proven blocked. Earlier attempts failed in environment setup or never reached the page content; fixed in `871b0c6`, `7b3d337`, `66b230e` |
+| iOS Simulator re-check | run 35943345397 — 15/15 (Mobile Safari launched by bundle id) |
+
+Operator check (optional, needs the admin token or Cloudflare Access):
+open `/admin`, switch to Arabic, and confirm that each figure has
+«كيف يُحتسب؟», that the Questionnaire tab lists questions by their
+wording with a drop-off column, and that no English code appears in the
+tables.
 
 # RC3 — `wejhaty-v1.0.0-rc3` (historical record)
 
