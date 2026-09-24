@@ -1,0 +1,651 @@
+{
+  "source": "app/src/data/questionBanks.ts, app/src/data/i18n, app/src/personalization/copy.ts",
+  "questions": {
+    "tourism": [
+      {
+        "id": "tourism-proximity",
+        "kind": "proximity",
+        "ar": "هل يهمك أن تكون الوجهة السياحية قريبة من موقعك الحالي؟",
+        "en": "Does it matter that the holiday destination is close to your current location?"
+      },
+      {
+        "id": "tourism-climate",
+        "kind": "climate",
+        "ar": "أي طقس تفضّله خلال رحلتك؟",
+        "en": "Which weather do you prefer for your trip?"
+      },
+      {
+        "id": "tourism-cost",
+        "kind": "target",
+        "ar": "ما ميزانيتك التقريبية الإجمالية للرحلة؟",
+        "en": "What is your approximate total budget for the trip?"
+      },
+      {
+        "id": "tourism-urbanity",
+        "kind": "target",
+        "ar": "أين تفضّل قضاء معظم وقتك في الرحلة؟",
+        "en": "Where would you prefer to spend most of your trip?"
+      },
+      {
+        "id": "tourism-coastal",
+        "kind": "target",
+        "ar": "هل تريد أن يكون البحر جزءًا أساسيًا من رحلتك؟",
+        "en": "Do you want the sea to be a central part of your trip?"
+      },
+      {
+        "id": "tourism-size",
+        "kind": "target",
+        "ar": "أي تجربة تنقّل تناسبك أكثر في الرحلة؟",
+        "en": "Which travel pattern suits your trip better?"
+      },
+      {
+        "id": "tourism-island",
+        "kind": "target",
+        "ar": "هل تفضّل أن تكون الوجهة السياحية في جزيرة؟",
+        "en": "Would you prefer the holiday destination to be an island?"
+      },
+      {
+        "id": "tourism-popularity",
+        "kind": "target",
+        "ar": "ما مستوى الشهرة السياحية الذي ترتاح له؟",
+        "en": "What level of tourism popularity are you most comfortable with?"
+      },
+      {
+        "id": "tourism-safety",
+        "kind": "importance",
+        "ar": "كم يهمك انخفاض معدل الجرائم العنيفة في وجهة رحلتك؟",
+        "en": "How important is a low violent-crime rate at your trip destination?"
+      },
+      {
+        "id": "tourism-health",
+        "kind": "importance",
+        "ar": "ما مدى أهمية قوة المؤشرات الصحية أثناء السفر؟",
+        "en": "How important are strong health indicators while travelling?"
+      },
+      {
+        "id": "tourism-landBorder",
+        "kind": "landBorder",
+        "ar": "هل يهمك أن تكون الوجهة قابلة للوصول برًا من موقعك الحالي؟",
+        "en": "Does it matter to you that the destination can be reached by land from your current location?"
+      }
+    ],
+    "work": [
+      {
+        "id": "work-proximity",
+        "kind": "proximity",
+        "ar": "هل يهمك أن تكون دولة العمل قريبة من موقعك الحالي؟",
+        "en": "Does it matter that the work destination is close to your current location?"
+      },
+      {
+        "id": "work-climate",
+        "kind": "climate",
+        "ar": "أي مناخ يناسبك للحياة اليومية أثناء العمل؟",
+        "en": "Which climate suits your day-to-day life while working?"
+      },
+      {
+        "id": "work-cost",
+        "kind": "target",
+        "ar": "ما مستوى الإنفاق الشهري الذي يناسبك؟",
+        "en": "What monthly spending level suits you?"
+      },
+      {
+        "id": "work-urbanity",
+        "kind": "target",
+        "ar": "أي بيئة عمل ومعيشة تناسبك أكثر؟",
+        "en": "Which work and living environment suits you best?"
+      },
+      {
+        "id": "work-size",
+        "kind": "target",
+        "ar": "أي حجم دولة يناسب حياتك العملية؟",
+        "en": "Which country scale suits your working life?"
+      },
+      {
+        "id": "work-safety",
+        "kind": "importance",
+        "ar": "كم يهمك انخفاض معدل الجرائم العنيفة في دولة العمل؟",
+        "en": "How important is a low violent-crime rate in the country you would work in?"
+      },
+      {
+        "id": "work-opportunity",
+        "kind": "importance",
+        "ar": "ما مدى أهمية قوة فرص العمل في الدولة؟",
+        "en": "How important are strong job opportunities?"
+      },
+      {
+        "id": "work-income",
+        "kind": "importance",
+        "ar": "ما مدى أهمية ارتفاع مستوى الدخل في الدولة؟",
+        "en": "How important is a high income level in the country?"
+      },
+      {
+        "id": "work-growth",
+        "kind": "importance",
+        "ar": "ما مدى أهمية أن يكون اقتصاد الدولة في نمو حاليًا؟",
+        "en": "How important is it that the country’s economy is currently growing?"
+      },
+      {
+        "id": "work-health",
+        "kind": "importance",
+        "ar": "ما مدى أهمية قوة النظام الصحي حيث ستعيش وتعمل؟",
+        "en": "How important is a strong health system where you would live and work?"
+      },
+      {
+        "id": "work-landBorder",
+        "kind": "landBorder",
+        "ar": "هل يهمك أن تكون الوجهة قابلة للوصول برًا من موقعك الحالي؟",
+        "en": "Does it matter to you that the destination can be reached by land from your current location?"
+      }
+    ],
+    "education": [
+      {
+        "id": "education-proximity",
+        "kind": "proximity",
+        "ar": "هل يهمك أن تكون وجهة الدراسة قريبة من موقعك الحالي؟",
+        "en": "Does it matter that the study destination is close to your current location?"
+      },
+      {
+        "id": "education-climate",
+        "kind": "climate",
+        "ar": "أي مناخ تفضّله طوال سنة دراسية كاملة؟",
+        "en": "Which climate would you prefer across a full academic year?"
+      },
+      {
+        "id": "education-cost",
+        "kind": "target",
+        "ar": "ما مستوى الإنفاق الشهري الذي يناسبك أثناء الدراسة؟",
+        "en": "What monthly spending level suits you while studying?"
+      },
+      {
+        "id": "education-urbanity",
+        "kind": "target",
+        "ar": "أي بيئة دراسية تناسبك أكثر؟",
+        "en": "Which study environment suits you best?"
+      },
+      {
+        "id": "education-size",
+        "kind": "target",
+        "ar": "أي حجم دولة يناسبك أثناء الدراسة؟",
+        "en": "Which country scale suits you while studying?"
+      },
+      {
+        "id": "education-safety",
+        "kind": "importance",
+        "ar": "كم يهمك انخفاض معدل الجرائم العنيفة في مدينة الدراسة؟",
+        "en": "How important is a low violent-crime rate where you would study?"
+      },
+      {
+        "id": "education-education",
+        "kind": "importance",
+        "ar": "ما مدى أهمية قوة مؤشرات التعليم العالي؟",
+        "en": "How important are strong higher-education indicators?"
+      },
+      {
+        "id": "education-opportunity",
+        "kind": "importance",
+        "ar": "ما مدى أهمية توفر فرص عمل بعد التخرج؟",
+        "en": "How important are job opportunities after graduating?"
+      },
+      {
+        "id": "education-health",
+        "kind": "importance",
+        "ar": "ما مدى أهمية سهولة الوصول إلى رعاية صحية جيدة أثناء الدراسة؟",
+        "en": "How important is access to good healthcare while studying?"
+      },
+      {
+        "id": "education-landBorder",
+        "kind": "landBorder",
+        "ar": "هل يهمك أن تكون الوجهة قابلة للوصول برًا من موقعك الحالي؟",
+        "en": "Does it matter to you that the destination can be reached by land from your current location?"
+      }
+    ],
+    "medical": [
+      {
+        "id": "medical-proximity",
+        "kind": "proximity",
+        "ar": "هل يهمك أن تكون وجهة العلاج قريبة من موقعك الحالي؟",
+        "en": "Does it matter that the medical destination is close to your current location?"
+      },
+      {
+        "id": "medical-climate",
+        "kind": "climate",
+        "ar": "أي مناخ تفضّله لفترة العلاج والتعافي؟",
+        "en": "Which climate would you prefer for treatment and recovery?"
+      },
+      {
+        "id": "medical-cost",
+        "kind": "target",
+        "ar": "ما مستوى الإنفاق التقريبي الذي يناسبك لهذه الرحلة العلاجية؟",
+        "en": "What approximate spending level suits you for this medical trip?"
+      },
+      {
+        "id": "medical-urbanity",
+        "kind": "target",
+        "ar": "أي محيط تفضّله أثناء فترة العلاج؟",
+        "en": "What kind of surroundings would you prefer during treatment?"
+      },
+      {
+        "id": "medical-size",
+        "kind": "target",
+        "ar": "ما مدى أهمية قصر التنقل الداخلي إلى مكان العلاج؟",
+        "en": "How much does short internal travel to the treatment location matter?"
+      },
+      {
+        "id": "medical-safety",
+        "kind": "importance",
+        "ar": "كم يهمك انخفاض معدل الجرائم العنيفة في وجهة العلاج؟",
+        "en": "How important is a low violent-crime rate at the medical destination?"
+      },
+      {
+        "id": "medical-health",
+        "kind": "importance",
+        "ar": "ما مدى أهمية قوة النظام الصحي في الدولة؟",
+        "en": "How important is the country’s overall health system?"
+      },
+      {
+        "id": "medical-income",
+        "kind": "importance",
+        "ar": "ما مدى أهمية أن تكون الدولة مرتفعة الدخل (بنية تحتية طبية أفضل تمويلًا)؟",
+        "en": "How important is a high-income country (better-funded medical infrastructure)?"
+      },
+      {
+        "id": "medical-landBorder",
+        "kind": "landBorder",
+        "ar": "هل يهمك أن تكون الوجهة قابلة للوصول برًا من موقعك الحالي؟",
+        "en": "Does it matter to you that the destination can be reached by land from your current location?"
+      }
+    ],
+    "immigration": [
+      {
+        "id": "immigration-proximity",
+        "kind": "proximity",
+        "ar": "هل يهمك أن تكون الدولة التي ستعيش فيها قريبة من موقعك الحالي؟",
+        "en": "Does it matter that the country you would live in is close to your current location?"
+      },
+      {
+        "id": "immigration-climate",
+        "kind": "climate",
+        "ar": "أي مناخ تريد أن تعيش فيه على المدى الطويل؟",
+        "en": "Which climate would you want to live in long term?"
+      },
+      {
+        "id": "immigration-cost",
+        "kind": "target",
+        "ar": "ما مستوى الإنفاق الشهري الذي يناسبك للمعيشة هناك؟",
+        "en": "What monthly spending level suits you for living there?"
+      },
+      {
+        "id": "immigration-urbanity",
+        "kind": "target",
+        "ar": "أين تفضّل أن تسكن على المدى الطويل؟",
+        "en": "Where would you prefer to live long term?"
+      },
+      {
+        "id": "immigration-coastal",
+        "kind": "target",
+        "ar": "هل تفضّل العيش قريبًا من الساحل؟",
+        "en": "Would you prefer to live near the coast?"
+      },
+      {
+        "id": "immigration-size",
+        "kind": "target",
+        "ar": "أي حجم دولة تريد أن تعيش فيه؟",
+        "en": "Which country scale would you want to live in?"
+      },
+      {
+        "id": "immigration-safety",
+        "kind": "importance",
+        "ar": "كم يهمك انخفاض معدل الجرائم العنيفة في الدولة التي ستعيش فيها؟",
+        "en": "How important is a low violent-crime rate in the country you would live in?"
+      },
+      {
+        "id": "immigration-income",
+        "kind": "importance",
+        "ar": "ما مدى أهمية ارتفاع مستوى الدخل والرفاه الاقتصادي؟",
+        "en": "How important are income levels and economic well-being?"
+      },
+      {
+        "id": "immigration-health",
+        "kind": "importance",
+        "ar": "ما مدى أهمية قوة النظام الصحي لك ولعائلتك؟",
+        "en": "How important is a strong health system for you and your family?"
+      },
+      {
+        "id": "immigration-education",
+        "kind": "importance",
+        "ar": "ما مدى أهمية قوة مؤشرات التعليم لك أو لعائلتك؟",
+        "en": "How important are strong education indicators for you or your family?"
+      },
+      {
+        "id": "immigration-landBorder",
+        "kind": "landBorder",
+        "ar": "هل يهمك أن تكون الوجهة قابلة للوصول برًا من موقعك الحالي؟",
+        "en": "Does it matter to you that the destination can be reached by land from your current location?"
+      }
+    ],
+    "investment": [
+      {
+        "id": "investment-proximity",
+        "kind": "proximity",
+        "ar": "هل يهمك أن تكون وجهة الاستثمار قريبة من موقعك الحالي؟",
+        "en": "Does it matter that the investment destination is close to your current location?"
+      },
+      {
+        "id": "investment-climate",
+        "kind": "climate",
+        "ar": "هل يهمك مناخ معيّن للسوق الذي تستثمر فيه (عقار، ضيافة، زراعة)؟",
+        "en": "Does a particular climate matter for the market you would invest in (property, hospitality, agriculture)?"
+      },
+      {
+        "id": "investment-cost",
+        "kind": "target",
+        "ar": "ما مستوى الأسعار الذي تفضّله في السوق المستهدف؟",
+        "en": "What price level do you prefer in the target market?"
+      },
+      {
+        "id": "investment-urbanity",
+        "kind": "target",
+        "ar": "أي نوع من الأسواق المحلية يناسب استثمارك؟",
+        "en": "Which kind of local market suits your investment?"
+      },
+      {
+        "id": "investment-size",
+        "kind": "target",
+        "ar": "أي حجم سوق تستهدف؟",
+        "en": "Which market size are you targeting?"
+      },
+      {
+        "id": "investment-safety",
+        "kind": "importance",
+        "ar": "كم يهمك استقرار الأمن في السوق المستهدف؟",
+        "en": "How important is a stable security situation in the target market?"
+      },
+      {
+        "id": "investment-investment",
+        "kind": "importance",
+        "ar": "ما مدى أهمية نشاط الاستثمار الأجنبي في الدولة؟",
+        "en": "How important is active foreign investment in the country?"
+      },
+      {
+        "id": "investment-growth",
+        "kind": "importance",
+        "ar": "ما مدى أهمية النمو الاقتصادي الحالي للسوق؟",
+        "en": "How important is the market’s current economic growth?"
+      },
+      {
+        "id": "investment-income",
+        "kind": "importance",
+        "ar": "ما مدى أهمية ارتفاع مستوى دخل السوق المستهدف؟",
+        "en": "How important is a high income level in the target market?"
+      },
+      {
+        "id": "investment-opportunity",
+        "kind": "importance",
+        "ar": "ما مدى أهمية قوة سوق العمل في السوق المستهدف؟",
+        "en": "How important is a strong labour market in the target market?"
+      },
+      {
+        "id": "investment-landBorder",
+        "kind": "landBorder",
+        "ar": "هل يهمك أن تكون الوجهة قابلة للوصول برًا من موقعك الحالي؟",
+        "en": "Does it matter to you that the destination can be reached by land from your current location?"
+      }
+    ],
+    "wellness": [
+      {
+        "id": "wellness-proximity",
+        "kind": "proximity",
+        "ar": "هل يهمك أن تكون وجهة الاستجمام قريبة من موقعك الحالي؟",
+        "en": "Does it matter that the wellness destination is close to your current location?"
+      },
+      {
+        "id": "wellness-climate",
+        "kind": "climate",
+        "ar": "أي طقس يساعدك على الاسترخاء أكثر؟",
+        "en": "Which weather helps you relax most?"
+      },
+      {
+        "id": "wellness-cost",
+        "kind": "target",
+        "ar": "ما ميزانيتك التقريبية الإجمالية لهذه الإقامة؟",
+        "en": "What is your approximate total budget for this stay?"
+      },
+      {
+        "id": "wellness-urbanity",
+        "kind": "target",
+        "ar": "أين تفضّل قضاء معظم وقتك للاستجمام؟",
+        "en": "Where would you prefer to spend most of your time unwinding?"
+      },
+      {
+        "id": "wellness-coastal",
+        "kind": "target",
+        "ar": "هل تريد أن يكون البحر جزءًا أساسيًا من هذه الإقامة؟",
+        "en": "Do you want the sea to be a central part of this stay?"
+      },
+      {
+        "id": "wellness-size",
+        "kind": "target",
+        "ar": "كم تريد أن تتنقل داخل الدولة خلال إقامتك؟",
+        "en": "How much do you want to move around inside the country during your stay?"
+      },
+      {
+        "id": "wellness-island",
+        "kind": "target",
+        "ar": "هل تفضّل أن تكون وجهة الاستجمام في جزيرة؟",
+        "en": "Would you prefer the wellness destination to be an island?"
+      },
+      {
+        "id": "wellness-popularity",
+        "kind": "target",
+        "ar": "هل تفضّل مكانًا منعزلًا أم وجهة استجمام معروفة؟",
+        "en": "Would you prefer somewhere secluded, or a well-known wellness destination?"
+      },
+      {
+        "id": "wellness-safety",
+        "kind": "importance",
+        "ar": "كم يهمك انخفاض معدل الجرائم العنيفة في وجهة الاستجمام؟",
+        "en": "How important is a low violent-crime rate at the wellness destination?"
+      },
+      {
+        "id": "wellness-health",
+        "kind": "importance",
+        "ar": "ما مدى أهمية قوة المؤشرات الصحية العامة؟",
+        "en": "How important are strong public-health indicators?"
+      },
+      {
+        "id": "wellness-landBorder",
+        "kind": "landBorder",
+        "ar": "هل يهمك أن تكون الوجهة قابلة للوصول برًا من موقعك الحالي؟",
+        "en": "Does it matter to you that the destination can be reached by land from your current location?"
+      }
+    ],
+    "other": [
+      {
+        "id": "other-proximity",
+        "kind": "proximity",
+        "ar": "هل يهمك أن تكون الوجهة قريبة من موقعك الحالي؟",
+        "en": "Does it matter that the destination is close to your current location?"
+      },
+      {
+        "id": "other-climate",
+        "kind": "climate",
+        "ar": "أي طقس تفضّله خلال فترة إقامتك؟",
+        "en": "Which weather do you prefer for most of your time there?"
+      },
+      {
+        "id": "other-cost",
+        "kind": "target",
+        "ar": "ما مستوى الإنفاق الذي يناسبك؟",
+        "en": "What spending level suits you?"
+      },
+      {
+        "id": "other-urbanity",
+        "kind": "target",
+        "ar": "أين تفضّل قضاء معظم وقتك؟",
+        "en": "Where would you prefer to spend most of your time?"
+      },
+      {
+        "id": "other-coastal",
+        "kind": "target",
+        "ar": "هل تريد أن يكون البحر جزءًا أساسيًا من هذه التجربة؟",
+        "en": "Do you want the sea to be a central part of this experience?"
+      },
+      {
+        "id": "other-size",
+        "kind": "target",
+        "ar": "أي حجم دولة يناسبك؟",
+        "en": "Which country scale suits you?"
+      },
+      {
+        "id": "other-island",
+        "kind": "target",
+        "ar": "هل تفضّل أن تكون الوجهة في جزيرة؟",
+        "en": "Would you prefer the destination to be an island?"
+      },
+      {
+        "id": "other-popularity",
+        "kind": "target",
+        "ar": "ما نوع الوجهة الذي ترتاح له أكثر؟",
+        "en": "Which type of destination suits you best?"
+      },
+      {
+        "id": "other-safety",
+        "kind": "importance",
+        "ar": "كم يهمك انخفاض معدل الجرائم العنيفة في الوجهة؟",
+        "en": "How important is a low violent-crime rate at the destination?"
+      },
+      {
+        "id": "other-growth",
+        "kind": "importance",
+        "ar": "هل يهمك أن تكون الوجهة في اقتصاد ينمو حاليًا؟",
+        "en": "How important is current economic growth at the destination?"
+      },
+      {
+        "id": "other-landBorder",
+        "kind": "landBorder",
+        "ar": "هل يهمك أن تكون الوجهة قابلة للوصول برًا من موقعك الحالي؟",
+        "en": "Does it matter to you that the destination can be reached by land from your current location?"
+      }
+    ]
+  },
+  "exploreFilters": {
+    "region": {
+      "ar": "المنطقة",
+      "en": "Region"
+    },
+    "purpose": {
+      "ar": "الغرض",
+      "en": "Purpose"
+    },
+    "cost": {
+      "ar": "التكلفة",
+      "en": "Cost"
+    },
+    "sort": {
+      "ar": "الترتيب",
+      "en": "Sort"
+    }
+  },
+  "exploreSorts": {
+    "personal-desc": {
+      "ar": "التوافق معك: الأعلى أولًا",
+      "en": "Personal match: Highest first"
+    },
+    "personal-asc": {
+      "ar": "التوافق معك: الأقل أولًا",
+      "en": "Personal match: Lowest first"
+    },
+    "default": {
+      "ar": "الترتيب الافتراضي",
+      "en": "Default order"
+    },
+    "name-asc": {
+      "ar": "الاسم: أ–ي",
+      "en": "Name: A–Z"
+    },
+    "name-desc": {
+      "ar": "الاسم: ي–أ",
+      "en": "Name: Z–A"
+    },
+    "area-desc": {
+      "ar": "المساحة: الأكبر أولًا",
+      "en": "Area: largest first"
+    },
+    "area-asc": {
+      "ar": "المساحة: الأصغر أولًا",
+      "en": "Area: smallest first"
+    },
+    "cost-asc": {
+      "ar": "الأسعار: الأقل أولًا",
+      "en": "Price level: lowest first"
+    },
+    "cost-desc": {
+      "ar": "الأسعار: الأعلى أولًا",
+      "en": "Price level: highest first"
+    },
+    "nearest": {
+      "ar": "الأقرب إلى موقعي",
+      "en": "Nearest to me"
+    },
+    "farthest": {
+      "ar": "الأبعد عن موقعي",
+      "en": "Farthest from me"
+    }
+  },
+  "exploreRegions": {
+    "all": {
+      "ar": "كل المناطق",
+      "en": "All Regions"
+    },
+    "Africa": {
+      "ar": "أفريقيا",
+      "en": "Africa"
+    },
+    "Asia": {
+      "ar": "آسيا",
+      "en": "Asia"
+    },
+    "Europe": {
+      "ar": "أوروبا",
+      "en": "Europe"
+    },
+    "MiddleEast": {
+      "ar": "الشرق الأوسط",
+      "en": "Middle East"
+    },
+    "NAmerica": {
+      "ar": "أمريكا الشمالية",
+      "en": "North America"
+    },
+    "SouthAmerica": {
+      "ar": "أمريكا الجنوبية",
+      "en": "South America"
+    },
+    "Oceania": {
+      "ar": "أوقيانوسيا",
+      "en": "Oceania"
+    }
+  },
+  "exploreCosts": {
+    "1": {
+      "ar": "منخفضة",
+      "en": "Low"
+    },
+    "2": {
+      "ar": "متوسطة",
+      "en": "Medium"
+    },
+    "3": {
+      "ar": "مرتفعة",
+      "en": "High"
+    },
+    "4": {
+      "ar": "فاخرة",
+      "en": "Luxury"
+    },
+    "all": {
+      "ar": "كل المستويات",
+      "en": "All Levels"
+    }
+  }
+}

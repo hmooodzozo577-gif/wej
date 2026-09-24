@@ -251,6 +251,17 @@ describe('privacy — enforced by what the SQL can even ask for', () => {
     }
   });
 
+  it('stays within the Workers Free plan budget of 50 D1 queries per request', async () => {
+    // Phase 21 added panels without adding queries (48 before and after).
+    // Going past 50 would make the whole analytics call fail on that plan.
+    const db = new FakeDb();
+    await handleAdminRequest(
+      new Request('https://w.dev/api/admin/analytics', { headers: { Authorization: 'Bearer fixture-admin-secret' } }),
+      env({ PRODUCT_DB: db as never }), json,
+    );
+    expect(db.calls.length).toBeLessThanOrEqual(50);
+  });
+
   it('passes every filter value as a bound parameter, never as SQL text', async () => {
     const db = new FakeDb();
     await handleAdminRequest(

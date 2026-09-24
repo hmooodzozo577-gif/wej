@@ -23,6 +23,7 @@ import {
   buildAnalytics,
   listFeedback,
   listRatings,
+  parseRatingsQuery,
   parseFeedbackQuery,
   parseFilters,
   updateFeedbackStatus,
@@ -260,7 +261,7 @@ export async function handleAdminRequest(
     return json(await listFeedback(db, filters, parseFeedbackQuery(url)), 200);
   }
   if (url.pathname === '/api/admin/ratings') {
-    return json({ ratings: await listRatings(db, filters) }, 200);
+    return json({ ratings: await listRatings(db, filters, parseRatingsQuery(url)) }, 200);
   }
 
   // '/api/admin/summary' is kept as an alias of '/api/admin/analytics' so an
