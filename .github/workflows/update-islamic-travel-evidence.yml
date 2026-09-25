@@ -1,0 +1,113 @@
+name: Update Islamic-travel evidence
+
+# v1.1 — monthly snapshot of mapped mosques and places tagged halal per
+# country, from OpenStreetMap through the public Overpass API. Personal
+# Match uses these counts only as POSITIVE evidence for two optional,
+# local-only traveller preferences; a country with no evidence is "not
+# counted", never scored down (see app/src/personalization/islamicTravel.ts).
+# Opens a pull request only when the data changed and validated; never
+# pushes to the deploy branch. Data (c) OpenStreetMap contributors, ODbL.
+on:
+  schedule:
+    - cron: '0 5 2 * *' # 05:00 UTC on the 2nd of each month
+  workflow_dispatch: {}
+
+# No workflow-wide token scope; the job below asks for what it needs
+# (push the update branch, open the PR).
+permissions: {}
+
+concurrency:
+  group: islamic-travel-evidence-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    # One polite query per country against the public Overpass instance.
+    timeout-minutes: 300
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Run the ingestion pipeline tests (fixtures only, no network)
+        working-directory: app
+        run: npx vitest run scripts/lib/islamicTravelIngest.test.mjs
+
+      - name: Generate the snapshot from OpenStreetMap (Overpass)
+        working-directory: app
+        run: node scripts/generate-islamic-travel-evidence.mjs
+
+      - name: Upload generated snapshot (verification artifact)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: islamic-travel-evidence-snapshot
+          path: app/src/data/generated/islamicTravelEvidence.json
+          retention-days: 14
+
+      - name: Check whether the snapshot actually changed
+        id: diff
+        working-directory: app
+        # Compares the data, not the bytes: every run re-stamps
+        # snapshotUpdatedAt, which alone is not an update worth a PR.
+        run: node scripts/lib/snapshotChanged.mjs src/data/generated/islamicTravelEvidence.json >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push the updated snapshot to a new branch
+        if: steps.diff.outputs.changed == 'true'
+        id: push_branch
+        working-directory: app
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          BRANCH="update-islamic-travel-evidence-${{ github.run_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add src/data/generated/islamicTravelEvidence.json
+          git commit -m "chore: update Islamic-travel evidence snapshot"
+          git push origin "$BRANCH"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Open a pull request with the updated snapshot
+        if: steps.diff.outputs.changed == 'true'
+        working-directory: app
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # set +e: see update-travel-cost-index.yml's identical comment
+          # — GitHub Actions runs steps under `bash -e` by default, which
+          # would otherwise skip every diagnostic line below on the
+          # first failing command.
+          set +e
+          BRANCH="${{ steps.push_branch.outputs.branch }}"
+          pr_output=$(gh pr create \
+            --base claude/marhaba-kxry8l \
+            --head "$BRANCH" \
+            --title "chore: update Islamic-travel evidence snapshot" \
+            --body "Automated snapshot of places mapped in OpenStreetMap (mosques: amenity=place_of_worship + religion=muslim; halal: diet:halal=yes|only), counted per country through the Overpass API by scripts/generate-islamic-travel-evidence.mjs and validated before this PR was opened. Data (c) OpenStreetMap contributors, ODbL 1.0. Used only as positive evidence for Personal Match (personal-match-1.1); absence is never scored. Review the diff, then merge normally." 2>&1)
+          pr_status=$?
+          echo "$pr_output"
+          if [ "$pr_status" -eq 0 ]; then
+            echo "Snapshot generation: SUCCEEDED. Branch push: SUCCEEDED. Pull request: OPENED."
+            exit 0
+          fi
+          if echo "$pr_output" | grep -qi "not permitted to create or approve pull requests"; then
+            echo "::error::Snapshot generation SUCCEEDED and branch '$BRANCH' was pushed with the real, validated update — but PR creation is BLOCKED by a repository setting, not a code or data problem. Required fix (one-time, by a repo admin): Settings -> Actions -> General -> Workflow permissions -> check 'Allow GitHub Actions to create and approve pull requests'. Until that is enabled, this job correctly reports FAILURE (an incomplete update path), not success — the branch above still holds the real update for manual PR creation in the meantime."
+            exit 1
+          fi
+          echo "::error::Snapshot generation SUCCEEDED and branch '$BRANCH' was pushed, but pull request creation failed for an UNRECOGNIZED reason (see gh output above) — this needs investigation, not just a repository-setting fix."
+          exit 1
