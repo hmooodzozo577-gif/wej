@@ -40,6 +40,11 @@ on:
         type: boolean
         required: false
         default: true
+      seo_checks:
+        description: 'Also check what crawlers and link previews get without JavaScript (plain HTTP GETs)'
+        type: boolean
+        required: false
+        default: true
 
 # No workflow-wide token scope; the job declares read-only access.
 permissions: {}
@@ -83,6 +88,18 @@ jobs:
             echo "::error::Unsupported engines list"; exit 1
           fi
           node scripts/production-smoke.mjs "$SITE" "$ENGINES"
+
+      - name: Check SEO documents, sitemap, robots and icons (plain HTTP)
+        if: ${{ !cancelled() && inputs.seo_checks }}
+        working-directory: app
+        env:
+          SITE: ${{ inputs.site }}
+        run: |
+          case "$SITE" in
+            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            *) echo "::error::Unsupported site URL"; exit 1 ;;
+          esac
+          node scripts/seo-smoke.mjs "$SITE"
 
       - name: Check the Worker hardening (no data written)
         if: ${{ !cancelled() && inputs.worker_checks }}
