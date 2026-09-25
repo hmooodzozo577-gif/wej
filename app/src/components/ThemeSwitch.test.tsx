@@ -59,6 +59,23 @@ describe('ThemeSwitch', () => {
     expect(document.documentElement.dataset.theme).toBe('dark');
   });
 
+  // v1.1 (audit H1) — with storage blocked (Safari "Block All Cookies",
+  // some private modes) every localStorage access throws. The control is in
+  // the header of every page, so this used to take the whole app down.
+  it('keeps working when storage is blocked', () => {
+    const blocked = () => { throw new DOMException('The operation is insecure.', 'SecurityError'); };
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(blocked);
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(blocked);
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(blocked);
+    installMatchMedia(false);
+
+    expect(() => render(<ThemeSwitch lang="en" />)).not.toThrow();
+    expect(document.documentElement.dataset.theme).toBe('light');
+    fireEvent.click(screen.getByRole('combobox', { name: 'Theme' }));
+    fireEvent.click(screen.getByRole('option', { name: /Dark/ }));
+    expect(document.documentElement.dataset.theme).toBe('dark');
+  });
+
   it('restores a saved preference', () => {
     localStorage.setItem(THEME_STORAGE_KEY, 'light');
     render(<ThemeSwitch lang="en" />);

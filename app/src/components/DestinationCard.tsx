@@ -17,6 +17,7 @@ import { DestinationImage } from './DestinationImage';
 import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
 import type { DestinationNavigation } from '../state/types';
 import { trackEvent } from '../telemetry/productDataClient';
+import { routerPath } from '../site/site';
 
 export function DestinationCard({
   dest,
@@ -60,7 +61,7 @@ export function DestinationCard({
       className={`dest-card${fromResults ? ' result-destination-card' : ''}`}
       data-open={dest.id}
       onClick={() => trackEvent('destination_opened', { source: navigation?.source ?? 'direct' }, {
-        path: window.location.pathname.replace(/^\/wej/, '') || '/',
+        path: routerPath(window.location.pathname),
         locale: lang,
         countryCode: dest.countryCode,
       })}

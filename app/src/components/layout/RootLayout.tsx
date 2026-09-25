@@ -10,9 +10,13 @@ import { LocationIntro } from '../LocationIntro';
 import { ProductTelemetry } from '../../telemetry/ProductTelemetry';
 import { TravelBackdrop } from '../TravelBackdrop';
 import { isPersonalMatchFocusState } from '../../personalization/quizIntent';
+import { useDocumentMeta } from '../../seo/useDocumentMeta';
+import { useI18n } from '../../state/hooks';
 
 export function RootLayout() {
   const location = useLocation();
+  const { lang } = useI18n();
+  useDocumentMeta(lang);
   // Phase 20 — the end of a destination-match questionnaire lands on the
   // destination's Personal Match section, which brings itself into view
   // (PersonalMatchSection); scrolling to the top would undo that. Read

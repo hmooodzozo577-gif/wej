@@ -8,12 +8,14 @@ import { Quiz } from './routes/Quiz';
 import { Results } from './routes/Results';
 import { Destination } from './routes/Destination';
 import { Explore } from './routes/Explore';
+import { NotFound } from './routes/NotFound';
+import { ROUTER_BASENAME } from './site/site';
 
 function App() {
   return (
     <AppStateProvider>
       <PersonalizationProvider>
-        <BrowserRouter basename="/wej">
+        <BrowserRouter basename={ROUTER_BASENAME}>
           <Routes>
             <Route element={<RootLayout />}>
               <Route path="/" element={<Home />} />
@@ -22,6 +24,7 @@ function App() {
               <Route path="/results" element={<Results />} />
               <Route path="/destination/:id" element={<Destination />} />
               <Route path="/explore" element={<Explore />} />
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </BrowserRouter>

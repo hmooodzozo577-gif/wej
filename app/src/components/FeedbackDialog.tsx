@@ -3,6 +3,7 @@ import type { FeedbackStrings, Lang } from '../data/types';
 import { submitFeedback } from '../telemetry/productDataClient';
 import { useTurnstile } from '../telemetry/turnstile';
 import { Select } from './Select';
+import { routerPath } from '../site/site';
 
 export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; strings: FeedbackStrings; countryCode?: string }) {
   const [open, setOpen] = useState(false);
@@ -96,7 +97,7 @@ export function FeedbackDialog({ lang, strings, countryCode }: { lang: Lang; str
         screenshotDataUrl: screenshot,
         ...(turnstile.token ? { turnstileToken: turnstile.token } : {}),
       }, {
-        path: window.location.pathname.replace(/^\/wej/, '') || '/',
+        path: routerPath(window.location.pathname),
         locale: lang,
         countryCode,
       });

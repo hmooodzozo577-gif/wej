@@ -5568,3 +5568,27 @@ html[dir='rtl'] .travel-route-band {
   content-visibility: auto;
   contain-intrinsic-size: auto 300px auto 410px;
 }
+
+/* --- v1.1 --------------------------------------------------------------
+   Scoped additions only; nothing above is restyled. */
+.footer-version {
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.not-found {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  padding: 64px 0 88px;
+}
+
+.not-found h1 {
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.2rem);
+}
+
+.not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

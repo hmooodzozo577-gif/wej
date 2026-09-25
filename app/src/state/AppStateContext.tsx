@@ -1,6 +1,7 @@
 // React Context + useReducer for application/quiz state, per the approved
 // architecture. Also ports setLang()'s document-level side effects
-// (documentElement.lang/dir, document.title) — everything else setLang()
+// (documentElement.lang/dir; the title is per page since v1.1, see
+// seo/useDocumentMeta.ts) — everything else setLang()
 // used to do (updating specific DOM nodes by id) is now just React
 // re-rendering from context, so it doesn't need to be replicated here.
 import { useEffect, useMemo, useReducer } from 'react';
@@ -16,7 +17,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     const dict = I18N[state.lang];
     document.documentElement.lang = dict.htmlLang;
     document.documentElement.dir = dict.dir;
-    document.title = state.lang === 'ar' ? 'وِجهتي — Wejhaty' : 'Wejhaty — Find Your Destination';
   }, [state.lang]);
 
   const value = useMemo(() => ({ state, dispatch }), [state]);

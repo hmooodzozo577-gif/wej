@@ -2,13 +2,30 @@ import { useEffect, useState } from 'react';
 import type { Lang } from '../data/types';
 import { Icon } from './Icon';
 import { Select } from './Select';
+import { THEME_COLOR } from '../site/theme';
 
 export type ThemePreference = 'auto' | 'light' | 'dark';
 export const THEME_STORAGE_KEY = 'wejhaty.theme';
 
+// Storage can be blocked outright (Safari "Block All Cookies", some private
+// modes), and then even reading localStorage throws. The theme control sits
+// in the header of every page, so it must never let that escape.
 function savedPreference(): ThemePreference {
-  const value = localStorage.getItem(THEME_STORAGE_KEY);
-  return value === 'light' || value === 'dark' ? value : 'auto';
+  try {
+    const value = localStorage.getItem(THEME_STORAGE_KEY);
+    return value === 'light' || value === 'dark' ? value : 'auto';
+  } catch {
+    return 'auto';
+  }
+}
+
+function savePreference(preference: ThemePreference) {
+  try {
+    if (preference === 'auto') localStorage.removeItem(THEME_STORAGE_KEY);
+    else localStorage.setItem(THEME_STORAGE_KEY, preference);
+  } catch {
+    // The choice still applies to this page; it just is not remembered.
+  }
 }
 
 function applyTheme(preference: ThemePreference, systemDark: boolean) {
@@ -16,7 +33,7 @@ function applyTheme(preference: ThemePreference, systemDark: boolean) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
   document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
-    ?.setAttribute('content', theme === 'dark' ? '#111925' : '#F2EEE5');
+    ?.setAttribute('content', THEME_COLOR[theme]);
 }
 
 export function ThemeSwitch({ lang }: { lang: Lang }) {
@@ -45,8 +62,7 @@ export function ThemeSwitch({ lang }: { lang: Lang }) {
 
   const changePreference = (next: ThemePreference) => {
     setPreference(next);
-    if (next === 'auto') localStorage.removeItem(THEME_STORAGE_KEY);
-    else localStorage.setItem(THEME_STORAGE_KEY, next);
+    savePreference(next);
   };
 
   // The effective appearance for a given preference value: System resolves

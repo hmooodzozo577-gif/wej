@@ -48,6 +48,7 @@ import { computePersonalMatch } from '../personalization/personalMatch';
 import { PersonalMatchSection } from '../personalization/PersonalMatchSection';
 import { PERSONAL_COPY } from '../personalization/copy';
 import { EntryRequirementsCard } from '../entry/EntryRequirements';
+import { NotFound } from './NotFound';
 
 // Phase 11 Step 1 — compact, build-time Country Information card. Shared by
 // both the basic-country branch and the full-destination branch below, so
@@ -212,13 +213,7 @@ export function Destination() {
   const { preferences } = usePersonalization();
 
   const d = WORLD_CATALOG.find((x) => x.id === id);
-  if (!d) {
-    return (
-      <div className="container" style={{ padding: '60px 0' }}>
-        Not found
-      </div>
-    );
-  }
+  if (!d) return <NotFound />;
 
   const dt = t.detail;
   const continent = continentOf(d);

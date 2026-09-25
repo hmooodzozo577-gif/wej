@@ -74,13 +74,15 @@ describe('Phase 10 — F. destination routing', () => {
 
   it('an unknown id shows a safe "not found" state, not a crash', () => {
     renderAt('/destination/does-not-exist');
-    expect(screen.getByText('Not found')).toBeInTheDocument();
+    // v1.1 — the localized not-found page (NotFound.tsx) replaced the bare
+    // English "Not found" text.
+    expect(screen.getByRole('heading', { level: 1, name: /الصفحة غير موجودة|Page not found/ })).toBeInTheDocument();
   });
 
   it('an excluded country (see excludedCountries.ts) is not resolvable — same "not found" state as an unknown id, no special-case hack', () => {
     for (const excluded of EXCLUDED_COUNTRIES) {
       renderAt(`/destination/${excluded.iso2.toLowerCase()}`);
-      expect(screen.getByText('Not found')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1, name: /الصفحة غير موجودة|Page not found/ })).toBeInTheDocument();
     }
   });
 

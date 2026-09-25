@@ -59,9 +59,16 @@ jobs:
           VITE_TRAVEL_WORKER_URL: ${{ env.WORKER_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
 
-      - name: SPA fallback (404.html = copy of index.html)
+      # v1.1 — the build itself writes one document per page, a noindex
+      # 404.html, sitemap.xml, robots.txt and the manifest (build/seoPages.ts).
+      # Copying index.html over 404.html would give every unknown URL the
+      # home page's canonical link, so the build output is used as it is.
+      - name: Check the generated route documents
         working-directory: app
-        run: cp dist/index.html dist/404.html
+        run: |
+          test -f dist/404.html && grep -q 'noindex' dist/404.html
+          test -f dist/destination/japan/index.html
+          test -f dist/sitemap.xml && test -f dist/robots.txt && test -f dist/manifest.webmanifest
 
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
