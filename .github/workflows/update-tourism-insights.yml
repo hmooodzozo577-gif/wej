@@ -71,12 +71,9 @@ jobs:
       - name: Check whether the snapshot actually changed
         id: diff
         working-directory: app
-        run: |
-          if git diff --quiet -- src/data/generated/tourismInsights.json; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
+        # Compares the data, not the bytes: every run re-stamps
+        # snapshotUpdatedAt, which alone is not an update worth a PR.
+        run: node scripts/lib/snapshotChanged.mjs src/data/generated/tourismInsights.json >> "$GITHUB_OUTPUT"
 
       # Always a brand-new branch per run, split from PR-creation for the
       # same reason as update-travel-cost-index.yml: a snapshot pushed
