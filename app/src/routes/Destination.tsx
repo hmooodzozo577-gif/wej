@@ -49,6 +49,7 @@ import { PersonalMatchSection } from '../personalization/PersonalMatchSection';
 import { PERSONAL_COPY } from '../personalization/copy';
 import { EntryRequirementsCard } from '../entry/EntryRequirements';
 import { NotFound } from './NotFound';
+import { DestinationActions } from '../components/DestinationActions';
 
 // Phase 11 Step 1 — compact, build-time Country Information card. Shared by
 // both the basic-country branch and the full-destination branch below, so
@@ -281,6 +282,7 @@ export function Destination() {
             }
           />
           <SurprisePager navigation={navigation} surpriseLabel={dt.surpriseAgain} />
+          <DestinationActions destination={d} lang={lang} personalScore={personal?.eligible ? personal.score : null} />
           </section>
 
           {/* Visual refinement pass: two-zone layout. First (now narrow,
@@ -393,6 +395,7 @@ export function Destination() {
           }
         />
         <SurprisePager navigation={navigation} surpriseLabel={dt.surpriseAgain} />
+        <DestinationActions destination={d} lang={lang} personalScore={personal?.eligible ? personal.score : null} />
         </section>
 
         {/* Visual refinement pass: two-zone layout. First (now narrow,

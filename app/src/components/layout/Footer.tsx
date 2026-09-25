@@ -1,10 +1,12 @@
 // Ports the <footer class="footer"> markup from wejhaty.html.
 import { useI18n } from '../../state/hooks';
+import { Link } from 'react-router-dom';
 import { FeedbackDialog } from '../FeedbackDialog';
+import { FAVORITES_COPY } from '../../favorites/copy';
 import { APP_VERSION } from '../../site/site';
 
 export function Footer() {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   return (
     <footer className="footer">
       <div className="container footer-row">
@@ -20,6 +22,10 @@ export function Footer() {
           </span>
         </div>
         <div className="footer-actions">
+          {/* v1.1 — Favorites is always reachable from here; the header
+              link is hidden between 861 and 1099 px, where it would wrap
+              the accepted header onto two lines. */}
+          <Link className="footer-link" to="/favorites">{FAVORITES_COPY[lang].nav}</Link>
           <FeedbackDialog lang={t.htmlLang} strings={t.feedback} />
           <small>{t.footer}</small>
           {/* v1.1 — the release, from package.json via the build (one source). */}

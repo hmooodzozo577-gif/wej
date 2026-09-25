@@ -18,6 +18,7 @@ import { RECOMMENDATION_PROFILE_BY_CODE } from '../data/worldRecommendation';
 import type { DestinationNavigation } from '../state/types';
 import { trackEvent } from '../telemetry/productDataClient';
 import { routerPath } from '../site/site';
+import { FavoriteButton } from '../favorites/FavoriteButton';
 
 export function DestinationCard({
   dest,
@@ -29,6 +30,7 @@ export function DestinationCard({
   navigation,
   personalScore,
   personalAria,
+  favoriteControl = false,
 }: {
   dest: CatalogEntry;
   lang: Lang;
@@ -44,6 +46,10 @@ export function DestinationCard({
    *  tooltip, and the surrounding page labels it. */
   personalScore?: number | null;
   personalAria?: string;
+  /** v1.1 — a compact Favorite toggle over the image (Explore only). It
+   *  sits beside the card link, never inside it: a button inside a link is
+   *  invalid and unreachable for keyboard users. */
+  favoriteControl?: boolean;
 }) {
   const fromResults = matchScore !== undefined;
   const continent = continentOf(dest);
@@ -54,7 +60,7 @@ export function DestinationCard({
   const info = dest.recommendationReady ? undefined : countryInfoOf(dest.id);
   const profile = RECOMMENDATION_PROFILE_BY_CODE.get(dest.countryCode);
 
-  return (
+  const card = (
     <Link
       to={`/destination/${dest.id}`}
       state={{ fromResults, purpose, navigation }}
@@ -123,5 +129,12 @@ export function DestinationCard({
         </span>
       </div>
     </Link>
+  );
+  if (!favoriteControl) return card;
+  return (
+    <div className="dest-card-wrap">
+      {card}
+      <FavoriteButton destination={dest} lang={lang} variant="icon" />
+    </div>
   );
 }

@@ -216,6 +216,7 @@ export function Explore() {
                       ? { personalScore: match.score, personalAria: pc.scoreAria(match.score) }
                       : {};
                   })()}
+                  favoriteControl
                 />
               ))}
             </div>

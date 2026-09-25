@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../../state/hooks';
 import { LanguageSwitch } from '../LanguageSwitch';
 import { ThemeSwitch } from '../ThemeSwitch';
+import { FAVORITES_COPY } from '../../favorites/copy';
 
 export function Header() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export function Header() {
   const isHome = location.pathname === '/';
   const isExplore = location.pathname.startsWith('/explore');
   const isPurpose = location.pathname.startsWith('/purpose') || location.pathname.startsWith('/quiz');
+  const isFavorites = location.pathname.startsWith('/favorites') || location.pathname.startsWith('/compare');
 
   // Matches the original exactly: `.mobile-menu` visibility is driven by the
   // existing `body.menu-open .mobile-menu { display: flex; }` CSS rule, not
@@ -45,6 +47,10 @@ export function Header() {
     navigate('/purpose');
     closeMenu();
   };
+  const goFavorites = () => {
+    navigate('/favorites');
+    closeMenu();
+  };
 
   const navLinks = (
     <>
@@ -59,6 +65,9 @@ export function Header() {
       </button>
       <button type="button" className={`navlink${isPurpose ? ' active' : ''}`} onClick={goPurpose} aria-current={isPurpose ? 'page' : undefined}>
         {t.nav.quiz}
+      </button>
+      <button type="button" className={`navlink navlink-favorites${isFavorites ? ' active' : ''}`} onClick={goFavorites} aria-current={isFavorites ? 'page' : undefined}>
+        {FAVORITES_COPY[lang].nav}
       </button>
     </>
   );

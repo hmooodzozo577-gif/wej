@@ -13,6 +13,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAppState, useI18n } from '../state/hooks';
 import { costLabel, nameOf } from '../data/destinationText';
 import { FlagChip } from '../components/flags/FlagIcon';
+import { ShareButton } from '../share/ShareButton';
 import { Icon } from '../components/Icon';
 import { DestinationCard } from '../components/DestinationCard';
 import { buildWhyText, rankDestinations } from '../engine';
@@ -202,6 +203,9 @@ export function Results() {
             <span className="top-pick-cta">{r.viewDetails} <Icon name="arrowEnd" size={16} /></span>
           </div>
         </Link>
+        <div className="top-pick-actions">
+          <ShareButton destination={first.result.dest} lang={lang} personalScore={firstDisplay.personal ? firstDisplay.value : null} />
+        </div>
 
         <div className="results-grid">
           {rest.map((item, index) => {
