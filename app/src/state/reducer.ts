@@ -14,6 +14,7 @@ export const initialAppState: AppState = {
   exploreSortChosen: false,
   location: { status: 'idle', coords: null, diagnostic: null },
   passportCode: null,
+  passportChosen: false,
 };
 
 function initialPath(purpose: AppState['purpose'], hasLocation: boolean): string[] {
@@ -132,7 +133,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case 'LOCATION_RESET':
       return withoutLocationQuestions({ ...state, location: { status: 'idle', coords: null, diagnostic: null } });
     case 'SET_PASSPORT':
-      return { ...state, passportCode: action.countryCode };
+      // Every SET_PASSPORT is the traveller's own act (select, clear, skip,
+      // or continuing with the value shown), so it also ends the default.
+      return { ...state, passportCode: action.countryCode, passportChosen: true };
     case 'HYDRATE_QUIZ_FROM_PROFILE': {
       // Keep only questions that exist in the bank the traveller can be
       // asked NOW — a location-dependent answer saved earlier is dropped

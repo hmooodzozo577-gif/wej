@@ -13,8 +13,11 @@
 // and no destination is marked down for the absence.
 //
 // It is NEVER inferred from location. Location says where the traveller is;
-// a passport says what document they hold. Those are different facts and
-// this component reads neither from the other.
+// a passport says what document they hold. Those are different facts. v1.1
+// only lets the current country be the selector's INITIAL value (see
+// usePassportDefault.ts) — a convenience the traveller confirms by
+// continuing, or changes in one tap; it is never stored or reported as
+// their passport before that.
 import { useMemo } from 'react';
 import { useAppState, useI18n } from '../state/hooks';
 import { WORLD_CATALOG } from '../data/worldCatalog';
@@ -23,7 +26,12 @@ import { FlagChip } from './flags/FlagIcon';
 import { Icon } from './Icon';
 import { Select } from './Select';
 
-export function PassportSelect({ id = 'passport-select' }: { id?: string }) {
+export function PassportSelect({ id = 'passport-select', defaultCode = null }: {
+  id?: string;
+  /** v1.1 — shown as the initial selection until the traveller chooses
+   *  (usePassportDefault). A normal value: no label, badge or explanation. */
+  defaultCode?: string | null;
+}) {
   const { state, dispatch } = useAppState();
   const { lang, t } = useI18n();
   const p = t.passport;
@@ -49,7 +57,7 @@ export function PassportSelect({ id = 'passport-select' }: { id?: string }) {
       <Select
         id={id}
         labelledBy={`${id}-label`}
-        value={state.passportCode ?? ''}
+        value={state.passportCode ?? defaultCode ?? ''}
         options={options}
         placeholder={p.placeholder}
         searchable
@@ -58,7 +66,7 @@ export function PassportSelect({ id = 'passport-select' }: { id?: string }) {
         icon={<Icon name="shield" size={15} />}
         onChange={(value) => dispatch({ type: 'SET_PASSPORT', countryCode: value || null })}
       />
-      {state.passportCode ? (
+      {state.passportCode ?? defaultCode ? (
         <button
           type="button"
           className="btn btn-ghost btn-sm"

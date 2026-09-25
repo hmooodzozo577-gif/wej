@@ -10,6 +10,7 @@ import { rankDestinations } from '../engine';
 import { useAppState, useI18n } from '../state/hooks';
 import { trackEvent } from '../telemetry/productDataClient';
 import { PassportSelect } from '../components/PassportSelect';
+import { usePassportDefault } from '../components/usePassportDefault';
 import { useEntrySnapshot } from '../entry/useEntrySnapshot';
 import { EntryCoverageNote } from '../entry/EntryRequirements';
 import { waitForLocationSettle } from '../state/waitForLocationSettle';
@@ -60,6 +61,10 @@ export function Quiz() {
   // passport step appears (it is needed on Results next), and supplies the
   // step's coverage line, so the claim is read from the data itself.
   const entrySnapshot = useEntrySnapshot(passportStep);
+  // v1.1 — the selector's initial value from an already-granted location;
+  // a default only, never stored as the passport until the traveller
+  // continues with it (usePassportDefault.ts).
+  const passportDefault = usePassportDefault(state);
   const { saveFromQuiz } = usePersonalization();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -196,14 +201,17 @@ export function Quiz() {
           <p className="passport-why">{t.passport.purposeNote}</p>
           <p className="passport-why">{t.passport.entryNote}</p>
           {entrySnapshot.status === 'ready' ? <EntryCoverageNote snapshot={entrySnapshot.snapshot} lang={lang} /> : null}
-          <PassportSelect />
+          <PassportSelect defaultCode={passportDefault} />
           <p className="city-data-note">{t.passport.privacyNote}</p>
           <div className="quiz-checkpoint-actions">
             <button
               type="button"
               className="btn btn-primary"
               onClick={() => {
-                trackEvent('quiz_passport_choice', { chosen: state.passportCode !== null }, { path: `/quiz/${purposeParam}`, locale: lang });
+                // Continuing with the default shown is the traveller's own
+                // choice; only then does it become the session's passport.
+                if (!state.passportCode && passportDefault) dispatch({ type: 'SET_PASSPORT', countryCode: passportDefault });
+                trackEvent('quiz_passport_choice', { chosen: state.passportCode !== null || passportDefault !== null }, { path: `/quiz/${purposeParam}`, locale: lang });
                 finish();
               }}
             >

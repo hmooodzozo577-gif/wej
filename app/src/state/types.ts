@@ -105,6 +105,10 @@ export interface AppState {
    *  document will they travel on" (entry requirements). Never a passport
    *  NUMBER — only the country. */
   passportCode: string | null;
+  /** v1.1 — true once the traveller has chosen, changed, cleared or skipped
+   *  the passport in this session. From then on the location-based default
+   *  (components/usePassportDefault.ts) never applies again. */
+  passportChosen: boolean;
 }
 
 export type AppAction =
