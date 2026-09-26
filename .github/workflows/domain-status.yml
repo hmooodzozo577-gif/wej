@@ -51,7 +51,7 @@ jobs:
       - name: Official EU.org policy pages
         if: endsWith(inputs.domain, '.eu.org')
         run: |
-          for page in policy.html opendomains.html faq.html; do
+          for page in '' policy.html opendomains.html; do
             echo "== https://nic.eu.org/$page"
             curl -sS --max-time 20 "https://nic.eu.org/$page" | sed -e 's/<[^>]*>//g' | tr -s ' \n' | head -c 6000 || true
             echo
