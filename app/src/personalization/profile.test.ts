@@ -73,7 +73,10 @@ describe('personalization profile', () => {
     expect(validateProfile({ ...good, purpose: 'space' })).toBeNull();
     expect(validateProfile({ ...good, createdAt: 'yesterday' })).toBeNull();
     expect(validateProfile({ ...good, answers: { nope: 1 } })).toBeNull();
-    expect(validateProfile({ ...good, schemaVersion: 2 })).toBeNull();
+    // validateProfile() only accepts the current schema; older records go
+    // through migrateProfileData() first, newer ones are refused.
+    expect(validateProfile({ ...good, schemaVersion: PROFILE_SCHEMA_VERSION - 1 })).toBeNull();
+    expect(validateProfile({ ...good, schemaVersion: PROFILE_SCHEMA_VERSION + 1 })).toBeNull();
   });
 
   it('never throws on corrupt stored text', () => {
@@ -88,17 +91,19 @@ describe('personalization profile', () => {
   });
 
   describe('migration pipeline', () => {
-    it('has no registered steps while v1 is the only schema', () => {
-      expect(Object.keys(PROFILE_MIGRATIONS)).toEqual([]);
+    it('registers exactly one step: v1 → v2 (v1.1)', () => {
+      expect(PROFILE_SCHEMA_VERSION).toBe(2);
+      expect(Object.keys(PROFILE_MIGRATIONS)).toEqual(['1']);
     });
 
     it('upgrades an old record through each registered step, deterministically', () => {
       const migrations = {
         0: (data: Record<string, unknown>) => ({ ...data, schemaVersion: 1, answers: data.prefs, prefs: undefined }),
+        1: PROFILE_MIGRATIONS[1]!,
       };
       const old = { schemaVersion: 0, purpose: 'tourism', prefs: ANSWERS, path: PATH, createdAt: NOW.toISOString(), updatedAt: NOW.toISOString() };
-      const once = migrateProfileData(old, migrations, 1);
-      const twice = migrateProfileData(old, migrations, 1);
+      const once = migrateProfileData(old, migrations, 2);
+      const twice = migrateProfileData(old, migrations, 2);
       expect(once).toEqual(twice);
       expect(validateProfile(once)?.answers).toEqual(ANSWERS);
     });

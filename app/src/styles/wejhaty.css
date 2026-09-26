@@ -5951,3 +5951,68 @@ html[dir='rtl'] .travel-route-band {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/* ------------------------------------------------------------------
+   v1.1 — optional travel-need questions (language, Islamic practice,
+   halal food). Same option look as every other question; the language
+   list is the one multi-select, so its options are checkboxes (square
+   mark) in a denser grid, with an explicit Continue.
+   ------------------------------------------------------------------ */
+.q-hint {
+  margin: -6px 0 14px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.q-options.lang-options {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.q-options.lang-options .q-option {
+  min-height: 52px;
+  padding: 12px 14px;
+}
+
+@media (max-width: 560px) {
+  .q-options.lang-options {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+.q-option .check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--muted);
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.q-option.selected .check {
+  border-color: var(--gold);
+  background: var(--gold);
+}
+
+.q-option.selected .check::after {
+  content: '';
+  width: 5px;
+  height: 10px;
+  margin-top: -2px;
+  border: solid var(--white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.q-multi-actions {
+  display: flex;
+  margin-top: 18px;
+}
+
+.q-private-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}

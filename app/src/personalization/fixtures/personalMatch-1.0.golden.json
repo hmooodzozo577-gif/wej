@@ -1,0 +1,674 @@
+{
+ "tourism/first/sparse/no-location": {
+  "digest": "fcacadcf3bbd4c6d25f7169bfddf14f56e3e4c3c3c1d505f282a7314074cd792",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6484
+ },
+ "tourism/first/sparse/located": {
+  "digest": "c47222b07fda36250493b32771f63bb0512f0642a4f23b42995010b0b3dff60d",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6317
+ },
+ "tourism/first/dense/no-location": {
+  "digest": "ea61f5f4adadac9dd8effbfee2ddb1bf8d606dea35481a11537c41313c695404",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9902
+ },
+ "tourism/first/dense/located": {
+  "digest": "3ad581c36cc8bcb35b4ca5fb48e2b5b054dcf1f1107cd09f2f177889d1d9e975",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9379
+ },
+ "tourism/middle/sparse/no-location": {
+  "digest": "3ce9c65c1241b86d7b10a0c81a0e460a5e168976dc4bc7b888dade0a81d282dc",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "tourism/middle/sparse/located": {
+  "digest": "3ce9c65c1241b86d7b10a0c81a0e460a5e168976dc4bc7b888dade0a81d282dc",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "tourism/middle/dense/no-location": {
+  "digest": "0ef7eff6264a5f7cc38a551d2ab9329ed09cfe0d35155ff2dc042a84780a2729",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11654
+ },
+ "tourism/middle/dense/located": {
+  "digest": "0ef7eff6264a5f7cc38a551d2ab9329ed09cfe0d35155ff2dc042a84780a2729",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11654
+ },
+ "tourism/last/sparse/no-location": {
+  "digest": "e01de521cb9945f240e423961c7ae6e788e2c2474034e2dc1c7f9bf5c0d40922",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "tourism/last/sparse/located": {
+  "digest": "e01de521cb9945f240e423961c7ae6e788e2c2474034e2dc1c7f9bf5c0d40922",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "tourism/last/dense/no-location": {
+  "digest": "55e533e19cc261fd8a8668829990fe6f7d45aa59f614c492e8688447ca059b08",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11214
+ },
+ "tourism/last/dense/located": {
+  "digest": "55e533e19cc261fd8a8668829990fe6f7d45aa59f614c492e8688447ca059b08",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11214
+ },
+ "tourism/land-border/located": {
+  "digest": "2a2e75a9120fc4887febed8437c2eb08d98e4b0e531dc47cfdc3d33fef0403a5",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11654
+ },
+ "tourism/land-border/no-location": {
+  "digest": "7301cd0f709983e162daf3946a35f8fb080bfbf88bed858c7d1c8b45e6c0dd75",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11654
+ },
+ "work/first/sparse/no-location": {
+  "digest": "bc26ea044a30647b926e86bc09fedd5e1a7a56f56c8f91a3e1b63a467a0475e6",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6484
+ },
+ "work/first/sparse/located": {
+  "digest": "71884dbbf583525c2679d97cca344c240c69d60152d954b1d0dc67eead9047ba",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6317
+ },
+ "work/first/dense/no-location": {
+  "digest": "b291f2c1e905831aebf1695012c7ebeb5ece21e5731e9dada49ac233baeaba2a",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9535
+ },
+ "work/first/dense/located": {
+  "digest": "680b19bf2c0d857be34948f96c9836deb17dcc14f414a6588c04a7fb11d156e0",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8952
+ },
+ "work/middle/sparse/no-location": {
+  "digest": "7fcf74fa39e9765c054e86edbe4ec9ce9f1732c14383427061d21caa0565151a",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "work/middle/sparse/located": {
+  "digest": "7fcf74fa39e9765c054e86edbe4ec9ce9f1732c14383427061d21caa0565151a",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "work/middle/dense/no-location": {
+  "digest": "49cc32ba74d7863195ef3ae83636b1ab9cc41337382ad34d4085f4bb62991da0",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11850
+ },
+ "work/middle/dense/located": {
+  "digest": "49cc32ba74d7863195ef3ae83636b1ab9cc41337382ad34d4085f4bb62991da0",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11850
+ },
+ "work/last/sparse/no-location": {
+  "digest": "10c5e39423e552e367176f581b29971c5a102f942e094992eb7c9b3fc462ec07",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "work/last/sparse/located": {
+  "digest": "10c5e39423e552e367176f581b29971c5a102f942e094992eb7c9b3fc462ec07",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "work/last/dense/no-location": {
+  "digest": "8b46977e5104c6748495adfdf5349f3321f3c6bb733a528678e230ac04eec829",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11040
+ },
+ "work/last/dense/located": {
+  "digest": "8b46977e5104c6748495adfdf5349f3321f3c6bb733a528678e230ac04eec829",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11040
+ },
+ "work/land-border/located": {
+  "digest": "3e559ab9f04d1a0cf0d185e5e549092d007dd699ffcf4e7d65b4fdd424e0b2fe",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11850
+ },
+ "work/land-border/no-location": {
+  "digest": "14e05e8ac1818a7d71a102fc6eef345d6e2c5d8d42c58a22e5e7c48286f3f84a",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11850
+ },
+ "education/first/sparse/no-location": {
+  "digest": "598b87952ed3b781f2afc743ef5368d8e9809c0dc4b671605a437a8d28f0125e",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6484
+ },
+ "education/first/sparse/located": {
+  "digest": "b83f70d395e3b5e1472a42eea999585b5ed3890fd02cacfb4d537be07f7e2d31",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6317
+ },
+ "education/first/dense/no-location": {
+  "digest": "b21946a7c29f4eb5b656a6201a861fb6351707c20f6cbac905bc0eb7e9e24c57",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9456
+ },
+ "education/first/dense/located": {
+  "digest": "b67f79901ef8cd80d5f01edde28aaa3503438245905b8b194c5a3b7e2c1761b6",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8860
+ },
+ "education/middle/sparse/no-location": {
+  "digest": "0091c08ba54bdddc9d7f3ac921180524fbafa6b6e1f20a8e9135690d25da20bd",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "education/middle/sparse/located": {
+  "digest": "0091c08ba54bdddc9d7f3ac921180524fbafa6b6e1f20a8e9135690d25da20bd",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "education/middle/dense/no-location": {
+  "digest": "8bcfa0652a38eaa705c9127185b5f39c6b7a11d02f3b559b7ed5bbf5f9ecbfb0",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11952
+ },
+ "education/middle/dense/located": {
+  "digest": "8bcfa0652a38eaa705c9127185b5f39c6b7a11d02f3b559b7ed5bbf5f9ecbfb0",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11952
+ },
+ "education/last/sparse/no-location": {
+  "digest": "01f1a5ca0204f4b0d539596142efccb0c2c0ff3b655a9ab4f665bbaee82418d8",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "education/last/sparse/located": {
+  "digest": "01f1a5ca0204f4b0d539596142efccb0c2c0ff3b655a9ab4f665bbaee82418d8",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "education/last/dense/no-location": {
+  "digest": "377a1491b78b6439207b9ca93e86fc301a7aef5674c47fcefd8762a5d29858d8",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11034
+ },
+ "education/last/dense/located": {
+  "digest": "377a1491b78b6439207b9ca93e86fc301a7aef5674c47fcefd8762a5d29858d8",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11034
+ },
+ "education/land-border/located": {
+  "digest": "6f2a04d083353d07cf5f7eeefa6e339decdad5f095a60e9c82d45a33e72170c9",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11952
+ },
+ "education/land-border/no-location": {
+  "digest": "b375be9ae562977d2155db99f798442dfaa012f50cb4bae7fbb111d9b24300a8",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11952
+ },
+ "medical/first/sparse/no-location": {
+  "digest": "8b29dc3410ee363172504fb34146af27ae1d2b285a24c7ea792417496f231826",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6484
+ },
+ "medical/first/sparse/located": {
+  "digest": "a29a099af4f0308a296349d6cdefa6669a51fb57443a9f109e40566914c37d95",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6317
+ },
+ "medical/first/dense/no-location": {
+  "digest": "6dcf42d642c31419d416f658f50edeca4ce8da9832033cd36bb84747d77a19ec",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9437
+ },
+ "medical/first/dense/located": {
+  "digest": "755de6d44d59c93b2cf7e2b241268f3d1024e1f646a297805606691896368a1b",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8840
+ },
+ "medical/middle/sparse/no-location": {
+  "digest": "d7ad638ae6e0f18958d0390aff6951cf3bf8b6d7f60fa4008eae2f244691f31a",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "medical/middle/sparse/located": {
+  "digest": "d7ad638ae6e0f18958d0390aff6951cf3bf8b6d7f60fa4008eae2f244691f31a",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "medical/middle/dense/no-location": {
+  "digest": "2094c0e3aef78beac63617e9647d5a12232e8d3d0b8fd8808749376b4a2ed4d5",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 12096
+ },
+ "medical/middle/dense/located": {
+  "digest": "2094c0e3aef78beac63617e9647d5a12232e8d3d0b8fd8808749376b4a2ed4d5",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 12096
+ },
+ "medical/last/sparse/no-location": {
+  "digest": "65f8d698621017c59a543e0380f78ec0d98dd13d22c23e2b95a4fe2e59ab01e1",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "medical/last/sparse/located": {
+  "digest": "65f8d698621017c59a543e0380f78ec0d98dd13d22c23e2b95a4fe2e59ab01e1",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "medical/last/dense/no-location": {
+  "digest": "793d34313718d3c701e9c520aa05dac23524ea75e035cc5cbd0dbb0980df9343",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10985
+ },
+ "medical/last/dense/located": {
+  "digest": "793d34313718d3c701e9c520aa05dac23524ea75e035cc5cbd0dbb0980df9343",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10985
+ },
+ "medical/land-border/located": {
+  "digest": "853661540fce94e5c7f4c4cfb443da3ccc1456ea3e6e5d33c1211f76169cc366",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 12096
+ },
+ "medical/land-border/no-location": {
+  "digest": "b415eedbad0fc320907f99dd7edc9f955335667727ec0f22936f61428fc9f03e",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 12096
+ },
+ "immigration/first/sparse/no-location": {
+  "digest": "11b0413ddf2475bf6c5c2e26536f00edc164397543dcb5a43acd84f07759bae9",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6484
+ },
+ "immigration/first/sparse/located": {
+  "digest": "91aeb1afeab5b0e989897ceddceb74d006bea138c73e1cfe39c385b2bb235e5f",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6317
+ },
+ "immigration/first/dense/no-location": {
+  "digest": "79f2bba1bb6956a9380151d1e44275ddb406674540ee68688dc28441920e76d9",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10297
+ },
+ "immigration/first/dense/located": {
+  "digest": "8fe23347636dc73b2b4861b5396831da6e673a4dd1b7421bd02c89ef1556d80e",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9666
+ },
+ "immigration/middle/sparse/no-location": {
+  "digest": "b88402516d7a015f3c5926cb74b6a63cd8b5ebdc35dd18d848f0d4812afdf5b7",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "immigration/middle/sparse/located": {
+  "digest": "b88402516d7a015f3c5926cb74b6a63cd8b5ebdc35dd18d848f0d4812afdf5b7",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "immigration/middle/dense/no-location": {
+  "digest": "79700d21b905c40dd7a0434607c7715063930a972cfaf56ecedf0f35aafd5322",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10886
+ },
+ "immigration/middle/dense/located": {
+  "digest": "79700d21b905c40dd7a0434607c7715063930a972cfaf56ecedf0f35aafd5322",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10886
+ },
+ "immigration/last/sparse/no-location": {
+  "digest": "1928a0c028a775c1f528182a0c3f41dd895559685f0cbbfd04af97eafd6c1ae8",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "immigration/last/sparse/located": {
+  "digest": "1928a0c028a775c1f528182a0c3f41dd895559685f0cbbfd04af97eafd6c1ae8",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "immigration/last/dense/no-location": {
+  "digest": "f12f14ee0b053680e4363088f1aa16b5eb37ac1229f34cb33a99c1d360b19e5c",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10874
+ },
+ "immigration/last/dense/located": {
+  "digest": "f12f14ee0b053680e4363088f1aa16b5eb37ac1229f34cb33a99c1d360b19e5c",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10874
+ },
+ "immigration/land-border/located": {
+  "digest": "c2967a17137051eb79d00b79e53e43659889f2c494e6d0e5032f60e9a98b06a6",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10886
+ },
+ "immigration/land-border/no-location": {
+  "digest": "eed43bf6d37872613e5c733e2dac3d517effb9f6f039e7572de26d8678030bfb",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10886
+ },
+ "investment/first/sparse/no-location": {
+  "digest": "3885eeac078739cd03f4fefe4b53b9f9be20389dca144a8d1478d9349f6dde44",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6484
+ },
+ "investment/first/sparse/located": {
+  "digest": "110ff54b03cf20515e905eaa4ff69f1928b2bc234cdde95256a7ccec38f01349",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6317
+ },
+ "investment/first/dense/no-location": {
+  "digest": "fcb51a16dc59efc7a453e5a48f82a88a4b2cac25637e818a33136434791d887a",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9383
+ },
+ "investment/first/dense/located": {
+  "digest": "30ba305ae5bac7db180c0c296c913216f64e980f03062459a355bef332d0f9af",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8831
+ },
+ "investment/middle/sparse/no-location": {
+  "digest": "c7e44c438c19ba60d736f1a6711ef55f0653855f44cd619587611e7b606c0ab6",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "investment/middle/sparse/located": {
+  "digest": "c7e44c438c19ba60d736f1a6711ef55f0653855f44cd619587611e7b606c0ab6",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "investment/middle/dense/no-location": {
+  "digest": "148611adfda1dfcf8a18177b1bc088fc5cce021373bd037f31108e8b45d4d10a",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11548
+ },
+ "investment/middle/dense/located": {
+  "digest": "148611adfda1dfcf8a18177b1bc088fc5cce021373bd037f31108e8b45d4d10a",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11548
+ },
+ "investment/last/sparse/no-location": {
+  "digest": "b0fd0fa58fc60e509eda1a71e9445df2a2729832b3fcc01695420c254562da42",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "investment/last/sparse/located": {
+  "digest": "b0fd0fa58fc60e509eda1a71e9445df2a2729832b3fcc01695420c254562da42",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "investment/last/dense/no-location": {
+  "digest": "d167df0330c01fa2241ced484bb12383d39aecd5d1b0a9da15f1a78441d73b46",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10678
+ },
+ "investment/last/dense/located": {
+  "digest": "d167df0330c01fa2241ced484bb12383d39aecd5d1b0a9da15f1a78441d73b46",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 10678
+ },
+ "investment/land-border/located": {
+  "digest": "a5c2000e0981d8470f52181712879e912c9a8df4463f3a4940f09bfdfbaf3fb9",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11548
+ },
+ "investment/land-border/no-location": {
+  "digest": "f162fea874bf03aa75b8cfa46d54acb9cf97459251cf4797184faa1341d505b0",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11548
+ },
+ "wellness/first/sparse/no-location": {
+  "digest": "0c256b11a850e8575088f7e87d540547cc21e983bf53219faa3e302d5bb4e183",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6484
+ },
+ "wellness/first/sparse/located": {
+  "digest": "8586cb6989fff55db1c593bb5c607f67412a0a231e5d4c4842d0ef1370a79386",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6317
+ },
+ "wellness/first/dense/no-location": {
+  "digest": "e475624a19b5c6530b3a490bcde2546dd1f41093cbf36adad96e37028c1f3ee8",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9902
+ },
+ "wellness/first/dense/located": {
+  "digest": "5c4af3631b3167ead584867019f6fd80e24a1b54c9432d464f2eeac99139e7b8",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9379
+ },
+ "wellness/middle/sparse/no-location": {
+  "digest": "86898d9f3a6489285286aa6a080f66034f8eb63e23e1189e696bfc0888af691d",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "wellness/middle/sparse/located": {
+  "digest": "86898d9f3a6489285286aa6a080f66034f8eb63e23e1189e696bfc0888af691d",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "wellness/middle/dense/no-location": {
+  "digest": "e406fd2a52b5e705833fb424f44a45013b256efda2b2f69c6b1ec8504f2a662d",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11654
+ },
+ "wellness/middle/dense/located": {
+  "digest": "e406fd2a52b5e705833fb424f44a45013b256efda2b2f69c6b1ec8504f2a662d",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11654
+ },
+ "wellness/last/sparse/no-location": {
+  "digest": "fac159caa4cf00a81f8a6d3173a7c778c211a90893eecbc40049b9c3ebd884fd",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "wellness/last/sparse/located": {
+  "digest": "fac159caa4cf00a81f8a6d3173a7c778c211a90893eecbc40049b9c3ebd884fd",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "wellness/last/dense/no-location": {
+  "digest": "bae06b7db7f3b8ccf165b887fd582e8c66bb111bc5a6d8cc0ddd1557fe5c15b0",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11214
+ },
+ "wellness/last/dense/located": {
+  "digest": "bae06b7db7f3b8ccf165b887fd582e8c66bb111bc5a6d8cc0ddd1557fe5c15b0",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11214
+ },
+ "wellness/land-border/located": {
+  "digest": "d436a485fed2668fcca3c1626e460c2084ca4e36414e6ea5aca2ad08a9eb0b33",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11654
+ },
+ "wellness/land-border/no-location": {
+  "digest": "edb9c861bf79685e88f2acea5a529648f3aa80b046451438707f62c1c838e203",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11654
+ },
+ "other/first/sparse/no-location": {
+  "digest": "8dce28cd1bcd670070a2e5a1dd3f40716fade55981f4e5c4aba593723fc01668",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6484
+ },
+ "other/first/sparse/located": {
+  "digest": "b289721decb4b27e3399297c3cc8a723145ee3e738affba6dcaec2f1a41e767c",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 6317
+ },
+ "other/first/dense/no-location": {
+  "digest": "9be5f731755b6ceddce5fe9cb3e16518b85ab0dd808309b2dfa7490519db8530",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9873
+ },
+ "other/first/dense/located": {
+  "digest": "f5f545fedd7fa223e375d140d29c27c65f464a8979e393b0b1214672388d8a24",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 9357
+ },
+ "other/middle/sparse/no-location": {
+  "digest": "1110aefec7367bf1be08e434a541d235589e58b08eddad2252ed6a4b30955afa",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "other/middle/sparse/located": {
+  "digest": "1110aefec7367bf1be08e434a541d235589e58b08eddad2252ed6a4b30955afa",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 8758
+ },
+ "other/middle/dense/no-location": {
+  "digest": "657a548494860e8710f00f3e62e3b219b2ad1c53f389f607a42140eb094ca9f3",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11591
+ },
+ "other/middle/dense/located": {
+  "digest": "657a548494860e8710f00f3e62e3b219b2ad1c53f389f607a42140eb094ca9f3",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11591
+ },
+ "other/last/sparse/no-location": {
+  "digest": "f17e064bdf2cb79278a064675b9207555727879be2e21b6f9a4b17135b3c3383",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "other/last/sparse/located": {
+  "digest": "f17e064bdf2cb79278a064675b9207555727879be2e21b6f9a4b17135b3c3383",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 7498
+ },
+ "other/last/dense/no-location": {
+  "digest": "5a25b3c2be7f835db1f42c7217ffa1c3d12fe973ee6996a3fcf7183663bc576d",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11122
+ },
+ "other/last/dense/located": {
+  "digest": "5a25b3c2be7f835db1f42c7217ffa1c3d12fe973ee6996a3fcf7183663bc576d",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11122
+ },
+ "other/land-border/located": {
+  "digest": "73fb3ca8e9bbab1224c5ee4d944a47fef63f078aec8b4f66ff8500dc535e2201",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11591
+ },
+ "other/land-border/no-location": {
+  "digest": "273350134bac6d9fb657120dc1c1e8e06087c9b699bca6a41b7c575957479bf3",
+  "countries": 194,
+  "scored": 194,
+  "scoreSum": 11591
+ }
+}

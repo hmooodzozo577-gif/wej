@@ -20,6 +20,13 @@ import { approximateCountryOf, haversineKm, type Coords } from '../data/geo';
 import type { CatalogEntry, RecommendationProfile, RecommendationProfileKey } from '../data/types';
 import type { RankedResult } from '../engine/types';
 import {
+  SOME_EVIDENCE_FIT,
+  STRONG_EVIDENCE_FIT,
+  evidenceTier,
+  matchingOfficialLanguages,
+  parseLanguageAnswer,
+} from './travelNeeds';
+import {
   PERSONAL_MATCH_METHODOLOGY_VERSION,
   type ConstraintStatus,
   type FactorId,
@@ -102,6 +109,30 @@ function evaluated(signal: PreferenceSignal, rawFit: number, extra: Partial<Fact
   };
 }
 
+/** personal-match-1.1 — one of the traveller's languages is an official
+ *  language of the country: a good fit. None is: NOT counted — English, for
+ *  one, is widely used in many countries where it is not official, so the
+ *  absence of an official match is not evidence of difficulty. */
+function evaluateLanguage(signal: PreferenceSignal, dest: CatalogEntry): FactorResult {
+  const official = countryInfoOf(dest.id)?.languagesEn ?? [];
+  const languages = parseLanguageAnswer(signal.value);
+  if (!official.length || !languages) return unavailable(signal, 'noData');
+  const matched = matchingOfficialLanguages(languages, official);
+  if (!matched.length) return unavailable(signal, 'noEvidence');
+  return evaluated(signal, STRONG_EVIDENCE_FIT, { countryValue: matched.join(',') });
+}
+
+/** personal-match-1.1 — Islamic practice (mapped mosques / Muslim places
+ *  of worship) and halal food (places tagged as serving halal food), from
+ *  the OpenStreetMap snapshot. Only positive evidence counts; too little
+ *  mapped is NOT counted, never a low score. */
+function evaluateEvidence(signal: PreferenceSignal, dest: CatalogEntry): FactorResult {
+  const { tier, count } = evidenceTier(dest.countryCode, signal.factor === 'halalFood' ? 'halalPlaces' : 'mosques');
+  if (tier === 'noData') return unavailable(signal, 'noData');
+  if (tier === 'insufficient') return { ...unavailable(signal, 'noEvidence'), countryValue: count };
+  return evaluated(signal, tier === 'strong' ? STRONG_EVIDENCE_FIT : SOME_EVIDENCE_FIT, { countryValue: count });
+}
+
 function evaluateSignal(signal: PreferenceSignal, dest: CatalogEntry, profile: RecommendationProfile | undefined, ctx: MatchContext): FactorResult {
   if (signal.kind === 'near') {
     const info = countryInfoOf(dest.id);
@@ -110,6 +141,9 @@ function evaluateSignal(signal: PreferenceSignal, dest: CatalogEntry, profile: R
     const distanceKm = haversineKm(ctx.origin, info.latlng);
     return evaluated(signal, 100 * Math.exp(-distanceKm / NEAR_DISTANCE_SCALE_KM), { distanceKm: Math.round(distanceKm) });
   }
+
+  if (signal.kind === 'language') return evaluateLanguage(signal, dest);
+  if (signal.kind === 'evidence') return evaluateEvidence(signal, dest);
 
   const key = PROFILE_KEY_BY_FACTOR[signal.factor];
   if (!profile || !key || profile.imputedKeys.includes(key)) return unavailable(signal, 'noData');

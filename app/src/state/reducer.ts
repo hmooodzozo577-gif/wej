@@ -1,5 +1,5 @@
-import { selectNextQuestion } from '../adaptive';
-import { effectiveQuestionBank, isLocationDependentQuestionId } from '../data/questionBanks';
+import { nextQuestion, questionnaireBank } from '../adaptive';
+import { isLocationDependentQuestionId } from '../data/questionBanks';
 import type { AppAction, AppState } from './types';
 
 export const initialAppState: AppState = {
@@ -19,7 +19,7 @@ export const initialAppState: AppState = {
 
 function initialPath(purpose: AppState['purpose'], hasLocation: boolean): string[] {
   if (!purpose) return [];
-  const first = selectNextQuestion(effectiveQuestionBank(purpose, hasLocation), {}, []);
+  const first = nextQuestion(purpose, hasLocation, {}, []);
   return first ? [first.id] : [];
 }
 
@@ -60,7 +60,7 @@ function withoutLocationQuestions(state: AppState): AppState {
 function advance(state: AppState): AppState {
   if (!state.purpose) return state;
   if (state.qIndex + 1 < state.path.length) return { ...state, qIndex: state.qIndex + 1 };
-  const next = selectNextQuestion(effectiveQuestionBank(state.purpose, !!state.location.coords), state.answers, state.path);
+  const next = nextQuestion(state.purpose, !!state.location.coords, state.answers, state.path);
   if (!next) return state;
   return { ...state, path: [...state.path, next.id], qIndex: state.qIndex + 1 };
 }
@@ -140,8 +140,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       // Keep only questions that exist in the bank the traveller can be
       // asked NOW — a location-dependent answer saved earlier is dropped
       // when there is no location this visit, the same rule
-      // withoutLocationQuestions() applies.
-      const bank = effectiveQuestionBank(action.purpose, !!state.location.coords);
+      // withoutLocationQuestions() applies. The v1.1 travel-need answers
+      // are part of the questionnaire and come back with the rest.
+      const bank = questionnaireBank(action.purpose, !!state.location.coords);
       const askable = new Set(bank.map((question) => question.id));
       const answers = Object.fromEntries(Object.entries(action.answers).filter(([id]) => askable.has(id)));
       let path = action.path.filter((id) => askable.has(id) && answers[id] !== undefined);

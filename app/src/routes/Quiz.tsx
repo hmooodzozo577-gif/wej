@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { selectNextQuestion } from '../adaptive';
+import { nextQuestion, questionnaireBank } from '../adaptive';
 import { Icon } from '../components/Icon';
 import { ProgressBar } from '../components/ProgressBar';
 import { QuestionOption } from '../components/QuestionOption';
-import { effectiveQuestionBank, QUESTION_BANKS } from '../data/questionBanks';
+import { QUESTION_BANKS } from '../data/questionBanks';
 import type { PurposeId } from '../data/types';
 import { rankDestinations } from '../engine';
 import { useAppState, useI18n } from '../state/hooks';
@@ -18,6 +18,8 @@ import { CompassMark } from '../components/CompassMark';
 import { TravelRouteDecor } from '../components/TravelRouteDecor';
 import { usePersonalization } from '../personalization/usePersonalization';
 import { readDestinationMatchIntent, type PersonalMatchFocusState } from '../personalization/quizIntent';
+import { TRAVEL_NEED_COPY, isTravelNeedQuestion, isTravelNeedQuestionId } from '../personalization/travelNeeds';
+import { LanguageChoice } from '../components/LanguageChoice';
 
 const OPTIONAL_RESULTS_AFTER = 5;
 const ANSWER_TRANSITION_MS = 140;
@@ -87,17 +89,33 @@ export function Quiz() {
   if (!validPurpose) return <Navigate to="/purpose" replace state={intentState} />;
   if (!purposeSynced) return null;
 
-  const questions = effectiveQuestionBank(purposeParam, !!state.location.coords);
-  const reachableQuestionCount = new Set(questions.map((item) => item.profileKey ?? item.id)).size;
+  const questions = questionnaireBank(purposeParam, !!state.location.coords);
+  // v1.1 — the language list is only reachable while communication
+  // matters (or is not yet answered); every other question as before.
+  const reachable = questions.filter(
+    (item) =>
+      !isTravelNeedQuestion(item) ||
+      !item.parent ||
+      state.answers[item.parent.questionId] === undefined ||
+      item.parent.values.includes(state.answers[item.parent.questionId]),
+  );
+  const reachableQuestionCount = new Set(reachable.map((item) => item.profileKey ?? item.id)).size;
   const purposeName = t.purposes[purposeParam].n;
   const qIndex = Math.min(state.qIndex, Math.max(0, state.path.length - 1));
   const question = questions.find((item) => item.id === state.path[qIndex]) ?? questions[0];
   const answeredCount = questions.filter((item) => state.answers[item.id] !== undefined).length;
+  // The early-results checkpoint and every analytics count read the Phase 14
+  // questions only: the travel-need answers are local-only (travelNeeds.ts)
+  // and must not change or reveal anything in telemetry.
+  const coreAnsweredCount = (answers: typeof state.answers) =>
+    questions.filter((item) => !isTravelNeedQuestion(item) && answers[item.id] !== undefined).length;
   const hasCachedNext = qIndex + 1 < state.path.length;
-  const computedNext = hasCachedNext ? questions.find((item) => item.id === state.path[qIndex + 1]) ?? null : selectNextQuestion(questions, state.answers, state.path);
+  const computedNext = hasCachedNext
+    ? questions.find((item) => item.id === state.path[qIndex + 1]) ?? null
+    : nextQuestion(purposeParam, !!state.location.coords, state.answers, state.path);
   const hasMoreQuestions = computedNext !== null;
   const showCheckpoint =
-    answeredCount >= OPTIONAL_RESULTS_AFTER &&
+    coreAnsweredCount(state.answers) >= OPTIONAL_RESULTS_AFTER &&
     !state.questionnaireCheckpointPassed &&
     state.answers[question.id] !== undefined &&
     hasMoreQuestions;
@@ -113,7 +131,7 @@ export function Quiz() {
     const results = rankDestinations(purposeParam, answers, state.location.coords);
     trackEvent('quiz_results_generated', {
       purpose: purposeParam,
-      answerCount: Object.keys(answers).length,
+      answerCount: Object.keys(answers).filter((id) => !isTravelNeedQuestionId(id)).length,
       results: results.slice(0, 5).map((item) => ({ countryCode: item.dest.countryCode, score: item.score })),
     }, { path: `/quiz/${purposeParam}`, locale: lang });
     dispatch({ type: 'SET_RESULTS', results });
@@ -133,13 +151,17 @@ export function Quiz() {
   const onSelect = async (value: string | number) => {
     if (advancing) return;
     const answers = { ...state.answers, [question.id]: value };
-    const answeredAfter = questions.filter((item) => answers[item.id] !== undefined).length;
+    const answeredAfter = coreAnsweredCount(answers);
     let nextAfterAnswer = hasCachedNext
       ? computedNext
-      : selectNextQuestion(questions, answers, state.path);
+      : nextQuestion(purposeParam, !!state.location.coords, answers, state.path);
 
     dispatch({ type: 'SET_ANSWER', questionId: question.id, value });
-    trackEvent('quiz_answer', { purpose: purposeParam, questionId: question.id, value, questionNumber: qIndex + 1 }, { path: `/quiz/${purposeParam}`, locale: lang });
+    // v1.1 — the language, Islamic-practice and halal answers are never
+    // sent anywhere: no analytics event, no Worker, no admin.
+    if (!isTravelNeedQuestion(question)) {
+      trackEvent('quiz_answer', { purpose: purposeParam, questionId: question.id, value, questionNumber: qIndex + 1 }, { path: `/quiz/${purposeParam}`, locale: lang });
+    }
     if (answeredAfter >= OPTIONAL_RESULTS_AFTER && !state.questionnaireCheckpointPassed && nextAfterAnswer) {
       return;
     }
@@ -151,12 +173,18 @@ export function Quiz() {
     // state on its own (effectiveQuestionBank() is recomputed on every
     // render and inside the reducer's own advance()), so only this one
     // spot needs to hold briefly rather than finalize immediately.
-    if (!nextAfterAnswer && stateRef.current.location.status === 'requesting') {
+    // v1.1 — the optional travel-need questions now follow the Phase 14
+    // questions, so that decision point is "the Phase 14 questions are
+    // done", whatever comes next: a location-dependent question is still
+    // asked with the other Phase 14 questions, and the traveller never
+    // waits a second time at the end of the travel needs.
+    const phase14Done =
+      !hasCachedNext && !isTravelNeedQuestion(question) && (!nextAfterAnswer || isTravelNeedQuestion(nextAfterAnswer));
+    if (phase14Done && stateRef.current.location.status === 'requesting') {
       setWaitingForLocation(true);
       await waitForLocationSettle(() => stateRef.current.location.status);
       setWaitingForLocation(false);
-      const freshQuestions = effectiveQuestionBank(purposeParam, !!stateRef.current.location.coords);
-      nextAfterAnswer = selectNextQuestion(freshQuestions, answers, state.path);
+      nextAfterAnswer = nextQuestion(purposeParam, !!stateRef.current.location.coords, answers, state.path);
     }
 
     setAdvancing(true);
@@ -169,10 +197,12 @@ export function Quiz() {
     }, ANSWER_TRANSITION_MS);
   };
 
+  const multiSelect = question.kind === 'personalLanguages';
   const hasDescription = question.options.some((option) => option.desc);
   let optionsClass = 'q-options';
   if (hasDescription || question.options.length <= 2) optionsClass += ' single-col';
   else if (question.options.length === 3) optionsClass += ' cols-3';
+  const questionText = lang === 'ar' ? question.text.ar : question.text.en;
 
   return (
     <div className="quiz-wrap">
@@ -238,13 +268,13 @@ export function Quiz() {
           <p>{t.quiz.checkpointBody}</p>
           <div className="quiz-checkpoint-actions">
             <button type="button" className="btn btn-primary" onClick={() => {
-              trackEvent('quiz_checkpoint_choice', { choice: 'results', answerCount: answeredCount }, { path: `/quiz/${purposeParam}`, locale: lang });
+              trackEvent('quiz_checkpoint_choice', { choice: 'results', answerCount: coreAnsweredCount(state.answers) }, { path: `/quiz/${purposeParam}`, locale: lang });
               requestResults();
             }}>
               {t.quiz.showResultsNow} <Icon name="arrowEnd" size={16} />
             </button>
             <button type="button" className="btn btn-ghost" onClick={() => {
-              trackEvent('quiz_checkpoint_choice', { choice: 'continue', answerCount: answeredCount }, { path: `/quiz/${purposeParam}`, locale: lang });
+              trackEvent('quiz_checkpoint_choice', { choice: 'continue', answerCount: coreAnsweredCount(state.answers) }, { path: `/quiz/${purposeParam}`, locale: lang });
               dispatch({ type: 'CONTINUE_QUESTIONS' });
             }}>
               {t.quiz.continueQuestions}
@@ -256,22 +286,27 @@ export function Quiz() {
           <div
             key={question.id}
             className={`q-card quiz-question-card motion-${motionDirection}`}
-            role="radiogroup"
-            aria-label={lang === 'ar' ? question.text.ar : question.text.en}
+            role={multiSelect ? 'group' : 'radiogroup'}
+            aria-label={questionText}
             aria-busy={advancing}
           >
-            <h2 className="q-text">{lang === 'ar' ? question.text.ar : question.text.en}</h2>
-            <div className={optionsClass}>
-              {question.options.map((option) => (
-                <QuestionOption
-                  key={String(option.value)}
-                  option={option}
-                  lang={lang}
-                  selected={state.answers[question.id]}
-                  onSelect={onSelect}
-                />
-              ))}
-            </div>
+            <h2 className="q-text">{questionText}</h2>
+            {multiSelect ? (
+              <LanguageChoice question={question} lang={lang} value={state.answers[question.id]} disabled={advancing} onSubmit={onSelect} />
+            ) : (
+              <div className={optionsClass}>
+                {question.options.map((option) => (
+                  <QuestionOption
+                    key={String(option.value)}
+                    option={option}
+                    lang={lang}
+                    selected={state.answers[question.id]}
+                    onSelect={onSelect}
+                  />
+                ))}
+              </div>
+            )}
+            {isTravelNeedQuestion(question) ? <p className="q-private-note">{TRAVEL_NEED_COPY[lang].privateNote}</p> : null}
             <div className="quiz-next-status" aria-live="polite">
               {waitingForLocation ? (
                 <><CompassMark className="quiz-spinner" size={22} /> {t.quiz.waitingForLocation}</>

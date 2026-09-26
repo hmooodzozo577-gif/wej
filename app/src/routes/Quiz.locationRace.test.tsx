@@ -58,6 +58,17 @@ function answerCurrentQuestion() {
   fireEvent.click(screen.getAllByRole('radio')[0]!);
 }
 
+// v1.1 — after the Phase 14 questions come the optional travel-need
+// questions (language, Islamic practice, halal food), then the passport
+// step. "Not important" to all three skips the language list.
+async function answerTravelNeedsNotImportant() {
+  await waitFor(() => expect(screen.getByText(/communicate easily in a language you know/)).toBeInTheDocument());
+  for (let step = 0; step < 3; step += 1) {
+    fireEvent.click(screen.getByRole('radio', { name: /Not important/ }));
+    await act(async () => { await vi.advanceTimersByTimeAsync(150); });
+  }
+}
+
 describe('geolocation/quiz race — the "no more questions" decision waits for a pending request', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
@@ -106,6 +117,10 @@ describe('geolocation/quiz race — the "no more questions" decision waits for a
 
     await act(async () => { await vi.advanceTimersByTimeAsync(3000); }); // past LOCATION_SETTLE_TIMEOUT_MS
 
+    // Without a location the proximity question is never asked; the
+    // questionnaire moves on to the optional travel needs, then the passport.
+    expect(screen.queryByText(/close to your current location/i)).not.toBeInTheDocument();
+    await answerTravelNeedsNotImportant();
     await waitFor(() => expect(document.querySelector('.quiz-passport')).not.toBeNull());
   });
 
@@ -121,6 +136,7 @@ describe('geolocation/quiz race — the "no more questions" decision waits for a
     answerCurrentQuestion();
     await act(async () => { await vi.advanceTimersByTimeAsync(150); });
     expect(screen.queryByText('Getting your location…', { exact: false })).not.toBeInTheDocument();
+    await answerTravelNeedsNotImportant();
     await waitFor(() => expect(document.querySelector('.quiz-passport')).not.toBeNull());
   });
 
@@ -129,6 +145,7 @@ describe('geolocation/quiz race — the "no more questions" decision waits for a
     answerCurrentQuestion();
     await act(async () => { await vi.advanceTimersByTimeAsync(150); });
     expect(screen.queryByText('Getting your location…', { exact: false })).not.toBeInTheDocument();
+    await answerTravelNeedsNotImportant();
     await waitFor(() => expect(document.querySelector('.quiz-passport')).not.toBeNull());
   });
 

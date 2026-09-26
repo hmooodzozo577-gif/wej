@@ -11,12 +11,19 @@
 import type { PurposeId } from '../data/types';
 import type { Answers } from '../engine/types';
 
-/** Bump only with a matching entry in PROFILE_MIGRATIONS (profile.ts). */
-export const PROFILE_SCHEMA_VERSION = 1 as const;
+/** Bump only with a matching entry in PROFILE_MIGRATIONS (profile.ts).
+ *  v2 (v1.1): may also hold the optional travel-need answers (language,
+ *  Islamic practice, halal food — travelNeeds.ts). A v1 profile migrates
+ *  with every answer kept and the new questions simply unanswered. */
+export const PROFILE_SCHEMA_VERSION = 2 as const;
 
 /** Bump whenever a formula, weight, threshold or factor changes, so a
- *  future calibration can never silently change what an old number meant. */
-export const PERSONAL_MATCH_METHODOLOGY_VERSION = 'personal-match-1.0' as const;
+ *  future calibration can never silently change what an old number meant.
+ *  personal-match-1.1 adds three optional factors (language, Islamic
+ *  practice, halal food); every personal-match-1.0 factor, weight and
+ *  threshold is unchanged, so a profile without the new answers scores
+ *  exactly as it did under 1.0. */
+export const PERSONAL_MATCH_METHODOLOGY_VERSION = 'personal-match-1.1' as const;
 
 /** What is remembered on this browser. Deliberately minimal: the quiz
  *  answers themselves are the traveller's preferences (signals are derived
@@ -50,7 +57,11 @@ export type FactorId =
   | 'education'
   | 'investment'
   | 'growth'
-  | 'proximity';
+  | 'proximity'
+  // personal-match-1.1 (travelNeeds.ts)
+  | 'language'
+  | 'islamicPractice'
+  | 'halalFood';
 
 /** How a preference is compared with a country:
  *  - climate: compatibility table between climates
@@ -58,8 +69,10 @@ export type FactorId =
  *  - target: closeness to a chosen point on a 0–100 scale
  *  - want / avoid: a yes/no characteristic the traveller wants or avoids
  *  - importance: a real indicator, weighted by how much it matters
- *  - near: straight-line distance, only with a shared location */
-export type SignalKind = 'climate' | 'budget' | 'target' | 'want' | 'avoid' | 'importance' | 'near';
+ *  - near: straight-line distance, only with a shared location
+ *  - language (1.1): the traveller's languages vs the country's official ones
+ *  - evidence (1.1): mapped places (mosques, halal food), positive evidence only */
+export type SignalKind = 'climate' | 'budget' | 'target' | 'want' | 'avoid' | 'importance' | 'near' | 'language' | 'evidence';
 
 /** strong = "a deciding factor"; minor = "a secondary factor". Every other
  *  answer is a normal preference. None of these is a hard constraint. */
@@ -97,8 +110,11 @@ export type FactorOutcome = 'positive' | 'partial' | 'negative' | 'unavailable';
 
 /** noData: the country has no directly observed value for this factor
  *  (Phase 14 would use a worldwide median — Personal Match does not).
- *  noLocation: the factor needs a location the traveller has not shared. */
-export type UnavailableReason = 'noData' | 'noLocation';
+ *  noLocation: the factor needs a location the traveller has not shared.
+ *  noEvidence (1.1): the data exists but shows too little either way — none
+ *  of the traveller's languages is official there, or too few places are
+ *  mapped. Absence of evidence is never scored as a mismatch. */
+export type UnavailableReason = 'noData' | 'noLocation' | 'noEvidence';
 
 export interface FactorResult {
   factor: FactorId;

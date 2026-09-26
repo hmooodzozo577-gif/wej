@@ -4,17 +4,21 @@
 import { QUESTION_BANKS, landBorderQuestionId } from '../data/questionBanks';
 import type { PurposeId, Question } from '../data/types';
 import type { Answers } from '../engine/types';
+import { parseLanguageAnswer, travelNeedQuestions } from './travelNeeds';
 import { PROFILE_SCHEMA_VERSION, type PersonalizationProfile } from './types';
 
 const PURPOSE_IDS = Object.keys(QUESTION_BANKS) as PurposeId[];
 
 /** One step upgrades a stored record from version N (the key) to N + 1.
- *  v1 is the first schema, so the registry is empty today; the runner is
- *  still exercised by tests so the first real migration drops into a
- *  pipeline that is already proven. A step must be deterministic and must
- *  set `schemaVersion` to N + 1. */
+ *  A step must be deterministic and must set `schemaVersion` to N + 1. */
 export type ProfileMigration = (data: Record<string, unknown>) => Record<string, unknown>;
-export const PROFILE_MIGRATIONS: Readonly<Record<number, ProfileMigration>> = {};
+export const PROFILE_MIGRATIONS: Readonly<Record<number, ProfileMigration>> = {
+  /** v1 → v2 (v1.1): v2 only ADDS the optional travel-need questions, so
+   *  every v1 answer, the asked order and both timestamps carry over as
+   *  they are, and the new questions start unanswered — a v1 profile
+   *  scores exactly as it did. */
+  1: (data) => ({ ...data, schemaVersion: 2 }),
+};
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -29,15 +33,22 @@ function isIsoDate(value: unknown): value is string {
 }
 
 /** Every question a profile for this purpose may hold an answer to: the
- *  purpose's bank plus its optional land-border question. */
+ *  purpose's bank, its optional land-border question and (v2) the optional
+ *  travel-need questions. */
 function questionsFor(purpose: PurposeId): Map<string, Question | 'landBorder'> {
   const map = new Map<string, Question | 'landBorder'>(QUESTION_BANKS[purpose].map((question) => [question.id, question]));
   map.set(landBorderQuestionId(purpose), 'landBorder');
+  for (const question of travelNeedQuestions(purpose)) map.set(question.id, question);
   return map;
 }
 
 function isValidAnswer(question: Question | 'landBorder', value: unknown): value is string | number {
   if (question === 'landBorder') return value === 0 || value === 1;
+  // The one multi-select answer: known language codes, canonical order.
+  if (question.kind === 'personalLanguages') {
+    const codes = parseLanguageAnswer(value);
+    return !!codes && codes.join(',') === [...codes].sort().join(',');
+  }
   return question.options.some((option) => option.value === value);
 }
 
@@ -51,6 +62,13 @@ export function sanitizeAnswers(purpose: PurposeId, answers: unknown): Answers {
   for (const [id, value] of Object.entries(answers)) {
     const question = questions.get(id);
     if (question && isValidAnswer(question, value)) clean[id] = value;
+  }
+  // A travel-need answer that only makes sense after its parent answer
+  // (the language list, after "communication matters") is dropped without it.
+  for (const question of travelNeedQuestions(purpose)) {
+    if (question.parent && clean[question.id] !== undefined && !question.parent.values.includes(clean[question.parent.questionId])) {
+      delete clean[question.id];
+    }
   }
   return clean;
 }

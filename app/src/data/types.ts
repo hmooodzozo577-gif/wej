@@ -211,7 +211,18 @@ export interface PurposeMeta {
   pScoreKey: NumericDestinationKey | null;
 }
 
-export type QuestionKind = 'target' | 'importance' | 'climate' | 'category' | 'flavor' | 'proximity' | 'landBorder';
+export type QuestionKind =
+  | 'target'
+  | 'importance'
+  | 'climate'
+  | 'category'
+  | 'flavor'
+  | 'proximity'
+  | 'landBorder'
+  /** v1.1 — Personal Match only (personalization/travelNeeds.ts); never in
+   *  QUESTION_BANKS, so Phase 14 never reads them. */
+  | 'personalImportance'
+  | 'personalLanguages';
 
 export interface LocalizedText {
   en: string;

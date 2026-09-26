@@ -12,7 +12,7 @@
 // and a non-Muslim-majority country with many tagged places counts as
 // evidence. Mapping completeness varies by country; that is why only
 // positive evidence is ever used and absence is never scored (the runtime
-// classification lives in src/personalization/islamicTravel.ts).
+// classification lives in src/personalization/travelNeeds.ts).
 //
 // Licence: OpenStreetMap data is © OpenStreetMap contributors, ODbL 1.0.
 // The committed snapshot is a derived database under the same licence.

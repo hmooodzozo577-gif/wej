@@ -18,6 +18,7 @@ import {
   joinList,
 } from '../engine/answerVocabulary';
 import { PERSONAL_COPY } from './copy';
+import { languageLabel } from './travelNeeds';
 import { FACTOR_BY_PROFILE_KEY } from './signals';
 import type { FactorId, FactorResult, NormalizedPreferences, PersonalMatch } from './types';
 
@@ -53,6 +54,14 @@ function preferenceInOwnWords(prefs: NormalizedPreferences, questionId: string, 
   const signal = prefs.signals.find((item) => item.questionId === questionId);
   if (!signal) return undefined;
   if (signal.kind === 'near') return lang === 'ar' ? 'أن تكون قريبة من موقعك' : 'being close to your location';
+  if (signal.kind === 'language') {
+    const names = String(signal.value).split(',').map((code) => languageLabel(code, lang));
+    return lang === 'ar' ? `التواصل ب${joinList(names, 'ar')}` : `communicating in ${joinList(names, 'en')}`;
+  }
+  if (signal.kind === 'evidence') {
+    if (signal.factor === 'halalFood') return lang === 'ar' ? 'سهولة العثور على طعام حلال' : 'finding halal food easily';
+    return lang === 'ar' ? 'سهولة ممارسة شعائرك' : 'observing your Islamic practice easily';
+  }
   const question = QUESTION_BANKS[prefs.purpose]?.find((item) => item.id === questionId);
   if (!question) return undefined;
   if (signal.kind === 'importance') {
@@ -61,11 +70,30 @@ function preferenceInOwnWords(prefs: NormalizedPreferences, questionId: string, 
   return chosenLabel(question, { [questionId]: signal.value }, lang);
 }
 
+/** personal-match-1.1 — the data exists but shows too little either way.
+ *  Said plainly, including what it does NOT mean. */
+function noEvidenceDetail(factor: FactorResult, ar: boolean): string {
+  if (factor.factor === 'language') {
+    return ar
+      ? 'لا توجد بين لغاتها الرسمية لغة من لغاتك — ولا يعني ذلك صعوبة التواصل، فلم يُحتسب هذا العامل'
+      : 'None of your languages is an official language there — that does not mean communication is hard, so this factor was not counted';
+  }
+  if (factor.factor === 'halalFood') {
+    return ar
+      ? 'قليل من الأماكن فيها موسوم بالحلال على الخريطة المفتوحة، فلم يُحتسب هذا العامل — وفي بلدان كثيرة يكون الحلال هو السائد دون وسم'
+      : 'Few places there are tagged halal on the open map, so this factor was not counted — in many countries halal is the norm and simply not tagged';
+  }
+  return ar
+    ? 'المسجّل منها على الخريطة المفتوحة قليل، فلم يُحتسب هذا العامل — ولا يعني ذلك صعوبة ممارسة الشعائر'
+    : 'Too few places are mapped there to judge, so this factor was not counted — that does not mean practice is difficult';
+}
+
 /** One line describing how this country compares on this factor. */
 export function factorDetail(factor: FactorResult, lang: Lang): string {
   const ar = lang === 'ar';
   if (factor.outcome === 'unavailable') {
     if (factor.reason === 'noLocation') return ar ? 'موقعك غير مشارك، فلم تُحتسب المسافة' : 'Your location is not shared, so distance was not counted';
+    if (factor.reason === 'noEvidence') return noEvidenceDetail(factor, ar);
     return ar ? 'لا تتوفر بيانات مباشرة لهذه الدولة، فلم يُحتسب هذا العامل' : 'No direct data for this country, so this factor was not counted';
   }
   const { outcome } = factor;
@@ -110,6 +138,24 @@ export function factorDetail(factor: FactorResult, lang: Lang): string {
           ? (ar ? 'متوسط' : 'moderate')
           : (ar ? 'أضعف مما طلبت' : 'weaker than you asked for');
       return ar ? `المؤشر ${value}/100 — ${band}` : `Indicator ${value}/100 — ${band}`;
+    }
+    case 'language': {
+      const names = String(factor.countryValue ?? '').split(',').filter(Boolean).map((code) => languageLabel(code, lang));
+      return ar
+        ? `${joinList(names, 'ar')} من لغاتها الرسمية`
+        : `${joinList(names, 'en')} ${names.length > 1 ? 'are official languages' : 'is an official language'} there`;
+    }
+    case 'evidence': {
+      const count = formatNumber(Number(factor.countryValue ?? 0));
+      const limited = outcome === 'partial' ? (ar ? ' — عدد محدود' : ' — a limited number') : '';
+      if (factor.factor === 'halalFood') {
+        return ar
+          ? `أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: ${count}${limited}`
+          : `${count} places tagged as serving halal food on OpenStreetMap${limited}`;
+      }
+      return ar
+        ? `مساجد ومصليات مسجّلة على خريطة OpenStreetMap: ${count}${limited}`
+        : `${count} mosques and Muslim prayer places mapped on OpenStreetMap${limited}`;
     }
     case 'near': {
       const km = formatNumber(factor.distanceKm ?? 0);

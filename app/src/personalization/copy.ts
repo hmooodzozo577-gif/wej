@@ -93,6 +93,9 @@ export const PERSONAL_COPY: Record<Lang, PersonalCopy> = {
       investment: 'الاستثمار الأجنبي',
       growth: 'النمو الاقتصادي',
       proximity: 'القرب من موقعك',
+      language: 'التواصل بلغة تعرفها',
+      islamicPractice: 'سهولة ممارسة الشعائر',
+      halalFood: 'الطعام الحلال',
     },
   },
   en: {
@@ -146,6 +149,9 @@ export const PERSONAL_COPY: Record<Lang, PersonalCopy> = {
       investment: 'foreign investment',
       growth: 'economic growth',
       proximity: 'distance from you',
+      language: 'communicating in a language you know',
+      islamicPractice: 'ease of Islamic practice',
+      halalFood: 'halal food',
     },
   },
 };

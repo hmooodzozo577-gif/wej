@@ -15,9 +15,18 @@
 //     outside the weighted average.
 //   - One signal per factor, first answer wins — the same de-duplication
 //     Phase 14 applies to canonical dimensions.
+//   - personal-match-1.1: the optional travel needs (travelNeeds.ts) add
+//     up to three signals — language, Islamic practice, halal food — after
+//     the Phase 14 ones. "Not important" is neutral. Without these answers
+//     the signals are exactly the personal-match-1.0 signals.
 import { QUESTION_BANKS, landBorderQuestionId } from '../data/questionBanks';
 import type { PurposeId, Question, RecommendationProfileKey } from '../data/types';
 import type { Answers } from '../engine/types';
+import {
+  TRAVEL_NEED_BASE_WEIGHT,
+  parseLanguageAnswer,
+  travelNeedQuestionId,
+} from './travelNeeds';
 import type { FactorId, NormalizedPreferences, PreferenceSignal, SignalStrength } from './types';
 
 export const FACTOR_BY_PROFILE_KEY: Partial<Record<RecommendationProfileKey, FactorId>> = {
@@ -78,6 +87,34 @@ function signalFor(question: Question, answer: string | number, factor: FactorId
   }
 }
 
+function importanceOf(value: unknown): number | null {
+  return value === 100 || value === 60 || value === 0 ? value : null;
+}
+
+/** personal-match-1.1 — the three optional travel needs. Weight follows
+ *  importance exactly like the Phase 14 importance questions do
+ *  (base × importance / 100), and "very important" is a deciding factor. */
+function travelNeedSignals(purpose: PurposeId, answers: Answers, signals: PreferenceSignal[], neutral: string[]): void {
+  const push = (factor: FactorId, questionId: string, kind: 'language' | 'evidence', value: string | number, importance: number) =>
+    signals.push({ factor, questionId, kind, value, weight: (TRAVEL_NEED_BASE_WEIGHT * importance) / 100, strength: strengthOf(importance) });
+
+  const languageImportanceId = travelNeedQuestionId(purpose, 'languageImportance');
+  const languageImportance = importanceOf(answers[languageImportanceId]);
+  if (languageImportance === 0) neutral.push(languageImportanceId);
+  else if (languageImportance !== null) {
+    const languagesId = travelNeedQuestionId(purpose, 'languages');
+    const languages = parseLanguageAnswer(answers[languagesId]);
+    if (languages) push('language', languagesId, 'language', languages.join(','), languageImportance);
+  }
+
+  for (const [need, factor] of [['islamicPractice', 'islamicPractice'], ['halalFood', 'halalFood']] as const) {
+    const id = travelNeedQuestionId(purpose, need);
+    const importance = importanceOf(answers[id]);
+    if (importance === 0) neutral.push(id);
+    else if (importance !== null) push(factor, id, 'evidence', importance, importance);
+  }
+}
+
 export function normalizePreferences(purpose: PurposeId, answers: Answers): NormalizedPreferences {
   const signals: PreferenceSignal[] = [];
   const neutral: string[] = [];
@@ -105,6 +142,8 @@ export function normalizePreferences(purpose: PurposeId, answers: Answers): Norm
     if (signal === 'neutral') neutral.push(question.id);
     else if (signal && signal.weight > 0) signals.push(signal);
   }
+
+  travelNeedSignals(purpose, answers, signals, neutral);
 
   const landBorderId = landBorderQuestionId(purpose);
   const constraints: NormalizedPreferences['constraints'] = [];

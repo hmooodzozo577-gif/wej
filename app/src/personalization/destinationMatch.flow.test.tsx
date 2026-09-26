@@ -24,6 +24,7 @@ import { computePersonalMatch } from './personalMatch';
 import { PERSONAL_COPY } from './copy';
 import { destinationMatchState, readDestinationMatchIntent } from './quizIntent';
 import { I18N } from '../data/i18n';
+import { TRAVEL_NEED_COPY } from './travelNeeds';
 
 function memoryStorage(profile?: string): StorageLike & { data: Record<string, string> } {
   const data: Record<string, string> = {};
@@ -79,7 +80,7 @@ function renderFlow(initial: string | { pathname: string; state?: unknown }, sto
 /** Answers the first option until the questionnaire ends (checkpoint →
  *  "show results now"), then skips the passport step. Deterministic. */
 async function completeQuestionnaire(container: HTMLElement, lang: 'ar' | 'en' = 'ar') {
-  for (let step = 0; step < 20; step += 1) {
+  for (let step = 0; step < 30; step += 1) {
     if (screen.queryByText(I18N[lang].passport.title)) break;
     const now = screen.queryByText(I18N[lang].quiz.showResultsNow);
     if (now) {
@@ -90,6 +91,10 @@ async function completeQuestionnaire(container: HTMLElement, lang: 'ar' | 'en' =
     if (!options.length) break;
     await act(async () => {
       fireEvent.click(options[0]!);
+      // v1.1 — the language list is multi-select: choose, then Continue.
+      if (container.querySelector('.lang-options')) {
+        fireEvent.click(screen.getByRole('button', { name: new RegExp(TRAVEL_NEED_COPY[lang].continue) }));
+      }
       await new Promise((resolve) => setTimeout(resolve, 180));
     });
   }
