@@ -1,0 +1,40 @@
+name: Uptime monitor
+
+# v1.1 — free, hourly availability check of production: the home page, a
+# destination deep link, a public Worker endpoint and the admin boundary.
+# Read-only GET requests only (app/scripts/lib/uptime.mjs): nothing is
+# written, no credential is used, each check is tried at most twice. A
+# failure turns this run red, which GitHub reports to the repository owner;
+# no issue or comment is opened, so an outage cannot become notification spam.
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uptime-monitor
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: app/scripts
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - name: Check production
+        working-directory: app
+        run: node scripts/uptime-check.mjs
