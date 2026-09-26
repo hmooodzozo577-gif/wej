@@ -1,14 +1,83 @@
-# Wejhaty v1.0.0 — release record
+# Wejhaty — release record
 
-Status: **WEJHATY v1.0.0 — FINAL RELEASE (2026-09-24). PHASE 20 — FINAL
-WEJHATY USER-ACCEPTED. PHASE 21 — ADMIN POST-LAUNCH ENHANCEMENTS
-USER-ACCEPTED.** Current truth lives in `PROJECT_STATE.md` (state v42 and
-its final known-limitations register); this file records what the release
-and each earlier candidate are, and how they were checked.
+Status: **WEJHATY v1.1.0 RC1 — TECHNICALLY VERIFIED, PRODUCTION-VERIFIED,
+AWAITING USER ACCEPTANCE (2026-09-26).** **WEJHATY v1.0.0 — FINAL RELEASE
+(2026-09-24)** remains the accepted release: Phase 20 and Phase 21
+USER-ACCEPTED. Current truth lives in `PROJECT_STATE.md` (state v43 and its
+known-limitations register); this file records what each release and
+candidate is, and how it was checked.
 
 Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
 PRODUCTION-VERIFIED, USER-VERIFIED, USER-ACCEPTED, UNVERIFIED, DEFERRED,
-BLOCKED, FROZEN.
+BLOCKED, FROZEN, CANCELLED, PENDING HUMAN APPROVAL.
+
+# v1.1.0 RC1 — `wejhaty-v1.1.0-rc1` (AWAITING USER ACCEPTANCE)
+
+## v1.1.0-RC1.1 What it contains
+
+v1.0.0 plus: discoverability (a real HTTP-200 page document per route,
+one metadata system, sitemap, robots, structured data, Open Graph image,
+icons, manifest), sharing, Favorites, Compare, the passport selector's
+location default, Personal Match 1.1 (language, Islamic practice, halal
+food — local only), the footer version, one site-origin configuration,
+hourly uptime monitoring, and the Anti-Koshary audits. Details and
+evidence: `PROJECT_STATE.md` state v43 and the `docs/` files it lists.
+
+Not changed: Phase 14, Country Suitability, every personal-match-1.0
+factor, the Worker, admin analytics meanings, the hero, the Destination
+Match and Edit-preferences flows, the canonical country set and IL/ISR
+exclusion. Nothing is user-accepted yet.
+
+## v1.1.0-RC1.2 User-acceptance checklist
+
+Use a normal browser (Arabic first, then English; Light and Dark; a phone
+and a desktop).
+
+1. Footer shows `وجهتي v1.1.0` / `Wejhaty v1.1.0`.
+2. Open a destination link directly (for example `…/wej/destination/japan/`)
+   — it opens the page (no redirect to Home); the browser tab shows
+   «اليابان للسفر | وجهتي».
+3. Share on a destination: the phone share sheet opens, or the link is
+   copied with a short confirmation; the link opens that destination.
+4. Favorite on a destination and on an Explore card; reload — still
+   saved; open «المفضلة» from the header (or the footer on a mid-size
+   screen); remove one.
+5. In Favorites, tick two or three and press Compare: a table with real
+   data only — no winner, no combined score, no Passport, no budget; add
+   and remove a destination; on a phone the table scrolls sideways inside
+   its frame.
+6. Take the questionnaire to the end (continue past "show results now"):
+   after the usual questions come the language, Islamic-practice and
+   halal questions; the language list lets you pick several and has a
+   Continue button; "غير مهم" skips the language list.
+7. On a destination with saved preferences, «لماذا تناسبك هذه الوجهة؟»
+   explains the new factors; a destination without evidence says "لم
+   يُحتسب" and what that does not mean — never a low score.
+8. Allow location, then reach the passport step: the selector already
+   shows your current country with no message about it; change it, and
+   it stays as you chose; "skip" still works.
+9. An old saved profile (from v1.0) still shows your Personal Match;
+   "Edit my preferences" now also asks the three new questions.
+10. Everything from the v1.0 checklist still behaves the same.
+
+Say "accepted" (or list what to change) — nothing is marked accepted
+until you do.
+
+## v1.1.0-RC1.3 Integrity and production verification
+
+| Item | Value |
+|---|---|
+| RC1 commit | the commit that adds this section (a file cannot contain its own hash; read it from the refs below) |
+| Branch | `release/wejhaty-v1.1.0-rc1` → RC1 commit |
+| Tag | `wejhaty-v1.1.0-rc1` (annotated) → RC1 commit |
+| App source | `app/` identical to `deece16` (app tree `5c83c6eb69c416172daf50709efd19e7282d8bc1`); the RC1 commit changes documentation only |
+| Build | 616 files (208 page documents, 404, sitemap, robots, manifest, icons); the Pages build adds the Worker URL, so its entry chunk name (`index-CJFiJ9H1.js`) differs from an unconfigured local build; CSS `index-CJlRP7S5.css` is identical |
+| Pages deploy | run 36236954174 (`deece16`) |
+| Worker | unchanged since v1.0.0 — version `b1c2815a-5557-41fd-a3d8-025af15524ff`, not redeployed |
+| Tests | frontend 1187/1187 (115 files), Worker 273/273; `tsc`, oxlint, build clean; `verify-seo-build` 4 804/4 804 on `/wej/` and root builds |
+| Production smoke | run 36237100496 — Chromium/Firefox/WebKit/Edge 215/215 (0 CSP violations), SEO without JavaScript 2 182/2 182, Worker 19/19, admin 15/15, desktop Safari 26.6.2 15/15, iOS Simulator Mobile Safari 15/15, real VoiceOver 4/4; read-only; deployed `assets/index-CJFiJ9H1.js` / `assets/index-CJlRP7S5.css` |
+| Uptime | run 36203757208 — 4/4 up |
+| v1.0.0 | untouched: tag `wejhaty-v1.0.0` → `df54567`; `release/wejhaty-v1.0.0`, `backup/wejhaty-v1.0.0-final`, `backup/wejhaty-v1.0.0-pre-v1.1` → `df54567` |
 
 # v1.0.0 — `wejhaty-v1.0.0` (final release)
 

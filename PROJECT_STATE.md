@@ -5,9 +5,96 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-### Current verified state — 2026-09-24 (WEJHATY v1.0.0 — FINAL RELEASE)
+### Current verified state — 2026-09-26 (WEJHATY v1.1.0 RC1 — AWAITING USER ACCEPTANCE)
 
-- State document version: 42. **Status: WEJHATY v1.0.0 — FINAL RELEASE.
+- State document version: 43. **Status: WEJHATY v1.1.0 RC1 —
+  DISCOVERABILITY + SHARING + FAVORITES + COMPARE + PERSONALIZATION
+  EXPANSION — TECHNICALLY VERIFIED, PRODUCTION-VERIFIED, AWAITING USER
+  ACCEPTANCE.** Nothing in v1.1 is user-accepted. **WEJHATY v1.0.0 remains
+  the accepted release** and is untouched: tag `wejhaty-v1.0.0` (object
+  `e14eae3`) → `df54567`, `release/wejhaty-v1.0.0`,
+  `backup/wejhaty-v1.0.0-final` and the pre-v1.1 checkpoint
+  `backup/wejhaty-v1.0.0-pre-v1.1` all → `df54567`; RC1–RC4 refs
+  unchanged (verified with `git ls-remote`).
+- **RC1 refs**: branch `release/wejhaty-v1.1.0-rc1` and annotated tag
+  `wejhaty-v1.1.0-rc1` → the commit that records this state (a commit
+  cannot contain its own hash; read it from the refs). It changes
+  documentation only, on top of `8bc5eec`; its `app/` is identical to
+  `deece16` (app tree `5c83c6eb69c416172daf50709efd19e7282d8bc1`), which
+  Pages run 36236954174 deployed, so production already serves its app.
+- **App version**: `1.1.0` (`app/package.json`, the only source; the
+  footer shows `وجهتي v1.1.0` / `Wejhaty v1.1.0`).
+
+**What v1.1 adds** (details: `docs/SEO.md`, `docs/SITE_ORIGIN.md`,
+`docs/FAVORITES_AND_COMPARE.md`, `docs/PERSONAL_MATCH_V1_1.md`,
+`docs/DATA_SOURCES_V1_1.md`, `docs/PRIVACY_V1_1.md`,
+`docs/MONITORING.md`, `docs/audits/ANTI_KOSHARY_*`):
+
+| Area | What | Evidence |
+|---|---|---|
+| Discoverability | a real HTTP-200 page document per route (208: home, Explore, 194 destinations, utility pages), `noindex` utility pages, localized 404, one metadata system (`app/src/seo/meta.ts`), sitemap (196 URLs, no `lastmod`), robots, `WebSite` / `TouristDestination` / `BreadcrumbList` JSON-LD with no rating, review, offer or price, own Open Graph image | TEST-VERIFIED (`seo.test.ts`), 4 804 build checks on `/wej/` and root builds, PRODUCTION-VERIFIED (run 36237100496: 2 182 plain-HTTP checks, 194 destinations, metadata visible without JavaScript) |
+| Site origin | one config (`app/build/site.ts`); the Pages build reads optional repository variables `SITE_ORIGIN` / `SITE_BASE_PATH`; unset = byte-identical default build | TEST-VERIFIED, CODE-VERIFIED |
+| Icons + manifest | favicon.ico, SVG, apple-touch 180, 192, 512, maskable 512; manifest with base-path `start_url`/`scope`; no service worker | BROWSER-VERIFIED (sizes read from the files) |
+| Share | Web Share → copy → read-only field; AR/EN announcements; destination URL only, optional Personal Match % | TEST-VERIFIED, PRODUCTION-VERIFIED (4 engines) |
+| Favorites | `wejhaty.favorites.v1`, canonical ids only, defensive parsing, storage blocked/full safe, cross-tab | TEST-VERIFIED, BROWSER-VERIFIED (49 adversarial + 27 flow checks), PRODUCTION-VERIFIED |
+| Compare | 2–3 destinations, real data, Personal Match per destination, no winner/combined score, no Passport, no budget, `?ids=` only, `noindex` | TEST-VERIFIED, BROWSER-VERIFIED, PRODUCTION-VERIFIED |
+| Passport | the selector's initial value is the boundary-resolved current country when location is already granted; no wording, not stored, not sent, never over a manual choice; otherwise unchanged (FROZEN) | TEST-VERIFIED (`passportDefault.test.tsx`), PRODUCTION-VERIFIED (Chromium, Edge) |
+| Personal Match 1.1 | optional language (+ languages), Islamic-practice and halal questions after every Phase 14 question; positive evidence only (official languages; OpenStreetMap snapshot of 2026-09-26, 193/194 countries); `personal-match-1.1`, profile schema v2 with a v1→v2 migration | TEST-VERIFIED; golden fixture from the v1.0.0 code reproduced for 112 archetypes; PRODUCTION-VERIFIED local-only (smoke) |
+| Monitoring | hourly uptime workflow (4 read-only checks); read-only domain-status workflow | PRODUCTION-VERIFIED (run 36203757208: 4/4) |
+| Data PRs | data workflows compare data (not the run stamp) and open a PR only on a real change; Actions may now open PRs (U6 resolved) | PRODUCTION-VERIFIED (Stage 2 test PR, closed unmerged) |
+
+**Protected and unchanged**: Phase 14 (engine, weights, candidates —
+`app/src/engine/` unchanged; the travel needs are not in `QUESTION_BANKS`),
+Country Suitability, every personal-match-1.0 factor, the canonical
+country set and IL/ISR exclusion, current-country exclusion, hero
+identity, Destination Match and Edit-preferences flows, admin analytics
+meanings, and the whole Worker (`worker/` identical to v1.0.0; Worker
+273/273).
+
+**Gates** (final source): frontend 1187/1187 tests in 115 files
+(`--maxWorkers=2`), `tsc -b` 0, oxlint 0, production build OK,
+`verify-seo-build` 4 804/4 804 on the `/wej/` and root builds; Worker
+273/273, `tsc` 0. axe-core (WCAG 2.1 A/AA) 0 violations on 12 page states
+× AR/EN × Light/Dark (one Compare contrast issue found and fixed); v1.0
+pages were already clean. Local matrix 1 200/1 200 (7 pages × 390/430/800/
+1024/1280/1440 × AR/EN × Light/Dark, motion and reduced motion: no
+overflow, no page error, correct `dir`, one `h1`, one-line header).
+Entry bundle 603.6 → 615.7 KB gzip; CSS 20.9 → 22.2 KB gzip.
+
+**Production smoke** (run 36237100496 on `deece16`, read-only; deployed bundle `assets/index-CJFiJ9H1.js` / `assets/index-CJlRP7S5.css`): Chromium, Firefox, WebKit and Edge 215/215 (the v1.0 checks plus
+  the v1.1 checks: footer v1.1.0, Favorites persisted with canonical ids
+  only, Share giving the canonical link, Compare 3 max and noindex, a v1.0
+  profile migrating, travel needs asked after Phase 14 and never sent nor
+  put in the URL, and — Chromium/Edge — the passport selector starting at
+  the current country without being stored or sent; 0 CSP violations, 0
+  page errors); SEO without JavaScript 2 182/2 182; Worker 19/19; admin
+  15/15; desktop Safari 26.6.2 15/15; real VoiceOver + Safari 4/4 ("اليابان
+  للسفر | وجهتي", h1 + 10 h2); iOS Simulator Mobile Safari 15/15. Worker requests from
+  the browsers are aborted, so nothing is written.
+
+**Domain**: `wejhaty.eu.org` — PENDING HUMAN APPROVAL (not delegated; the
+owner must register on nic.eu.org; zero cost). The release does not wait
+for it. Switch-over checklist in `docs/SITE_ORIGIN.md`; the Worker CORS
+allow-list is the one code change, DEFERRED until the name resolves.
+
+**Anti-Koshary**: pre-audit (D1, D2, D5, H1, H2 fixed; L1 held) and
+post-audit (no Critical/High; P1, P2, X8 fixed in `e918f37`; Q1 `Quiz.tsx`
+growth and F1 CSS size DEFERRED).
+
+- **Rollback points** (never move, delete or force-push any of them):
+
+  | Point | Refs | Commit |
+  |---|---|---|
+  | v1.1.0 RC1 | `release/wejhaty-v1.1.0-rc1`, tag `wejhaty-v1.1.0-rc1` | the RC1 commit |
+  | v1.0.0 before v1.1 | `backup/wejhaty-v1.0.0-pre-v1.1` | `df54567` |
+  | v1.0.0 final | `release/wejhaty-v1.0.0`, `backup/wejhaty-v1.0.0-final`, tag `wejhaty-v1.0.0` | `df54567` |
+
+  Rolling back to v1.0.0 uses the state-v42 procedure with
+  `wejhaty-v1.0.0` as the source (history-preserving, no force push).
+
+### Previous state — 2026-09-24 (WEJHATY v1.0.0 — FINAL RELEASE; still the accepted release)
+
+- State document version 42 (superseded by 43 above). **Status then: WEJHATY v1.0.0 — FINAL RELEASE.
   PHASE 20 — FINAL WEJHATY USER-ACCEPTED. PHASE 21 — ADMIN POST-LAUNCH
   ENHANCEMENTS USER-ACCEPTED.** The user manually tested and accepted RC4
   (Phase 20) and the Phase 21 admin. Release date: 2026-09-24. The
