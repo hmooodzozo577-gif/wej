@@ -6016,3 +6016,7 @@ html[dir='rtl'] .travel-route-band {
   color: var(--muted);
   font-size: 0.85rem;
 }
+
+.quiz-question-card {
+  scroll-margin-top: 88px;
+}

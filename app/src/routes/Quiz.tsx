@@ -69,6 +69,18 @@ export function Quiz() {
   const passportDefault = usePassportDefault(state);
   const { saveFromQuiz } = usePersonalization();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // v1.1 — the language list is long enough to scroll on a phone; after it,
+  // bring the next question's card back into view (the only question after
+  // which the page can be left scrolled past the next heading).
+  const questionCard = useRef<HTMLDivElement | null>(null);
+  const revealNextQuestion = useRef(false);
+  const currentQuestionId = state.path[state.qIndex];
+  useEffect(() => {
+    if (!revealNextQuestion.current) return;
+    revealNextQuestion.current = false;
+    const card = questionCard.current;
+    if (card && typeof card.scrollIntoView === 'function' && card.getBoundingClientRect().top < 88) card.scrollIntoView({ block: 'start' });
+  }, [currentQuestionId]);
 
   const validPurpose = isPurposeId(purposeParam);
   const purposeSynced = validPurpose && state.purpose === purposeParam;
@@ -285,6 +297,7 @@ export function Quiz() {
         <>
           <div
             key={question.id}
+            ref={questionCard}
             className={`q-card quiz-question-card motion-${motionDirection}`}
             role={multiSelect ? 'group' : 'radiogroup'}
             aria-label={questionText}
@@ -292,7 +305,10 @@ export function Quiz() {
           >
             <h2 className="q-text">{questionText}</h2>
             {multiSelect ? (
-              <LanguageChoice question={question} lang={lang} value={state.answers[question.id]} disabled={advancing} onSubmit={onSelect} />
+              <LanguageChoice question={question} lang={lang} value={state.answers[question.id]} disabled={advancing} onSubmit={(value) => {
+                revealNextQuestion.current = true;
+                void onSelect(value);
+              }} />
             ) : (
               <div className={optionsClass}>
                 {question.options.map((option) => (
