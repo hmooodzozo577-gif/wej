@@ -128,8 +128,8 @@ production smoke run:
 
 | ID | Fix | Commit |
 |---|---|---|
-| P1 | One module, `app/scripts/lib/productionUrls.mjs`, holds the production site and Worker URLs; all 8 scripts import it (a command-line argument still overrides) | recorded in PROJECT_STATE.md |
-| P2 | `signals.ts` reads the importance values from `travelNeeds.ts` | recorded in PROJECT_STATE.md |
-| X8 | `TRAVEL_EVIDENCE_UPDATED_AT` removed | recorded in PROJECT_STATE.md |
+| P1 | One module, `app/scripts/lib/productionUrls.mjs`, holds the production site and Worker URLs; all 8 scripts import it (a command-line argument still overrides) | `e918f37` |
+| P2 | `signals.ts` reads the importance values from `travelNeeds.ts` | `e918f37` |
+| X8 | `TRAVEL_EVIDENCE_UPDATED_AT` removed | `e918f37` |
 
 Q1 and F1 stay DEFERRED; the Worker allow-list (D1) waits for a live domain.
