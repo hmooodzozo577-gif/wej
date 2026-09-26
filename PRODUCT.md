@@ -36,6 +36,9 @@ Wejhaty's distinguishing mechanism is a deterministic recommendation engine over
 - Precise coordinates remain in memory and are never sent to recommendation services or analytics.
 - Browser location and self-reported passport country are separate concepts. The product collects no passport number.
 - Sensitive personal or cultural traits are never inferred from nationality, language, locale, or location.
+- Optional self-reported travel needs (languages, ease of Islamic practice, halal food) refine Personal Match only, stay on the traveller's device, and are matched only against positive evidence (official languages; places mapped in OpenStreetMap). Missing evidence is "not counted", never a low score, and no country is rated for religiosity.
+- Favorites and comparisons are local; Compare shows real data side by side with no winner and no combined score. Shared links carry a destination only.
+- Only real, stable pages (home, Explore, destination pages) are indexable; personal and transient states are not.
 - All visible numbers use Latin digits in both languages.
 - Missing, partial, sourced, and verified information must remain visibly distinguishable.
 - Turnstile is not currently enabled and must not be represented as active.
@@ -65,6 +68,8 @@ Wejhaty's distinguishing mechanism is a deterministic recommendation engine over
 5. Give Arabic, English, mobile, tablet, accessibility, and performance equal release weight.
 
 ## Release Status
+
+Wejhaty v1.1.0 RC1 (tag `wejhaty-v1.1.0-rc1`) adds discoverability (a real page document per destination, metadata, sitemap, icons, manifest), sharing, Favorites, Compare, the passport selector's location default, and Personal Match 1.1 (language, Islamic practice, halal food). It is technically and production verified and awaits user acceptance; v1.0.0 remains the accepted release until then.
 
 Wejhaty v1.0.0 was released on 2026-09-24 (tag `wejhaty-v1.0.0`): Phase 20 (the public product) and Phase 21 (the operator dashboard) are user-accepted. The accepted product, including the Phase 17–20 visual identity, is frozen; any change to accepted behaviour, scoring, Personal Match, the frozen Passport feature or the visual identity needs an explicit new task. Current status and known limitations live in `PROJECT_STATE.md`.
 

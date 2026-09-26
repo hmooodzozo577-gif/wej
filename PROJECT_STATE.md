@@ -2318,10 +2318,15 @@ see "Non-negotiable product rules" above.)
 
 ## Roadmap gate and immediate backlog
 
-**WEJHATY v1.0.0 is released (2026-09-24).** Phase 20 (RC4) and Phase 21
-(Admin) are USER-ACCEPTED; Phase 16 (AI) stays CANCELLED. No phase is
-open, and none starts without an explicit, current instruction from the
-user.
+**WEJHATY v1.1.0 RC1 awaits user acceptance (2026-09-26).** v1.0.0
+(2026-09-24) stays the accepted release until the user accepts RC1;
+nothing in v1.1 is user-accepted. v1.2.0 has not started and does not
+start without an explicit, current instruction from the user. Phase 16
+(AI) stays CANCELLED.
+
+0. Next step: the user's manual acceptance of RC1 (checklist in
+   `RELEASE_CANDIDATE.md`, v1.1.0 RC1). Fixes found there go into a new
+   candidate with new refs; RC1's refs never move.
 
 1. The release is frozen. Product behaviour, Phase 14, Personal Match,
    Passport (FROZEN), admin metric semantics and the accepted visual
@@ -2331,7 +2336,7 @@ user.
    blocks the release.
 3. Roll back only with the refs and the procedure in state v42.
 
-## Final known-limitations register (authoritative, WEJHATY v1.0.0, 2026-09-24)
+## Known-limitations register (authoritative; v1.0.0 2026-09-24, updated for v1.1.0 RC1 2026-09-26)
 
 One status per item. Statuses: RESOLVED, DEFERRED, BLOCKED, FROZEN,
 CANCELLED, UNVERIFIED. Open items first; resolved items stay resolved and
@@ -2339,20 +2344,25 @@ are listed for traceability only.
 
 | ID | Item | Status | Reason / evidence | Next action | Owner |
 |---|---|---|---|---|---|
-| U9 | Passport / entry information | FROZEN | User decision: regression-only; `app/src/entry/` unchanged since RC4; the smoke proves the passport is neither stored nor sent | Regression-test only | User |
+| U9 | Passport / entry information | FROZEN | User decision: regression-only; `app/src/entry/` unchanged since RC4; the smoke proves the passport is neither stored nor sent. v1.1 (user-requested) adds only the selector's initial value from an already-granted location (`usePassportDefault.ts`): displayed, never stored, never sent, never over a manual choice | Regression-test only | User |
 | U1 | Thmanyah Arabic font | CANCELLED | User decision; license-reader workflow removed, typography unchanged | None — do not research or add it again | User |
 | U5 | Traveler Budget 13.5c (SAR/day) | DEFERRED | No legitimate traveller-budget source; per-diem ceilings for officials are not traveller budgets and are not used | Reopen only with a verified source | User |
 | U7 | Turnstile in production | DEFERRED | Server-side per-address rate limiting is active on every write path; Turnstile code and fail-closed verification are ready | Enable if abuse appears | User |
 | U8 | Paid travel/visa providers | DEFERRED | No credentials or contract; provider path dormant | Provider decision | User |
 | U14 | Paid-provider limiters | DEFERRED | Providers dormant | Add with any provider activation | Maintainer |
-| U6 | Automatic PRs from data workflows | BLOCKED | Repository setting. Latest check: run 35884386660 (2026-09-23) failed with "GitHub Actions is not permitted to create or approve pull requests". Its data branches (`update-*`) stay on origin unmerged | Settings → Actions → General → Workflow permissions → allow Actions to create and approve pull requests | User |
+| U6 | Automatic PRs from data workflows | RESOLVED (v1.1) | The repository setting now allows it: a harmless data run opened PR #3 (closed unmerged, v1.1 Stage 2). Workflows compare data (not the run stamp) and open a PR only on a real change. Old `update-*` branches stay on origin (the git proxy refuses branch deletion) | — | — |
 | U3 | Physical iPhone (real iOS Safari) | UNVERIFIED | No physical device here. iOS Simulator Mobile Safari 26.5 passes 15/15 (run 35946079472); a simulator is not a physical iPhone | Manual check on a real iPhone (RC2 checklist) | User |
 | U4b | Other real screen readers (VoiceOver on iPhone, TalkBack, NVDA, JAWS) | UNVERIFIED | No device or Windows/Android screen reader here; axe 0 violations and macOS VoiceOver passes | Manual checklist in the RC2 record | User |
 | U22 | Admin D1 query budget: 48 queries per analytics request, guard 50 | DEFERRED / FUTURE OPTIMIZATION | Within the Free-plan per-invocation cap and guarded by `worker/src/admin.test.ts`; not optimised during sign-off so accepted admin semantics stay unchanged | Consolidate queries before adding any admin metric that needs D1 | Maintainer |
 | U21 | Historic anonymous QA events from early macOS smoke runs | DEFERRED TO RETENTION | A handful of Safari/desktop/US sessions (2026-09-23 22:38 – 2026-09-24 00:24 UTC); not deleted (deleting production rows is destructive); the 90-day retention job removes them by about 2026-12-23 | None — retention removes them | Maintainer |
 | U15 | csv-parse dependency advisory | DEFERRED | Dev-only, transitive, not imported; production `npm audit` clean | Re-check at the next dependency upgrade | Maintainer |
 | U17 | Rate limiter precision | DEFERRED | Cloudflare's limiter is approximate per location (~2× budget seen); platform behaviour | Revisit only if abuse appears | Maintainer |
-| U18 | Main bundle size (~634 kB gzip) | DEFERRED | Measured: Home FCP 1.09 s, TBT 585 ms (4× CPU); route splitting risks scroll/focus behaviour | Revisit with a dataset lazy-load plan | Maintainer |
+| U18 | Main bundle size | DEFERRED | v1.1 entry chunk 615.7 KB gzip (v1.0 603.6 KB, same measure, +2.0 %); local 4× CPU medians v1.0 → v1.1: Home FCP 1.12 → 1.04 s, destination 1.05 → 1.10 s, Explore 1.78 → 1.89 s (within run-to-run noise); route splitting risks scroll/focus behaviour | Revisit with a dataset lazy-load plan | Maintainer |
+| V1 | Free domain `wejhaty.eu.org` | PENDING HUMAN APPROVAL | Not delegated (no NS/SOA, domain-status runs 36203816604/36203879114); registration needs the owner's own nic.eu.org account and a free DNS host; zero cost | Owner registers; then `docs/SITE_ORIGIN.md` checklist | User |
+| V2 | Worker CORS allow-list for a new origin | DEFERRED | One-line change (`worker/src/shared.ts`); deferred so v1.1 does not redeploy the Worker | Do it with the domain switch (V1) | Maintainer |
+| V3 | `Quiz.tsx` growth (Anti-Koshary Q1) and `wejhaty.css` size (F1) | DEFERRED | Splitting the accepted flow or stylesheet is a refactor, not a v1.1 need; behaviour pinned by tests | Revisit in a dedicated refactor task | Maintainer |
+| V4 | Long data runs and workflow edits | DEFERRED (low risk) | A data branch built on an old checkout is refused if a workflow file changed meanwhile (run 36202043431). Fixed for the 80-minute Islamic-evidence workflow; the other `update-*` workflows run in minutes and keep the old step | Apply the same step if one of them fails that way | Maintainer |
+| V5 | OpenStreetMap evidence limits | DEFERRED / DOCUMENTED | Mapping completeness varies; counts are national; Palestine has no OSM country boundary (not counted); halal has one level on purpose (`docs/DATA_SOURCES_V1_1.md`) | Monthly refresh; revisit thresholds only with evidence | Maintainer |
 | P20 | Phase 20 — Final Wejhaty (RC4) | RESOLVED | USER-ACCEPTED 2026-09-24; released as `wejhaty-v1.0.0` | — | User |
 | P21 | Phase 21 — Admin post-launch enhancements | RESOLVED | USER-ACCEPTED 2026-09-24; Worker `b1c2815a`; released as `wejhaty-v1.0.0` | — | User |
 | U2 | Real desktop Safari (macOS) and real Edge | RESOLVED | Safari 26.6.2 15/15 and Edge in every release smoke (run 35946079472) | Keep in every release smoke | Maintainer |

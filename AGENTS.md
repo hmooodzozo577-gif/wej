@@ -49,10 +49,38 @@ persistent autonomous engineering operating contract for this project.
   `VITE_*` variable — Worker-side only.
 - Never infer religion, ethnicity, politics, personal values, or
   cultural tolerance from location, nationality, language, or locale.
+- The v1.1 language, Islamic-practice and halal questions are optional,
+  self-reported and LOCAL ONLY: never an analytics event or dimension,
+  never sent to the Worker or admin, never in a URL, share text or page
+  metadata. Destination evidence is positive-only (an official language;
+  places mapped or tagged in OpenStreetMap); missing or thin evidence is
+  "not counted", never a low score; never rate a country, government or
+  society by religiosity, and never use religion statistics, an official
+  religion, a name or a region as evidence.
+- Personal Match is versioned: any change to a factor, weight, threshold or
+  formula bumps `PERSONAL_MATCH_METHODOLOGY_VERSION`; a stored-profile
+  format change bumps `PROFILE_SCHEMA_VERSION` with a migration that keeps
+  old answers. `personalMatch11.golden.test.ts` must keep reproducing the
+  v1.0.0 digests for profiles without the new answers.
+- One source each: page metadata in `app/src/seo/meta.ts`; the site origin
+  and base path in `app/build/site.ts` (set per build with
+  `WEJHATY_SITE_ORIGIN` / `WEJHATY_BASE_PATH`, or the Pages repository
+  variables `SITE_ORIGIN` / `SITE_BASE_PATH`); the app version in
+  `app/package.json`; the ops scripts' production URLs in
+  `app/scripts/lib/productionUrls.mjs`. Never hard-code another copy.
+- Only real, stable content is indexable (home, Explore, destination
+  pages). Personal and transient application state stays `noindex` and out
+  of the sitemap; structured data never claims a rating, review, offer or
+  price.
 - Location (from the browser) and passport (self-reported, optional,
   skippable) are different concepts — never infer one from the other.
   Location drives proximity, land borders and nearest/farthest;
-  passport drives entry requirements only.
+  passport drives entry requirements only. The one exception is the v1.1
+  user decision: an already-granted, boundary-resolved current country may
+  be the passport selector's INITIAL value (`usePassportDefault.ts`) — shown
+  without any wording, badge or tooltip, never stored or persisted, never
+  sent, and never applied over a choice the traveller made (clearing
+  included). It is a default, not a statement about citizenship.
 - Never fabricate a visa or entry-requirement claim. The editorial
   easy/medium/hard label stays disclosed as a general reference. A
   passport-specific entry requirement may only be shown when the
@@ -100,7 +128,8 @@ persistent autonomous engineering operating contract for this project.
   current task instruction to do so.
 - WEJHATY v1.0.0 (tag `wejhaty-v1.0.0`, 2026-09-24) is the user-accepted
   release and is frozen: change accepted behaviour only for an explicit
-  task. Never move, delete, rewrite or force-push a release or checkpoint
+  task. WEJHATY v1.1.0 RC1 (tag `wejhaty-v1.1.0-rc1`) awaits user
+  acceptance; never mark it accepted on the user's behalf. Never move, delete, rewrite or force-push a release or checkpoint
   ref (`release/wejhaty-*`, `backup/*`, `wejhaty-*` tags); a later release
   gets new refs.
 - Use available environment-specific testing/review tools when useful
