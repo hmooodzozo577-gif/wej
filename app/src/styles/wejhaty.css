@@ -5905,6 +5905,13 @@ html[dir='rtl'] .travel-route-band {
   font-weight: 400;
 }
 
+/* On the section band (--paper-2) the muted ink falls to 4.15:1 in Light;
+   the note keeps the band's own text colour and stays secondary by size
+   and weight (WCAG 1.4.3). */
+.compare-section-row .compare-section-note {
+  color: var(--text);
+}
+
 .compare-value {
   font-weight: 600;
 }
