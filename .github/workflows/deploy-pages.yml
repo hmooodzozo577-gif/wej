@@ -58,6 +58,13 @@ jobs:
         env:
           VITE_TRAVEL_WORKER_URL: ${{ env.WORKER_URL }}
           VITE_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
+          # v1.1 — the site origin and base path (app/build/site.ts). Unset
+          # repository variables arrive empty and keep the GitHub Pages
+          # project site (https://hmooodzozo577-gif.github.io/wej/); a live
+          # custom domain is SITE_ORIGIN=https://<domain> + SITE_BASE_PATH=/
+          # (see docs/SITE_ORIGIN.md for everything else that must change).
+          WEJHATY_SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
+          WEJHATY_BASE_PATH: ${{ vars.SITE_BASE_PATH }}
 
       # v1.1 — the build itself writes one document per page, a noindex
       # 404.html, sitemap.xml, robots.txt and the manifest (build/seoPages.ts).

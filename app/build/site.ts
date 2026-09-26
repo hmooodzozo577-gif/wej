@@ -47,6 +47,8 @@ export function normalizeOrigin(value: string): string {
 
 export function resolveSite(env: Record<string, string | undefined>): SiteConfig {
   const origin = normalizeOrigin(env.WEJHATY_SITE_ORIGIN || DEFAULT_SITE_ORIGIN);
-  const basePath = normalizeBasePath(env.WEJHATY_BASE_PATH ?? DEFAULT_BASE_PATH);
+  // An empty value means "not set" (an unset repository variable reaches the
+  // build as ""), never the root: a root build must say "/" explicitly.
+  const basePath = normalizeBasePath(env.WEJHATY_BASE_PATH || DEFAULT_BASE_PATH);
   return { origin, basePath, url: `${origin}${basePath}` };
 }

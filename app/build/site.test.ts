@@ -10,6 +10,10 @@ describe('resolveSite', () => {
     });
   });
 
+  it('treats empty values (unset repository variables) as not set', () => {
+    expect(resolveSite({ WEJHATY_SITE_ORIGIN: '', WEJHATY_BASE_PATH: '' })).toEqual(resolveSite({}));
+  });
+
   it('supports a custom root domain', () => {
     expect(resolveSite({ WEJHATY_SITE_ORIGIN: 'https://wejhaty.eu.org', WEJHATY_BASE_PATH: '/' })).toEqual({
       origin: 'https://wejhaty.eu.org',
