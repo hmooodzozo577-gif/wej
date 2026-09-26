@@ -61,6 +61,11 @@ async function answerQuestionnaire(pick) {
     const clicked = await js(`
       const now = document.querySelector('.quiz-checkpoint .btn-primary');
       if (now) { now.click(); return true; }
+      if (document.querySelector('.lang-options')) {
+        if (!document.querySelector('.q-check[aria-checked="true"]')) document.querySelector('.q-check').click();
+        setTimeout(() => document.querySelector('.q-multi-actions .btn')?.click(), 50);
+        return true;
+      }
       const options = document.querySelectorAll('.q-option');
       if (options.length) { options[Math.min(${Number(pick)}, options.length - 1)].click(); return true; }
       return false;`);

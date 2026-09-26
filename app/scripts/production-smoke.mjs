@@ -157,6 +157,12 @@ for (const engine of engineNames) {
         if (now) { await now.click(); await tab.waitForTimeout(300); continue; }
         const options = await tab.$$('.q-option');
         if (options.length) { await options[Math.min(pick, options.length - 1)].click(); await tab.waitForTimeout(450); }
+        // v1.1 — the language list is multi-select: keep a choice, then Continue.
+        if (await tab.$('.lang-options')) {
+          if (!(await tab.$('.q-check[aria-checked="true"]'))) await tab.click('.q-check');
+          await tab.click('.q-multi-actions .btn');
+          await tab.waitForTimeout(450);
+        }
       }
       await tab.click('.quiz-passport .btn-ghost:last-child');
     };
@@ -181,6 +187,44 @@ for (const engine of engineNames) {
     check(errors.length === 0, `${engine} destination match without page errors`, errors.join(' | '));
     const flowViolations = await tab.evaluate(() => window.__cspViolations ?? []);
     check(flowViolations.length === 0, `${engine} destination match without Content-Security-Policy violations`, flowViolations.join(' | '));
+    await context.close();
+  }
+
+  // v1.1 travel needs (language, Islamic practice, halal food): asked after
+  // the Phase 14 questions, kept in this browser only, never sent anywhere.
+  {
+    const { context, tab, errors } = await page({ width: 1280, height: 900 }, 'light', 'ar');
+    const sent = [];
+    tab.on('request', (request) => sent.push(`${request.url()} ${request.postData() ?? ''}`));
+    await tab.goto(`${SITE}/quiz/wellness`, { waitUntil: 'networkidle' });
+    const seen = new Set();
+    for (let i = 0; i < 30 && !(await tab.$('.quiz-passport')); i += 1) {
+      const more = await tab.$('.quiz-checkpoint .btn-ghost');
+      if (more) { await more.click(); await tab.waitForTimeout(300); continue; }
+      const heading = (await tab.textContent('h2.q-text').catch(() => '')) ?? '';
+      if (/التواصل بلغة/.test(heading)) seen.add('language');
+      if (/شعائرك الإسلامية/.test(heading)) seen.add('islamic');
+      if (/طعام حلال/.test(heading)) seen.add('halal');
+      if (await tab.$('.lang-options')) {
+        seen.add('languages');
+        const boxes = await tab.$$('.q-check');
+        await boxes[0].click();
+        await boxes[1].click();
+        await tab.click('.q-multi-actions .btn');
+      } else {
+        await tab.click('.q-option');
+      }
+      await tab.waitForTimeout(450);
+    }
+    check(['language', 'languages', 'islamic', 'halal'].every((key) => seen.has(key)), `${engine} travel-need questions asked after the Phase 14 questions`, [...seen].join(','));
+    await tab.click('.quiz-passport .btn-ghost:last-child');
+    await tab.waitForURL(/\/results$/, { timeout: 15000 }).catch(() => {});
+    check(/\/results$/.test(tab.url()), `${engine} travel needs never reach the URL`, tab.url());
+    const stored = await tab.evaluate(() => localStorage.getItem('wejhaty.personalization.v1') ?? '');
+    check(/wellness-islamicPractice/.test(stored) && /wellness-languages":"ar,en"/.test(stored), `${engine} travel needs kept in this browser's profile`);
+    const leaks = sent.filter((line) => /languageImportance|-languages|islamicPractice|halalFood|"ar,en"/.test(line));
+    check(leaks.length === 0, `${engine} travel needs never sent over the network`, leaks.join(' | ').slice(0, 300));
+    check(errors.length === 0, `${engine} travel needs without page errors`, errors.join(' | '));
     await context.close();
   }
   } catch (error) {
