@@ -1,0 +1,58 @@
+name: Domain status
+
+# v1.1 (Stage 19) — read-only look at a candidate free domain: its public
+# DNS (NS, SOA, A, CNAME), the EU.org WHOIS answer, and the official EU.org
+# policy pages it is governed by. It registers nothing, changes no DNS and
+# needs no secret; run it by hand to see whether a requested domain is
+# delegated yet.
+
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: 'Domain to inspect'
+        required: true
+        default: 'wejhaty.eu.org'
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate the input
+        env:
+          DOMAIN: ${{ inputs.domain }}
+        run: |
+          if ! printf '%s' "$DOMAIN" | grep -Eq '^[a-z0-9-]+(\.[a-z0-9-]+)+$'; then
+            echo "Not a domain name: $DOMAIN" >&2
+            exit 1
+          fi
+
+      - name: Public DNS
+        env:
+          DOMAIN: ${{ inputs.domain }}
+        run: |
+          for type in NS SOA A AAAA CNAME; do
+            echo "== $type"
+            dig +short "$DOMAIN" "$type" @1.1.1.1 || true
+          done
+
+      - name: EU.org WHOIS
+        if: endsWith(inputs.domain, '.eu.org')
+        env:
+          DOMAIN: ${{ inputs.domain }}
+        run: |
+          sudo apt-get install -y -qq whois > /dev/null 2>&1 || true
+          whois -h whois.eu.org "$DOMAIN" | head -n 60 || true
+
+      - name: Official EU.org policy pages
+        if: endsWith(inputs.domain, '.eu.org')
+        run: |
+          for page in policy.html opendomains.html faq.html; do
+            echo "== https://nic.eu.org/$page"
+            curl -sS --max-time 20 "https://nic.eu.org/$page" | sed -e 's/<[^>]*>//g' | tr -s ' \n' | head -c 6000 || true
+            echo
+          done
