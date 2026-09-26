@@ -8,8 +8,10 @@
 // No request writes anything (no event, rating, feedback or admin action),
 // no credential is ever sent, and each check is tried at most twice.
 
-export const DEFAULT_SITE = 'https://hmooodzozo577-gif.github.io/wej/';
-export const DEFAULT_WORKER = 'https://wejhaty-travel-worker.hmooodzozo577.workers.dev';
+import { PRODUCTION_SITE_URL, PRODUCTION_WORKER_URL } from './productionUrls.mjs';
+
+export const DEFAULT_SITE = PRODUCTION_SITE_URL;
+export const DEFAULT_WORKER = PRODUCTION_WORKER_URL;
 const USER_AGENT = 'WejhatyUptime/1.1 (+https://github.com/hmooodzozo577-gif/wej)';
 
 function withSlash(url) {

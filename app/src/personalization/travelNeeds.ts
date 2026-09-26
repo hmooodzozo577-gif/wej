@@ -217,8 +217,6 @@ interface EvidenceSnapshot {
 const EVIDENCE = evidenceJson as EvidenceSnapshot;
 const EVIDENCE_BY_CODE = new Map(EVIDENCE.entries.map((entry) => [entry.countryCode, entry]));
 
-export const TRAVEL_EVIDENCE_UPDATED_AT: string | null = EVIDENCE.snapshotUpdatedAt;
-
 export type EvidenceTier = 'strong' | 'some' | 'insufficient' | 'noData';
 
 export function evidenceTier(countryCode: string, kind: 'mosques' | 'halalPlaces'): { tier: EvidenceTier; count?: number } {

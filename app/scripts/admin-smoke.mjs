@@ -4,7 +4,8 @@
 // credentials. It never sends a token and never writes anything.
 //
 // Usage: node scripts/admin-smoke.mjs [workerUrl]
-const WORKER = (process.argv[2] || 'https://wejhaty-travel-worker.hmooodzozo577.workers.dev').replace(/\/$/, '');
+import { PRODUCTION_WORKER_URL } from './lib/productionUrls.mjs';
+const WORKER = (process.argv[2] || PRODUCTION_WORKER_URL).replace(/\/$/, '');
 let checks = 0;
 let failures = 0;
 const check = (ok, label, detail = '') => {

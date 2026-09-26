@@ -2,8 +2,9 @@
 // the live site WITHOUT running JavaScript. Plain HTTP GETs (no browser),
 // so it writes nothing anywhere.
 //
-//   node scripts/seo-smoke.mjs [site]   (default https://hmooodzozo577-gif.github.io/wej)
-const SITE = `${(process.argv[2] || 'https://hmooodzozo577-gif.github.io/wej').replace(/\/$/, '')}/`;
+//   node scripts/seo-smoke.mjs [site]   (default: PRODUCTION_SITE_URL, lib/productionUrls.mjs)
+import { PRODUCTION_SITE_URL } from './lib/productionUrls.mjs';
+const SITE = `${(process.argv[2] || PRODUCTION_SITE_URL).replace(/\/$/, '')}/`;
 const UA = 'WejhatySeoSmoke/1.1 (+read-only release check)';
 
 let passed = 0;

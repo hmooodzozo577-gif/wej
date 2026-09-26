@@ -13,11 +13,12 @@
 // safari-smoke.mjs for real Safari on macOS).
 // Exit status 0 only when every check passes.
 import { chromium, firefox, webkit } from 'playwright';
+import { PRODUCTION_SITE_URL, PRODUCTION_WORKER_HOST } from './lib/productionUrls.mjs';
 
-const SITE = (process.argv[2] || 'https://hmooodzozo577-gif.github.io/wej').replace(/\/$/, '');
+const SITE = (process.argv[2] || PRODUCTION_SITE_URL).replace(/\/$/, '');
 const ENGINES = { chromium, firefox, webkit, msedge: { launch: () => chromium.launch({ channel: 'msedge' }) } };
 const engineNames = (process.argv[3] || 'chromium,firefox,webkit').split(',').filter((name) => name in ENGINES);
-const WORKER_HOST = 'wejhaty-travel-worker.hmooodzozo577.workers.dev';
+const WORKER_HOST = PRODUCTION_WORKER_HOST;
 let checks = 0;
 let failures = 0;
 const check = (ok, label, detail = '') => {

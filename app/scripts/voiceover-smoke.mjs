@@ -10,8 +10,9 @@
 // Usage: node scripts/voiceover-smoke.mjs [siteUrl]
 import { execFileSync } from 'node:child_process';
 import { macOSActivate, voiceOver } from '@guidepup/guidepup';
+import { PRODUCTION_SITE_URL } from './lib/productionUrls.mjs';
 
-const SITE = (process.argv[2] || 'https://hmooodzozo577-gif.github.io/wej').replace(/\/$/, '');
+const SITE = (process.argv[2] || PRODUCTION_SITE_URL).replace(/\/$/, '');
 let checks = 0;
 let failures = 0;
 const check = (ok, label, detail = '') => {

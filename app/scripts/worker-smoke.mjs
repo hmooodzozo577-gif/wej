@@ -9,8 +9,9 @@
 //
 // Usage: node scripts/worker-smoke.mjs [workerUrl]
 // Exit status 0 only when every check passes.
-const WORKER = (process.argv[2] || 'https://wejhaty-travel-worker.hmooodzozo577.workers.dev').replace(/\/$/, '');
-const SITE_ORIGIN = 'https://hmooodzozo577-gif.github.io';
+import { PRODUCTION_WORKER_URL, PRODUCTION_SITE_ORIGIN } from './lib/productionUrls.mjs';
+const WORKER = (process.argv[2] || PRODUCTION_WORKER_URL).replace(/\/$/, '');
+const SITE_ORIGIN = PRODUCTION_SITE_ORIGIN;
 let checks = 0;
 let failures = 0;
 const check = (ok, label, detail = '') => {

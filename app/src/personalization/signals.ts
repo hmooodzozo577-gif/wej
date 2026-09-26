@@ -23,6 +23,8 @@ import { QUESTION_BANKS, landBorderQuestionId } from '../data/questionBanks';
 import type { PurposeId, Question, RecommendationProfileKey } from '../data/types';
 import type { Answers } from '../engine/types';
 import {
+  IMPORTANCE_SOME,
+  IMPORTANCE_VERY,
   TRAVEL_NEED_BASE_WEIGHT,
   parseLanguageAnswer,
   travelNeedQuestionId,
@@ -88,7 +90,7 @@ function signalFor(question: Question, answer: string | number, factor: FactorId
 }
 
 function importanceOf(value: unknown): number | null {
-  return value === 100 || value === 60 || value === 0 ? value : null;
+  return value === IMPORTANCE_VERY || value === IMPORTANCE_SOME || value === 0 ? value : null;
 }
 
 /** personal-match-1.1 — the three optional travel needs. Weight follows

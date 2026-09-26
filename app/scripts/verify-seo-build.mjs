@@ -1,15 +1,16 @@
 // v1.1 — checks a finished build for the SEO guarantees before it ships.
 //
 //   node scripts/verify-seo-build.mjs [dist] [site-url]
-//     site-url defaults to https://hmooodzozo577-gif.github.io/wej/
+//     site-url defaults to PRODUCTION_SITE_URL (lib/productionUrls.mjs)
 //
 // Reads only the files the build wrote: no network, no browser. Exits 1 on
 // the first class of failure, listing every offending file.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { PRODUCTION_SITE_URL } from './lib/productionUrls.mjs';
 
 const dist = process.argv[2] ?? 'dist';
-const siteUrl = process.argv[3] ?? 'https://hmooodzozo577-gif.github.io/wej/';
+const siteUrl = process.argv[3] ?? PRODUCTION_SITE_URL;
 const site = new URL(siteUrl);
 const basePath = site.pathname;
 

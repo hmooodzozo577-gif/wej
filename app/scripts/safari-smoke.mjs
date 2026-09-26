@@ -9,9 +9,10 @@
 //
 // Usage: node scripts/safari-smoke.mjs [siteUrl]
 import { Builder } from 'selenium-webdriver';
+import { PRODUCTION_SITE_URL, PRODUCTION_WORKER_URL } from './lib/productionUrls.mjs';
 
-const SITE = (process.argv[2] || 'https://hmooodzozo577-gif.github.io/wej').replace(/\/$/, '');
-const WORKER = 'https://wejhaty-travel-worker.hmooodzozo577.workers.dev';
+const SITE = (process.argv[2] || PRODUCTION_SITE_URL).replace(/\/$/, '');
+const WORKER = PRODUCTION_WORKER_URL;
 const IOS_UDID = process.env.IOS_UDID || '';
 const NAME = IOS_UDID ? 'ios-safari' : 'safari';
 let checks = 0;
