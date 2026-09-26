@@ -150,8 +150,8 @@ export function factorDetail(factor: FactorResult, lang: Lang): string {
       const limited = outcome === 'partial' ? (ar ? ' — عدد محدود' : ' — a limited number') : '';
       if (factor.factor === 'halalFood') {
         return ar
-          ? `أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: ${count}${limited}`
-          : `${count} places tagged as serving halal food on OpenStreetMap${limited}`;
+          ? `أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: ${count}`
+          : `${count} places tagged as serving halal food on OpenStreetMap`;
       }
       return ar
         ? `مساجد ومصليات مسجّلة على خريطة OpenStreetMap: ${count}${limited}`

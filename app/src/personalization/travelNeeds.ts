@@ -19,13 +19,17 @@
 //     many countries where it is not official — so it is "not counted",
 //     never a low score.
 //   - Islamic practice: mosques / Muslim places of worship MAPPED in
-//     OpenStreetMap (islamicTravelEvidence.json). Halal food: places
-//     explicitly TAGGED as serving halal food there. Neither is read from
-//     religion statistics, an official religion, a name or a region; no
-//     country or society is rated for religiosity. Mapping completeness
-//     varies, so only positive evidence counts and anything below the
-//     evidence floor is "not counted" — a Muslim-majority country where
-//     halal is simply the default (and rarely tagged) is not marked down.
+//     OpenStreetMap (islamicTravelEvidence.json), by count and, for small
+//     countries, by density per land area. Halal food: places explicitly
+//     TAGGED as serving halal food there. Neither is read from religion
+//     statistics, an official religion, a name or a region; no country or
+//     society is rated for religiosity. Mapping completeness varies, so
+//     only positive evidence counts and anything below the evidence floor
+//     is "not counted".
+//   - Halal has ONE level on purpose: where halal is simply the default it
+//     is rarely tagged, so a count of tags cannot say that one country is
+//     "less halal-friendly" than another. Enough tagged places is positive
+//     evidence; fewer is not counted — never a partial or low score.
 //
 // Privacy: these answers stay in the local profile. They are never sent to
 // the Worker, analytics or admin, never put in a URL, a share text or page
@@ -53,11 +57,15 @@ export const TRAVEL_NEED_COPY = {
 export const IMPORTANCE_VERY = 100;
 export const IMPORTANCE_SOME = 60;
 
-/** Evidence floors (counts of places mapped in OpenStreetMap). At or above
- *  STRONG: a good match (fit 100). At or above SOME: a partial match (fit
- *  60). Below SOME: not counted — too little evidence either way. */
-export const MOSQUE_EVIDENCE = { strong: 200, some: 20 } as const;
-export const HALAL_EVIDENCE = { strong: 100, some: 10 } as const;
+/** Evidence floors (places mapped in OpenStreetMap).
+ *  Mosques: at least STRONG places, or at least SOME places at a density of
+ *  STRONG_DENSITY per 1,000 km² (a small country with many mosques), is a
+ *  good match (fit 100); at least SOME is a partial match (fit 60); fewer
+ *  is not counted.
+ *  Halal: at least FLOOR tagged places is a good match (fit 100); fewer is
+ *  not counted (see the header for why there is no partial level). */
+export const MOSQUE_EVIDENCE = { strong: 200, some: 20, strongDensityPer1000Km2: 5 } as const;
+export const HALAL_EVIDENCE = { floor: 20 } as const;
 export const STRONG_EVIDENCE_FIT = 100;
 export const SOME_EVIDENCE_FIT = 60;
 
@@ -219,12 +227,17 @@ const EVIDENCE_BY_CODE = new Map(EVIDENCE.entries.map((entry) => [entry.countryC
 
 export type EvidenceTier = 'strong' | 'some' | 'insufficient' | 'noData';
 
-export function evidenceTier(countryCode: string, kind: 'mosques' | 'halalPlaces'): { tier: EvidenceTier; count?: number } {
+export function evidenceTier(
+  countryCode: string,
+  kind: 'mosques' | 'halalPlaces',
+  areaKm2?: number,
+): { tier: EvidenceTier; count?: number } {
   const entry = EVIDENCE_BY_CODE.get(countryCode);
   const count = entry?.status === 'ok' ? entry[kind] : undefined;
   if (typeof count !== 'number') return { tier: 'noData' };
-  const floors = kind === 'mosques' ? MOSQUE_EVIDENCE : HALAL_EVIDENCE;
-  if (count >= floors.strong) return { tier: 'strong', count };
-  if (count >= floors.some) return { tier: 'some', count };
+  if (kind === 'halalPlaces') return { tier: count >= HALAL_EVIDENCE.floor ? 'strong' : 'insufficient', count };
+  const dense = typeof areaKm2 === 'number' && areaKm2 > 0 && (count / areaKm2) * 1000 >= MOSQUE_EVIDENCE.strongDensityPer1000Km2;
+  if (count >= MOSQUE_EVIDENCE.strong || (count >= MOSQUE_EVIDENCE.some && dense)) return { tier: 'strong', count };
+  if (count >= MOSQUE_EVIDENCE.some) return { tier: 'some', count };
   return { tier: 'insufficient', count };
 }

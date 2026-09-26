@@ -13,12 +13,15 @@
 // safari-smoke.mjs for real Safari on macOS).
 // Exit status 0 only when every check passes.
 import { chromium, firefox, webkit } from 'playwright';
+import { readFileSync } from 'node:fs';
 import { PRODUCTION_SITE_URL, PRODUCTION_WORKER_HOST } from './lib/productionUrls.mjs';
 
 const SITE = (process.argv[2] || PRODUCTION_SITE_URL).replace(/\/$/, '');
 const ENGINES = { chromium, firefox, webkit, msedge: { launch: () => chromium.launch({ channel: 'msedge' }) } };
 const engineNames = (process.argv[3] || 'chromium,firefox,webkit').split(',').filter((name) => name in ENGINES);
 const WORKER_HOST = PRODUCTION_WORKER_HOST;
+// The version the footer must show: the app's one version source.
+const APP_VERSION = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 let checks = 0;
 let failures = 0;
 const check = (ok, label, detail = '') => {
@@ -225,6 +228,74 @@ for (const engine of engineNames) {
     const leaks = sent.filter((line) => /languageImportance|-languages|islamicPractice|halalFood|"ar,en"/.test(line));
     check(leaks.length === 0, `${engine} travel needs never sent over the network`, leaks.join(' | ').slice(0, 300));
     check(errors.length === 0, `${engine} travel needs without page errors`, errors.join(' | '));
+    await context.close();
+  }
+
+  // v1.1 surfaces: version footer, Favorites, Compare, Share, a v1.0
+  // profile migrating, and the passport selector's location default.
+  {
+    const { context, tab, errors } = await page({ width: 1280, height: 900 }, 'light', 'ar');
+    check(((await tab.textContent('.footer-version')) ?? '').includes(`v${APP_VERSION}`), `${engine} footer shows v${APP_VERSION}`);
+
+    await tab.goto(`${SITE}/destination/japan/`, { waitUntil: 'networkidle' });
+    const favorite = '.destination-actions button[aria-pressed]';
+    await tab.click(favorite);
+    check((await tab.getAttribute(favorite, 'aria-pressed')) === 'true', `${engine} favorite toggles on`);
+    await tab.reload({ waitUntil: 'networkidle' });
+    check((await tab.getAttribute(favorite, 'aria-pressed')) === 'true', `${engine} favorite survives a reload`);
+    const storedFavorites = await tab.evaluate(() => localStorage.getItem('wejhaty.favorites.v1'));
+    check(storedFavorites === '{"version":1,"ids":["japan"]}', `${engine} favorites store canonical ids only`, String(storedFavorites));
+    await tab.goto(`${SITE}/favorites/`, { waitUntil: 'networkidle' });
+    check(/اليابان/.test((await tab.textContent('main')) ?? ''), `${engine} Favorites page lists Japan`);
+
+    await tab.goto(`${SITE}/destination/japan/`, { waitUntil: 'networkidle' });
+    if (engine === 'chromium' || engine === 'msedge') await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(SITE).origin });
+    await tab.click('.share-button');
+    await tab.waitForTimeout(500);
+    const shareUrl = `${SITE}/destination/japan/`;
+    const manual = await tab.$eval('.share-manual input', (input) => input.value).catch(() => null);
+    const announced = (await tab.textContent('#wj-announcer').catch(() => '')) ?? '';
+    const copied = engine === 'chromium' || engine === 'msedge' ? await tab.evaluate(() => navigator.clipboard.readText()).catch(() => null) : null;
+    check(manual === shareUrl || copied === shareUrl || /نُسخ الرابط/.test(announced), `${engine} Share gives the canonical destination link`, String(manual ?? copied ?? announced));
+
+    await tab.goto(`${SITE}/compare?ids=japan,france,eg`, { waitUntil: 'networkidle' });
+    check((await tab.$$('thead th[scope="col"]')).length === 3, `${engine} Compare shows three destinations`);
+    check(/noindex/.test((await tab.getAttribute('meta[name="robots"]', 'content')) ?? ''), `${engine} Compare is noindex`);
+    await tab.goto(`${SITE}/compare?ids=japan,france,eg,uk`, { waitUntil: 'networkidle' });
+    check((await tab.$$('thead th[scope="col"]')).length === 3, `${engine} Compare never shows a fourth destination`);
+
+    await tab.evaluate(() => localStorage.setItem('wejhaty.personalization.v1', JSON.stringify({ schemaVersion: 1, purpose: 'tourism', answers: { 'tourism-climate': 'mediterranean', 'tourism-cost': 2 }, path: ['tourism-climate', 'tourism-cost'], createdAt: '2026-09-01T00:00:00.000Z', updatedAt: '2026-09-01T00:00:00.000Z' })));
+    await tab.goto(`${SITE}/destination/japan/`, { waitUntil: 'networkidle' });
+    const migrated = await tab.textContent('.personal-match-card:not(.is-empty) .personal-match-value b').catch(() => null);
+    check(/^\d+%$/.test(migrated ?? ''), `${engine} a v1.0 profile migrates and still shows a Personal Match`, String(migrated));
+    check(errors.length === 0, `${engine} v1.1 surfaces without page errors`, errors.join(' | '));
+    await context.close();
+  }
+
+  // Passport: an already-shared location only pre-fills the selector.
+  if (engine === 'chromium' || engine === 'msedge') {
+    const { context, tab, errors, passportLeaks } = await page({ width: 1280, height: 900 }, 'light', 'ar');
+    await context.grantPermissions(['geolocation'], { origin: new URL(SITE).origin });
+    await context.setGeolocation({ latitude: 24.7136, longitude: 46.6753 });
+    await tab.goto(`${SITE}/quiz/tourism`, { waitUntil: 'networkidle' });
+    // The location card's own button (its wording changes once the browser
+    // already allows location); a real request still needs this click.
+    const allow = await tab.$('.location-intro .btn-gold');
+    if (allow) await allow.click();
+    await tab.waitForTimeout(1500);
+    for (let i = 0; i < 20 && !(await tab.$('.quiz-passport')); i += 1) {
+      const now = await tab.$('.quiz-checkpoint .btn-primary');
+      if (now) { await now.click(); await tab.waitForTimeout(300); continue; }
+      const option = await tab.$('.q-option');
+      if (option) { await option.click(); await tab.waitForTimeout(450); }
+    }
+    await tab.waitForTimeout(800);
+    const shown = (await tab.textContent('#passport-select').catch(() => '')) ?? '';
+    check(/السعودية/.test(shown), `${engine} passport selector starts at the current country`, shown.trim().slice(0, 40));
+    const stored = await tab.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }));
+    check(!/passport|"SA"/.test(stored), `${engine} the default passport is not stored`);
+    check(passportLeaks.length === 0, `${engine} the default passport is not sent`, passportLeaks.join(' '));
+    check(errors.length === 0, `${engine} passport default without page errors`, errors.join(' | '));
     await context.close();
   }
   } catch (error) {

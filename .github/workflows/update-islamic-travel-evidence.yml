@@ -4,7 +4,7 @@ name: Update Islamic-travel evidence
 # country, from OpenStreetMap through the public Overpass API. Personal
 # Match uses these counts only as POSITIVE evidence for two optional,
 # local-only traveller preferences; a country with no evidence is "not
-# counted", never scored down (see app/src/personalization/islamicTravel.ts).
+# counted", never scored down (see app/src/personalization/travelNeeds.ts).
 # Opens a pull request only when the data changed and validated; never
 # pushes to the deploy branch. Data (c) OpenStreetMap contributors, ODbL.
 on:
@@ -57,6 +57,20 @@ jobs:
           name: islamic-travel-evidence-snapshot
           path: app/src/data/generated/islamicTravelEvidence.json
           retention-days: 14
+
+      # The generation takes over an hour. If the deploy branch moved in the
+      # meantime (in particular a workflow file), a branch built on the old
+      # checkout is refused by GitHub ("create or update workflow ...
+      # without workflows permission", run 36202043431). So the new data is
+      # placed on the deploy branch's CURRENT head, and compared with that.
+      - name: Move the snapshot onto the latest deploy-branch head
+        working-directory: app
+        run: |
+          set -euo pipefail
+          cp src/data/generated/islamicTravelEvidence.json "$RUNNER_TEMP/islamicTravelEvidence.json"
+          git fetch --depth=1 origin claude/marhaba-kxry8l
+          git checkout --force -B snapshot-base FETCH_HEAD
+          cp "$RUNNER_TEMP/islamicTravelEvidence.json" src/data/generated/islamicTravelEvidence.json
 
       - name: Check whether the snapshot actually changed
         id: diff

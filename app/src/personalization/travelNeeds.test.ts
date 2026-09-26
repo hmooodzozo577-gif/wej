@@ -19,6 +19,14 @@ vi.mock('../data/generated/islamicTravelEvidence.json', () => ({
       { countryCode: 'GB', status: 'ok', mosques: 1500, halalPlaces: 800 },
       { countryCode: 'JP', status: 'ok', mosques: 60, halalPlaces: 40 },
       { countryCode: 'MC', status: 'ok', mosques: 0, halalPlaces: 0 },
+      // Muslim-majority, halal the default: few tags, but above the floor.
+      { countryCode: 'EG', status: 'ok', mosques: 2362, halalPlaces: 97 },
+      // Just under the halal floor.
+      { countryCode: 'OM', status: 'ok', mosques: 2126, halalPlaces: 10 },
+      // A small country with many mosques for its size (density rule).
+      { countryCode: 'SG', status: 'ok', mosques: 76, halalPlaces: 331 },
+      // A large country with the same kind of count stays partial.
+      { countryCode: 'AU', status: 'ok', mosques: 124, halalPlaces: 107 },
       { countryCode: 'FR', status: 'unavailable' },
     ],
   },
@@ -164,23 +172,32 @@ describe('evaluation — only positive evidence counts', () => {
     expect(factorDetail(result, 'ar')).toMatch(/لا يعني ذلك صعوبة التواصل/);
   });
 
-  it('mapped mosques: many is a good fit, some is partial, too few is not counted', () => {
+  it('mapped mosques: many (or dense) is a good fit, some is partial, too few is not counted', () => {
     const answers = needs({ [id('islamicPractice')]: 100 });
     expect(factor('ksa', answers, 'islamicPractice')).toMatchObject({ outcome: 'positive', fit: 100, countryValue: 5000 });
     expect(factor('uk', answers, 'islamicPractice')).toMatchObject({ outcome: 'positive', fit: 100 });
     expect(factor('japan', answers, 'islamicPractice')).toMatchObject({ outcome: 'partial', fit: 60, countryValue: 60 });
+    // 76 mosques in about 700 km² is many for the size; 124 across Australia is not.
+    expect(factor('singapore', answers, 'islamicPractice')).toMatchObject({ outcome: 'positive', fit: 100, countryValue: 76 });
+    expect(factor('australia', answers, 'islamicPractice')).toMatchObject({ outcome: 'partial', fit: 60, countryValue: 124 });
     expect(factor('mc', answers, 'islamicPractice')).toMatchObject({ outcome: 'unavailable', reason: 'noEvidence', countryValue: 0 });
     expect(factor('france', answers, 'islamicPractice')).toMatchObject({ outcome: 'unavailable', reason: 'noData' });
     // Not in the snapshot at all.
     expect(factor('usa', answers, 'islamicPractice')).toMatchObject({ outcome: 'unavailable', reason: 'noData' });
   });
 
-  it('halal is judged on its own evidence: few tags in a Muslim-majority country is not counted, not low', () => {
+  it('halal is judged on its own evidence, with one level: enough tags is a match, fewer is not counted', () => {
     const answers = needs({ [id('halalFood')]: 100 });
     expect(factor('ksa', answers, 'halalFood')).toMatchObject({ outcome: 'unavailable', reason: 'noEvidence' });
     expect(matchFor('ksa', answers).score).toBe(matchFor('ksa', CORE).score);
     expect(factor('uk', answers, 'halalFood')).toMatchObject({ outcome: 'positive', fit: 100 });
     expect(factor('malaysia', answers, 'halalFood')?.outcome).toBe('positive');
+    // No partial level: 97 tags in Egypt and 800 in the UK are both a match,
+    // so a tagging habit never ranks one country as "less halal" than another.
+    expect(factor('eg', answers, 'halalFood')).toMatchObject({ outcome: 'positive', fit: 100 });
+    expect(factor('japan', answers, 'halalFood')).toMatchObject({ outcome: 'positive', fit: 100 });
+    expect(factor('om', answers, 'halalFood')).toMatchObject({ outcome: 'unavailable', reason: 'noEvidence' });
+    for (const dest of WORLD_CATALOG) expect(computePersonalMatch(dest, normalizePreferences('tourism', answers)).factors.find((f) => f.factor === 'halalFood')?.outcome).not.toBe('partial');
     // Independent questions: halal evidence says nothing about mosques and vice versa.
     const both = needs({ [id('islamicPractice')]: 100, [id('halalFood')]: 100 });
     expect(factor('ksa', both, 'islamicPractice')?.outcome).toBe('positive');
@@ -213,7 +230,7 @@ describe('evaluation — only positive evidence counts', () => {
     const match = matchFor('japan', answers);
     const lines = match.factors.map((f) => factorDetail(f, 'en')).join(' ');
     expect(lines).toMatch(/60 mosques and Muslim prayer places mapped on OpenStreetMap — a limited number/);
-    expect(lines).toMatch(/40 places tagged as serving halal food on OpenStreetMap — a limited number/);
+    expect(lines).toMatch(/40 places tagged as serving halal food on OpenStreetMap(?! —)/);
     const all = [
       ...['ar', 'en'].flatMap((lang) => WORLD_CATALOG.slice(0, 40).flatMap((dest) => matchFor(dest.id, answers).factors.map((f) => factorDetail(f, lang as 'ar' | 'en')))),
       personalSummary(match, normalizePreferences('tourism', answers), byId('japan'), 'ar'),

@@ -123,11 +123,12 @@ function evaluateLanguage(signal: PreferenceSignal, dest: CatalogEntry): FactorR
 }
 
 /** personal-match-1.1 — Islamic practice (mapped mosques / Muslim places
- *  of worship) and halal food (places tagged as serving halal food), from
- *  the OpenStreetMap snapshot. Only positive evidence counts; too little
- *  mapped is NOT counted, never a low score. */
+ *  of worship, by count or density) and halal food (places tagged as
+ *  serving halal food), from the OpenStreetMap snapshot. Only positive
+ *  evidence counts; too little mapped is NOT counted, never a low score. */
 function evaluateEvidence(signal: PreferenceSignal, dest: CatalogEntry): FactorResult {
-  const { tier, count } = evidenceTier(dest.countryCode, signal.factor === 'halalFood' ? 'halalPlaces' : 'mosques');
+  const kind = signal.factor === 'halalFood' ? 'halalPlaces' : 'mosques';
+  const { tier, count } = evidenceTier(dest.countryCode, kind, countryInfoOf(dest.id)?.areaKm2);
   if (tier === 'noData') return unavailable(signal, 'noData');
   if (tier === 'insufficient') return { ...unavailable(signal, 'noEvidence'), countryValue: count };
   return evaluated(signal, tier === 'strong' ? STRONG_EVIDENCE_FIT : SOME_EVIDENCE_FIT, { countryValue: count });
