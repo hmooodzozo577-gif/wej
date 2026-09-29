@@ -1,17 +1,96 @@
 # Wejhaty — release record
 
-Status: **WEJHATY v1.1.0 RC1 — TECHNICALLY VERIFIED, PRODUCTION-VERIFIED,
-AWAITING USER ACCEPTANCE (2026-09-26).** **WEJHATY v1.0.0 — FINAL RELEASE
-(2026-09-24)** remains the accepted release: Phase 20 and Phase 21
-USER-ACCEPTED. Current truth lives in `PROJECT_STATE.md` (state v43 and its
-known-limitations register); this file records what each release and
-candidate is, and how it was checked.
+Status: **WEJHATY v1.1.0 RC2 — FINAL UI CLEANUP + DATA METHODOLOGY &
+ATTRIBUTION PASS — TECHNICALLY VERIFIED, PRODUCTION-VERIFIED, AWAITING USER
+ACCEPTANCE (2026-09-29).** RC1 (2026-09-26) is kept unchanged as a
+historical candidate. **WEJHATY v1.0.0 — FINAL RELEASE (2026-09-24)**
+remains the accepted release. Current truth lives in `PROJECT_STATE.md`
+(state v44 and its known-limitations register); this file records what
+each release and candidate is, and how it was checked.
 
 Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
 PRODUCTION-VERIFIED, USER-VERIFIED, USER-ACCEPTED, UNVERIFIED, DEFERRED,
 BLOCKED, FROZEN, CANCELLED, PENDING HUMAN APPROVAL.
 
-# v1.1.0 RC1 — `wejhaty-v1.1.0-rc1` (AWAITING USER ACCEPTANCE)
+# v1.1.0 RC2 — `wejhaty-v1.1.0-rc2` (AWAITING USER ACCEPTANCE)
+
+## v1.1.0-RC2.1 What it contains
+
+RC1 plus exactly:
+
+1. **Footer cleanup** (the one issue found in the user's RC1 review). The
+   footer no longer carries a Favorites link.
+   - Favorites stays in the header at every width, and in the mobile menu
+     below 861 px.
+   - Between 861 and 1099 px, "How it works" steps aside instead, because
+     five links do not fit on one line there.
+2. **Personal Match 1.2**. The partial mosque level is removed.
+   - It lowered a match below "not counted" in 3,664 of 10,560 audited
+     cases.
+   - Answering a travel need can now never lower a score.
+   - Thresholds are unchanged.
+3. **ODbL attribution** under «لماذا تناسبك هذه الوجهة؟» when a travel need
+   is used.
+   - It credits OpenStreetMap contributors and world-countries
+     (mledoze/countries).
+   - It states that the thresholds are Wejhaty's own.
+   - Not-counted factors show the OpenStreetMap count.
+4. **Source, licence and methodology documentation**:
+   `docs/DATA_SOURCES_V1_1.md`, `docs/PERSONAL_MATCH_V1_1.md`,
+   `docs/audits/DATA_METHODOLOGY_RC2.md`, `docs/PRIVACY_V1_1.md`.
+5. **Tests and smoke checks** for the above:
+   - per-suite time allowances for two heavy suites;
+   - the Safari smoke waits for the page to load before checking styles.
+
+Not changed: Phase 14 (`app/src/engine` byte-identical to v1.0.0), the
+Passport (`app/src/entry` identical), Favorites storage, Compare, Share,
+SEO architecture, Admin, the Worker, the visual identity, the app version
+(1.1.0). Nothing is user-accepted yet.
+
+## v1.1.0-RC2.2 Final visual check
+
+Arabic first, then English; Light and Dark; a phone and a desktop.
+
+1. The footer shows brand, «تواصل واقترح أو أبلغ عن مشكلة», the reference
+   note and `وجهتي v1.1.0`. There is **no** «المفضلة» in the footer, and
+   no gap where it was.
+2. «المفضلة» is in the header on a desktop, on a tablet or narrow laptop
+   window (about 900–1100 px wide), and in the phone menu. It opens your
+   Favorites.
+3. Favorites and Compare work as in RC1: save, reload, remove, compare two
+   or three.
+4. On a destination, with the Islamic-practice or halal question answered,
+   «لماذا تناسبك هذه الوجهة؟» ends with a short source note:
+   - «أعداد المساجد والأماكن الحلال من بيانات OpenStreetMap (© مساهمو
+     OpenStreetMap)، متاحة بترخيص ODbL…»;
+   - «…حدود احتسابها فمن منهجية وجهتي».
+   The links open the OpenStreetMap copyright page, mledoze/countries and
+   the licence.
+5. A destination with few mapped mosques says the OpenStreetMap count, "أقل
+   مما تشترطه منهجية وجهتي", and that this does not mean practice is hard.
+   It is listed under «لم يُحتسب», never as a lower match.
+6. Everything else from the RC1 checklist still behaves the same.
+
+Say "accepted" (or list what to change). Nothing is marked accepted, and no
+final v1.1.0 is cut, until you do.
+
+## v1.1.0-RC2.3 Integrity and production verification
+
+| Item | Value |
+|---|---|
+| RC2 commit | the commit that adds this section (read its hash from the refs below) |
+| Branch | `release/wejhaty-v1.1.0-rc2` → RC2 commit |
+| Tag | `wejhaty-v1.1.0-rc2` (annotated) → RC2 commit |
+| App source | `app/` identical to `e0a6134`; the RC2 commit changes documentation only |
+| Pages deploy | run 36597640040 (`e0a6134`); the app build is unchanged since `c8e01e0` (run 36590837434) |
+| Worker | unchanged since v1.0.0 — version `b1c2815a-5557-41fd-a3d8-025af15524ff`, not redeployed; Worker tests 273/273, `tsc` 0 |
+| Tests | frontend 1203/1203 (118 files, two consecutive runs); `tsc`, oxlint, build clean; `verify-seo-build` 4 804/4 804 on `/wej/` and root builds |
+| Browser QA (local) | matrix 1 200/1 200; RC2 footer/header/notice 340/340; axe 0 violations on 48 states; Favorites/Compare adversarial 49/49 and flow 27/27; smoke on the RC2 build (Chromium) 68/68 |
+| Production smoke | run 36597749469 (`e0a6134`) — Chromium/Firefox/WebKit/Edge 243/243 (0 CSP violations), SEO without JavaScript 2 182/2 182, Worker 19/19, admin 15/15, desktop Safari 26.6.2 16/16, iOS Simulator Mobile Safari 26.5 16/16, real VoiceOver 4/4; read-only; deployed `assets/index-CpqLXvsI.js` / `assets/index-DpoUvE_F.css`. Run 36595061886 failed only in the iOS Simulator (styles read before the stylesheet loaded on a slow simulator); fixed in the smoke script, not the site |
+| RC1 | unchanged: `release/wejhaty-v1.1.0-rc1` and tag `wejhaty-v1.1.0-rc1` (object `aa2ee70`) → `cee6e75` |
+| v1.0.0 | untouched: tag `wejhaty-v1.0.0` (object `e14eae3`) → `df54567`; `release/wejhaty-v1.0.0`, `backup/wejhaty-v1.0.0-final`, `backup/wejhaty-v1.0.0-pre-v1.1` → `df54567` |
+
+# v1.1.0 RC1 — `wejhaty-v1.1.0-rc1` (historical; superseded by RC2)
 
 ## v1.1.0-RC1.1 What it contains
 

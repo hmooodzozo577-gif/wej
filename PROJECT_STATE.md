@@ -5,7 +5,91 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-### Current verified state — 2026-09-26 (WEJHATY v1.1.0 RC1 — AWAITING USER ACCEPTANCE)
+### Current verified state — 2026-09-29 (WEJHATY v1.1.0 RC2 — AWAITING USER ACCEPTANCE)
+
+- State document version: 44. **Status: WEJHATY v1.1.0 RC2 — FINAL UI
+  CLEANUP + DATA METHODOLOGY & ATTRIBUTION PASS — TECHNICALLY VERIFIED,
+  PRODUCTION-VERIFIED, AWAITING USER ACCEPTANCE.** Nothing in v1.1 is
+  user-accepted.
+  - The user reviewed RC1 and reported one issue (Favorites duplicated in
+    the footer); RC2 fixes it.
+  - RC2 also carries the data-methodology and attribution review.
+  - **WEJHATY v1.0.0 remains the accepted release** and is untouched.
+- **RC2 refs**: branch `release/wejhaty-v1.1.0-rc2` and annotated tag
+  `wejhaty-v1.1.0-rc2`, both → the commit that records this state (read
+  its hash from the refs).
+  - That commit changes documentation only, on top of `e0a6134` (Pages run 36597640040; the app build is the same
+    since `c8e01e0`, Pages run 36590837434), so production already serves
+    its app.
+- **RC1 is immutable**: branch `release/wejhaty-v1.1.0-rc1` and tag
+  `wejhaty-v1.1.0-rc1` (object `aa2ee70`) → `cee6e75`, verified with
+  `git ls-remote`.
+- **App version** `1.1.0` (unchanged; `app/package.json` is the only
+  source). **Methodology** `personal-match-1.2`. **Profile schema** 2
+  (unchanged).
+
+**What RC2 changes**:
+
+| Area | Change | Evidence |
+|---|---|---|
+| Footer | Favorites link removed. Before, the footer carried it because the header hid Favorites between 861 and 1099 px. Now the header keeps Favorites at every width and "How it works" (a scroll to a Home section) steps aside in that band. The header there is 12–28 px narrower than RC1, so nothing new wraps. Footer = brand, feedback, note, version. | TEST-VERIFIED (`Footer.test.tsx`), BROWSER-VERIFIED (340 checks: 6 widths × AR/EN × Light/Dark, header vs RC1 at 11 widths, notice) |
+| Personal Match 1.2 | The partial mosque level (fit 60) is removed. It lowered a Personal Match below "not counted" in 3,664 of 10,560 audited cases (33 countries, up to 7 points). Thin evidence is now not counted, so answering a travel need never lowers a score. Thresholds are kept. | TEST-VERIFIED (`travelNeeds.monotonic.test.ts`; golden v1.0 digests still reproduced), audit `docs/audits/DATA_METHODOLOGY_RC2.md` |
+| Attribution | ODbL notice under "why this destination suits you" when a travel need is used: OpenStreetMap data (© OpenStreetMap contributors → openstreetmap.org/copyright) and world-countries (mledoze/countries), both ODbL. The notice says the thresholds are Wejhaty's own. Not-counted factors show the OpenStreetMap count and "below what Wejhaty's method needs". | TEST-VERIFIED (`travelNeedSources.test.tsx`), axe 0 |
+| Sources | `world-countries` 5.1.0 (npm) = mledoze/countries, ODbL 1.0 (the package.json has no licence field; two generator comments that said "MIT" are corrected); OSM via Overpass, ODbL 1.0 | CODE-VERIFIED (`docs/DATA_SOURCES_V1_1.md`) |
+| Tests | two heavy suites get their own time allowance (register U16 kept: no global raise); the Safari smoke checks computed styles only after the page has loaded (a slow iOS Simulator measured them before the stylesheet arrived) | TEST-VERIFIED, two consecutive full runs |
+
+**Gates**:
+
+- Frontend 1203/1203 in 118 files (`--maxWorkers=2`, two consecutive
+  runs); `tsc -b` 0; oxlint 0; build OK.
+- `verify-seo-build` 4 804/4 804 on the `/wej/` and root (custom origin)
+  builds; the root build has 0 `github.io` or `/wej/` references.
+- Worker untouched (`worker/` identical to v1.0.0; version `b1c2815a`).
+- Local matrix 1 200/1 200; axe (WCAG 2.1 A/AA) 0 violations on 48
+  states; adversarial Favorites/Compare 49/49; flow 27/27; local smoke on
+  the RC2 build (Chromium) 68/68.
+- Entry bundle +857 B gzip (+0.14 %), CSS +22 B gzip.
+
+**Production smoke**: run 36597749469 on `e0a6134`, read-only (deployed
+bundle `assets/index-CpqLXvsI.js` / `assets/index-DpoUvE_F.css`, recorded
+by run 36595061886 on the same build).
+- Chromium, Firefox, WebKit and Edge: 243/243. That covers RC1's checks,
+  plus the footer without Favorites, the header Favorites at 1280 and
+  1024 px, and the ODbL notice with the thresholds owned by Wejhaty.
+- 0 CSP violations and 0 page errors; the travel needs are never sent or
+  put in the URL.
+- Chromium/Edge: the passport default is neither stored nor sent.
+- SEO without JavaScript 2 182/2 182 (194 destinations); Worker 19/19;
+  admin 15/15.
+- Desktop Safari 26.6.2: 16/16.
+- iOS Simulator Mobile Safari 26.5: 16/16.
+- Real VoiceOver + Safari: 4/4 (h1 «اليابان», 10 h2).
+- The earlier run 36595061886 failed only its iOS Simulator job (2 style
+  checks read before the stylesheet arrived); root cause and fix in
+  `e0a6134`. Worker requests from the browsers are aborted, so nothing is
+  written.
+
+**Workflow fix (V4)**: the Islamic-evidence workflow now places the new
+snapshot on the deploy branch's latest head. A local simulation, with a
+workflow file changed on the deploy branch mid-run, produced a branch
+that differs from the new head only by the snapshot. The live proof is
+the next scheduled run (2026-10-02 05:00 UTC).
+
+**Anti-Koshary**: no new broad pass (as instructed). The touched files
+were reviewed read-only: no duplicated rule, no dead export left
+(`SOME_EVIDENCE_FIT` and the partial tier were removed with their only
+uses).
+
+- **Rollback points** (never move, delete or force-push any of them):
+
+  | Point | Refs | Commit |
+  |---|---|---|
+  | v1.1.0 RC2 | `release/wejhaty-v1.1.0-rc2`, tag `wejhaty-v1.1.0-rc2` | the RC2 commit |
+  | v1.1.0 RC1 | `release/wejhaty-v1.1.0-rc1`, tag `wejhaty-v1.1.0-rc1` | `cee6e75` |
+  | v1.0.0 before v1.1 | `backup/wejhaty-v1.0.0-pre-v1.1` | `df54567` |
+  | v1.0.0 final | `release/wejhaty-v1.0.0`, `backup/wejhaty-v1.0.0-final`, tag `wejhaty-v1.0.0` | `df54567` |
+
+### Previous state — 2026-09-26 (WEJHATY v1.1.0 RC1 — superseded by RC2; its refs never move)
 
 - State document version: 43. **Status: WEJHATY v1.1.0 RC1 —
   DISCOVERABILITY + SHARING + FAVORITES + COMPARE + PERSONALIZATION
@@ -2405,15 +2489,18 @@ see "Non-negotiable product rules" above.)
 
 ## Roadmap gate and immediate backlog
 
-**WEJHATY v1.1.0 RC1 awaits user acceptance (2026-09-26).** v1.0.0
-(2026-09-24) stays the accepted release until the user accepts RC1;
-nothing in v1.1 is user-accepted. v1.2.0 has not started and does not
+**WEJHATY v1.1.0 RC2 awaits user acceptance (2026-09-29).** RC1 was
+reviewed by the user; its one issue (Favorites duplicated in the footer)
+is fixed in RC2 together with the data-methodology and attribution pass.
+v1.0.0 (2026-09-24) stays the accepted release until the user accepts
+RC2; nothing in v1.1 is user-accepted. v1.2.0 has not started and does not
 start without an explicit, current instruction from the user. Phase 16
 (AI) stays CANCELLED.
 
-0. Next step: the user's manual acceptance of RC1 (checklist in
-   `RELEASE_CANDIDATE.md`, v1.1.0 RC1). Fixes found there go into a new
-   candidate with new refs; RC1's refs never move.
+0. Next step: the user's final visual check of RC2 (checklist in
+   `RELEASE_CANDIDATE.md`, v1.1.0 RC2). The final v1.1.0 release is cut
+   only after that; fixes go into a new candidate with new refs. RC1's
+   and RC2's refs never move.
 
 1. The release is frozen. Product behaviour, Phase 14, Personal Match,
    Passport (FROZEN), admin metric semantics and the accepted visual
@@ -2423,7 +2510,7 @@ start without an explicit, current instruction from the user. Phase 16
    blocks the release.
 3. Roll back only with the refs and the procedure in state v42.
 
-## Known-limitations register (authoritative; v1.0.0 2026-09-24, updated for v1.1.0 RC1 2026-09-26)
+## Known-limitations register (authoritative; v1.0.0 2026-09-24, updated for v1.1.0 RC2 2026-09-29)
 
 One status per item. Statuses: RESOLVED, DEFERRED, BLOCKED, FROZEN,
 CANCELLED, UNVERIFIED. Open items first; resolved items stay resolved and
@@ -2437,7 +2524,7 @@ are listed for traceability only.
 | U7 | Turnstile in production | DEFERRED | Server-side per-address rate limiting is active on every write path; Turnstile code and fail-closed verification are ready | Enable if abuse appears | User |
 | U8 | Paid travel/visa providers | DEFERRED | No credentials or contract; provider path dormant | Provider decision | User |
 | U14 | Paid-provider limiters | DEFERRED | Providers dormant | Add with any provider activation | Maintainer |
-| U6 | Automatic PRs from data workflows | RESOLVED (v1.1) | The repository setting now allows it: a harmless data run opened PR #3 (closed unmerged, v1.1 Stage 2). Workflows compare data (not the run stamp) and open a PR only on a real change. Old `update-*` branches stay on origin (the git proxy refuses branch deletion) | — | — |
+| U6 | Automatic PRs from data workflows | RESOLVED (v1.1) | The repository setting now allows it: a harmless data run opened PR #3 (closed unmerged, v1.1 Stage 2). Workflows compare data (not the run stamp) and open a PR only on a real change. Old `update-*` branches stay on origin (the git proxy refuses branch deletion). RC2: the workflows are unchanged apart from a PR-body wording line; the repository setting itself is only readable with admin credentials, so the next data run is its live re-check | — | — |
 | U3 | Physical iPhone (real iOS Safari) | UNVERIFIED | No physical device here. iOS Simulator Mobile Safari 26.5 passes 15/15 (run 35946079472); a simulator is not a physical iPhone | Manual check on a real iPhone (RC2 checklist) | User |
 | U4b | Other real screen readers (VoiceOver on iPhone, TalkBack, NVDA, JAWS) | UNVERIFIED | No device or Windows/Android screen reader here; axe 0 violations and macOS VoiceOver passes | Manual checklist in the RC2 record | User |
 | U22 | Admin D1 query budget: 48 queries per analytics request, guard 50 | DEFERRED / FUTURE OPTIMIZATION | Within the Free-plan per-invocation cap and guarded by `worker/src/admin.test.ts`; not optimised during sign-off so accepted admin semantics stay unchanged | Consolidate queries before adding any admin metric that needs D1 | Maintainer |
@@ -2448,8 +2535,10 @@ are listed for traceability only.
 | V1 | Free domain `wejhaty.eu.org` | PENDING HUMAN APPROVAL | Not delegated (no NS/SOA, domain-status runs 36203816604/36203879114); registration needs the owner's own nic.eu.org account and a free DNS host; zero cost | Owner registers; then `docs/SITE_ORIGIN.md` checklist | User |
 | V2 | Worker CORS allow-list for a new origin | DEFERRED | One-line change (`worker/src/shared.ts`); deferred so v1.1 does not redeploy the Worker | Do it with the domain switch (V1) | Maintainer |
 | V3 | `Quiz.tsx` growth (Anti-Koshary Q1) and `wejhaty.css` size (F1) | DEFERRED | Splitting the accepted flow or stylesheet is a refactor, not a v1.1 need; behaviour pinned by tests | Revisit in a dedicated refactor task | Maintainer |
-| V4 | Long data runs and workflow edits | DEFERRED (low risk) | A data branch built on an old checkout is refused if a workflow file changed meanwhile (run 36202043431). Fixed for the 80-minute Islamic-evidence workflow; the other `update-*` workflows run in minutes and keep the old step | Apply the same step if one of them fails that way | Maintainer |
-| V5 | OpenStreetMap evidence limits | DEFERRED / DOCUMENTED | Mapping completeness varies; counts are national; Palestine has no OSM country boundary (not counted); halal has one level on purpose (`docs/DATA_SOURCES_V1_1.md`) | Monthly refresh; revisit thresholds only with evidence | Maintainer |
+| V4 | Long data runs and workflow edits | DEFERRED (low risk) | A data branch built on an old checkout is refused if a workflow file changed meanwhile (run 36202043431). Fixed for the 80-minute Islamic-evidence workflow (it places the snapshot on the deploy branch's latest head); RC2 simulated the step locally with a mid-run workflow change: the branch differed from the new head only by the snapshot. The other `update-*` workflows run in minutes and keep the old step | Live proof: the scheduled run on 2026-10-02 05:00 UTC; apply the same step elsewhere if one fails that way | Maintainer |
+| V5 | OpenStreetMap evidence limits | DEFERRED / DOCUMENTED | RC2 sensitivity audit on all 193 countries with data (`docs/audits/DATA_METHODOLOGY_RC2.md`): the partial mosque level was a scoring defect and is removed (`personal-match-1.2`); thresholds 200 / 20 / 5 per 1,000 km² and the halal floor 20 are stable and kept; 18 countries sit within ±25 % of a mosque threshold and 13 of the halal floor; national totals, overseas parts inside `admin_level=2`, possible double mapping; Palestine has no OSM country boundary | Monthly refresh; revisit thresholds only with evidence of a structural defect | Maintainer |
+| V6 | Halal tags reflect tagging culture | DOCUMENTED (source limitation) | Median halal tags per mapped mosque 0.015 in Muslim-majority countries vs 1.056 in highly mapped Western / East Asian ones; 31 countries with ≥ 200 mapped mosques have < 20 halal tags. They are "not counted" (never lower), and the explanation says halal is often the norm and untagged; no floor removes the gap and inferring halal from mosques would infer from a Muslim presence | None unless a legitimate halal-availability source appears | Maintainer |
+| V7 | English header wraps between 861 and ~930 px | DEFERRED (pre-existing) | Brand + four links + controls do not fit on one line there in English; RC1 wrapped there too (measured; v1.0 had the same four links). RC2's header is 28 px narrower there (940 px now fits) | Fix only in a header-layout task | Maintainer |
 | P20 | Phase 20 — Final Wejhaty (RC4) | RESOLVED | USER-ACCEPTED 2026-09-24; released as `wejhaty-v1.0.0` | — | User |
 | P21 | Phase 21 — Admin post-launch enhancements | RESOLVED | USER-ACCEPTED 2026-09-24; Worker `b1c2815a`; released as `wejhaty-v1.0.0` | — | User |
 | U2 | Real desktop Safari (macOS) and real Edge | RESOLVED | Safari 26.6.2 15/15 and Edge in every release smoke (run 35946079472) | Keep in every release smoke | Maintainer |
@@ -2458,7 +2547,7 @@ are listed for traceability only.
 | U11 | Main-site CSP | RESOLVED | Build-time meta CSP, no `unsafe-eval`, hashed inline script; 0 violations; no framing protection claimed (meta cannot set frame-ancestors) | — | — |
 | U12 | GitHub Actions SHA pinning | RESOLVED | Every action pinned to the SHA its tag resolved to in this repository's run logs | Re-pin on upgrades | Maintainer |
 | U13 | Undeclared-length (chunked) body limits | RESOLVED | `readBoundedBody` enforces the per-endpoint ceiling; production smoke 413 checks | — | — |
-| U16 | Slow-test policy | RESOLVED | Suites run with `--maxWorkers=2`; timeouts are never raised to hide contention | — | Maintainer |
+| U16 | Slow-test policy | RESOLVED | Suites run with `--maxWorkers=2`; timeouts are never raised globally to hide contention. Heavy-by-design suites (the full Explore grid in jsdom, 400 profiles × every country) carry their own allowance (RC2) | — | Maintainer |
 | U19 | Dark hero "nearby" note contrast | RESOLVED | Feathered backplate; all 176 states pass, lowest P10 6.02:1 | — | — |
 | U20 | Phase 21 (Admin) delivery | RESOLVED | See P21 | — | — |
 | R1 | heading-order (axe) | RESOLVED | h2 structure, visuals unchanged | — | — |
