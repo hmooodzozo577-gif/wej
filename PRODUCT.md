@@ -69,7 +69,16 @@ Wejhaty's distinguishing mechanism is a deterministic recommendation engine over
 
 ## Release Status
 
-Wejhaty v1.1.0 RC2 (tag `wejhaty-v1.1.0-rc2`; RC1 kept unchanged) adds discoverability (a real page document per destination, metadata, sitemap, icons, manifest), sharing, Favorites, Compare, the passport selector's location default, and Personal Match 1.2 (language, Islamic practice, halal food — positive evidence at one level, with ODbL source credits). It is technically and production verified and awaits user acceptance; v1.0.0 remains the accepted release until then.
+Wejhaty v1.1.0 was released on 2026-09-29 (tag `wejhaty-v1.1.0`; the user accepted RC2).
+
+It adds:
+
+- discoverability: a real page document per destination, metadata, sitemap, icons and manifest;
+- sharing, Favorites and Compare;
+- the passport selector's location default;
+- Personal Match 1.2: language, Islamic practice and halal food, as positive evidence at one level, with ODbL source credits.
+
+v1.1.0 is frozen like v1.0.0. Any change to accepted behaviour needs an explicit new task.
 
 Wejhaty v1.0.0 was released on 2026-09-24 (tag `wejhaty-v1.0.0`): Phase 20 (the public product) and Phase 21 (the operator dashboard) are user-accepted. The accepted product, including the Phase 17–20 visual identity, is frozen; any change to accepted behaviour, scoring, Personal Match, the frozen Passport feature or the visual identity needs an explicit new task. Current status and known limitations live in `PROJECT_STATE.md`.
 

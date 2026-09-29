@@ -1,18 +1,87 @@
 # Wejhaty — release record
 
-Status: **WEJHATY v1.1.0 RC2 — FINAL UI CLEANUP + DATA METHODOLOGY &
-ATTRIBUTION PASS — TECHNICALLY VERIFIED, PRODUCTION-VERIFIED, AWAITING USER
-ACCEPTANCE (2026-09-29).** RC1 (2026-09-26) is kept unchanged as a
-historical candidate. **WEJHATY v1.0.0 — FINAL RELEASE (2026-09-24)**
-remains the accepted release. Current truth lives in `PROJECT_STATE.md`
-(state v44 and its known-limitations register); this file records what
-each release and candidate is, and how it was checked.
+Status: **WEJHATY v1.1.0 — FINAL RELEASE — TECHNICALLY VERIFIED,
+PRODUCTION-VERIFIED, USER-ACCEPTED, RELEASED (2026-09-29).**
+
+- RC2 was user-accepted ("ناجح") and is the basis of v1.1.0.
+- RC1 and RC2 stay unchanged as historical candidates.
+- **WEJHATY v1.0.0 (2026-09-24)** stays a released, immutable version.
+
+Current truth lives in `PROJECT_STATE.md` (state v45 and its
+known-limitations register). This file records what each release and
+candidate is, and how it was checked.
 
 Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
 PRODUCTION-VERIFIED, USER-VERIFIED, USER-ACCEPTED, UNVERIFIED, DEFERRED,
 BLOCKED, FROZEN, CANCELLED, PENDING HUMAN APPROVAL.
 
-# v1.1.0 RC2 — `wejhaty-v1.1.0-rc2` (AWAITING USER ACCEPTANCE)
+# v1.1.0 — `wejhaty-v1.1.0` (final release)
+
+## v1.1.0.1 What it is
+
+The user-accepted RC2, released as is. The release commit changes
+documentation only; no product behaviour changed after the acceptance.
+
+v1.1.0 adds to v1.0.0:
+
+- **Discoverability**: a real HTTP-200 page document for each of the 194
+  destinations, one metadata system, sitemap, robots, structured data,
+  Open Graph image, icons and manifest.
+- **Sharing**, **Favorites** (local, in the header) and **Compare** (2–3
+  destinations, real data, no winner).
+- **The passport selector's location default**: an initial value only,
+  never stored or sent.
+- **Personal Match 1.2**, with optional, local-only questions on language,
+  ease of Islamic practice and halal food.
+  - Positive evidence only, at one level: official languages; places
+    mapped or tagged in OpenStreetMap.
+  - Wejhaty's own thresholds, credited under the ODbL.
+  - Thin or missing evidence is not counted, never a low score.
+- **Operations**: the footer version from one source, one site-origin
+  configuration, hourly uptime monitoring, and data workflows that open a
+  PR only on a real change.
+
+| Item | Value |
+|---|---|
+| User acceptance | RC2 USER-ACCEPTED ("ناجح") — 2026-09-29 |
+| Release commit | the commit that adds this section (read its hash from the refs below) |
+| Branch | `release/wejhaty-v1.1.0` → release commit |
+| Tag | `wejhaty-v1.1.0` (annotated) → release commit |
+| Final checkpoint | `backup/wejhaty-v1.1.0-final` → release commit |
+| Parent | `7f42a24` (RC2, tree `ea4bbec4e41aada5ef2737c24939091b9749045d`) |
+| App source | `app/` tree `f4b7f9d7fd426792974d3a6e8c0ebcdd24c81206`, identical to RC2; `assets/index-CpqLXvsI.js`, `assets/index-DpoUvE_F.css` |
+| Protected code | `app/src/engine`, `app/src/entry`, `worker/` byte-identical to v1.0.0 (same git tree hashes) |
+| Pages deploy | run 36603816570 on `7f42a24`, deployment 6740977228 |
+| Worker | not redeployed — version `b1c2815a-5557-41fd-a3d8-025af15524ff` |
+| Tests | frontend 1203/1203, Worker 273/273; `tsc`, oxlint, build and `wrangler deploy --dry-run` clean; `verify-seo-build` 4 804/4 804 (`/wej/` and root) |
+| Browser checks (local) | matrix 1 200/1 200; axe 0 violations on 48 states; footer/header/notice 340/340; Favorites/Compare 49/49 and 27/27 |
+| Production smoke | run 36604356348 — Chromium/Firefox/WebKit/Edge 243/243 (0 CSP violations), SEO without JavaScript 2 182/2 182, Worker 19/19, admin 15/15, desktop Safari 16/16, iOS Simulator 16/16, real VoiceOver 4/4; read-only |
+| GitHub Release | none; the repository does not use GitHub Releases (v1.0.0 had none), and the annotated tag is the release record |
+
+## v1.1.0.2 Known limitations
+
+See the known-limitations register in `PROJECT_STATE.md`. In short:
+
+- **FROZEN**: Passport.
+- **CANCELLED**: Thmanyah.
+- **DEFERRED**:
+  - Traveler Budget, Turnstile, and paid providers with their limiters;
+  - the Worker CORS entry for a new origin;
+  - the `Quiz.tsx` and CSS size;
+  - the English header wrap between 861 and ~930 px (already present
+    before v1.1).
+- **PENDING HUMAN APPROVAL**: the free domain `wejhaty.eu.org`.
+- **UNVERIFIED**: a physical iPhone and other screen readers.
+- **DOCUMENTED**: OpenStreetMap evidence limits, including the halal
+  tagging-culture gap.
+
+## v1.1.0.3 Rollback
+
+Refs and the history-preserving procedure are in `PROJECT_STATE.md`
+(state v45 rollback table; procedure in state v42). No release, candidate
+or checkpoint ref is ever moved, deleted or force-pushed.
+
+# v1.1.0 RC2 — `wejhaty-v1.1.0-rc2` (USER-ACCEPTED; basis of v1.1.0)
 
 ## v1.1.0-RC2.1 What it contains
 

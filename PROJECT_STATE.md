@@ -5,7 +5,87 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-### Current verified state — 2026-09-29 (WEJHATY v1.1.0 RC2 — AWAITING USER ACCEPTANCE)
+### Current verified state — 2026-09-29 (WEJHATY v1.1.0 — FINAL RELEASE, USER-ACCEPTED)
+
+- State document version: 45. **Status: WEJHATY v1.1.0 — FINAL RELEASE —
+  TECHNICALLY VERIFIED, PRODUCTION-VERIFIED, USER-ACCEPTED, RELEASED.**
+  - The user tested RC2 and accepted it ("ناجح"), 2026-09-29.
+  - v1.1.0 is that accepted RC2 with a documentation-only release commit.
+    No product behaviour changed, so the acceptance carries over.
+  - v1.0.0 stays a released, immutable version.
+- **Release refs**:
+  - branch `release/wejhaty-v1.1.0`, annotated tag `wejhaty-v1.1.0` and the
+    checkpoint `backup/wejhaty-v1.1.0-final`, all → the commit that records
+    this state (read its hash from the refs);
+  - parent `7f42a24` (RC2, tree `ea4bbec4e41aada5ef2737c24939091b9749045d`);
+  - the release commit changes documentation only.
+- **App**: `app/` tree `f4b7f9d7fd426792974d3a6e8c0ebcdd24c81206` —
+  identical in RC2 (`7f42a24`), in `e0a6134` and in the release commit.
+  - Version `1.1.0` (`app/package.json`, the only source).
+  - Methodology `personal-match-1.2`; profile schema 2.
+- **Deploy**: Pages run 36603816570 (workflow_dispatch on `7f42a24`),
+  github-pages deployment 6740977228. Deployed `assets/index-CpqLXvsI.js`
+  / `assets/index-DpoUvE_F.css`, the same names as RC2; a local build with
+  the Pages Worker URL reproduces them.
+- **Worker**: not redeployed; version
+  `b1c2815a-5557-41fd-a3d8-025af15524ff`; `worker/` tree `827dc53` is
+  identical to v1.0.0.
+
+**Protected, proven by git object hashes (v1.0.0 `df54567` = v1.1.0)**:
+
+| Tree or file | Hash |
+|---|---|
+| `app/src/engine` (Phase 14) | `75d09040b0f8` |
+| `app/src/entry` (Passport) | `cf4f8f719ea5` |
+| `worker` | `827dc53c1540` |
+| `questionBanks.json` | `08c555d23be8` |
+| `recommendationIndicators.json` | `cfebb3b379d6` |
+| `countryIntelligence.json` | `45394ad91e8c` |
+
+All six are byte-identical to v1.0.0.
+
+**Gates on the release source** (the RC2 app tree):
+
+- Frontend 1203/1203 (118 files); `tsc -b` 0; oxlint 0; build OK.
+- `verify-seo-build` 4 804/4 804 on the `/wej/` and root builds; the root
+  build has no `github.io` or `/wej/` reference.
+- Worker 273/273, `tsc` 0, `wrangler deploy --dry-run` clean.
+- Local browser checks:
+  - matrix 1 200/1 200;
+  - axe (WCAG 2.1 A/AA) 0 violations on 48 states;
+  - footer, header and source notice 340/340;
+  - Favorites/Compare adversarial 49/49 and flow 27/27.
+- Bundle identical to RC2: JS 2 428 421 B (633 896 B gzip -9), CSS
+  113 055 B (22 742 B gzip -9).
+
+**Production smoke** (run 36604356348 on `7f42a24`, read-only):
+
+| Check | Result |
+|---|---|
+| Chromium, Firefox, WebKit and Edge | 243/243, 0 CSP violations |
+| SEO without JavaScript (194 destinations) | 2 182/2 182 |
+| Worker | 19/19 |
+| Admin | 15/15 |
+| Desktop Safari 26.6.2 | 16/16 |
+| iOS Simulator Mobile Safari 26.5 | 16/16 |
+| Real VoiceOver + Safari | 4/4 |
+
+**GitHub Releases**: not used by this repository (0 releases; v1.0.0 had
+none), so none was created. The annotated tag is the release record.
+
+- **Rollback points** (never move, delete or force-push any of them):
+
+  | Point | Refs | Commit |
+  |---|---|---|
+  | v1.1.0 final | `release/wejhaty-v1.1.0`, `backup/wejhaty-v1.1.0-final`, tag `wejhaty-v1.1.0` | the release commit |
+  | v1.1.0 RC2 (accepted) | `release/wejhaty-v1.1.0-rc2`, tag `wejhaty-v1.1.0-rc2` | `7f42a24` |
+  | v1.1.0 RC1 | `release/wejhaty-v1.1.0-rc1`, tag `wejhaty-v1.1.0-rc1` | `cee6e75` |
+  | v1.0.0 final | `release/wejhaty-v1.0.0`, `backup/wejhaty-v1.0.0-final`, `backup/wejhaty-v1.0.0-pre-v1.1`, tag `wejhaty-v1.0.0` | `df54567` |
+
+  Rolling back uses the state-v42 procedure with the chosen tag as the
+  source (history-preserving, no force push).
+
+### Previous state — 2026-09-29 (WEJHATY v1.1.0 RC2 — USER-ACCEPTED; basis of v1.1.0)
 
 - State document version: 44. **Status: WEJHATY v1.1.0 RC2 — FINAL UI
   CLEANUP + DATA METHODOLOGY & ATTRIBUTION PASS — TECHNICALLY VERIFIED,
@@ -2489,18 +2569,13 @@ see "Non-negotiable product rules" above.)
 
 ## Roadmap gate and immediate backlog
 
-**WEJHATY v1.1.0 RC2 awaits user acceptance (2026-09-29).** RC1 was
-reviewed by the user; its one issue (Favorites duplicated in the footer)
-is fixed in RC2 together with the data-methodology and attribution pass.
-v1.0.0 (2026-09-24) stays the accepted release until the user accepts
-RC2; nothing in v1.1 is user-accepted. v1.2.0 has not started and does not
-start without an explicit, current instruction from the user. Phase 16
-(AI) stays CANCELLED.
+**WEJHATY v1.1.0 is released (2026-09-29, tag `wejhaty-v1.1.0`,
+USER-ACCEPTED on RC2).** v1.0.0 stays a released, immutable version.
+v1.2.0 has not started and does not start without an explicit, current
+instruction from the user. Phase 16 (AI) stays CANCELLED.
 
-0. Next step: the user's final visual check of RC2 (checklist in
-   `RELEASE_CANDIDATE.md`, v1.1.0 RC2). The final v1.1.0 release is cut
-   only after that; fixes go into a new candidate with new refs. RC1's
-   and RC2's refs never move.
+0. Next step: none inside v1.1.0. Any change to released behaviour is a
+   new task with new refs; no v1.1.0, RC or v1.0.0 ref ever moves.
 
 1. The release is frozen. Product behaviour, Phase 14, Personal Match,
    Passport (FROZEN), admin metric semantics and the accepted visual
@@ -2510,7 +2585,7 @@ start without an explicit, current instruction from the user. Phase 16
    blocks the release.
 3. Roll back only with the refs and the procedure in state v42.
 
-## Known-limitations register (authoritative; v1.0.0 2026-09-24, updated for v1.1.0 RC2 2026-09-29)
+## Known-limitations register (authoritative; v1.0.0 2026-09-24, updated for v1.1.0 final 2026-09-29)
 
 One status per item. Statuses: RESOLVED, DEFERRED, BLOCKED, FROZEN,
 CANCELLED, UNVERIFIED. Open items first; resolved items stay resolved and
