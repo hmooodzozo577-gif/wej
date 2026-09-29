@@ -18,6 +18,11 @@ import { RootLayout } from './RootLayout';
 import { Explore } from '../../routes/Explore';
 import { Home } from '../../routes/Home';
 
+// Most tests here render the full Explore grid (~194 cards) in jsdom; give
+// it real headroom (same allowance as Explore.excludedCountries.test.tsx and
+// personalization.ui.test.tsx).
+vi.setConfig({ testTimeout: 90000 });
+
 // RootLayout mounts Header -> ThemeSwitch, which reads matchMedia — stub it
 // so this file can render the real layout rather than reimplementing it.
 Object.defineProperty(window, 'matchMedia', {

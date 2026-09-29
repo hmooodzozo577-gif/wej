@@ -92,6 +92,8 @@ describe('Personal Match engine', () => {
     expect(a.methodologyVersion).toBe(PERSONAL_MATCH_METHODOLOGY_VERSION);
   });
 
+  // 400 profiles × every country is deliberately heavy work, not contention;
+  // it gets its own allowance like the other full-catalog suites.
   it('stays bounded, finite and honest across 400 random profiles × every country', () => {
     const rand = prng(18);
     for (let i = 0; i < 400; i++) {
@@ -114,7 +116,7 @@ describe('Personal Match engine', () => {
         }
       }
     }
-  });
+  }, 60000);
 
   it('never reaches a fake 100% from a single matching preference', () => {
     const prefs = normalizePreferences('tourism', { 'tourism-climate': 'cold' });
