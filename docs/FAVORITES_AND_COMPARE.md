@@ -14,8 +14,10 @@
   then lasts for the visit. Other tabs follow changes (`storage` event).
 - Controls: a Favorite toggle (`aria-pressed`) under the destination hero
   and a small icon on Explore cards; announcements through one polite live
-  region. The header link is hidden between 861 and 1099 px (no room
-  without wrapping); the footer link is always there.
+  region. Favorites is in the header at every width (in the mobile menu
+  below 861 px). Between 861 and 1099 px, where five links do not fit on
+  one line, "How it works" (a scroll to a Home section) steps aside
+  instead. Since RC2 the footer has no Favorites link.
 - The Favorites page lists them, opens a destination, removes one, and
   selects two or three for Compare.
 

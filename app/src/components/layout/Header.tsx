@@ -57,7 +57,7 @@ export function Header() {
       <button type="button" className={`navlink${isHome ? ' active' : ''}`} onClick={goHome} aria-current={isHome ? 'page' : undefined}>
         {t.nav.home}
       </button>
-      <button type="button" className="navlink" onClick={goHow}>
+      <button type="button" className="navlink navlink-how" onClick={goHow}>
         {t.nav.how}
       </button>
       <button type="button" className={`navlink${isExplore ? ' active' : ''}`} onClick={goExplore} aria-current={isExplore ? 'page' : undefined}>

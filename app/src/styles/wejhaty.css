@@ -5943,20 +5943,14 @@ html[dir='rtl'] .travel-route-band {
 }
 
 /* The header has no room for a fifth link between the hamburger breakpoint
-   and 1100 px (it would wrap onto two lines); Favorites stays in the footer
-   and the mobile menu there. */
+   and 1100 px (it would wrap onto two lines). Favorites is a page and stays
+   in the header at every width; "How it works" only scrolls Home to its own
+   section, so it is the one link that steps aside here (the mobile menu and
+   wider screens keep all five). */
 @media (min-width: 861px) and (max-width: 1099px) {
-  .nav-links .navlink-favorites {
+  .nav-links .navlink-how {
     display: none;
   }
-}
-
-.footer-link {
-  color: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 /* ------------------------------------------------------------------
