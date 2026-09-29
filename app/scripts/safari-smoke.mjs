@@ -96,6 +96,10 @@ try {
   await driver.get(`${SITE}/`);
   check(await waitFor('() => !!document.querySelector(".hero-stat b")'), 'home renders');
   check((await js('return document.querySelector(".hero-stat b")?.textContent.trim()')) === '194', 'hero stat reads 194');
+  // The app can render before its stylesheet has arrived (nothing is painted
+  // until it does); computed styles are only meaningful once the page has
+  // finished loading, which a slow iOS Simulator makes visible.
+  check(await waitFor('() => document.readyState === "complete"', 30000), 'page finished loading (stylesheets applied)');
   const cta = await js('return getComputedStyle(document.querySelector(".home-hero-frame .btn-gold")).backgroundColor');
   check(cta === 'rgb(192, 83, 44)', 'CTA background', cta);
   const overflow = await js('return document.documentElement.scrollWidth - document.documentElement.clientWidth');
