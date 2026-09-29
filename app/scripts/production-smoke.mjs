@@ -227,6 +227,12 @@ for (const engine of engineNames) {
     check(/wellness-islamicPractice/.test(stored) && /wellness-languages":"ar,en"/.test(stored), `${engine} travel needs kept in this browser's profile`);
     const leaks = sent.filter((line) => /languageImportance|-languages|islamicPractice|halalFood|"ar,en"/.test(line));
     check(leaks.length === 0, `${engine} travel needs never sent over the network`, leaks.join(' | ').slice(0, 300));
+    // RC2: the ODbL notice for the travel-need evidence, with the thresholds
+    // said to be Wejhaty's own.
+    await tab.goto(`${SITE}/destination/japan/`, { waitUntil: 'networkidle' });
+    const sources = (await tab.textContent('.personal-match-sources').catch(() => '')) ?? '';
+    check(!!(await tab.$('.personal-match-sources a[href="https://www.openstreetmap.org/copyright"]')) && /ODbL/.test(sources), `${engine} travel-need sources credit OpenStreetMap contributors under the ODbL`);
+    check(/منهجية وجهتي/.test(sources) && /mledoze\/countries/.test(sources), `${engine} travel-need notice names world-countries and owns the thresholds`);
     check(errors.length === 0, `${engine} travel needs without page errors`, errors.join(' | '));
     await context.close();
   }
@@ -236,6 +242,9 @@ for (const engine of engineNames) {
   {
     const { context, tab, errors } = await page({ width: 1280, height: 900 }, 'light', 'ar');
     check(((await tab.textContent('.footer-version')) ?? '').includes(`v${APP_VERSION}`), `${engine} footer shows v${APP_VERSION}`);
+    // RC2: Favorites lives in the header only.
+    check((await tab.$$('footer a[href*="favorites"]')).length === 0 && !/المفضلة/.test((await tab.textContent('footer')) ?? ''), `${engine} footer has no Favorites link`);
+    check(await tab.isVisible('.nav-links .navlink-favorites'), `${engine} header keeps Favorites`);
 
     await tab.goto(`${SITE}/destination/japan/`, { waitUntil: 'networkidle' });
     const favorite = '.destination-actions button[aria-pressed]';
@@ -269,6 +278,18 @@ for (const engine of engineNames) {
     const migrated = await tab.textContent('.personal-match-card:not(.is-empty) .personal-match-value b').catch(() => null);
     check(/^\d+%$/.test(migrated ?? ''), `${engine} a v1.0 profile migrates and still shows a Personal Match`, String(migrated));
     check(errors.length === 0, `${engine} v1.1 surfaces without page errors`, errors.join(' | '));
+    await context.close();
+  }
+
+  // RC2: between 861 and 1099 px the header keeps Favorites (it steps
+  // "How it works" aside instead), so Favorites is in the header at every width.
+  {
+    const { context, tab, errors } = await page({ width: 1024, height: 900 }, 'light', 'ar');
+    check(await tab.isVisible('.nav-links .navlink-favorites'), `${engine} header keeps Favorites at 1024 px`);
+    await tab.click('.nav-links .navlink-favorites');
+    await tab.waitForURL(/\/favorites$/, { timeout: 10000 }).catch(() => {});
+    check(/\/favorites$/.test(new URL(tab.url()).pathname), `${engine} header Favorites opens the Favorites page at 1024 px`, tab.url());
+    check(errors.length === 0, `${engine} mid-width header without page errors`, errors.join(' | '));
     await context.close();
   }
 

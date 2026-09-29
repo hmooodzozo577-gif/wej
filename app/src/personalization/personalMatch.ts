@@ -20,7 +20,6 @@ import { approximateCountryOf, haversineKm, type Coords } from '../data/geo';
 import type { CatalogEntry, RecommendationProfile, RecommendationProfileKey } from '../data/types';
 import type { RankedResult } from '../engine/types';
 import {
-  SOME_EVIDENCE_FIT,
   STRONG_EVIDENCE_FIT,
   evidenceTier,
   matchingOfficialLanguages,
@@ -122,16 +121,17 @@ function evaluateLanguage(signal: PreferenceSignal, dest: CatalogEntry): FactorR
   return evaluated(signal, STRONG_EVIDENCE_FIT, { countryValue: matched.join(',') });
 }
 
-/** personal-match-1.1 — Islamic practice (mapped mosques / Muslim places
+/** personal-match-1.2 — Islamic practice (mapped mosques / Muslim places
  *  of worship, by count or density) and halal food (places tagged as
  *  serving halal food), from the OpenStreetMap snapshot. Only positive
- *  evidence counts; too little mapped is NOT counted, never a low score. */
+ *  evidence counts, at one level: enough is a good fit; too little mapped
+ *  is NOT counted, so more evidence can never lower a score. */
 function evaluateEvidence(signal: PreferenceSignal, dest: CatalogEntry): FactorResult {
   const kind = signal.factor === 'halalFood' ? 'halalPlaces' : 'mosques';
   const { tier, count } = evidenceTier(dest.countryCode, kind, countryInfoOf(dest.id)?.areaKm2);
   if (tier === 'noData') return unavailable(signal, 'noData');
   if (tier === 'insufficient') return { ...unavailable(signal, 'noEvidence'), countryValue: count };
-  return evaluated(signal, tier === 'strong' ? STRONG_EVIDENCE_FIT : SOME_EVIDENCE_FIT, { countryValue: count });
+  return evaluated(signal, STRONG_EVIDENCE_FIT, { countryValue: count });
 }
 
 function evaluateSignal(signal: PreferenceSignal, dest: CatalogEntry, profile: RecommendationProfile | undefined, ctx: MatchContext): FactorResult {

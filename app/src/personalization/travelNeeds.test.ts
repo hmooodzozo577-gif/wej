@@ -1,5 +1,6 @@
 // v1.1 — the three optional travel needs (language, Islamic practice, halal
-// food) in Personal Match (personal-match-1.1): questions, signals,
+// food) in Personal Match (personal-match-1.1; one evidence level since
+// personal-match-1.2): questions, signals,
 // evaluation, "missing evidence is never a low score", schema v2 migration,
 // and that none of it reaches Phase 14, analytics or the admin catalog.
 import fs from 'node:fs';
@@ -25,7 +26,7 @@ vi.mock('../data/generated/islamicTravelEvidence.json', () => ({
       { countryCode: 'OM', status: 'ok', mosques: 2126, halalPlaces: 10 },
       // A small country with many mosques for its size (density rule).
       { countryCode: 'SG', status: 'ok', mosques: 76, halalPlaces: 331 },
-      // A large country with the same kind of count stays partial.
+      // A large country with the same kind of count is not counted.
       { countryCode: 'AU', status: 'ok', mosques: 124, halalPlaces: 107 },
       { countryCode: 'FR', status: 'unavailable' },
     ],
@@ -172,14 +173,17 @@ describe('evaluation — only positive evidence counts', () => {
     expect(factorDetail(result, 'ar')).toMatch(/لا يعني ذلك صعوبة التواصل/);
   });
 
-  it('mapped mosques: many (or dense) is a good fit, some is partial, too few is not counted', () => {
+  it('mapped mosques: many (or dense for the size) is a good fit, fewer is not counted', () => {
     const answers = needs({ [id('islamicPractice')]: 100 });
     expect(factor('ksa', answers, 'islamicPractice')).toMatchObject({ outcome: 'positive', fit: 100, countryValue: 5000 });
     expect(factor('uk', answers, 'islamicPractice')).toMatchObject({ outcome: 'positive', fit: 100 });
-    expect(factor('japan', answers, 'islamicPractice')).toMatchObject({ outcome: 'partial', fit: 60, countryValue: 60 });
+    // personal-match-1.2: no partial level — 60 mapped is not counted, so it
+    // cannot pull the score below what no evidence at all would give.
+    expect(factor('japan', answers, 'islamicPractice')).toMatchObject({ outcome: 'unavailable', reason: 'noEvidence', fit: null, countryValue: 60 });
+    expect(matchFor('japan', answers).score).toBe(matchFor('japan', CORE).score);
     // 76 mosques in about 700 km² is many for the size; 124 across Australia is not.
     expect(factor('singapore', answers, 'islamicPractice')).toMatchObject({ outcome: 'positive', fit: 100, countryValue: 76 });
-    expect(factor('australia', answers, 'islamicPractice')).toMatchObject({ outcome: 'partial', fit: 60, countryValue: 124 });
+    expect(factor('australia', answers, 'islamicPractice')).toMatchObject({ outcome: 'unavailable', reason: 'noEvidence', countryValue: 124 });
     expect(factor('mc', answers, 'islamicPractice')).toMatchObject({ outcome: 'unavailable', reason: 'noEvidence', countryValue: 0 });
     expect(factor('france', answers, 'islamicPractice')).toMatchObject({ outcome: 'unavailable', reason: 'noData' });
     // Not in the snapshot at all.
@@ -217,11 +221,14 @@ describe('evaluation — only positive evidence counts', () => {
       const match = computePersonalMatch(dest, prefs);
       const travel = match.factors.filter((f) => ['language', 'islamicPractice', 'halalFood'].includes(f.factor));
       expect(travel).toHaveLength(3);
-      for (const item of travel) expect(item.outcome, `${dest.id} ${item.factor}`).not.toBe('negative');
+      for (const item of travel) {
+        expect(item.outcome, `${dest.id} ${item.factor}`).not.toBe('negative');
+        expect([null, 100], `${dest.id} ${item.factor}`).toContain(item.fit);
+      }
       if (travel.every((item) => item.outcome === 'unavailable')) {
         expect(match.score, dest.id).toBe(computePersonalMatch(dest, corePrefs).score);
       }
-      expect(match.methodologyVersion).toBe('personal-match-1.1');
+      expect(match.methodologyVersion).toBe('personal-match-1.2');
     }
   });
 
@@ -229,7 +236,9 @@ describe('evaluation — only positive evidence counts', () => {
     const answers = needs({ [id('islamicPractice')]: 100, [id('halalFood')]: 100 });
     const match = matchFor('japan', answers);
     const lines = match.factors.map((f) => factorDetail(f, 'en')).join(' ');
-    expect(lines).toMatch(/60 mosques and Muslim prayer places mapped on OpenStreetMap — a limited number/);
+    // The source's count, and that the threshold is Wejhaty's own.
+    expect(lines).toMatch(/60 mosques and Muslim prayer places mapped on OpenStreetMap — below what Wejhaty's method needs, so this factor was not counted\. That does not mean practice is difficult/);
+    expect(matchFor('om', answers).factors.map((f) => factorDetail(f, 'ar')).join(' ')).toMatch(/أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: 10 — أقل مما تشترطه منهجية وجهتي/);
     expect(lines).toMatch(/40 places tagged as serving halal food on OpenStreetMap(?! —)/);
     const all = [
       ...['ar', 'en'].flatMap((lang) => WORLD_CATALOG.slice(0, 40).flatMap((dest) => matchFor(dest.id, answers).factors.map((f) => factorDetail(f, lang as 'ar' | 'en')))),
@@ -254,7 +263,7 @@ describe('profile schema v2', () => {
     expect(PROFILE_SCHEMA_VERSION).toBe(2);
     expect(migrated).toEqual({ ...v1, schemaVersion: 2 });
     expect(Object.keys(migrated.answers).some(isTravelNeedQuestionId)).toBe(false);
-    expect(PERSONAL_MATCH_METHODOLOGY_VERSION).toBe('personal-match-1.1');
+    expect(PERSONAL_MATCH_METHODOLOGY_VERSION).toBe('personal-match-1.2');
   });
 
   it('keeps only valid travel-need answers', () => {

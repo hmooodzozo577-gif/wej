@@ -112,7 +112,7 @@ jobs:
             --base claude/marhaba-kxry8l \
             --head "$BRANCH" \
             --title "chore: update Islamic-travel evidence snapshot" \
-            --body "Automated snapshot of places mapped in OpenStreetMap (mosques: amenity=place_of_worship + religion=muslim; halal: diet:halal=yes|only), counted per country through the Overpass API by scripts/generate-islamic-travel-evidence.mjs and validated before this PR was opened. Data (c) OpenStreetMap contributors, ODbL 1.0. Used only as positive evidence for Personal Match (personal-match-1.1); absence is never scored. Review the diff, then merge normally." 2>&1)
+            --body "Automated snapshot of places mapped in OpenStreetMap (mosques: amenity=place_of_worship + religion=muslim; halal: diet:halal=yes|only), counted per country through the Overpass API by scripts/generate-islamic-travel-evidence.mjs and validated before this PR was opened. Data (c) OpenStreetMap contributors, ODbL 1.0. Used only as positive evidence for Personal Match (thresholds: app/src/personalization/travelNeeds.ts); thin or missing evidence is never scored. Review the diff, then merge normally." 2>&1)
           pr_status=$?
           echo "$pr_output"
           if [ "$pr_status" -eq 0 ]; then

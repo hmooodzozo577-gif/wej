@@ -12,6 +12,7 @@ import { factorDetail, factorLabel, groupFactors } from './explain';
 import { usePersonalization } from './usePersonalization';
 import type { FactorResult, PersonalMatch } from './types';
 import { destinationMatchState, isPersonalMatchFocusState } from './quizIntent';
+import { TRAVEL_NEED_SOURCES } from './travelNeeds';
 
 /** Factor labels are written for use mid-sentence; as list headings the
  *  English ones start with a capital. */
@@ -36,6 +37,34 @@ function FactorList({ title, factors, tone, lang }: { title: string; factors: Fa
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+/** The ODbL notice for the v1.1 travel-need evidence, only when the match
+ *  uses it: OpenStreetMap for mosques and halal places, world-countries
+ *  (mledoze/countries) for official languages. */
+function TravelNeedSources({ match, lang }: { match: PersonalMatch; lang: 'ar' | 'en' }) {
+  const uses = (id: string) => match.factors.some((factor) => factor.factor === id);
+  const osm = uses('islamicPractice') || uses('halalFood');
+  const languages = uses('language');
+  if (!osm && !languages) return null;
+  const copy = TRAVEL_NEED_SOURCES[lang];
+  const odbl = <a href={TRAVEL_NEED_SOURCES.odblUrl} target="_blank" rel="noreferrer">ODbL</a>;
+  return (
+    <div className="personal-match-sources">
+      {osm ? (
+        <p>
+          {copy.osmLead} (<a href={TRAVEL_NEED_SOURCES.osmCopyrightUrl} target="_blank" rel="noreferrer">{copy.osmCredit}</a>)
+          {lang === 'ar' ? '، ' : ', '}{copy.license} {odbl}. {copy.osmThresholds}
+        </p>
+      ) : null}
+      {languages ? (
+        <p>
+          {copy.languagesLead} (<a href={TRAVEL_NEED_SOURCES.countriesUrl} target="_blank" rel="noreferrer">mledoze/countries</a>)
+          {lang === 'ar' ? '، ' : ', '}{copy.license} {odbl}.
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -120,6 +149,8 @@ export function PersonalMatchSection({ destination, match }: { destination: Cata
         <FactorList title={pc.groupNegative} factors={groups.negative} tone="negative" lang={lang} />
         <FactorList title={pc.groupUnavailable} factors={groups.unavailable} tone="unavailable" lang={lang} />
       </div>
+
+      <TravelNeedSources match={match} lang={lang} />
 
       <div className="personal-match-actions">
         <button type="button" className="btn btn-ghost btn-sm" onClick={edit}>

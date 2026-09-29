@@ -71,21 +71,23 @@ function preferenceInOwnWords(prefs: NormalizedPreferences, questionId: string, 
 }
 
 /** personal-match-1.1 — the data exists but shows too little either way.
- *  Said plainly, including what it does NOT mean. */
+ *  Said plainly: the source's count, that the threshold is Wejhaty's own,
+ *  and what "not counted" does NOT mean. */
 function noEvidenceDetail(factor: FactorResult, ar: boolean): string {
   if (factor.factor === 'language') {
     return ar
       ? 'لا توجد بين لغاتها الرسمية لغة من لغاتك — ولا يعني ذلك صعوبة التواصل، فلم يُحتسب هذا العامل'
       : 'None of your languages is an official language there — that does not mean communication is hard, so this factor was not counted';
   }
+  const count = formatNumber(Number(factor.countryValue ?? 0));
   if (factor.factor === 'halalFood') {
     return ar
-      ? 'قليل من الأماكن فيها موسوم بالحلال على الخريطة المفتوحة، فلم يُحتسب هذا العامل — وفي بلدان كثيرة يكون الحلال هو السائد دون وسم'
-      : 'Few places there are tagged halal on the open map, so this factor was not counted — in many countries halal is the norm and simply not tagged';
+      ? `أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: ${count} — أقل مما تشترطه منهجية وجهتي، فلم يُحتسب هذا العامل. وفي بلدان كثيرة يكون الحلال هو السائد دون وسم`
+      : `${count} places tagged as serving halal food on OpenStreetMap — below what Wejhaty's method needs, so this factor was not counted. In many countries halal is the norm and simply not tagged`;
   }
   return ar
-    ? 'المسجّل منها على الخريطة المفتوحة قليل، فلم يُحتسب هذا العامل — ولا يعني ذلك صعوبة ممارسة الشعائر'
-    : 'Too few places are mapped there to judge, so this factor was not counted — that does not mean practice is difficult';
+    ? `مساجد ومصليات مسجّلة على خريطة OpenStreetMap: ${count} — أقل مما تشترطه منهجية وجهتي، فلم يُحتسب هذا العامل. ولا يعني ذلك صعوبة ممارسة الشعائر`
+    : `${count} mosques and Muslim prayer places mapped on OpenStreetMap — below what Wejhaty's method needs, so this factor was not counted. That does not mean practice is difficult`;
 }
 
 /** One line describing how this country compares on this factor. */
@@ -147,15 +149,14 @@ export function factorDetail(factor: FactorResult, lang: Lang): string {
     }
     case 'evidence': {
       const count = formatNumber(Number(factor.countryValue ?? 0));
-      const limited = outcome === 'partial' ? (ar ? ' — عدد محدود' : ' — a limited number') : '';
       if (factor.factor === 'halalFood') {
         return ar
           ? `أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: ${count}`
           : `${count} places tagged as serving halal food on OpenStreetMap`;
       }
       return ar
-        ? `مساجد ومصليات مسجّلة على خريطة OpenStreetMap: ${count}${limited}`
-        : `${count} mosques and Muslim prayer places mapped on OpenStreetMap${limited}`;
+        ? `مساجد ومصليات مسجّلة على خريطة OpenStreetMap: ${count}`
+        : `${count} mosques and Muslim prayer places mapped on OpenStreetMap`;
     }
     case 'near': {
       const km = formatNumber(factor.distanceKm ?? 0);

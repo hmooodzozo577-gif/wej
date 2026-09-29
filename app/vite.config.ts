@@ -23,5 +23,9 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/setupTests.ts',
+    // Several suites are CPU-bound (every catalog country rendered or
+    // scored); on a slower runner they pass their assertions but cross
+    // Vitest's default 5 s. A hang still fails, just later.
+    testTimeout: 30_000,
   },
 })

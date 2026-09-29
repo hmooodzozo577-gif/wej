@@ -57,7 +57,7 @@ function loadEffectiveCatalogCountryCodes() {
 }
 
 /** ISO3 -> ISO2, from the same `world-countries` package
- *  generate-world-countries.mjs already uses (MIT licensed, already a
+ *  generate-world-countries.mjs already uses (ODbL data, already a
  *  dependency — no new one added). */
 function loadIso3ToIso2Map() {
   const map = new Map();

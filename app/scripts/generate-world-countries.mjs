@@ -6,8 +6,11 @@
 //
 // SOURCE / CONVENTION (documented explicitly per Phase 10 requirements):
 // - Country facts (ISO codes, English/Arabic names, region/subregion,
-//   capital) come from the `world-countries` npm package (MIT), itself
-//   built on the maintained mledoze/countries dataset.
+//   capital) come from the `world-countries` npm package, itself built on
+//   the maintained mledoze/countries dataset. Its data is licensed under
+//   the ODC Open Database License 1.0 (node_modules/world-countries/LICENSE;
+//   the package.json has no "license" field), so the generated files are
+//   derived databases under the ODbL — see docs/DATA_SOURCES_V1_1.md.
 // - Country list = 193 UN member states + 2 UN observer states (the Holy
 //   See / Vatican City, and the State of Palestine) = 195 total. This is
 //   the same "195 countries" convention widely cited for "countries of the

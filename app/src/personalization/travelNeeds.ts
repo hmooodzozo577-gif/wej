@@ -1,4 +1,5 @@
-// v1.1 — three optional traveller needs for Personal Match (personal-match-1.1):
+// v1.1 — three optional traveller needs for Personal Match (personal-match-1.1,
+// corrected in personal-match-1.2):
 //
 //   LANGUAGE           how much easy communication in a language the
 //                      traveller knows matters, and which languages
@@ -20,16 +21,22 @@
 //     never a low score.
 //   - Islamic practice: mosques / Muslim places of worship MAPPED in
 //     OpenStreetMap (islamicTravelEvidence.json), by count and, for small
-//     countries, by density per land area. Halal food: places explicitly
-//     TAGGED as serving halal food there. Neither is read from religion
+//     countries, by density per area. Halal food: places explicitly TAGGED
+//     as serving halal food there. Neither is read from religion
 //     statistics, an official religion, a name or a region; no country or
 //     society is rated for religiosity. Mapping completeness varies, so
 //     only positive evidence counts and anything below the evidence floor
 //     is "not counted".
-//   - Halal has ONE level on purpose: where halal is simply the default it
+//   - Every travel need has ONE level: enough evidence is a good fit (100);
+//     less is not counted. A lower "partial" fit would pull a country's
+//     Personal Match DOWN whenever its other factors score above it, so
+//     more mapped evidence could give a lower result than less — which is
+//     why personal-match-1.2 dropped the 1.1 partial mosque level. For
+//     halal there is a second reason: where halal is simply the default it
 //     is rarely tagged, so a count of tags cannot say that one country is
-//     "less halal-friendly" than another. Enough tagged places is positive
-//     evidence; fewer is not counted — never a partial or low score.
+//     "less halal-friendly" than another.
+//   - The thresholds are Wejhaty's own reading of the counts, not an
+//     OpenStreetMap rating (docs/DATA_SOURCES_V1_1.md).
 //
 // Privacy: these answers stay in the local profile. They are never sent to
 // the Worker, analytics or admin, never put in a URL, a share text or page
@@ -52,22 +59,44 @@ export const TRAVEL_NEED_COPY = {
   },
 } as const;
 
+/** Where the travel-need evidence comes from, shown under "why this suits
+ *  you" whenever one of these factors is part of the match. Both sources
+ *  are ODbL databases, so the notice names each one, links it and the
+ *  licence, and says the counting thresholds are Wejhaty's own. */
+export const TRAVEL_NEED_SOURCES = {
+  osmCopyrightUrl: 'https://www.openstreetmap.org/copyright',
+  countriesUrl: 'https://github.com/mledoze/countries',
+  odblUrl: 'https://opendatacommons.org/licenses/odbl/1-0/',
+  ar: {
+    osmLead: 'أعداد المساجد والأماكن الحلال من بيانات OpenStreetMap',
+    osmCredit: '© مساهمو OpenStreetMap',
+    osmThresholds: 'أما حدود احتسابها فمن منهجية وجهتي، وليست تقييمًا من OpenStreetMap.',
+    languagesLead: 'اللغات الرسمية من قاعدة بيانات world-countries',
+    license: 'متاحة بترخيص',
+  },
+  en: {
+    osmLead: 'Mosque and halal counts come from OpenStreetMap data',
+    osmCredit: '© OpenStreetMap contributors',
+    osmThresholds: "The thresholds that count them are Wejhaty's own method, not an OpenStreetMap rating.",
+    languagesLead: 'Official languages come from the world-countries database',
+    license: 'available under the',
+  },
+} as const;
+
 /** Importance answers: 100 very important (a deciding factor), 60
  *  important, 0 not important (neutral, never scored). */
 export const IMPORTANCE_VERY = 100;
 export const IMPORTANCE_SOME = 60;
 
-/** Evidence floors (places mapped in OpenStreetMap).
- *  Mosques: at least STRONG places, or at least SOME places at a density of
- *  STRONG_DENSITY per 1,000 km² (a small country with many mosques), is a
- *  good match (fit 100); at least SOME is a partial match (fit 60); fewer
- *  is not counted.
+/** Evidence floors (places mapped in OpenStreetMap) — Wejhaty's thresholds.
+ *  Mosques: at least STRONG places, or at least DENSE_FLOOR places at a
+ *  density of DENSITY per 1,000 km² (a small country with many mosques for
+ *  its size), is a good match (fit 100); anything less is not counted.
  *  Halal: at least FLOOR tagged places is a good match (fit 100); fewer is
- *  not counted (see the header for why there is no partial level). */
-export const MOSQUE_EVIDENCE = { strong: 200, some: 20, strongDensityPer1000Km2: 5 } as const;
+ *  not counted. There is no partial level (see the header). */
+export const MOSQUE_EVIDENCE = { strong: 200, denseFloor: 20, densityPer1000Km2: 5 } as const;
 export const HALAL_EVIDENCE = { floor: 20 } as const;
 export const STRONG_EVIDENCE_FIT = 100;
-export const SOME_EVIDENCE_FIT = 60;
 
 export interface LanguageOption {
   code: string;
@@ -225,7 +254,7 @@ interface EvidenceSnapshot {
 const EVIDENCE = evidenceJson as EvidenceSnapshot;
 const EVIDENCE_BY_CODE = new Map(EVIDENCE.entries.map((entry) => [entry.countryCode, entry]));
 
-export type EvidenceTier = 'strong' | 'some' | 'insufficient' | 'noData';
+export type EvidenceTier = 'strong' | 'insufficient' | 'noData';
 
 export function evidenceTier(
   countryCode: string,
@@ -236,8 +265,7 @@ export function evidenceTier(
   const count = entry?.status === 'ok' ? entry[kind] : undefined;
   if (typeof count !== 'number') return { tier: 'noData' };
   if (kind === 'halalPlaces') return { tier: count >= HALAL_EVIDENCE.floor ? 'strong' : 'insufficient', count };
-  const dense = typeof areaKm2 === 'number' && areaKm2 > 0 && (count / areaKm2) * 1000 >= MOSQUE_EVIDENCE.strongDensityPer1000Km2;
-  if (count >= MOSQUE_EVIDENCE.strong || (count >= MOSQUE_EVIDENCE.some && dense)) return { tier: 'strong', count };
-  if (count >= MOSQUE_EVIDENCE.some) return { tier: 'some', count };
+  const dense = typeof areaKm2 === 'number' && areaKm2 > 0 && (count / areaKm2) * 1000 >= MOSQUE_EVIDENCE.densityPer1000Km2;
+  if (count >= MOSQUE_EVIDENCE.strong || (count >= MOSQUE_EVIDENCE.denseFloor && dense)) return { tier: 'strong', count };
   return { tier: 'insufficient', count };
 }

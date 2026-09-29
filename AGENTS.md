@@ -53,7 +53,11 @@ persistent autonomous engineering operating contract for this project.
   self-reported and LOCAL ONLY: never an analytics event or dimension,
   never sent to the Worker or admin, never in a URL, share text or page
   metadata. Destination evidence is positive-only (an official language;
-  places mapped or tagged in OpenStreetMap); missing or thin evidence is
+  places mapped or tagged in OpenStreetMap), at one level (enough is a
+  good fit, less is not counted, so answering a need can never lower a
+  score); the thresholds are Wejhaty's, never presented as an
+  OpenStreetMap rating; the ODbL source notice under "why this destination
+  suits you" must stay; missing or thin evidence is
   "not counted", never a low score; never rate a country, government or
   society by religiosity, and never use religion statistics, an official
   religion, a name or a region as evidence.

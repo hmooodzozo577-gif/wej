@@ -1,6 +1,7 @@
-# Personal Match 1.1 — language, Islamic practice, halal food
+# Personal Match 1.1 / 1.2 — language, Islamic practice, halal food
 
-Methodology `personal-match-1.1`; profile schema v2. Deterministic, no AI.
+Methodology `personal-match-1.2` (v1.1.0 RC2; RC1 shipped 1.1). Profile
+schema v2. Deterministic, no AI.
 Phase 14 (candidates, weights, ranking) and Country Suitability are
 untouched.
 
@@ -29,14 +30,21 @@ Weight = 10 × importance / 100 (Very important = 10, a deciding factor;
 Important = 6). The Personal Match formula is unchanged:
 `round((Σ wᵢ·fitᵢ + 8·50) / (Σ wᵢ + 8))` over evaluated factors.
 
-| Factor | Evidence | Fit | Not counted when |
+| Factor | Evidence (source fact) | Fit (Wejhaty's threshold) | Not counted when |
 |---|---|---|---|
-| Language | one of your languages is an **official** language of the country (world-countries data) | 100 | none is official — English, for one, is widely used where it is not official, so this is not evidence of difficulty |
-| Islamic practice | mosques / Muslim places of worship **mapped** in OpenStreetMap | ≥ 200, or ≥ 20 at ≥ 5 per 1,000 km²: 100; ≥ 20: 60 | fewer than 20 mapped, or no data for the country |
-| Halal food | places **tagged** `diet:halal=yes\|only` in OpenStreetMap | ≥ 20: 100 (one level — see below) | fewer than 20 tagged, or no data |
+| Language | one of your languages is an **official** language of the country (world-countries data) | 100 | none is official. English, for one, is widely used where it is not official, so this is not evidence of difficulty. |
+| Islamic practice | mosques / Muslim places of worship **mapped** in OpenStreetMap | ≥ 200, or ≥ 20 at ≥ 5 per 1,000 km²: 100 | anything less, or no data for the country |
+| Halal food | places **tagged** `diet:halal=yes\|only` in OpenStreetMap | ≥ 20: 100 | fewer than 20 tagged, or no data |
 
-"Not counted" lowers coverage and confidence, never the score. A travel
-need is never a "negative" outcome. Nothing reads religion statistics, an
+Every travel need has **one level**. Enough evidence is a good fit, and
+anything less is not counted. The thresholds are Wejhaty's own reading of
+the counts, not an OpenStreetMap rating.
+
+"Not counted" lowers coverage and confidence, never the score: the score
+is exactly what it would be had the question not been answered. So
+answering a travel need can only raise or keep a Personal Match
+(`travelNeeds.monotonic.test.ts`, every purpose and country). A travel need
+is never a "negative" outcome. Nothing reads religion statistics, an
 official religion, a country name or a region, and no country or society
 is rated for religiosity. A Muslim-majority country where halal is simply
 the default (and rarely tagged) is "not counted", not low; a
@@ -46,12 +54,27 @@ where the number comes from. Halal has a single level on purpose: where
 halal is the default it is rarely tagged, so the number of tags cannot
 rank one country as "less halal-friendly" than another.
 
+**Why 1.2.** 1.1 had a partial mosque level: fit 60 for 20–199 mapped
+without the density. In the weighted average a fit of 60 pulls the result
+down whenever the other factors score higher. So a country with 128 mapped
+mosques (Italy) could score below one with 19 (Poland): 3,664 of 10,560
+audited cases, up to 7 points, across 33 countries. 1.2 treats that range
+as not counted, like every other thin evidence. Nothing else changed. The
+audit is in `docs/audits/DATA_METHODOLOGY_RC2.md`.
+
 "لماذا هذه النسبة؟" explains each factor in plain words, including what a
-"not counted" factor does **not** mean.
+"not counted" factor does **not** mean. A not-counted mosque or halal
+factor shows the OpenStreetMap count and says it is below what Wejhaty's
+method needs. Under the factors, a short notice credits the sources:
+"© OpenStreetMap contributors" and world-countries (mledoze/countries),
+both under the ODbL. The notice also says the thresholds are Wejhaty's.
 
 ## Versioning and migration
 
-- `PERSONAL_MATCH_METHODOLOGY_VERSION = 'personal-match-1.1'`.
+- `PERSONAL_MATCH_METHODOLOGY_VERSION = 'personal-match-1.2'`.
+  - 1.1 (RC1) added the three travel needs.
+  - 1.2 (RC2) removed the partial mosque level.
+  - The profile format did not change for 1.2, so there is no migration.
 - `PROFILE_SCHEMA_VERSION = 2`; migration 1 → 2 keeps every answer, the
   asked order and both timestamps; the new questions start unanswered.
   "Edit my preferences" then asks them.

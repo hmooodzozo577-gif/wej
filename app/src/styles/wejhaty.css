@@ -5463,6 +5463,25 @@ html[dir='rtl'] .travel-route-band {
 
 .personal-match-actions .btn { min-height: 44px; }
 
+/* v1.1 RC2 — the ODbL source notice for the travel-need evidence: a quiet
+   footnote under the factors, same register as the other data notes. */
+.personal-match-sources {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.6;
+}
+
+.personal-match-sources p { margin: 0; }
+
+.personal-match-sources a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
 .personal-match-card.is-empty p { margin: 0; color: var(--muted); }
 .personal-match-card.is-empty .btn { justify-self: start; min-height: 44px; }
 

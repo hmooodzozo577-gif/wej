@@ -22,8 +22,12 @@ export const PROFILE_SCHEMA_VERSION = 2 as const;
  *  personal-match-1.1 adds three optional factors (language, Islamic
  *  practice, halal food); every personal-match-1.0 factor, weight and
  *  threshold is unchanged, so a profile without the new answers scores
- *  exactly as it did under 1.0. */
-export const PERSONAL_MATCH_METHODOLOGY_VERSION = 'personal-match-1.1' as const;
+ *  exactly as it did under 1.0.
+ *  personal-match-1.2 drops 1.1's partial mosque level (fit 60): it could
+ *  lower a Personal Match below what no evidence gives, so thin evidence
+ *  is now "not counted" like every other travel need. Nothing else
+ *  changes. */
+export const PERSONAL_MATCH_METHODOLOGY_VERSION = 'personal-match-1.2' as const;
 
 /** What is remembered on this browser. Deliberately minimal: the quiz
  *  answers themselves are the traveller's preferences (signals are derived

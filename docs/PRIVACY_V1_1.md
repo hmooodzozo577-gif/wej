@@ -35,6 +35,15 @@ and, only when the traveller shares from a page that shows it, the
 Personal Match percentage. Static pages and runtime metadata describe
 destinations, never a traveller.
 
+## Source links (RC2)
+
+The data-source notice under "why this destination suits you" holds three
+static links: OpenStreetMap's copyright page, the mledoze/countries
+repository and the ODbL text. The links are fixed; no answer, score or
+country is added to them. They open in a new tab only when the traveller
+clicks. The page loads nothing from those sites, so showing the notice
+sends nothing anywhere.
+
 ## Evidence
 
 - `app/src/routes/Quiz.travelNeeds.test.tsx` — no analytics event or count

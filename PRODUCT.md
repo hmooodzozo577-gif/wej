@@ -36,7 +36,7 @@ Wejhaty's distinguishing mechanism is a deterministic recommendation engine over
 - Precise coordinates remain in memory and are never sent to recommendation services or analytics.
 - Browser location and self-reported passport country are separate concepts. The product collects no passport number.
 - Sensitive personal or cultural traits are never inferred from nationality, language, locale, or location.
-- Optional self-reported travel needs (languages, ease of Islamic practice, halal food) refine Personal Match only, stay on the traveller's device, and are matched only against positive evidence (official languages; places mapped in OpenStreetMap). Missing evidence is "not counted", never a low score, and no country is rated for religiosity.
+- Optional self-reported travel needs (languages, ease of Islamic practice, halal food) refine Personal Match only, stay on the traveller's device, and are matched only against positive evidence (official languages from world-countries; places mapped in OpenStreetMap, credited under the ODbL). The thresholds are Wejhaty's own. Missing or thin evidence is "not counted", never a low score, and no country is rated for religiosity.
 - Favorites and comparisons are local; Compare shows real data side by side with no winner and no combined score. Shared links carry a destination only.
 - Only real, stable pages (home, Explore, destination pages) are indexable; personal and transient states are not.
 - All visible numbers use Latin digits in both languages.
