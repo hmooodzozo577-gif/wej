@@ -3054,8 +3054,18 @@ html[dir='rtl'][data-theme='light'] .home-hero-scrim {
   border-radius: 0;
   object-fit: cover;
   object-position: center;
+  /* v1.1.1 — the resting style equals the settle animation's last
+     keyframe, and the animation fills backwards only. With `both`, the
+     finished animation kept holding the photo, so the browser kept it as
+     its own composited layer for the life of the page, and the scrim and
+     all the Hero copy became a second layer over it. On Android Chrome,
+     after scrolling away and back, those two layers came back without
+     their top part: the frame's navy background showed through as an
+     empty band. Once the animation ends now, the photo and copy paint
+     with the frame. */
   transform: scale(1.015);
-  animation: hero-photo-settle 1100ms var(--motion-ease-out) both;
+  filter: none;
+  animation: hero-photo-settle 1100ms var(--motion-ease-out) backwards;
 }
 
 .home-hero-scrim {
@@ -3527,6 +3537,9 @@ html[dir='rtl'] .top-pick:focus-visible .top-pick-cta svg { transform: translate
   .results-grid .dest-card {
     animation: none !important;
   }
+
+  /* The still photo keeps the look it has always had without motion. */
+  .home-hero-frame > .hero-folio-image { filter: saturate(0.86) contrast(1.03); }
 
   .dest-card,
   .purpose-card,

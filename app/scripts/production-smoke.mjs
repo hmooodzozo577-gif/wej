@@ -293,6 +293,56 @@ for (const engine of engineNames) {
     await context.close();
   }
 
+  // v1.1.1: once the Hero photo's settle animation ends, nothing holds the
+  // photo. A held (fill "both") animation kept it, and by overlap the scrim
+  // and the Hero copy, as separate composited layers; on Android Chrome
+  // those came back from a scroll cycle without their top part.
+  {
+    const context = await browser.newContext({ viewport: { width: 1000, height: 600 }, reducedMotion: 'no-preference' });
+    await context.addInitScript(() => localStorage.setItem('wejhaty.theme', 'dark'));
+    await context.route(`https://${WORKER_HOST}/**`, (route) => route.abort());
+    const tab = await context.newPage();
+    const errors = [];
+    tab.on('pageerror', (error) => errors.push(error.message));
+    await tab.goto(`${SITE}/`, { waitUntil: 'networkidle' });
+    const photo = '.home-hero-frame > .hero-folio-image';
+    await tab.waitForFunction((selector) => document.querySelector(selector)?.complete, photo, { timeout: 15000 }).catch(() => {});
+    await tab.waitForTimeout(2500);
+    const rest = await tab.evaluate((selector) => {
+      const image = document.querySelector(selector);
+      const style = getComputedStyle(image);
+      return { held: image.getAnimations().length, transform: style.transform, filter: style.filter };
+    }, photo);
+    check(rest.held === 0, `${engine} Hero photo holds no finished animation`, String(rest.held));
+    check(/^matrix\(1\.015, 0, 0, 1\.015, 0, 0\)$/.test(rest.transform) && rest.filter === 'none', `${engine} Hero photo rests at its last keyframe`, `${rest.transform} ${rest.filter}`);
+    const boxes = () => tab.evaluate((selector) => [selector, '.home-hero-frame', '.home-hero-frame .hero-grid'].map((s) => {
+      const r = document.querySelector(s).getBoundingClientRect();
+      return [r.x, r.y + scrollY, r.width, r.height].map(Math.round).join(',');
+    }).join(' '), photo);
+    const before = await boxes();
+    await tab.evaluate(() => window.scrollTo(0, innerHeight * 2));
+    await tab.waitForTimeout(300);
+    await tab.evaluate(() => window.scrollTo(0, 0));
+    await tab.waitForTimeout(300);
+    check((await boxes()) === before, `${engine} Hero photo and copy keep their place after a scroll cycle`, before);
+    if (engine === 'chromium' || engine === 'msedge') {
+      const cdp = await context.newCDPSession(tab);
+      let layers = [];
+      cdp.on('LayerTree.layerTreeDidChange', (event) => { if (event.layers) layers = event.layers; });
+      await cdp.send('LayerTree.enable');
+      await tab.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      const frame = await tab.evaluate(() => document.querySelector('.home-hero-frame').getBoundingClientRect().width);
+      const held = [];
+      for (const layer of layers.filter((l) => l.drawsContent && l.width >= frame * 0.9 && l.height >= 300)) {
+        const { compositingReasonIds = [] } = await cdp.send('LayerTree.compositingReasons', { layerId: layer.layerId });
+        if (compositingReasonIds.some((reason) => /^Active(Transform|Filter)Animation$/.test(reason))) held.push(`${Math.round(layer.width)}x${Math.round(layer.height)}`);
+      }
+      check(layers.length > 0 && held.length === 0, `${engine} Hero photo is not a lasting composited layer`, held.join(' ') || `${layers.length} layers`);
+    }
+    check(errors.length === 0, `${engine} Hero scroll check without page errors`, errors.join(' | '));
+    await context.close();
+  }
+
   // Passport: an already-shared location only pre-fills the selector.
   if (engine === 'chromium' || engine === 'msedge') {
     const { context, tab, errors, passportLeaks } = await page({ width: 1280, height: 900 }, 'light', 'ar');
