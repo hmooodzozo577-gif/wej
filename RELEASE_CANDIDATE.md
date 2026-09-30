@@ -1,15 +1,58 @@
 # Wejhaty — release record
 
-Status: **WEJHATY v1.1.0 — FINAL RELEASE — TECHNICALLY VERIFIED,
-PRODUCTION-VERIFIED, USER-ACCEPTED, RELEASED (2026-09-29).**
+Status: **WEJHATY v1.1.1 RC1 — ANDROID CHROME HERO SCROLL HOTFIX —
+TECHNICALLY VERIFIED, PRODUCTION-VERIFIED, AWAITING USER ACCEPTANCE
+(2026-09-30).** **WEJHATY v1.1.0 (2026-09-29) stays the released,
+user-accepted version**; its refs never move.
 
-- RC2 was user-accepted ("ناجح") and is the basis of v1.1.0.
-- RC1 and RC2 stay unchanged as historical candidates.
+- v1.1.0 RC1 and RC2 stay unchanged as historical candidates.
 - **WEJHATY v1.0.0 (2026-09-24)** stays a released, immutable version.
 
-Current truth lives in `PROJECT_STATE.md` (state v45 and its
+Current truth lives in `PROJECT_STATE.md` (state v46 and its
 known-limitations register). This file records what each release and
 candidate is, and how it was checked.
+
+# v1.1.1 RC1 — `wejhaty-v1.1.1-rc1` (hotfix candidate)
+
+## v1.1.1-RC1.1 What it is
+
+- Branch `release/wejhaty-v1.1.1-rc1` and annotated tag
+  `wejhaty-v1.1.1-rc1` → the commit that records this candidate. It
+  descends from v1.1.0 (`8643c85`) through the branch
+  `hotfix/wejhaty-v1.1.1-android-hero`. It is not built on RC2 and does
+  not rewrite v1.1.0.
+- One product change, in `app/src/styles/wejhaty.css`: the Home Hero
+  photo's settle animation fills `backwards` instead of `both`, and the
+  photo's resting style is the animation's last keyframe
+  (`scale(1.015)`, no filter). The reduced-motion rule keeps its
+  still-photo look. Before, the finished animation kept holding the
+  photo, so Chrome kept the photo and, over it, the scrim and the Hero
+  copy as two lasting composited layers apart from the frame. On an
+  Android device those two layers came back from a scroll cycle without
+  their top part: an empty navy band inside the frame. Diagnosis:
+  `PROJECT_STATE.md` state v46.
+- Regression tests: `app/src/routes/Home.heroPhotoLayer.test.ts` (fails on
+  v1.1.0) and new Hero checks in `app/scripts/production-smoke.mjs`
+  (three fail on v1.1.0 locally).
+- Version `1.1.1` (`app/package.json`); the footer shows v1.1.1.
+- Nothing else changes: engine, Passport, Worker, data, Personal Match,
+  Favorites, Compare, Share, SEO, attribution, privacy, Admin, analytics,
+  header and footer are identical to v1.1.0.
+
+## v1.1.1-RC1.2 User-acceptance checklist
+
+On the Android device that showed the band (Chrome, Arabic, dark):
+
+1. Open Home at the top. The photo fills the whole frame.
+2. Scroll down one or two screens, then back to the top, slowly. No navy
+   band; headline and eyebrow visible; photo reaches the frame's top edge.
+3. Repeat fast (a flick), and with momentum, several times.
+4. Rotate the device and repeat once in the other orientation.
+5. Optional: English, and Light mode.
+
+## v1.1.1-RC1.3 Integrity and production verification
+
+{{RC1_VERIFICATION}}
 
 Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
 PRODUCTION-VERIFIED, USER-VERIFIED, USER-ACCEPTED, UNVERIFIED, DEFERRED,

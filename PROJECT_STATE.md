@@ -5,7 +5,80 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-### Current verified state — 2026-09-29 (WEJHATY v1.1.0 — FINAL RELEASE, USER-ACCEPTED)
+### Current verified state — 2026-09-30 (WEJHATY v1.1.1 RC1 — ANDROID CHROME HERO SCROLL HOTFIX, AWAITING USER ACCEPTANCE)
+
+- State document version: 46. **Status: WEJHATY v1.1.1 RC1 — TECHNICALLY
+  VERIFIED, PRODUCTION-VERIFIED, AWAITING USER ACCEPTANCE.** Nothing in
+  v1.1.1 is user-accepted. **v1.1.0 stays the accepted, released
+  version**; its refs are unchanged (state v45 below).
+- **The bug** (user report, real Android Chrome, Arabic, dark, with a
+  screenshot from an Android tablet in landscape): after scrolling down
+  and back to the top of Home, the Hero frame shows an empty navy band
+  across its top. The frame's own background and border are there, but
+  the photo **and** everything drawn over it (scrim, eyebrow, headline,
+  inner orange border) are missing above one horizontal line. The route
+  decoration, which is outside the frame, is drawn normally. The same
+  glitch was reported in Phase 17 and never reproduced (state v31).
+- **Root cause** (CODE-VERIFIED and BROWSER-VERIFIED in Chromium's layer
+  tree; the last step is device-only):
+  1. The photo's 1.1 s settle animation used `animation-fill-mode: both`.
+     The finished animation kept holding the photo (`getAnimations()`
+     still returned it, state `finished`).
+  2. Chromium therefore kept the photo as its own composited layer for the
+     life of the page (reasons `ActiveTransformAnimation`,
+     `ActiveFilterAnimation`, still there after 10 s). The scrim, the Hero
+     copy and the inner border, painted over it, became a second layer
+     (reason `Overlap`). The frame's background stayed in the page layer.
+  3. That split is exactly the screenshot: both frame-sized layers lost
+     their top part after a scroll cycle, the page layer did not. The
+     final step (Android's GPU tiling dropping or not re-rastering the top
+     tiles of those two layers) cannot run in headless Chromium: five
+     Phase 17 attempts and this round's touch/mouse/instant, slow/fast and
+     multi-cycle runs never show the band there.
+  - Not the cause, measured: the Hero has no scroll handler, no parallax,
+    no `IntersectionObserver`/`ResizeObserver`/`visualViewport` code, no
+    viewport-height unit on Home (`.home-hero-frame` is
+    `clamp(560px, 50vw, 610px)` above 930 px container width and
+    `height: auto` below), no `background-attachment: fixed`. Geometry and
+    computed styles of header, stage, frame, photo, scrim, grid, headline,
+    routes, plane and compass are identical in states A (fresh) and C
+    (after 3 scroll cycles); only the animated plane moves.
+- **Fix** (`app/src/styles/wejhaty.css`, one rule plus one reduced-motion
+  line): the photo's resting style is now the animation's last keyframe
+  (`transform: scale(1.015); filter: none`, `saturate(1)` ≡ `none`) and
+  the animation fills `backwards` only. When it ends, nothing holds the
+  photo, so the photo, scrim and copy paint with the frame again. The
+  reduced-motion rule keeps that case's still-photo look
+  (`saturate(0.86) contrast(1.03)`) unchanged. Same motion, same final
+  picture; no offset, reload, scroll call, timer, overlay or
+  platform-specific rule.
+- **Regression tests**:
+  - `app/src/routes/Home.heroPhotoLayer.test.ts` (3 tests): fails on
+    v1.1.0 (`fill: both`; reduced-motion rule missing), passes now.
+  - `app/scripts/production-smoke.mjs`, every engine: the photo holds no
+    finished animation; it rests at its last keyframe; photo, frame and
+    grid keep their place after a scroll cycle; Chromium/Edge: no lasting
+    frame-sized composited layer with an active animation. Locally on
+    v1.1.0 three of these fail (`held 1`, `saturate(1)`, layer 950×558);
+    on the fix 73/73 pass.
+- **Unchanged, proven**: Phase 14 engine `75d09040b0f8`, Passport
+  `cf4f8f719ea5`, `worker/` `827dc53c1540` (no diff against v1.1.0 or
+  v1.0.0), all data, Personal Match `personal-match-1.2`, Favorites,
+  Compare, Share, SEO, OSM notice, privacy, Admin, analytics, footer,
+  header. Version `1.1.1` (`app/package.json`, the only source; the footer
+  shows v1.1.1).
+- **Gates**: {{GATES}}
+- **Deploy and production smoke**: {{DEPLOY}}
+- **RC1 refs**: branch `release/wejhaty-v1.1.1-rc1` and annotated tag
+  `wejhaty-v1.1.1-rc1` → the commit that records this state (read its hash
+  from the refs); it descends from v1.1.0 `8643c85` through
+  `hotfix/wejhaty-v1.1.1-android-hero`. No `wejhaty-v1.1.1` final tag
+  exists yet.
+- **Needs the user**: re-test on the same Android device (Home → scroll
+  down → back to top, slow and fast, several times; also after rotating).
+  Register V8.
+
+### Previous state — 2026-09-29 (WEJHATY v1.1.0 — FINAL RELEASE, USER-ACCEPTED; still the released version)
 
 - State document version: 45. **Status: WEJHATY v1.1.0 — FINAL RELEASE —
   TECHNICALLY VERIFIED, PRODUCTION-VERIFIED, USER-ACCEPTED, RELEASED.**
@@ -2614,6 +2687,7 @@ are listed for traceability only.
 | V5 | OpenStreetMap evidence limits | DEFERRED / DOCUMENTED | RC2 sensitivity audit on all 193 countries with data (`docs/audits/DATA_METHODOLOGY_RC2.md`): the partial mosque level was a scoring defect and is removed (`personal-match-1.2`); thresholds 200 / 20 / 5 per 1,000 km² and the halal floor 20 are stable and kept; 18 countries sit within ±25 % of a mosque threshold and 13 of the halal floor; national totals, overseas parts inside `admin_level=2`, possible double mapping; Palestine has no OSM country boundary | Monthly refresh; revisit thresholds only with evidence of a structural defect | Maintainer |
 | V6 | Halal tags reflect tagging culture | DOCUMENTED (source limitation) | Median halal tags per mapped mosque 0.015 in Muslim-majority countries vs 1.056 in highly mapped Western / East Asian ones; 31 countries with ≥ 200 mapped mosques have < 20 halal tags. They are "not counted" (never lower), and the explanation says halal is often the norm and untagged; no floor removes the gap and inferring halal from mosques would infer from a Muslim presence | None unless a legitimate halal-availability source appears | Maintainer |
 | V7 | English header wraps between 861 and ~930 px | DEFERRED (pre-existing) | Brand + four links + controls do not fit on one line there in English; RC1 wrapped there too (measured; v1.0 had the same four links). RC2's header is 28 px narrower there (940 px now fits) | Fix only in a header-layout task | Maintainer |
+| V8 | Android Chrome Hero scroll band (v1.1.1 RC1) | UNVERIFIED (on the physical device) | Root cause fixed: the photo's settle animation no longer holds the photo, so Chromium no longer keeps the photo and the Hero copy as two lasting composited layers apart from the frame (layer tree, `getAnimations()`, unit and smoke regressions). The band itself never appears in headless Chromium, so only the user's device can confirm it is gone. The unconfirmed Phase 17 `will-change: transform` on the Hero route decoration is kept (outside the frame, drawn correctly in the report) | User re-tests Home scroll down/up on the same Android device | User |
 | P20 | Phase 20 — Final Wejhaty (RC4) | RESOLVED | USER-ACCEPTED 2026-09-24; released as `wejhaty-v1.0.0` | — | User |
 | P21 | Phase 21 — Admin post-launch enhancements | RESOLVED | USER-ACCEPTED 2026-09-24; Worker `b1c2815a`; released as `wejhaty-v1.0.0` | — | User |
 | U2 | Real desktop Safari (macOS) and real Edge | RESOLVED | Safari 26.6.2 15/15 and Edge in every release smoke (run 35946079472) | Keep in every release smoke | Maintainer |
