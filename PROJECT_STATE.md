@@ -78,7 +78,19 @@ fix) and the new `routes/Home.heroPhotoLayer.test.ts`; outside `app/src`,
 - Worker 273/273, `tsc` 0, `wrangler deploy --dry-run` clean.
 - Local browser checks (Chromium): matrix 1 200/1 200; axe (WCAG 2.1
   A/AA) 0 violations on 48 states (AR/EN × Light/Dark); Favorites/Compare
-  adversarial 49/49 and flow 27/27; {{HERO_MATRIX}}
+  adversarial 49/49 and flow 27/27; keyboard 80/80 (Home, AR/EN ×
+  Light/Dark × 1280/390 × motion/reduced motion: Tab reaches the Hero
+  CTA, every stop has a visible ring, none on a hidden element, Enter
+  opens the quiz).
+- Hero matrix on the release build, 125 states (phones, tablets
+  including 1000×560, desktops; AR/EN × Light/Dark/System; reduced
+  motion; slow, fast and double scroll cycles, instant jumps, viewport
+  height change mid-scroll both ways): 4 874/4 875. The one miss was
+  "`scrollY` not yet 0 right after `scrollTo(0, 0)`" while 2 shards
+  shared the CPU; that state re-run alone: 39/39. Every state: no held
+  photo animation, rest style `scale(1.015)` / no filter (reduced motion
+  `saturate(0.86) contrast(1.03)`), photo covering the frame, geometry
+  identical to the fresh load, no lasting animated layer.
 - Bundle identical to RC1: JS 2 432 882 B (635 379 B gzip -9), CSS
   113 142 B (22 758 B gzip -9); delta 0.
 
