@@ -91,7 +91,32 @@ configuration, and current Git state outrank this document when they differ.
     Hero), so the dynamic toolbar is not a factor; no unit was changed.
   - Bundle: JS 2 432 882 B both (gzip -9 +2 B, the version string); CSS
     +87 B (+16 B gzip). No dependency change.
-- **Deploy and production smoke**: {{DEPLOY}}
+- **Deploy**: the deploy branch fast-forwarded from `8643c85`. Pages run
+  36678165796 (`130f3c8`) → deployment 6753007972; then Pages run
+  36680050325 (`e6138ae`, a smoke-script-only change, same app build) →
+  github-pages deployment 6753324597. Served bundle
+  `assets/index-Q4TA26ho.js` / `assets/index-xnUlk2Vq.css`, the names of
+  the local build. Worker not redeployed (`b1c2815a`).
+- **Production smoke** (read-only):
+  - Run 36678242211 on `130f3c8`: 260/261. Every new Hero check passed on
+    all four engines. The one failure, Edge "the default passport is not
+    stored", was a false alarm already present in the check: it looked
+    for `"SA"` anywhere in browser storage, and the Home Hero stores the
+    codes of the destinations it showed (`wejhaty.hero.*`), Saudi Arabia
+    among them at random. Fixed in `e6138ae` (the check skips only
+    `wejhaty.hero.*`). With the Hero forced to SA, the old check fails and
+    the new one passes; a real stored passport still fails it.
+  - Run 36680147185 on `e6138ae`: all green.
+
+    | Check | Result |
+    |---|---|
+    | Chromium, Firefox, WebKit and Edge (incl. the new Hero checks; footer v1.1.1) | 261/261, 0 CSP violations |
+    | SEO without JavaScript (194 destinations) | 2 182/2 182 |
+    | Worker | 19/19 |
+    | Admin | 15/15 |
+    | Desktop Safari 26.6.2 | 16/16 |
+    | iOS Simulator Mobile Safari | job passed |
+    | Real VoiceOver + Safari | 4/4 |
 - **RC1 refs**: branch `release/wejhaty-v1.1.1-rc1` and annotated tag
   `wejhaty-v1.1.1-rc1` → the commit that records this state (read its hash
   from the refs); it descends from v1.1.0 `8643c85` through

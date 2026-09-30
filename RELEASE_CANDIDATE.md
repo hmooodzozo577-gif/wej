@@ -52,7 +52,23 @@ On the Android device that showed the band (Chrome, Arabic, dark):
 
 ## v1.1.1-RC1.3 Integrity and production verification
 
-{{RC1_VERIFICATION}}
+- Local: frontend 1206/1206 (119 files); `tsc -b` 0; oxlint 0;
+  `verify-seo-build` 4 804/4 804 on the `/wej/` and root builds; matrix
+  1 200/1 200; axe 0 violations on 48 states; adversarial 49/49; flow
+  27/27; Hero matrix 125 states / 4 887 checks (8 CPU-contention
+  `scrollY` misses, 312/312 on re-run alone).
+- `worker/` identical to v1.1.0; Phase 14 engine `75d09040b0f8`,
+  Passport `cf4f8f719ea5` unchanged.
+- Deploy: Pages run 36680050325 → github-pages deployment 6753324597
+  (`e6138ae`; bundle `index-Q4TA26ho.js` / `index-xnUlk2Vq.css`).
+- Production smoke run 36680147185: four engines 261/261 (the new Hero
+  checks included), SEO 2 182/2 182, Worker 19/19, Admin 15/15, desktop
+  Safari 16/16, iOS Simulator passed, VoiceOver 4/4. The earlier run
+  36678242211 (260/261) failed only on a passport-storage false alarm
+  caused by the Hero's random Saudi Arabia code; the check is fixed in
+  `e6138ae` (details in `PROJECT_STATE.md` state v46).
+- Not verified here: the physical Android device (register V8) and a
+  physical iPhone (U3).
 
 Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
 PRODUCTION-VERIFIED, USER-VERIFIED, USER-ACCEPTED, UNVERIFIED, DEFERRED,
