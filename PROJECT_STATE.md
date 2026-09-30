@@ -94,7 +94,24 @@ fix) and the new `routes/Home.heroPhotoLayer.test.ts`; outside `app/src`,
 - Bundle identical to RC1: JS 2 432 882 B (635 379 B gzip -9), CSS
   113 142 B (22 758 B gzip -9); delta 0.
 
-**Production smoke**: {{SMOKE}}
+**Production smoke** (run 36789013469 on `39b156f`, read-only, against the
+live v1.1.1 runtime):
+
+| Check | Result |
+|---|---|
+| Chromium, Firefox, WebKit and Edge (Hero checks, footer v1.1.1, corrected passport-storage check) | 261/261, 0 CSP violations |
+| SEO without JavaScript (194 destinations) | 2 182/2 182 |
+| Worker | 19/19 |
+| Admin | 15/15 |
+| Desktop Safari 26.6.2 | 16/16 |
+| iOS Simulator Mobile Safari 26.5 | 16/16 |
+| Real VoiceOver + Safari | 4/4 |
+
+The iOS job's first attempt was cancelled by the runner, not by a test:
+its smoke and screenshot steps succeeded, then the runner's post-job
+cleanup ("Post Setup Node" 14 min, "Post Checkout" still running) passed
+the 30-minute job limit and its log was lost. That job alone was re-run
+once (attempt 2): 16/16, clean cleanup.
 
 **GitHub Releases**: still not used by this repository (0 releases), so
 none was created; the annotated tag is the release record.

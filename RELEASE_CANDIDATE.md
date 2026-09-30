@@ -35,7 +35,27 @@ candidate is, and how it was checked.
 
 ## v1.1.1.2 Verification
 
-{{FINAL_VERIFICATION}}
+- RC1 → final: `PROJECT_STATE.md` and `RELEASE_CANDIDATE.md` only; `app/`
+  tree `16d6ab4` unchanged; the local build is byte-identical to RC1's
+  (616 files; `index-Q4TA26ho.js` 2 432 882 B, `index-xnUlk2Vq.css`
+  113 142 B; delta 0).
+- Local: frontend 1206/1206 (119 files, Hero regression included);
+  `tsc -b` 0; oxlint 0; `verify-seo-build` 4 804/4 804 on the `/wej/` and
+  root builds; Worker 273/273, `tsc` 0, `wrangler --dry-run` clean;
+  matrix 1 200/1 200; axe 0 violations on 48 states; adversarial 49/49;
+  Favorites/Compare flow 27/27; keyboard 80/80; Hero matrix 125 states,
+  4 874/4 875 (one `scrollY` timing miss under 2-shard load; 39/39
+  alone).
+- Protected trees identical to v1.1.0: engine `75d09040b0f8`, Passport
+  `cf4f8f719ea5`, personalization `42aed467ac4a`, favorites
+  `602ef1c28415`, data `97c9e35767bb`, `worker` `827dc53c1540`.
+- Production: github-pages deployment 6753324597 (Pages run 36680050325),
+  unchanged; no new deployment needed.
+- Production smoke run 36789013469: four engines 261/261, SEO 2 182/2 182,
+  Worker 19/19, Admin 15/15, desktop Safari 16/16, iOS Simulator 16/16
+  (job re-run once after a runner cleanup timeout), VoiceOver 4/4.
+- Not verified here: a physical iPhone (register U3), other Android
+  devices, other screen readers (U4b).
 
 ## v1.1.1.3 Rollback
 
