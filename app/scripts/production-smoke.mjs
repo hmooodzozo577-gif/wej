@@ -363,8 +363,13 @@ for (const engine of engineNames) {
     await tab.waitForTimeout(800);
     const shown = (await tab.textContent('#passport-select').catch(() => '')) ?? '';
     check(/السعودية/.test(shown), `${engine} passport selector starts at the current country`, shown.trim().slice(0, 40));
-    const stored = await tab.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }));
-    check(!/passport|"SA"/.test(stored), `${engine} the default passport is not stored`);
+    // The Home Hero keeps the codes of the destinations it showed
+    // (`wejhaty.hero.*`), and Saudi Arabia is one of them at random; only
+    // the other keys can hold a passport.
+    const stored = await tab.evaluate(() => [localStorage, sessionStorage]
+      .map((store) => JSON.stringify(Object.fromEntries(Object.entries({ ...store }).filter(([key]) => !key.startsWith('wejhaty.hero.')))))
+      .join(''));
+    check(!/passport|"SA"/.test(stored), `${engine} the default passport is not stored`, stored.slice(0, 200));
     check(passportLeaks.length === 0, `${engine} the default passport is not sent`, passportLeaks.join(' '));
     check(errors.length === 0, `${engine} passport default without page errors`, errors.join(' | '));
     await context.close();
