@@ -1,18 +1,50 @@
 # Wejhaty — release record
 
-Status: **WEJHATY v1.1.1 RC1 — ANDROID CHROME HERO SCROLL HOTFIX —
-TECHNICALLY VERIFIED, PRODUCTION-VERIFIED, AWAITING USER ACCEPTANCE
-(2026-09-30).** **WEJHATY v1.1.0 (2026-09-29) stays the released,
-user-accepted version**; its refs never move.
+Status: **WEJHATY v1.1.1 — FINAL HOTFIX RELEASE — TECHNICALLY VERIFIED,
+PRODUCTION-VERIFIED, USER-ACCEPTED, RELEASED (2026-09-30).**
 
-- v1.1.0 RC1 and RC2 stay unchanged as historical candidates.
+- v1.1.1 RC1 was user-accepted on the real Android device ("ناجح") and
+  is the basis of v1.1.1; it stays unchanged as a historical candidate.
+- **WEJHATY v1.1.0 (2026-09-29)** is the previous final release,
+  superseded by v1.1.1; its refs never move. Its RC1 and RC2 stay
+  unchanged.
 - **WEJHATY v1.0.0 (2026-09-24)** stays a released, immutable version.
 
-Current truth lives in `PROJECT_STATE.md` (state v46 and its
+Current truth lives in `PROJECT_STATE.md` (state v47 and its
 known-limitations register). This file records what each release and
 candidate is, and how it was checked.
 
-# v1.1.1 RC1 — `wejhaty-v1.1.1-rc1` (hotfix candidate)
+# v1.1.1 — `wejhaty-v1.1.1` (final hotfix release)
+
+## v1.1.1.1 What it is
+
+- Reason: Android Chrome Hero compositing / paint stability hotfix.
+- Branch `release/wejhaty-v1.1.1`, annotated tag `wejhaty-v1.1.1` and
+  `backup/wejhaty-v1.1.1-final` → the release commit, whose parent is the
+  accepted RC1 `39b156f`. The release commit changes documentation only;
+  the `app/` tree (`16d6ab4`) is the one the user accepted and the one in
+  production (deployment 6753324597).
+- User acceptance: tested on the same physical Android device and Chrome
+  that showed the dark Hero band; the required scroll-down / back-to-top
+  sequence was repeated; result "ناجح". Automated runs never reproduced
+  the paint artifact itself; they prove the root cause is gone. One device
+  and one browser were tested; this is not a certification of other
+  Android devices.
+- Same product as v1.1.0 apart from the Hero fix, its tests, the smoke
+  checks and version 1.1.1 (see RC1 below).
+
+## v1.1.1.2 Verification
+
+{{FINAL_VERIFICATION}}
+
+## v1.1.1.3 Rollback
+
+Roll back with the state-v42 procedure using tag `wejhaty-v1.1.0` (or
+`wejhaty-v1.1.1-rc1`) as the source: history-preserving, no force push.
+The only runtime difference from v1.1.0 is the Hero photo rule, so a
+rollback brings the Android band back.
+
+# v1.1.1 RC1 — `wejhaty-v1.1.1-rc1` (USER-ACCEPTED; basis of v1.1.1)
 
 ## v1.1.1-RC1.1 What it is
 
@@ -74,7 +106,7 @@ Evidence labels: CODE-VERIFIED, TEST-VERIFIED, BROWSER-VERIFIED,
 PRODUCTION-VERIFIED, USER-VERIFIED, USER-ACCEPTED, UNVERIFIED, DEFERRED,
 BLOCKED, FROZEN, CANCELLED, PENDING HUMAN APPROVAL.
 
-# v1.1.0 — `wejhaty-v1.1.0` (final release)
+# v1.1.0 — `wejhaty-v1.1.0` (final release; superseded by v1.1.1)
 
 ## v1.1.0.1 What it is
 

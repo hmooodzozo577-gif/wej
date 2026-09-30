@@ -5,7 +5,103 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-### Current verified state — 2026-09-30 (WEJHATY v1.1.1 RC1 — ANDROID CHROME HERO SCROLL HOTFIX, AWAITING USER ACCEPTANCE)
+### Current verified state — 2026-09-30 (WEJHATY v1.1.1 — FINAL HOTFIX RELEASE, USER-ACCEPTED)
+
+- State document version: 47. **Status: WEJHATY v1.1.1 — FINAL HOTFIX
+  RELEASE — TECHNICALLY VERIFIED, PRODUCTION-VERIFIED, USER-ACCEPTED,
+  RELEASED.** Reason: Android Chrome Hero compositing / paint stability
+  hotfix. v1.1.1 supersedes v1.1.0, which stays the previous final
+  release with its refs unchanged.
+- **User acceptance** (2026-09-30): the user tested RC1 on the **same
+  physical Android device and Chrome** where the dark Hero band was first
+  seen, repeated the required scroll-down / back-to-top behaviour, and
+  reported **"ناجح"** (success). The band did not appear during that
+  acceptance test.
+  - Automated testing never reproduced the GPU paint artifact itself
+    (headless Chromium does not show it). What automation proved is the
+    root cause and its removal: the finished settle animation no longer
+    holds the photo, and no lasting frame-sized animated layer remains.
+    The real-device test is the evidence that the band is gone.
+  - This is one device, one browser. It is not a certification of every
+    Android device or Chrome version.
+- **v1.1.1 = the accepted RC1 plus a documentation-only release commit.**
+  RC1 → final changes `PROJECT_STATE.md` and `RELEASE_CANDIDATE.md` only;
+  the `app/` tree is `16d6ab453d7f7a2667ef6703cdd4553b10e031bd` in RC1
+  (`39b156f`), in the deployed `e6138ae` and in the release commit, so the
+  accepted behaviour is exactly what ships.
+- **Release refs**: branch `release/wejhaty-v1.1.1`, annotated tag
+  `wejhaty-v1.1.1` and the checkpoint `backup/wejhaty-v1.1.1-final`, all →
+  the commit that records this state (read its hash from the refs);
+  parent `39b156feb580d8bcc2bbace79e2698891111f718` (RC1, tree
+  `283e4f5c8bbdf04eb43f454aab42bbf7b2f56913`).
+- **RC1 is immutable**: branch `release/wejhaty-v1.1.1-rc1` and tag
+  `wejhaty-v1.1.1-rc1` (object `14554a843be606dcde14a876f349c54e014a8e19`)
+  → `39b156f`.
+- **App**: version `1.1.1` (`app/package.json`, the only source; the
+  footer shows v1.1.1). Methodology `personal-match-1.2`; profile schema 2.
+- **Deploy**: no new deployment is needed. Production is github-pages
+  deployment 6753324597 (Pages run 36680050325, `e6138ae`), whose `app/`
+  tree equals the release's. Served `assets/index-Q4TA26ho.js` /
+  `assets/index-xnUlk2Vq.css`. A local build of the release source is
+  byte-identical to the RC1 build (616 files). Documentation-only pushes
+  do not trigger the Pages workflow (it builds on `app/**`).
+- **Worker**: not redeployed; version `b1c2815a`; `worker/` tree
+  `827dc53c1540` identical to v1.1.0 and v1.0.0.
+
+**Protected, proven by git object hashes (v1.1.0 `8643c85` = v1.1.1)**:
+
+| Tree | Hash |
+|---|---|
+| `app/src/engine` (Phase 14, Country Suitability) | `75d09040b0f8` |
+| `app/src/entry` (Passport) | `cf4f8f719ea5` |
+| `app/src/personalization` (Personal Match 1.2) | `42aed467ac4a` |
+| `app/src/favorites` | `602ef1c28415` |
+| `app/src/data` | `97c9e35767bb` |
+| `app/src/components` | `90d628452ed3` |
+| `app/src/routes/Compare.tsx` | `caf67a4edb65` |
+| `app/src/routes/Home.tsx` | `3c06500b8e10` |
+| `app/build` (SEO pages, CSP, site) | `96b179c89327` |
+| `worker` | `827dc53c1540` |
+
+The only `app/src` differences from v1.1.0 are `styles/wejhaty.css` (the
+fix) and the new `routes/Home.heroPhotoLayer.test.ts`; outside `app/src`,
+`package.json`/`package-lock.json` (version) and `scripts/production-smoke.mjs`
+(Hero checks; the Hero-key exclusion in the passport storage check).
+
+**Gates on the release source**:
+
+- Frontend 1206/1206 (119 files, `--maxWorkers=2`), including the Hero
+  regression test; `tsc -b` 0; oxlint 0; build OK (asset names and bytes
+  equal to RC1).
+- `verify-seo-build` 4 804/4 804 on the `/wej/` and root builds; the root
+  build has no `github.io` or `/wej/` reference.
+- Worker 273/273, `tsc` 0, `wrangler deploy --dry-run` clean.
+- Local browser checks (Chromium): matrix 1 200/1 200; axe (WCAG 2.1
+  A/AA) 0 violations on 48 states (AR/EN × Light/Dark); Favorites/Compare
+  adversarial 49/49 and flow 27/27; {{HERO_MATRIX}}
+- Bundle identical to RC1: JS 2 432 882 B (635 379 B gzip -9), CSS
+  113 142 B (22 758 B gzip -9); delta 0.
+
+**Production smoke**: {{SMOKE}}
+
+**GitHub Releases**: still not used by this repository (0 releases), so
+none was created; the annotated tag is the release record.
+
+- **Rollback points** (never move, delete or force-push any of them):
+
+  | Point | Refs | Commit |
+  |---|---|---|
+  | v1.1.1 final | `release/wejhaty-v1.1.1`, `backup/wejhaty-v1.1.1-final`, tag `wejhaty-v1.1.1` | the release commit |
+  | v1.1.1 RC1 (accepted) | `release/wejhaty-v1.1.1-rc1`, tag `wejhaty-v1.1.1-rc1` | `39b156f` |
+  | v1.1.0 final | `release/wejhaty-v1.1.0`, `backup/wejhaty-v1.1.0-final`, tag `wejhaty-v1.1.0` | `8643c85` |
+  | v1.1.0 RC2 | `release/wejhaty-v1.1.0-rc2`, tag `wejhaty-v1.1.0-rc2` | `7f42a24` |
+  | v1.1.0 RC1 | `release/wejhaty-v1.1.0-rc1`, tag `wejhaty-v1.1.0-rc1` | `cee6e75` |
+  | v1.0.0 final | `release/wejhaty-v1.0.0`, `backup/wejhaty-v1.0.0-final`, `backup/wejhaty-v1.0.0-pre-v1.1`, tag `wejhaty-v1.0.0` | `df54567` |
+
+  Rolling back uses the state-v42 procedure with the chosen tag as the
+  source (history-preserving, no force push).
+
+### Previous state — 2026-09-30 (WEJHATY v1.1.1 RC1 — USER-ACCEPTED; basis of v1.1.1)
 
 - State document version: 46. **Status: WEJHATY v1.1.1 RC1 — TECHNICALLY
   VERIFIED, PRODUCTION-VERIFIED, AWAITING USER ACCEPTANCE.** Nothing in
@@ -126,7 +222,7 @@ configuration, and current Git state outrank this document when they differ.
   down → back to top, slow and fast, several times; also after rotating).
   Register V8.
 
-### Previous state — 2026-09-29 (WEJHATY v1.1.0 — FINAL RELEASE, USER-ACCEPTED; still the released version)
+### Previous state — 2026-09-29 (WEJHATY v1.1.0 — FINAL RELEASE, USER-ACCEPTED; superseded by v1.1.1, its refs never move)
 
 - State document version: 45. **Status: WEJHATY v1.1.0 — FINAL RELEASE —
   TECHNICALLY VERIFIED, PRODUCTION-VERIFIED, USER-ACCEPTED, RELEASED.**
@@ -2706,7 +2802,7 @@ instruction from the user. Phase 16 (AI) stays CANCELLED.
    blocks the release.
 3. Roll back only with the refs and the procedure in state v42.
 
-## Known-limitations register (authoritative; v1.0.0 2026-09-24, updated for v1.1.0 final 2026-09-29)
+## Known-limitations register (authoritative; v1.0.0 2026-09-24, updated for v1.1.1 final 2026-09-30)
 
 One status per item. Statuses: RESOLVED, DEFERRED, BLOCKED, FROZEN,
 CANCELLED, UNVERIFIED. Open items first; resolved items stay resolved and
@@ -2735,9 +2831,9 @@ are listed for traceability only.
 | V5 | OpenStreetMap evidence limits | DEFERRED / DOCUMENTED | RC2 sensitivity audit on all 193 countries with data (`docs/audits/DATA_METHODOLOGY_RC2.md`): the partial mosque level was a scoring defect and is removed (`personal-match-1.2`); thresholds 200 / 20 / 5 per 1,000 km² and the halal floor 20 are stable and kept; 18 countries sit within ±25 % of a mosque threshold and 13 of the halal floor; national totals, overseas parts inside `admin_level=2`, possible double mapping; Palestine has no OSM country boundary | Monthly refresh; revisit thresholds only with evidence of a structural defect | Maintainer |
 | V6 | Halal tags reflect tagging culture | DOCUMENTED (source limitation) | Median halal tags per mapped mosque 0.015 in Muslim-majority countries vs 1.056 in highly mapped Western / East Asian ones; 31 countries with ≥ 200 mapped mosques have < 20 halal tags. They are "not counted" (never lower), and the explanation says halal is often the norm and untagged; no floor removes the gap and inferring halal from mosques would infer from a Muslim presence | None unless a legitimate halal-availability source appears | Maintainer |
 | V7 | English header wraps between 861 and ~930 px | DEFERRED (pre-existing) | Brand + four links + controls do not fit on one line there in English; RC1 wrapped there too (measured; v1.0 had the same four links). RC2's header is 28 px narrower there (940 px now fits) | Fix only in a header-layout task | Maintainer |
-| V8 | Android Chrome Hero scroll band (v1.1.1 RC1) | UNVERIFIED (on the physical device) | Root cause fixed: the photo's settle animation no longer holds the photo, so Chromium no longer keeps the photo and the Hero copy as two lasting composited layers apart from the frame (layer tree, `getAnimations()`, unit and smoke regressions). The band itself never appears in headless Chromium, so only the user's device can confirm it is gone. The unconfirmed Phase 17 `will-change: transform` on the Hero route decoration is kept (outside the frame, drawn correctly in the report) | User re-tests Home scroll down/up on the same Android device | User |
 | P20 | Phase 20 — Final Wejhaty (RC4) | RESOLVED | USER-ACCEPTED 2026-09-24; released as `wejhaty-v1.0.0` | — | User |
 | P21 | Phase 21 — Admin post-launch enhancements | RESOLVED | USER-ACCEPTED 2026-09-24; Worker `b1c2815a`; released as `wejhaty-v1.0.0` | — | User |
+| V8 | Android Chrome Hero scroll band | RESOLVED (v1.1.1; USER-VERIFIED on one device) | Root cause fixed in RC1: the photo's settle animation no longer holds the photo, so Chrome no longer keeps the photo and the Hero copy as two lasting composited layers apart from the frame (layer tree, `getAnimations()`, unit and smoke regressions). Headless Chromium never showed the band itself; the user re-tested on the same Android device and Chrome and reported "ناجح" (2026-09-30). Not a certification of other Android devices. The unconfirmed Phase 17 `will-change: transform` on the route decoration is kept | Re-open only if the band is seen again on any device | — |
 | U2 | Real desktop Safari (macOS) and real Edge | RESOLVED | Safari 26.6.2 15/15 and Edge in every release smoke (run 35946079472) | Keep in every release smoke | Maintainer |
 | U4a | Real VoiceOver (macOS) + Safari | RESOLVED | 4/4: "heading level 1 اليابان" and 10 level-2 headings (runs 35944167490, 35946079472) | Keep in the release smoke | Maintainer |
 | U10 | Destination "Edit my preferences" | RESOLVED | Returns to the same destination with its updated match | — | — |
