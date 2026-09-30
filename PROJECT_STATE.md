@@ -67,7 +67,30 @@ configuration, and current Git state outrank this document when they differ.
   Compare, Share, SEO, OSM notice, privacy, Admin, analytics, footer,
   header. Version `1.1.1` (`app/package.json`, the only source; the footer
   shows v1.1.1).
-- **Gates**: {{GATES}}
+- **Gates** (hotfix source):
+  - Frontend 1206/1206 in 119 files (`--maxWorkers=2`); `tsc -b` 0;
+    oxlint 0; build OK.
+  - `verify-seo-build` 4 804/4 804 on the `/wej/` and root builds; the
+    root build has no `github.io` or `/wej/` reference.
+  - `worker/` has no diff against v1.1.0 (not redeployed).
+  - Local browser checks (Chromium): matrix 1 200/1 200; axe (WCAG 2.1
+    A/AA) 0 violations on 48 states; Favorites/Compare adversarial 49/49
+    and flow 27/27; local smoke on the fixed build 73/73.
+  - Hero matrix, 125 states: phones 360/375/390/412/430 × heights
+    640/800/915; tablets 768–1280 in both orientations, including the
+    reported 1000×560; desktops 1280–1920. Each in AR/EN × Light/Dark,
+    plus System and reduced motion. Sequences per state: fresh; slow
+    down/up; fast down/up/down/up; instant jumps; height change mid-scroll
+    both ways (+11 %). 4 887 checks: frame, photo, grid and headline
+    boxes identical to the fresh load, the photo covering the frame, no
+    held animation, no lasting animated layer, no overflow, correct
+    direction, no page errors. 8 misses, all "`scrollY` not yet 0 right
+    after `scrollTo(0, 0)`", only while 4 shards shared the CPU; the same
+    8 states re-run alone: 312/312.
+  - Hero geometry does not depend on the viewport height (no `vh` in the
+    Hero), so the dynamic toolbar is not a factor; no unit was changed.
+  - Bundle: JS 2 432 882 B both (gzip -9 +2 B, the version string); CSS
+    +87 B (+16 B gzip). No dependency change.
 - **Deploy and production smoke**: {{DEPLOY}}
 - **RC1 refs**: branch `release/wejhaty-v1.1.1-rc1` and annotated tag
   `wejhaty-v1.1.1-rc1` → the commit that records this state (read its hash
