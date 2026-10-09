@@ -146,3 +146,18 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** Apply every migration to an in-memory SQLite (Node's built-in `node:sqlite`) and assert metric values for named journeys; keep one metric dictionary (definition, numerator, denominator, window, limitation) as the single source for labels, docs and tests; run browser QA against the real runtime in local mode (`wrangler dev --local`) over a deterministic synthetic seed. Keep a guard on per-request query count when the platform caps it.
 
 **Principle:** A metric is only defined once it has a numerator, a denominator and a window written down — and it is only tested once a real query engine has computed it.
+
+### Observation 10: Reproduce hosting blank screens by matching built asset hashes to the host's log
+
+**Status:** OPEN
+**Date:** 2026-10-09
+**Session context:** Static SPA blank on a second static host after a successful build.
+**Skill:** systematic-debugging
+**Type:** open-source
+**Phase/Area:** Evidence gathering / reproduction
+
+**Issue:** Live site unreachable from sandbox. Rebuilding locally with the host's (empty) env reproduced the exact asset hashes from the host's build log, proving the same output; serving it from the root with a 404-fallback server plus a headless browser showed the asset 404 and empty root.
+
+**Suggested improvement:** Add to reproduction guidance: when the live target is unreachable, match content-hashed filenames from the deploy log to a local build to prove output equivalence, then emulate the host's serving rules locally.
+
+**Principle:** Content hashes turn a build log into a reproducibility oracle when live access is blocked.
