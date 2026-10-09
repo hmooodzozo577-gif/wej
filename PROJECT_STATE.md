@@ -5,6 +5,27 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Hosting addendum — 2026-10-09 (Cloudflare Pages blank screen fixed in source)
+
+- Cloudflare Pages project `wej` (root `app`, `npm run build`, output
+  `dist`, https://wej.pages.dev) built `d599931` with no `WEJHATY_*`
+  variables, so `build/site.ts` used the GitHub Pages default base `/wej/`.
+  The root-served page asked for `/wej/assets/index-*.js` → 404 → blank
+  `#root`. Reproduced locally with the same asset hashes as the
+  Cloudflare log.
+- Fix: `app/build/site.ts` switches its defaults to origin
+  `https://wej.pages.dev` + base `/` when Cloudflare's build sets
+  `CF_PAGES=1`; explicit `WEJHATY_SITE_ORIGIN` / `WEJHATY_BASE_PATH`
+  still win. GitHub Pages output is byte-identical (616 files,
+  `index-Q4TA26ho.js`).
+- Not done (external config / out of scope): Cloudflare Pages has no
+  `VITE_TRAVEL_WORKER_URL`, so Worker-backed features stay off there; the
+  Worker's CORS allows only the github.io origin (`worker/src/shared.ts`),
+  so setting that variable alone would not make them work. Live
+  wej.pages.dev not yet verified after redeploy. Cloudflare deploys from
+  `claude/marhaba-kxry8l`; the fix lives on `claude/clever-galileo-39y1gk`
+  until merged.
+
 ### Current verified state — 2026-09-30 (WEJHATY v1.1.1 — FINAL HOTFIX RELEASE, USER-ACCEPTED)
 
 - State document version: 47. **Status: WEJHATY v1.1.1 — FINAL HOTFIX

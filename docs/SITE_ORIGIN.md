@@ -25,6 +25,19 @@ Both builds are verified with `app/scripts/verify-seo-build.mjs`: the
 `/wej/` build and a root build (`WEJHATY_SITE_ORIGIN=https://wejhaty.eu.org
 WEJHATY_BASE_PATH=/`), which contains no `github.io` and no `/wej/`.
 
+## Cloudflare Pages (https://wej.pages.dev)
+
+Cloudflare Pages serves the build from the domain root. Its build
+environment sets `CF_PAGES=1`; `build/site.ts` then defaults to
+`https://wej.pages.dev` and `/` instead of the GitHub Pages values.
+`WEJHATY_SITE_ORIGIN` / `WEJHATY_BASE_PATH` set in the Cloudflare project
+still override those defaults. Without this, the page loaded
+`/wej/assets/…`, got 404 and rendered blank.
+
+Worker-backed features need `VITE_TRAVEL_WORKER_URL` in the Cloudflare
+project **and** the `wej.pages.dev` origin in the Worker's CORS
+allow-list (`worker/src/shared.ts`); neither is set today.
+
 ## The free domain — status: PENDING HUMAN APPROVAL
 
 Candidate: `wejhaty.eu.org` (EU.org, free of charge). Checked on

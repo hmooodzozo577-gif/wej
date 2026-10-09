@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_BASE_PATH, DEFAULT_SITE_ORIGIN, normalizeBasePath, resolveSite } from './site.ts';
+import {
+  CLOUDFLARE_PAGES_BASE_PATH,
+  CLOUDFLARE_PAGES_SITE_ORIGIN,
+  DEFAULT_BASE_PATH,
+  DEFAULT_SITE_ORIGIN,
+  normalizeBasePath,
+  resolveSite,
+} from './site.ts';
 
 describe('resolveSite', () => {
   it('defaults to the GitHub Pages project site', () => {
@@ -19,6 +26,24 @@ describe('resolveSite', () => {
       origin: 'https://wejhaty.eu.org',
       basePath: '/',
       url: 'https://wejhaty.eu.org/',
+    });
+  });
+
+  it('serves Cloudflare Pages builds (CF_PAGES=1) from the domain root', () => {
+    expect(resolveSite({ CF_PAGES: '1' })).toEqual({
+      origin: CLOUDFLARE_PAGES_SITE_ORIGIN,
+      basePath: CLOUDFLARE_PAGES_BASE_PATH,
+      url: 'https://wej.pages.dev/',
+    });
+    expect(resolveSite({ CF_PAGES: '1', WEJHATY_SITE_ORIGIN: '', WEJHATY_BASE_PATH: '' })).toEqual(resolveSite({ CF_PAGES: '1' }));
+    expect(resolveSite({ CF_PAGES: '0' })).toEqual(resolveSite({}));
+  });
+
+  it('lets the WEJHATY_* variables override the Cloudflare Pages defaults', () => {
+    expect(resolveSite({ CF_PAGES: '1', WEJHATY_SITE_ORIGIN: 'https://wejhaty.eu.org', WEJHATY_BASE_PATH: '/wej/' })).toEqual({
+      origin: 'https://wejhaty.eu.org',
+      basePath: '/wej/',
+      url: 'https://wejhaty.eu.org/wej/',
     });
   });
 

@@ -10,9 +10,16 @@
 //   (default)                                   https://hmooodzozo577-gif.github.io/wej/
 //   WEJHATY_SITE_ORIGIN=https://example.org \
 //   WEJHATY_BASE_PATH=/  npm run build          https://example.org/
+//
+// Cloudflare Pages serves the same build from the domain root
+// (https://wej.pages.dev/). Its build environment sets CF_PAGES=1, which
+// switches the defaults to that root site; the WEJHATY_* variables still
+// override either default.
 
 export const DEFAULT_SITE_ORIGIN = 'https://hmooodzozo577-gif.github.io';
 export const DEFAULT_BASE_PATH = '/wej/';
+export const CLOUDFLARE_PAGES_SITE_ORIGIN = 'https://wej.pages.dev';
+export const CLOUDFLARE_PAGES_BASE_PATH = '/';
 
 export interface SiteConfig {
   /** Scheme + host, no path, no trailing slash. */
@@ -46,9 +53,15 @@ export function normalizeOrigin(value: string): string {
 }
 
 export function resolveSite(env: Record<string, string | undefined>): SiteConfig {
-  const origin = normalizeOrigin(env.WEJHATY_SITE_ORIGIN || DEFAULT_SITE_ORIGIN);
+  const cloudflarePages = env.CF_PAGES === '1';
+  const origin = normalizeOrigin(
+    env.WEJHATY_SITE_ORIGIN || (cloudflarePages ? CLOUDFLARE_PAGES_SITE_ORIGIN : DEFAULT_SITE_ORIGIN),
+  );
   // An empty value means "not set" (an unset repository variable reaches the
-  // build as ""), never the root: a root build must say "/" explicitly.
-  const basePath = normalizeBasePath(env.WEJHATY_BASE_PATH || DEFAULT_BASE_PATH);
+  // build as ""), never the root: a root build must say "/" explicitly
+  // (Cloudflare Pages says it through CF_PAGES).
+  const basePath = normalizeBasePath(
+    env.WEJHATY_BASE_PATH || (cloudflarePages ? CLOUDFLARE_PAGES_BASE_PATH : DEFAULT_BASE_PATH),
+  );
   return { origin, basePath, url: `${origin}${basePath}` };
 }
