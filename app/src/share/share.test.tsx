@@ -16,12 +16,12 @@ describe('share payload', () => {
     expect(payload.url).toMatch(/^https:\/\/hmooodzozo577-gif\.github\.io\/.*destination\/japan\/$/);
     expect(payload.url).not.toContain('?');
     expect(payload.url).not.toContain('#');
-    expect(payload.text).toBe('Japan on Wejhaty');
+    expect(payload.text).toBe('Japan on TILQAA');
   });
 
   it('mentions the Personal Match only when the sender shares it, and never in the URL', () => {
     const payload = destinationSharePayload(japan, 'ar', 87);
-    expect(payload.text).toBe('اليابان — توافقي معها 87% على وجهتي');
+    expect(payload.text).toBe('اليابان — توافقي معها 87% على تِلقاء');
     expect(payload.url).not.toMatch(/87|match|profile|answer|passport|lat|lng|halal|religion|language/i);
   });
 });

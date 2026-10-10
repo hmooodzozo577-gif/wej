@@ -1,5 +1,5 @@
 ---
-name: "Wejhaty — Cinematic Compass Atlas"
+name: "TILQAA — Cinematic Compass Atlas"
 description: "Arabic-first travel decisions guided by destination photography, compass cartography, and calm evidence-led UI."
 colors:
   ink: "#17243a"
@@ -105,7 +105,9 @@ components:
     rounded: "{rounded.card}"
 ---
 
-# Design System: وجهتي / Wejhaty
+# Design System: تِلقاء / TILQAA
+
+The product was renamed from وجهتي / Wejhaty to تِلقاء / TILQAA on 2026-10-10. The visual system below is unchanged by the rename; "Wejhaty" in the narrative that follows refers to the same product. The brand mark in the header and footer is one component (`app/src/brand/BrandMark.tsx`) so the separately designed logo can replace the compass glyph in one place.
 
 ## Overview
 

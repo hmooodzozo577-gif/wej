@@ -27,7 +27,7 @@ export function uptimeChecks(site = DEFAULT_SITE, worker = DEFAULT_WORKER) {
       name: 'home page',
       url: base,
       expectStatus: 200,
-      verify: (body) => body.includes('<div id="root"') && body.includes('وجهتي'),
+      verify: (body) => body.includes('<div id="root"') && body.includes('تِلقاء'),
     },
     {
       name: 'destination deep link (Japan)',

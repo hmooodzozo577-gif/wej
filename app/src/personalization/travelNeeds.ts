@@ -43,6 +43,7 @@
 // metadata (see Quiz.tsx, which skips telemetry for these questions).
 import evidenceJson from '../data/generated/islamicTravelEvidence.json';
 import type { LocalizedText, PurposeId, Question, QuestionOption } from '../data/types';
+import { BRAND } from '../brand/brand';
 
 export const TRAVEL_NEED_BASE_WEIGHT = 10;
 
@@ -62,7 +63,7 @@ export const TRAVEL_NEED_COPY = {
 /** Where the travel-need evidence comes from, shown under "why this suits
  *  you" whenever one of these factors is part of the match. Both sources
  *  are ODbL databases, so the notice names each one, links it and the
- *  licence, and says the counting thresholds are Wejhaty's own. */
+ *  licence, and says the counting thresholds are the product's own. */
 export const TRAVEL_NEED_SOURCES = {
   osmCopyrightUrl: 'https://www.openstreetmap.org/copyright',
   countriesUrl: 'https://github.com/mledoze/countries',
@@ -70,14 +71,14 @@ export const TRAVEL_NEED_SOURCES = {
   ar: {
     osmLead: 'أعداد المساجد والأماكن الحلال من بيانات OpenStreetMap',
     osmCredit: '© مساهمو OpenStreetMap',
-    osmThresholds: 'أما حدود احتسابها فمن منهجية وجهتي، وليست تقييمًا من OpenStreetMap.',
+    osmThresholds: `أما حدود احتسابها فمن منهجية ${BRAND.ar}، وليست تقييمًا من OpenStreetMap.`,
     languagesLead: 'اللغات الرسمية من قاعدة بيانات world-countries',
     license: 'متاحة بترخيص',
   },
   en: {
     osmLead: 'Mosque and halal counts come from OpenStreetMap data',
     osmCredit: '© OpenStreetMap contributors',
-    osmThresholds: "The thresholds that count them are Wejhaty's own method, not an OpenStreetMap rating.",
+    osmThresholds: `The thresholds that count them are ${BRAND.en}'s own method, not an OpenStreetMap rating.`,
     languagesLead: 'Official languages come from the world-countries database',
     license: 'available under the',
   },

@@ -38,6 +38,11 @@ const titleOf = (html) => attr(html, /<title>([^<]*)<\/title>/);
 // offer or a price. (Checked on keys: an editorial description may mention
 // prices in words.)
 const FORBIDDEN_KEYS = /^(aggregateRating|review|reviews|offers|price|priceRange|ratingValue)$/i;
+// The public name is تِلقاء / TILQAA. The previous name may survive only in
+// technical identifiers (storage keys such as `wejhaty.theme`), never as a
+// word a visitor or a crawler reads. "وجهتين" and "وجهتك" are ordinary words.
+const OLD_BRAND = /Wejhaty|(?<![\p{L}\p{M}])وِ?جهتي(?![\p{L}\p{M}])/u;
+const BRAND_AR = 'تِلقاء';
 const keysOf = (value) => (value && typeof value === 'object'
   ? Object.entries(value).flatMap(([key, child]) => [key, ...keysOf(child)])
   : []);
@@ -55,6 +60,8 @@ for (const file of files) {
   check(/<meta name="description" content="[^"]{20,}"/.test(html), `${rel}: no description`);
   check(/<meta http-equiv="Content-Security-Policy"/.test(html), `${rel}: lost its CSP`);
   check(/<script type="module"[^>]+src="[^"]+"/.test(html), `${rel}: lost the app script`);
+  check(!OLD_BRAND.test(html), `${rel}: still shows the previous brand name`);
+  check(titleOf(html)?.includes(BRAND_AR), `${rel}: the title does not name ${BRAND_AR}`);
   check(html.includes(`href="${basePath}manifest.webmanifest"`), `${rel}: no manifest link`);
   const robots = robotsOf(html);
   const expectIndexed = rel === 'index.html' || rel === 'explore/index.html' || rel.startsWith('destination/');
@@ -99,13 +106,16 @@ for (const file of destinationFiles) {
 check(locs.every((loc) => loc.startsWith(siteUrl)), 'sitemap contains a URL outside the site');
 check(!/quiz|results|favorites|compare|purpose|admin|\/il\/|lastmod/.test(sitemap), 'sitemap lists a private route or an invented lastmod');
 check(read(join(dist, 'robots.txt')).includes(`Sitemap: ${new URL('sitemap.xml', siteUrl).href}`), 'robots.txt does not point to the sitemap');
-const manifest = JSON.parse(read(join(dist, 'manifest.webmanifest')));
+const manifestText = read(join(dist, 'manifest.webmanifest'));
+check(!OLD_BRAND.test(manifestText), 'manifest still shows the previous brand name');
+const manifest = JSON.parse(manifestText);
+check(manifest.short_name === BRAND_AR && manifest.name.startsWith(BRAND_AR), `manifest names ${manifest.short_name}, expected ${BRAND_AR}`);
 check(manifest.start_url === basePath && manifest.scope === basePath, 'manifest start_url/scope do not match the base path');
 for (const icon of manifest.icons) {
   const path = join(dist, icon.src.slice(basePath.length));
   check(existsSync(path), `manifest icon missing: ${icon.src}`);
 }
-for (const asset of ['favicon.ico', 'icons/icon.svg', 'icons/apple-touch-icon.png', 'og/wejhaty-share.png']) {
+for (const asset of ['favicon.ico', 'icons/icon.svg', 'icons/apple-touch-icon.png', 'og/tilqaa-share.png']) {
   check(existsSync(join(dist, asset)), `missing ${asset}`);
 }
 

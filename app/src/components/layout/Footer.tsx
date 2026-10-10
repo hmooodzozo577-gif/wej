@@ -2,19 +2,16 @@
 import { useI18n } from '../../state/hooks';
 import { FeedbackDialog } from '../FeedbackDialog';
 import { APP_VERSION } from '../../site/site';
+import { BrandMark } from '../../brand/BrandMark';
+import { NameStoryDialog } from '../../brand/NameStoryDialog';
 
 export function Footer() {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   return (
     <footer className="footer">
       <div className="container footer-row">
         <div className="brand" style={{ cursor: 'default' }}>
-          <span className="brand-mark">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="9.5" stroke="#EBE7DC" strokeWidth="1.4" />
-              <path d="M15.5 8.5L13 13L8.5 15.5L11 11L15.5 8.5Z" fill="#D9A85C" />
-            </svg>
-          </span>
+          <BrandMark size={18} />
           <span className="brand-name" style={{ fontSize: '1.05rem' }}>
             {t.brand}
           </span>
@@ -22,10 +19,14 @@ export function Footer() {
         <div className="footer-actions">
           <FeedbackDialog lang={t.htmlLang} strings={t.feedback} />
           <small>{t.footer}</small>
-          {/* v1.1 — the release, from package.json via the build (one source). */}
-          <small className="footer-version">
-            {t.brand} <span dir="ltr">v{APP_VERSION}</span>
-          </small>
+          {/* v1.1 — the release, from package.json via the build (one source),
+              with the story of the name beside it. */}
+          <div className="footer-meta">
+            <small className="footer-version">
+              {t.brand} <span dir="ltr">v{APP_VERSION}</span>
+            </small>
+            <NameStoryDialog lang={lang} />
+          </div>
         </div>
       </div>
     </footer>

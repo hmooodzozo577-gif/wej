@@ -9,6 +9,7 @@ import { QUESTION_BANKS } from '../data/questionBanks';
 import { I18N } from '../data/i18n';
 import { costLabel } from '../data/destinationText';
 import type { CatalogEntry, Lang } from '../data/types';
+import { BRAND } from '../brand/brand';
 import {
   CLIMATE_BARE,
   DIRECTION_PHRASE,
@@ -82,12 +83,12 @@ function noEvidenceDetail(factor: FactorResult, ar: boolean): string {
   const count = formatNumber(Number(factor.countryValue ?? 0));
   if (factor.factor === 'halalFood') {
     return ar
-      ? `أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: ${count} — أقل مما تشترطه منهجية وجهتي، فلم يُحتسب هذا العامل. وفي بلدان كثيرة يكون الحلال هو السائد دون وسم`
-      : `${count} places tagged as serving halal food on OpenStreetMap — below what Wejhaty's method needs, so this factor was not counted. In many countries halal is the norm and simply not tagged`;
+      ? `أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: ${count} — أقل مما تشترطه منهجية ${BRAND.ar}، فلم يُحتسب هذا العامل. وفي بلدان كثيرة يكون الحلال هو السائد دون وسم`
+      : `${count} places tagged as serving halal food on OpenStreetMap — below what ${BRAND.en}'s method needs, so this factor was not counted. In many countries halal is the norm and simply not tagged`;
   }
   return ar
-    ? `مساجد ومصليات مسجّلة على خريطة OpenStreetMap: ${count} — أقل مما تشترطه منهجية وجهتي، فلم يُحتسب هذا العامل. ولا يعني ذلك صعوبة ممارسة الشعائر`
-    : `${count} mosques and Muslim prayer places mapped on OpenStreetMap — below what Wejhaty's method needs, so this factor was not counted. That does not mean practice is difficult`;
+    ? `مساجد ومصليات مسجّلة على خريطة OpenStreetMap: ${count} — أقل مما تشترطه منهجية ${BRAND.ar}، فلم يُحتسب هذا العامل. ولا يعني ذلك صعوبة ممارسة الشعائر`
+    : `${count} mosques and Muslim prayer places mapped on OpenStreetMap — below what ${BRAND.en}'s method needs, so this factor was not counted. That does not mean practice is difficult`;
 }
 
 /** One line describing how this country compares on this factor. */

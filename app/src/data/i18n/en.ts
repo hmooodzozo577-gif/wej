@@ -4,13 +4,18 @@
 // needed (Africa, SouthAmerica) at the wrapper layer.
 import enJson from '../generated/i18n.en.json';
 import type { I18nDict } from '../types';
+import { BRAND } from '../../brand/brand';
 
 const base = enJson as I18nDict;
 
 export const EN: I18nDict = {
   ...base,
+  // The extracted copy names the previous brand; the public name comes from
+  // brand/brand.ts (the generated file stays a verbatim extraction).
+  brand: BRAND.en,
+  how: { ...base.how, title: `How ${BRAND.en} Works` },
   footer: 'Destination data is a reference; verify official requirements and changing information before travel.',
-  disclaimer: 'Wejhaty recommendations are guidance based on your answers and sourced public data. Verify official requirements, prices, and changing information before travel.',
+  disclaimer: `${BRAND.en} recommendations are guidance based on your answers and sourced public data. Verify official requirements, prices, and changing information before travel.`,
   hero: {
     ...base.hero,
     h1: 'Discover your next destination',
@@ -28,7 +33,7 @@ export const EN: I18nDict = {
     proximityUnavailable: 'You said proximity matters, but location was unavailable, so distance did not affect these results.',
     recommendationMethodNote: 'Match percentages are estimates calculated from your answers and sourced international indicators. Missing values use dataset medians and do not guarantee a travel experience.',
     ratingTitle: 'What do you think of this result?',
-    ratingBody: 'Your anonymous rating helps us improve Wejhaty. It does not change your current ranking.',
+    ratingBody: `Your anonymous rating helps us improve ${BRAND.en}. It does not change your current ranking.`,
     ratingStarsLabel: 'Your rating, from 1 to 5',
     ratingCommentLabel: 'Your feedback (optional)',
     ratingCommentPlaceholder: 'What was useful, and what was missing?',
@@ -83,7 +88,7 @@ export const EN: I18nDict = {
   },
   feedback: {
     open: 'Contact, suggest, or report',
-    title: 'Contact the Wejhaty developer',
+    title: `Contact the ${BRAND.en} developer`,
     countryTitle: 'Report this country',
     close: 'Close',
     type: 'Message type',
@@ -192,7 +197,7 @@ export const EN: I18nDict = {
     approxNote: 'This is an approximate straight-line estimate, not a real travel distance or border detection.',
     nearbyTitle: 'Nearby countries',
     denied:
-      'Location permission was denied. You can still use Wejhaty normally — only distances, nearby destinations, and some location-based personalization may be less accurate. Country facts and tourism statistics are not affected.',
+      `Location permission was denied. You can still use ${BRAND.en} normally — only distances, nearby destinations, and some location-based personalization may be less accurate. Country facts and tourism statistics are not affected.`,
     unavailable: 'Your location could not be determined right now.',
     timeout: 'The location request took too long.',
     unsupported: 'Your browser does not support location services.',
@@ -204,9 +209,9 @@ export const EN: I18nDict = {
     notNow: 'Not now',
     alreadyGrantedBody: 'Your browser already allows this site to use your approximate location — turn it on now to improve your suggestions.',
     alreadyGrantedCta: 'Use my location now',
-    deniedNote: 'Location for this site is turned off in your browser settings. You can keep using Wejhaty normally without it.',
+    deniedNote: `Location for this site is turned off in your browser settings. You can keep using ${BRAND.en} normally without it.`,
     retryTitle: 'We could not find your location',
-    retryBody: 'Your browser could not determine your location on the last attempt. You can try again, or keep using Wejhaty without it.',
+    retryBody: `Your browser could not determine your location on the last attempt. You can try again, or keep using ${BRAND.en} without it.`,
     retryHelp: 'On a tablet, turn on device location and Wi-Fi, allow location for this browser, then try again.',
     retryCta: 'Try again',
     diagnosticTitle: 'Safe location diagnostic details',

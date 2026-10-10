@@ -161,3 +161,18 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** Add to reproduction guidance: when the live target is unreachable, match content-hashed filenames from the deploy log to a local build to prove output equivalence, then emulate the host's serving rules locally.
 
 **Principle:** Content hashes turn a build log into a reproducibility oracle when live access is blocked.
+
+### Observation 11: jsdom cannot see browser focus steps — verify modal focus restore in a real browser
+
+**Status:** OPEN
+**Date:** 2026-10-10
+**Session context:** Adding an accessible modal dialog to a React app with unit tests in jsdom.
+**Skill:** test-driven-development (and web-design-guidelines for dialog reviews)
+**Type:** open-source
+**Phase/Area:** Verification of focus management
+
+**Issue:** Unit tests asserted that focus returned to the trigger after a backdrop close, and that Tab stayed trapped. Both passed in jsdom while the real browser put focus on <body> (the browser's own mousedown focus step runs after React restores focus), and the Tab assertions passed even with the trap code deleted (fireEvent does not move focus). An adversarial reviewer found both by driving real Chromium and by deleting the code under test.
+
+**Suggested improvement:** For dialogs and focus traps: assert the handler's effect (event defaultPrevented via fireEvent's return value, focus moved by the handler), run a mutation check (delete the trap, the test must fail), and confirm backdrop/Escape/close focus restore in a real browser for mouse and touch.
+
+**Principle:** A test that passes with the feature deleted proves nothing; for browser-owned behaviour (focus, default actions) jsdom is not evidence.

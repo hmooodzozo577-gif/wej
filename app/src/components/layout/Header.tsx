@@ -9,6 +9,8 @@ import { useAppState, useI18n } from '../../state/hooks';
 import { LanguageSwitch } from '../LanguageSwitch';
 import { ThemeSwitch } from '../ThemeSwitch';
 import { FAVORITES_COPY } from '../../favorites/copy';
+import { BrandMark } from '../../brand/BrandMark';
+import { BRAND_HOME_LABEL } from '../../brand/brand';
 
 export function Header() {
   const navigate = useNavigate();
@@ -75,13 +77,8 @@ export function Header() {
   return (
     <header className="nav">
       <div className="container nav-row">
-        <button className="brand" aria-label="Home" onClick={goHome}>
-          <span className="brand-mark">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="9.5" stroke="#EBE7DC" strokeWidth="1.4" />
-              <path d="M15.5 8.5L13 13L8.5 15.5L11 11L15.5 8.5Z" fill="#D9A85C" />
-            </svg>
-          </span>
+        <button type="button" className="brand" aria-label={BRAND_HOME_LABEL[lang]} onClick={goHome}>
+          <BrandMark size={20} />
           <span className="brand-name">{t.brand}</span>
         </button>
         <nav className="nav-links" aria-label="Primary">

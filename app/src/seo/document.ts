@@ -6,6 +6,7 @@
 // Every value that reaches HTML or XML is escaped here.
 import type { PageMeta } from './meta';
 import { THEME_COLOR } from '../site/theme';
+import { BRAND, BRAND_BILINGUAL, BRAND_TAGLINE } from '../brand/brand';
 
 export interface SiteInfo {
   /** Scheme + host, no trailing slash. */
@@ -16,17 +17,19 @@ export interface SiteInfo {
   url: string;
 }
 
-/** The one sharing image: the Wejhaty mark and name, no personal data. The
+/** The one sharing image: the brand mark and name, no personal data. The
  *  destination photos are not used here because most of them are licensed
  *  CC BY / CC BY-SA and a link preview cannot show their attribution. */
 export const SHARE_IMAGE = {
-  path: 'og/wejhaty-share.png',
+  // Renamed with the brand so link previews fetch the new image instead of
+  // a cached one carrying the previous name.
+  path: 'og/tilqaa-share.png',
   width: 1200,
   height: 630,
-  alt: 'وجهتي — Wejhaty',
+  alt: `${BRAND.ar} — ${BRAND.en}`,
 } as const;
 
-const SITE_NAME = 'وجهتي Wejhaty';
+const SITE_NAME = BRAND_BILINGUAL;
 
 export function escapeHtml(value: string): string {
   return value
@@ -64,8 +67,8 @@ export function structuredData(meta: PageMeta, site: SiteInfo): object[] {
     return [{
       '@context': 'https://schema.org',
       '@type': 'WebSite',
-      name: 'وجهتي',
-      alternateName: 'Wejhaty',
+      name: BRAND.ar,
+      alternateName: BRAND.en,
       url: site.url,
       inLanguage: ['ar', 'en'],
       description: documentDescription(meta),
@@ -88,7 +91,7 @@ export function structuredData(meta: PageMeta, site: SiteInfo): object[] {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'وجهتي', item: site.url },
+          { '@type': 'ListItem', position: 1, name: BRAND.ar, item: site.url },
           { '@type': 'ListItem', position: 2, name: 'استكشف الوجهات', item: pageUrl(site, 'explore/') },
           { '@type': 'ListItem', position: 3, name, item: url },
         ],
@@ -170,9 +173,9 @@ export function robotsTxt(site: SiteInfo): string {
 export function webManifest(site: SiteInfo): string {
   const base = site.basePath;
   return `${JSON.stringify({
-    name: 'وجهتي — Wejhaty',
-    short_name: 'وجهتي',
-    description: 'Wejhaty — find your next destination.',
+    name: `${BRAND.ar} — ${BRAND.en}`,
+    short_name: BRAND.ar,
+    description: `${BRAND.en} — ${BRAND_TAGLINE.en}`,
     lang: 'ar',
     dir: 'rtl',
     start_url: base,

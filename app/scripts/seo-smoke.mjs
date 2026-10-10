@@ -104,7 +104,7 @@ if (manifest) {
     check(response.status === 200, `manifest icon ${icon.src}: HTTP 200`, String(response.status));
   }
 }
-for (const asset of ['favicon.ico', 'icons/apple-touch-icon.png', 'og/wejhaty-share.png']) {
+for (const asset of ['favicon.ico', 'icons/apple-touch-icon.png', 'og/tilqaa-share.png']) {
   const response = await get(`${SITE}${asset}`);
   check(response.status === 200, `${asset}: HTTP 200`, String(response.status));
 }

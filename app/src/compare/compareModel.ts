@@ -17,6 +17,7 @@ import { computePersonalMatch } from '../personalization/personalMatch';
 import { PERSONAL_COPY } from '../personalization/copy';
 import type { NormalizedPreferences } from '../personalization/types';
 import type { CatalogEntry, I18nDict, Lang } from '../data/types';
+import { BRAND } from '../brand/brand';
 
 export const COMPARE_MIN = 2;
 export const COMPARE_MAX = 3;
@@ -65,7 +66,7 @@ export interface CompareSection {
 export const COMPARE_COPY = {
   ar: {
     title: 'مقارنة الوجهات',
-    lead: 'مقارنة معلوماتية من البيانات المتاحة في وجهتي. لا تُحدد فائزًا ولا تجمع الأرقام في درجة واحدة.',
+    lead: `مقارنة معلوماتية من البيانات المتاحة في ${BRAND.ar}. لا تُحدد فائزًا ولا تجمع الأرقام في درجة واحدة.`,
     notAvailable: 'غير متوفر',
     facts: 'معلومات الدولة',
     suitability: 'الملاءمة العامة لكل غرض',
@@ -97,7 +98,7 @@ export const COMPARE_COPY = {
   },
   en: {
     title: 'Compare destinations',
-    lead: 'An informational comparison from the data Wejhaty has. It names no winner and never adds the numbers into one score.',
+    lead: `An informational comparison from the data ${BRAND.en} has. It names no winner and never adds the numbers into one score.`,
     notAvailable: 'Not available',
     facts: 'Country facts',
     suitability: 'General suitability by purpose',

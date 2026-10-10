@@ -6053,3 +6053,106 @@ html[dir='rtl'] .travel-route-band {
 .quiz-question-card {
   scroll-margin-top: 88px;
 }
+
+/* --- Brand: تِلقاء / TILQAA — "قصة الاسم" ---------------------------------
+   A quiet text button beside the release version, and the story dialog.
+   The dialog reuses the feedback dialog's backdrop, frame, heading row and
+   close button; only the reading styles below are new. The verse is set in
+   Amiri (an open-licensed naskh, loaded with the site's other Google Fonts
+   and downloaded only when the dialog shows it). No motion is added. */
+.footer-meta {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+
+.name-story-trigger {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+  cursor: pointer;
+}
+
+.name-story-trigger:hover {
+  text-decoration-color: var(--gold);
+}
+
+.name-story-trigger:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.name-story-dialog {
+  width: min(600px, 100%);
+}
+
+.name-story-close {
+  display: grid;
+  place-items: center;
+}
+
+.name-story-body {
+  display: grid;
+  gap: 14px;
+  line-height: 1.85;
+}
+
+.name-story-body p {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--text);
+}
+
+.name-story-verse {
+  margin: 4px 0;
+  padding: 20px 8px 16px;
+  border-block: 1px solid var(--line);
+  text-align: center;
+}
+
+.name-story-verse blockquote {
+  margin: 0;
+  color: var(--ink);
+  font-family: 'Amiri', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+  font-size: clamp(1.3rem, 1.05rem + 1.1vw, 1.65rem);
+  font-weight: 400;
+  line-height: 2.1;
+}
+
+.name-story-verse figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 12px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.name-story-verse cite {
+  font-style: normal;
+}
+
+.name-story-body .name-story-note {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.name-story-body .name-story-tagline {
+  margin-top: 4px;
+  color: var(--ink);
+  font-weight: 700;
+}
