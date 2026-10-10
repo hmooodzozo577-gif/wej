@@ -5,6 +5,55 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Rebrand — 2026-10-10 (وجهتي / Wejhaty → تِلقاء / TILQAA, in source, not deployed)
+
+- **Public name**: Arabic `تِلقاء` (kasra U+0650 under ت), Latin `TILQAA`.
+  Tagline «تِلقاء — العالم في اتجاهك.» / "TILQAA — The World Within Your
+  Reach." Single source: `app/src/brand/brand.ts` (`BRAND`,
+  `BRAND_TAGLINE`, `BRAND_BILINGUAL`, `BRAND_HOME_LABEL`); i18n, SEO
+  (`seo/meta.ts`, `seo/document.ts`), share text, Compare and travel-need
+  copy read from it. The generated `i18n.*.json` stays a verbatim
+  extraction; `i18n/ar.ts` / `en.ts` override `brand` and `how.title`.
+- **Kept on purpose (technical, compatibility)**: storage keys
+  (`wejhaty.theme`, `wejhaty.favorites.v1`, `wejhaty.personalization.v1`,
+  hero/surprise/analytics keys), `wejhaty.css` filename, `WEJHATY_*` build
+  variables, data-tool User-Agents, repository name, GitHub Pages `/wej/`
+  base path, Cloudflare root build, routes, Worker and its admin page
+  (the admin still says "Wejhaty — product data"; Worker out of scope).
+- **Home title** `تِلقاء TILQAA — العالم في اتجاهك` /
+  `TILQAA — The World Within Your Reach`; page titles `<page> | تِلقاء`;
+  og:site_name `تِلقاء TILQAA`; manifest `تِلقاء — TILQAA` /
+  short_name `تِلقاء`. Header home button's accessible name now starts
+  with the visible name (`تِلقاء — الصفحة الرئيسية` / `TILQAA — Home`).
+- **Sharing image** regenerated with the new name by
+  `scripts/generate-brand-assets.mjs` and renamed
+  `public/og/tilqaa-share.png` (cache-busting); icons regenerated
+  byte-identical (unchanged).
+- **«قصة الاسم»**: footer button beside the version opens
+  `app/src/brand/NameStoryDialog.tsx` (FeedbackDialog conventions:
+  aria-modal, labelled, Escape/backdrop/close, Tab trapped, focus restored,
+  scroll locked, no motion). Approved Arabic story verbatim; verse
+  Al-Qasas 28:22 quoted exactly as real text in Amiri (added to the
+  Google Fonts link; downloaded only when shown). English story is the
+  product's own wording with the verse left in Arabic — no Quran
+  translation is shown (pending a sourced, licensed translation if wanted).
+- **Known, pre-existing (not changed)**: `FeedbackDialog` closes on a
+  backdrop mousedown without cancelling it, so in a real browser focus
+  lands on `<body>` instead of its trigger (VERIFIED in Chromium by the
+  rebrand review). `NameStoryDialog` cancels that mousedown and returns
+  focus correctly; the same one-line fix can be applied to
+  `FeedbackDialog.tsx` in its own task.
+- **Logo**: not designed here. `app/src/brand/BrandMark.tsx` is the single
+  header/footer mark (still the compass glyph); replace it, the favicon
+  set and the sharing image when the separately designed logo arrives.
+- **Checks**: `scripts/verify-seo-build.mjs` now fails on the previous
+  name in any built HTML or the manifest and requires `تِلقاء` in every
+  title; `scripts/lib/uptime.mjs` and `production-smoke.mjs` expect the
+  new name (deploy the site and these checks together).
+- **Deploy**: committed to `claude/clever-galileo-39y1gk` only; NOT on
+  `claude/marhaba-kxry8l`, so neither GitHub Pages nor Cloudflare Pages
+  serves it yet.
+
 ### Hosting addendum — 2026-10-09 (Cloudflare Pages blank screen fixed in source)
 
 - Cloudflare Pages project `wej` (root `app`, `npm run build`, output
@@ -21,10 +70,11 @@ configuration, and current Git state outrank this document when they differ.
 - Not done (external config / out of scope): Cloudflare Pages has no
   `VITE_TRAVEL_WORKER_URL`, so Worker-backed features stay off there; the
   Worker's CORS allows only the github.io origin (`worker/src/shared.ts`),
-  so setting that variable alone would not make them work. Live
-  wej.pages.dev not yet verified after redeploy. Cloudflare deploys from
-  `claude/marhaba-kxry8l`; the fix lives on `claude/clever-galileo-39y1gk`
-  until merged.
+  so setting that variable alone would not make them work. The fix
+  (`dbfb977`) was fast-forwarded onto `claude/marhaba-kxry8l` on
+  2026-10-09 (REPORTED by the pushing agent; the GitHub Pages run it
+  triggered was in progress at the time). Live wej.pages.dev: UNKNOWN —
+  not verified by an agent (the sandbox cannot reach it).
 
 ### Current verified state — 2026-09-30 (WEJHATY v1.1.1 — FINAL HOTFIX RELEASE, USER-ACCEPTED)
 

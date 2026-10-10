@@ -22,7 +22,7 @@ describe('uptime checks', () => {
       if (url.endsWith('/admin/summary')) return response(401, '{"error":"unauthorized"}');
       if (url.includes('/api/')) return response(200, '{"score":70}');
       if (url.includes('/destination/japan/')) return response(200, '<link rel="canonical" href="https://example.org/wej/destination/japan/"> Japan');
-      return response(200, '<div id="root"></div> وجهتي');
+      return response(200, '<div id="root"></div> تِلقاء');
     };
     const results = await runUptime({ site: 'https://example.org/wej/', worker: 'https://worker.example', fetchImpl, sleep: async () => {} });
     expect(results.every((result) => result.ok)).toBe(true);

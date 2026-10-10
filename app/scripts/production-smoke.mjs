@@ -232,7 +232,7 @@ for (const engine of engineNames) {
     await tab.goto(`${SITE}/destination/japan/`, { waitUntil: 'networkidle' });
     const sources = (await tab.textContent('.personal-match-sources').catch(() => '')) ?? '';
     check(!!(await tab.$('.personal-match-sources a[href="https://www.openstreetmap.org/copyright"]')) && /ODbL/.test(sources), `${engine} travel-need sources credit OpenStreetMap contributors under the ODbL`);
-    check(/منهجية وجهتي/.test(sources) && /mledoze\/countries/.test(sources), `${engine} travel-need notice names world-countries and owns the thresholds`);
+    check(/منهجية تِلقاء/.test(sources) && /mledoze\/countries/.test(sources), `${engine} travel-need notice names world-countries and owns the thresholds`);
     check(errors.length === 0, `${engine} travel needs without page errors`, errors.join(' | '));
     await context.close();
   }

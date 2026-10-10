@@ -15,6 +15,7 @@
 import { WORLD_CATALOG, continentOf } from '../data/worldCatalog';
 import { I18N } from '../data/i18n';
 import type { CatalogEntry, Lang, PurposeId } from '../data/types';
+import { BRAND, BRAND_TAGLINE } from '../brand/brand';
 
 export type RouteKind = 'home' | 'explore' | 'destination' | 'purpose' | 'quiz' | 'results' | 'favorites' | 'compare' | 'notFound';
 
@@ -38,7 +39,7 @@ export interface PageMeta {
   names?: Record<Lang, string>;
 }
 
-export const BRAND: Record<Lang, string> = { ar: 'وجهتي', en: 'Wejhaty' };
+export { BRAND };
 
 /** Every purpose the questionnaire accepts at /quiz/:purpose. */
 export const QUIZ_PURPOSES: readonly PurposeId[] = ['tourism', 'work', 'education', 'medical', 'immigration', 'investment', 'wellness', 'other'];
@@ -58,12 +59,12 @@ function destinationDescription(entry: CatalogEntry, lang: Lang): string {
     const lead = entry.recommendationReady
       ? entry.descAr.trim()
       : `${entry.nameAr}: وجهة في ${region}${entry.capitalEn ? `، وعاصمتها ${entry.capitalEn}` : ''}.`;
-    return `${lead} اطّلع على معلومات الدولة ومدى ملاءمتها لكل غرض من أغراض السفر في وجهتي.`;
+    return `${lead} اطّلع على معلومات الدولة ومدى ملاءمتها لكل غرض من أغراض السفر في ${BRAND.ar}.`;
   }
   const lead = entry.recommendationReady
     ? entry.descEn.trim()
     : `${entry.nameEn}: a destination in ${region}${entry.capitalEn ? `, with ${entry.capitalEn} as its capital` : ''}.`;
-  return `${lead} See its country facts and how it fits each travel purpose on Wejhaty.`;
+  return `${lead} See its country facts and how it fits each travel purpose on ${BRAND.en}.`;
 }
 
 export function destinationMeta(entry: CatalogEntry): PageMeta {
@@ -97,9 +98,13 @@ export const HOME_META: PageMeta = {
   kind: 'home',
   path: '',
   index: true,
-  heading: { ar: 'وِجهتي', en: 'Wejhaty' },
-  // The accepted v1.0 home titles, unchanged.
-  title: { ar: 'وِجهتي — Wejhaty', en: 'Wejhaty — Find Your Destination' },
+  heading: { ar: BRAND.ar, en: BRAND.en },
+  // Both names lead the Arabic title (one URL serves both languages), and
+  // the tagline replaces the generic "Find Your Destination".
+  title: {
+    ar: `${BRAND.ar} ${BRAND.en} — ${BRAND_TAGLINE.ar.replace(/\.$/, '')}`,
+    en: `${BRAND.en} — ${BRAND_TAGLINE.en.replace(/\.$/, '')}`,
+  },
   description: HOME_DESCRIPTION,
 };
 

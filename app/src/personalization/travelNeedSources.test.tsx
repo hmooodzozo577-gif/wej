@@ -1,7 +1,7 @@
 // v1.1 RC2 — the ODbL source notice under "why this destination suits you":
 // shown only when a travel-need factor is part of the match, naming each
 // database, linking it and the licence, and saying the thresholds are
-// Wejhaty's own — never an OpenStreetMap rating.
+// TILQAA's own — never an OpenStreetMap rating.
 import { render } from '@testing-library/react';
 import { useEffect } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -71,7 +71,7 @@ describe('travel-need source notice', () => {
       ['mledoze/countries', 'https://github.com/mledoze/countries'],
       ['ODbL', 'https://opendatacommons.org/licenses/odbl/1-0/'],
     ]);
-    expect(text).toMatch(/حدود احتسابها فمن منهجية وجهتي، وليست تقييمًا من OpenStreetMap/);
+    expect(text).toMatch(/حدود احتسابها فمن منهجية تِلقاء، وليست تقييمًا من OpenStreetMap/);
     expect(text).toMatch(/أعداد المساجد والأماكن الحلال من بيانات OpenStreetMap \(© مساهمو OpenStreetMap\)، متاحة بترخيص ODbL\./);
     expect(text).toMatch(/اللغات الرسمية من قاعدة بيانات world-countries \(mledoze\/countries\)، متاحة بترخيص ODbL\./);
   });
@@ -81,7 +81,7 @@ describe('travel-need source notice', () => {
     expect(links.map(([label]) => label)).toEqual(['© OpenStreetMap contributors', 'ODbL', 'mledoze/countries', 'ODbL']);
     expect(text).toMatch(/Mosque and halal counts come from OpenStreetMap data \(© OpenStreetMap contributors\), available under the ODbL\./);
     expect(text).toMatch(/Official languages come from the world-countries database \(mledoze\/countries\), available under the ODbL\./);
-    expect(text).toMatch(/Wejhaty's own method, not an OpenStreetMap rating/);
+    expect(text).toMatch(/TILQAA's own method, not an OpenStreetMap rating/);
     expect(text).not.toMatch(/[؀-ۿ]/);
   });
 

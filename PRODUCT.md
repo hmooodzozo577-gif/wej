@@ -8,15 +8,15 @@ web
 
 ## Users
 
-Wejhaty serves Arabic-first travelers who need help choosing a destination for tourism, work, education, medical treatment, immigration, investment, wellness, or another stated purpose. English is supported as an equal product language. The product requires no account and must remain usable whether or not a traveler shares location or passport country.
+TILQAA (تِلقاء) serves Arabic-first travelers who need help choosing a destination for tourism, work, education, medical treatment, immigration, investment, wellness, or another stated purpose. English is supported as an equal product language. The product requires no account and must remain usable whether or not a traveler shares location or passport country.
 
 ## Product Purpose
 
-Wejhaty helps a traveler move from broad preferences to a practical, explainable shortlist of countries. It combines an answer-driven deterministic questionnaire with a worldwide destination catalog, country details, optional proximity context, and honest data-coverage states. Success means the traveler can understand why a destination appeared, inspect the available evidence, and continue planning without mistaking estimates or missing data for verified facts.
+TILQAA helps a traveler move from broad preferences to a practical, explainable shortlist of countries. It combines an answer-driven deterministic questionnaire with a worldwide destination catalog, country details, optional proximity context, and honest data-coverage states. Success means the traveler can understand why a destination appeared, inspect the available evidence, and continue planning without mistaking estimates or missing data for verified facts.
 
 ## Positioning
 
-Wejhaty's distinguishing mechanism is a deterministic recommendation engine over a worldwide catalog, paired with transparent reasons and explicit uncertainty. The interview gathers only supported preferences; Phase 14 remains the sole scoring and candidate-selection authority, and the browser-local Personal Match layer (Phase 18) may only reorder within Phase 14's top candidates, always labelled separately from a country's general suitability. Location may break otherwise-equal matches only when the traveler opts into proximity, and passport country is optional and used only to show entry requirements from destinations' official sources, never to rank.
+TILQAA's distinguishing mechanism is a deterministic recommendation engine over a worldwide catalog, paired with transparent reasons and explicit uncertainty. The interview gathers only supported preferences; Phase 14 remains the sole scoring and candidate-selection authority, and the browser-local Personal Match layer (Phase 18) may only reorder within Phase 14's top candidates, always labelled separately from a country's general suitability. Location may break otherwise-equal matches only when the traveler opts into proximity, and passport country is optional and used only to show entry requirements from destinations' official sources, never to rank.
 
 ## Operating Context
 
@@ -36,10 +36,10 @@ Wejhaty's distinguishing mechanism is a deterministic recommendation engine over
 - Precise coordinates remain in memory and are never sent to recommendation services or analytics.
 - Browser location and self-reported passport country are separate concepts. The product collects no passport number.
 - Sensitive personal or cultural traits are never inferred from nationality, language, locale, or location.
-- Optional self-reported travel needs (languages, ease of Islamic practice, halal food) refine Personal Match only, stay on the traveller's device, and are matched only against positive evidence (official languages from world-countries; places mapped in OpenStreetMap, credited under the ODbL). The thresholds are Wejhaty's own. Missing or thin evidence is "not counted", never a low score, and no country is rated for religiosity.
+- Optional self-reported travel needs (languages, ease of Islamic practice, halal food) refine Personal Match only, stay on the traveller's device, and are matched only against positive evidence (official languages from world-countries; places mapped in OpenStreetMap, credited under the ODbL). The thresholds are TILQAA's own. Missing or thin evidence is "not counted", never a low score, and no country is rated for religiosity.
 - Favorites and comparisons are local; Compare shows real data side by side with no winner and no combined score. Shared links carry a destination only.
 - Only real, stable pages (home, Explore, destination pages) are indexable; personal and transient states are not.
-- All visible numbers use Latin digits in both languages.
+- All visible numbers use Latin digits in both languages. The one exception is the quoted Quran reference «[القصص: ٢٢]» in the «قصة الاسم» dialog, which keeps the approved Arabic-Indic digits as part of the quotation.
 - Missing, partial, sourced, and verified information must remain visibly distinguishable.
 - Turnstile is not currently enabled and must not be represented as active.
 - Entry-requirement coverage is partial (official sources for 34 destinations) and must be presented as partial; uncovered destinations say so instead of guessing.
@@ -47,7 +47,7 @@ Wejhaty's distinguishing mechanism is a deterministic recommendation engine over
 
 ## Brand Commitments
 
-- Product name: `وجهتي / Wejhaty`.
+- Product name: `تِلقاء / TILQAA` (renamed from `وجهتي / Wejhaty` on 2026-10-10). Arabic name with the kasra under the ت; Latin name in capitals. Tagline: «تِلقاء — العالم في اتجاهك.» / “TILQAA — The World Within Your Reach.” Every public brand string comes from `app/src/brand/brand.ts`; the previous name stays only in technical identifiers (storage keys, the stylesheet filename, `WEJHATY_*` build variables, User-Agents), the repository name and the `/wej/` path. The story of the name lives in the footer's «قصة الاسم» dialog, never in a logo. The logo is designed separately and replaces `BrandMark` (`app/src/brand/BrandMark.tsx`).
 - Arabic must feel authored first, not translated after English.
 - The experience should communicate trusted travel decision-making, exploration, calm confidence, clarity, and international usefulness without cultural stereotypes.
 - Phase 17 may replace the incumbent visual identity when evidence supports a stronger system, while preserving product truth, routes, behavior, privacy, and accessible native interaction patterns.

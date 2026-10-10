@@ -236,15 +236,19 @@ describe('evaluation — only positive evidence counts', () => {
     const answers = needs({ [id('islamicPractice')]: 100, [id('halalFood')]: 100 });
     const match = matchFor('japan', answers);
     const lines = match.factors.map((f) => factorDetail(f, 'en')).join(' ');
-    // The source's count, and that the threshold is Wejhaty's own.
-    expect(lines).toMatch(/60 mosques and Muslim prayer places mapped on OpenStreetMap — below what Wejhaty's method needs, so this factor was not counted\. That does not mean practice is difficult/);
-    expect(matchFor('om', answers).factors.map((f) => factorDetail(f, 'ar')).join(' ')).toMatch(/أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: 10 — أقل مما تشترطه منهجية وجهتي/);
+    // The source's count, and that the threshold is TILQAA's own.
+    expect(lines).toMatch(/60 mosques and Muslim prayer places mapped on OpenStreetMap — below what TILQAA's method needs, so this factor was not counted\. That does not mean practice is difficult/);
+    expect(matchFor('om', answers).factors.map((f) => factorDetail(f, 'ar')).join(' ')).toMatch(/أماكن موسومة بتقديم طعام حلال على خريطة OpenStreetMap: 10 — أقل مما تشترطه منهجية تِلقاء/);
     expect(lines).toMatch(/40 places tagged as serving halal food on OpenStreetMap(?! —)/);
+    expect(matchFor('om', answers).factors.map((f) => factorDetail(f, 'en')).join(' ')).toMatch(/10 places tagged as serving halal food on OpenStreetMap — below what TILQAA's method needs/);
+    expect(match.factors.map((f) => factorDetail(f, 'ar')).join(' ')).toMatch(/مساجد ومصليات مسجّلة على خريطة OpenStreetMap: 60 — أقل مما تشترطه منهجية تِلقاء/);
     const all = [
       ...['ar', 'en'].flatMap((lang) => WORLD_CATALOG.slice(0, 40).flatMap((dest) => matchFor(dest.id, answers).factors.map((f) => factorDetail(f, lang as 'ar' | 'en')))),
       personalSummary(match, normalizePreferences('tourism', answers), byId('japan'), 'ar'),
     ].join(' ');
     expect(all).not.toMatch(/population|السكان|state religion|دين الدولة|religious country|%/i);
+    // The product's previous name, as a whole word (not "وجهتين"/"وجهتك").
+    expect(all).not.toMatch(/Wejhaty|(?<![\p{L}\p{M}])وِ?جهتي(?![\p{L}\p{M}])/u);
   });
 });
 

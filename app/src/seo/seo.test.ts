@@ -11,7 +11,7 @@ import {
 
 const PAGES_SITE: SiteInfo = { origin: 'https://hmooodzozo577-gif.github.io', basePath: '/wej/', url: 'https://hmooodzozo577-gif.github.io/wej/' };
 const ROOT_SITE: SiteInfo = { origin: 'https://wejhaty.example', basePath: '/', url: 'https://wejhaty.example/' };
-const TEMPLATE = '<!doctype html>\n<html lang="ar" dir="rtl">\n  <head>\n    <title>وِجهتي — Wejhaty</title>\n  </head>\n  <body><div id="root"></div></body>\n</html>\n';
+const TEMPLATE = '<!doctype html>\n<html lang="ar" dir="rtl">\n  <head>\n    <title>تِلقاء TILQAA — العالم في اتجاهك</title>\n  </head>\n  <body><div id="root"></div></body>\n</html>\n';
 
 describe('page metadata', () => {
   const pages = staticPages();
@@ -42,8 +42,8 @@ describe('page metadata', () => {
 
   it('describes destinations only with data the site already shows', () => {
     const japan = destinationMeta(WORLD_CATALOG.find((entry) => entry.id === 'japan')!);
-    expect(japan.title.ar).toBe('اليابان للسفر | وجهتي');
-    expect(japan.title.en).toBe('Japan travel | Wejhaty');
+    expect(japan.title.ar).toBe('اليابان للسفر | تِلقاء');
+    expect(japan.title.en).toBe('Japan travel | TILQAA');
     const afghanistan = destinationMeta(WORLD_CATALOG.find((entry) => entry.id === 'af')!);
     expect(afghanistan.description.en).toContain('with Kabul as its capital');
     // Each description is the destination's existing editorial line (the 30
@@ -83,8 +83,8 @@ describe('page metadata', () => {
     }
   });
 
-  it('keeps the accepted v1.0 home titles', () => {
-    expect(HOME_META.title).toEqual({ ar: 'وِجهتي — Wejhaty', en: 'Wejhaty — Find Your Destination' });
+  it('titles the home page with both names and the tagline', () => {
+    expect(HOME_META.title).toEqual({ ar: 'تِلقاء TILQAA — العالم في اتجاهك', en: 'TILQAA — The World Within Your Reach' });
   });
 });
 
@@ -104,7 +104,7 @@ describe('static documents', () => {
 
   it('writes a canonical link, robots rule and social tags from the configured origin', () => {
     const html = renderDocument(TEMPLATE, japan, PAGES_SITE);
-    expect(html).toContain('<title>اليابان للسفر — Japan travel | وجهتي Wejhaty</title>');
+    expect(html).toContain('<title>اليابان للسفر — Japan travel | تِلقاء TILQAA</title>');
     expect(html).toContain('<link rel="canonical" href="https://hmooodzozo577-gif.github.io/wej/destination/japan/" />');
     expect(html).toContain('<meta name="robots" content="index, follow" />');
     for (const property of ['og:title', 'og:description', 'og:url', 'og:type', 'og:image']) expect(html).toContain(`property="${property}"`);

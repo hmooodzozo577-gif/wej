@@ -7,6 +7,7 @@
 import { destinationUrl } from '../site/site';
 import type { CatalogEntry, Lang } from '../data/types';
 import { nameOf } from '../data/destinationText';
+import { BRAND } from '../brand/brand';
 
 export interface SharePayload {
   title: string;
@@ -22,8 +23,8 @@ export const SHARE_COPY = {
     shared: 'تمت المشاركة.',
     failed: 'تعذّر النسخ تلقائيًا. انسخ الرابط من الحقل.',
     linkLabel: 'رابط الوجهة',
-    text: (name: string) => `${name} على وجهتي`,
-    textWithMatch: (name: string, score: number) => `${name} — توافقي معها ${score}% على وجهتي`,
+    text: (name: string) => `${name} على ${BRAND.ar}`,
+    textWithMatch: (name: string, score: number) => `${name} — توافقي معها ${score}% على ${BRAND.ar}`,
   },
   en: {
     share: 'Share',
@@ -32,8 +33,8 @@ export const SHARE_COPY = {
     shared: 'Shared.',
     failed: 'Could not copy automatically. Copy the link from the field.',
     linkLabel: 'Destination link',
-    text: (name: string) => `${name} on Wejhaty`,
-    textWithMatch: (name: string, score: number) => `${name} — a ${score}% match for me on Wejhaty`,
+    text: (name: string) => `${name} on ${BRAND.en}`,
+    textWithMatch: (name: string, score: number) => `${name} — a ${score}% match for me on ${BRAND.en}`,
   },
 } satisfies Record<Lang, Record<string, unknown>>;
 

@@ -11,7 +11,7 @@
 //   icons/apple-touch-icon.png    180 px, full-bleed (iOS rounds it)
 //   icons/icon-192.png, icon-512.png
 //   icons/icon-maskable-512.png   mark inside the maskable safe zone
-//   og/wejhaty-share.png          1200 x 630 link-preview image
+//   og/tilqaa-share.png           1200 x 630 link-preview image
 //
 // The sharing image is rendered by Chromium with the site's own fonts
 // (Cairo for Arabic, Fraunces for the Latin wordmark) from Google Fonts.
@@ -138,9 +138,9 @@ try {
 </style></head><body>
   <div class="card">
     <div class="words">
-      <div class="ar">وِجهتي</div>
-      <div class="en">Wejhaty</div>
-      <div class="line">اكتشف وجهتك القادمة</div>
+      <div class="ar">تِلقاء</div>
+      <div class="en">TILQAA</div>
+      <div class="line">العالم في اتجاهك.</div>
     </div>
     ${markSvg({ size: 220, shape: 'disc', glyphShare: 0.62 }).replace('<svg ', '<svg class="mark" ')}
   </div>
@@ -151,7 +151,7 @@ try {
     throw new Error(`The site fonts did not load (${fonts.join(', ') || 'none'}); refusing to render the sharing image with fallback fonts.`);
   }
   const shot = await page.screenshot({ type: 'png' });
-  write('og/wejhaty-share.png', await sharp(shot).png({ compressionLevel: 9, palette: true, quality: 90 }).toBuffer());
+  write('og/tilqaa-share.png', await sharp(shot).png({ compressionLevel: 9, palette: true, quality: 90 }).toBuffer());
 } finally {
   await browser.close();
 }
