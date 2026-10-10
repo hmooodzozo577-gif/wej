@@ -2,7 +2,8 @@
 import { useI18n } from '../../state/hooks';
 import { FeedbackDialog } from '../FeedbackDialog';
 import { APP_VERSION } from '../../site/site';
-import { BrandMark } from '../../brand/BrandMark';
+import { TilqaaLogo } from '../../brand/TilqaaLogo';
+import { BRAND } from '../../brand/brand';
 import { NameStoryDialog } from '../../brand/NameStoryDialog';
 
 export function Footer() {
@@ -10,11 +11,8 @@ export function Footer() {
   return (
     <footer className="footer">
       <div className="container footer-row">
-        <div className="brand" style={{ cursor: 'default' }}>
-          <BrandMark size={18} />
-          <span className="brand-name" style={{ fontSize: '1.05rem' }}>
-            {t.brand}
-          </span>
+        <div className="brand footer-brand">
+          <TilqaaLogo variant="horizontal" height={34} className="brand-logo" label={`${BRAND.ar} — ${BRAND.en}`} />
         </div>
         <div className="footer-actions">
           <FeedbackDialog lang={t.htmlLang} strings={t.feedback} />

@@ -6125,7 +6125,7 @@ html[dir='rtl'] .travel-route-band {
 
 .name-story-verse blockquote {
   margin: 0;
-  color: var(--ink);
+  color: var(--tq-ink-text);
   font-family: 'Amiri', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
   font-size: clamp(1.3rem, 1.05rem + 1.1vw, 1.65rem);
   font-weight: 400;
@@ -6152,7 +6152,141 @@ html[dir='rtl'] .travel-route-band {
 }
 
 .name-story-body .name-story-tagline {
-  margin-top: 4px;
-  color: var(--ink);
+  color: var(--tq-ink-text);
   font-weight: 700;
+}
+
+/* --- Brand: the approved TILQAA logo (logo package v2) --------------------
+   brand/TilqaaLogo.tsx draws the approved artwork; its colours are the
+   --tq-* custom properties. On dark surfaces they switch to the approved
+   on-dark colours (Sand letters and tile, Oasis Ink letter in the tile; the
+   needle's saffron half never changes).
+   Header: one cut at a time, per the brand guide's sizes — horizontal at
+   40 px while the full nav shows, compact at 32 px once the nav collapses
+   (860px, the existing breakpoint), the small symbol below 360px. Height is
+   fixed and the width follows the viewBox, so the logo never stretches.
+   The 16px nav-row gap is wider than the guide's clear space (about a third
+   of the logo height). */
+:root {
+  --tq-oasis-ink: #0E3F3D;
+  --tq-saffron: #C77524;
+  --tq-sand: #F5EFE4;
+  --tq-night-oasis: #072523;
+  /* Brand-coloured text on the current surface. */
+  --tq-ink-text: var(--tq-oasis-ink);
+}
+
+[data-theme='dark'] {
+  --tq-ink-text: var(--tq-sand);
+}
+
+[data-theme='dark'] .brand-logo,
+[data-theme='dark'] .name-story-symbol-art {
+  --tq-main: var(--tq-sand);
+  --tq-tile: var(--tq-sand);
+  --tq-glyph: var(--tq-oasis-ink);
+  --tq-accent: var(--tq-saffron);
+}
+
+.brand-logo {
+  display: block;
+  flex: none;
+  width: auto;
+}
+
+.nav .brand {
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.nav .brand-logo-horizontal {
+  height: 40px;
+}
+
+.nav .brand-logo-compact,
+.nav .brand-logo-symbol {
+  display: none;
+  height: 32px;
+}
+
+@media (max-width: 860px) {
+  .nav .brand-logo-horizontal { display: none; }
+  .nav .brand-logo-compact { display: block; }
+}
+
+@media (max-width: 359px) {
+  .nav .brand-logo-compact { display: none; }
+  .nav .brand-logo-symbol { display: block; }
+}
+
+.footer-brand {
+  cursor: default;
+}
+
+.footer-brand .brand-logo {
+  height: 34px;
+}
+
+/* «قصة الاسم» in the brand palette: Sand by day, Night Oasis by night,
+   Oasis Ink headings; saffron stays inside the needle. */
+.feedback-dialog.name-story-dialog {
+  background: var(--tq-sand);
+}
+
+[data-theme='dark'] .feedback-dialog.name-story-dialog {
+  border-color: rgba(245, 239, 228, 0.16);
+  background: var(--tq-night-oasis);
+}
+
+.name-story-dialog h2,
+.name-story-dialog h3 {
+  color: var(--tq-ink-text);
+}
+
+.name-story-part {
+  display: grid;
+  gap: 14px;
+}
+
+.name-story-part h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.name-story-symbol {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.name-story-symbol > div {
+  display: grid;
+  gap: 8px;
+}
+
+.name-story-symbol-art {
+  width: 64px;
+  height: 64px;
+}
+
+.name-story-promise {
+  display: grid;
+  gap: 2px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.name-story-body .name-story-tagline-alt {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 420px) {
+  .name-story-symbol { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
+  .name-story-symbol-art { width: 56px; height: 56px; }
 }

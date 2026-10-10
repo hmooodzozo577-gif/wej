@@ -5,6 +5,32 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Logo — 2026-10-10 (approved TILQAA logo package v2 integrated, in source, not deployed)
+
+- **Assets**: approved masters in `app/brand/tilqaa-v2` (used SVG cuts,
+  favicon set, clear-space guide, the package README); the brand sheet,
+  PNG exports and package generator stay with the owner. `TilqaaLogo.tsx`
+  (typed adaptation of the package's `TilqaaLogo.jsx`: horizontal,
+  compact, symbol, symbolSmall) replaces `BrandMark.tsx`; a test keeps it
+  shape-identical to the masters.
+- **Header**: horizontal 40 px (> 860px), compact 32 px (360–860px), small
+  symbol 32 px (< 360px); home button 44 × 44 px minimum, accessible name
+  `تِلقاء — الصفحة الرئيسية` / `TILQAA — Home`. **Footer**: horizontal
+  34 px, image named `تِلقاء — TILQAA`. Dark theme uses the approved
+  on-dark colours. Measured with Playwright at 320–1440px, AR/EN,
+  light/dark: no overflow, nav row height unchanged (68px).
+- **Icons**: `favicon.ico` (16/32/48), `icons/icon.svg`, apple-touch,
+  192, 512 and maskable 512 are the approved files, same paths;
+  `generate-brand-assets.mjs` now copies them (never redraws) and renders
+  `og/tilqaa-share.png` from the approved on-dark horizontal logo on Night
+  Oasis. Manifest/theme colours unchanged (they follow the page surface).
+- **«قصة الاسم»** (footer only): the name (verse unchanged), the symbol
+  («إبرة تشير إلى وجهتك», the approved symbol at 64 px, design intent
+  only), the promise (both taglines). Brand palette: Sand / Night Oasis
+  surface, Oasis Ink headings; saffron only in the needle.
+- **Deploy**: committed to `claude/clever-galileo-39y1gk`; not on
+  `claude/marhaba-kxry8l`, so not served yet.
+
 ### Rebrand — 2026-10-10 (وجهتي / Wejhaty → تِلقاء / TILQAA, in source, not deployed)
 
 - **Public name**: Arabic `تِلقاء` (kasra U+0650 under ت), Latin `TILQAA`.
@@ -43,9 +69,7 @@ configuration, and current Git state outrank this document when they differ.
   rebrand review). `NameStoryDialog` cancels that mousedown and returns
   focus correctly; the same one-line fix can be applied to
   `FeedbackDialog.tsx` in its own task.
-- **Logo**: not designed here. `app/src/brand/BrandMark.tsx` is the single
-  header/footer mark (still the compass glyph); replace it, the favicon
-  set and the sharing image when the separately designed logo arrives.
+- **Logo**: integrated later the same day — see "Logo — 2026-10-10" above.
 - **Checks**: `scripts/verify-seo-build.mjs` now fails on the previous
   name in any built HTML or the manifest and requires `تِلقاء` in every
   title; `scripts/lib/uptime.mjs` and `production-smoke.mjs` expect the

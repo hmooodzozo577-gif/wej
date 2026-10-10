@@ -1,49 +1,37 @@
-// v1.1 — generates the icon set and the sharing image from the existing
-// Wejhaty mark (the compass in the header's .brand-mark: an ink disc, a
-// cream ring and a gold needle). The mark is not redesigned; it is only
-// drawn at the sizes browsers and home screens ask for.
+// v1.2 — publishes the approved TILQAA brand assets (logo package v2, in
+// brand/tilqaa-v2) and renders the sharing image from them. The approved
+// icons are copied byte for byte, never redrawn; the logo is never retyped.
 //
 //   node scripts/generate-brand-assets.mjs            (from app/)
 //
-// Writes, under public/:
-//   favicon.ico                   16 + 32 px (PNG-in-ICO)
-//   icons/icon.svg                scalable favicon
-//   icons/apple-touch-icon.png    180 px, full-bleed (iOS rounds it)
-//   icons/icon-192.png, icon-512.png
-//   icons/icon-maskable-512.png   mark inside the maskable safe zone
-//   og/tilqaa-share.png           1200 x 630 link-preview image
+// Copies brand/tilqaa-v2/favicon/* to public/ (the paths the pages and the
+// manifest already use):
+//   favicon.ico                   16 + 32 + 48 px          <- favicon.ico
+//   icons/icon.svg                small-size symbol cut    <- favicon.svg
+//   icons/apple-touch-icon.png    180 px                   <- apple-touch-icon.png
+//   icons/icon-192.png                                     <- favicon-192.png
+//   icons/icon-512.png                                     <- app-icon-512.png
+//   icons/icon-maskable-512.png   maskable safe zone       <- app-icon-maskable-512.png
+// Renders:
+//   og/tilqaa-share.png           1200 x 630: the approved horizontal logo
+//                                 (on-dark) on Night Oasis, with the tagline
 //
 // The sharing image is rendered by Chromium with the site's own fonts
-// (Cairo for Arabic, Fraunces for the Latin wordmark) from Google Fonts.
+// (Cairo for Arabic, Fraunces for Latin) from Google Fonts for the tagline.
 // Optional: PLAYWRIGHT_MODULE, CHROMIUM_PATH. Behind a proxy, run with
 // NODE_USE_ENV_PROXY=1 so Node's fetch uses it.
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
-const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
+const APP = join(dirname(fileURLToPath(import.meta.url)), '..');
+const PUBLIC = join(APP, 'public');
+const BRAND = join(APP, 'brand', 'tilqaa-v2');
 
-// The exact colours of the header mark (Header.tsx, .brand-mark in the
-// light theme where --ink is #17243a).
-const INK = '#17243a';
-const RING = '#EBE7DC';
-const NEEDLE = '#D9A85C';
-
-/** The header's 24-unit compass glyph. */
-const GLYPH = `<circle cx="12" cy="12" r="9.5" stroke="${RING}" stroke-width="1.4" fill="none"/><path d="M15.5 8.5L13 13L8.5 15.5L11 11L15.5 8.5Z" fill="${NEEDLE}"/>`;
-
-/** The mark on a background. `glyphShare` is the glyph's width as a share of
- *  the canvas (the header uses 20 px inside a 34 px disc, about 0.59). */
-function markSvg({ size, shape, glyphShare }) {
-  const glyph = size * glyphShare;
-  const offset = (size - glyph) / 2;
-  const scale = glyph / 24;
-  const background = shape === 'disc'
-    ? `<circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="${INK}"/>`
-    : `<rect width="${size}" height="${size}" fill="${INK}"/>`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${background}<g transform="translate(${offset} ${offset}) scale(${scale})">${GLYPH}</g></svg>`;
-}
+// The approved palette (brand/tilqaa-v2/README.md).
+const SAND = '#F5EFE4';
+const NIGHT_OASIS = '#072523';
 
 function write(relativePath, data) {
   const file = join(PUBLIC, relativePath);
@@ -52,45 +40,23 @@ function write(relativePath, data) {
   console.log(`wrote public/${relativePath} (${data.length} bytes)`);
 }
 
-async function png(svg, size) {
-  return sharp(Buffer.from(svg)).resize(size, size).png({ compressionLevel: 9 }).toBuffer();
+const ICONS = {
+  'favicon.ico': 'favicon.ico',
+  'icons/icon.svg': 'favicon.svg',
+  'icons/apple-touch-icon.png': 'apple-touch-icon.png',
+  'icons/icon-192.png': 'favicon-192.png',
+  'icons/icon-512.png': 'app-icon-512.png',
+  'icons/icon-maskable-512.png': 'app-icon-maskable-512.png',
+};
+for (const [target, source] of Object.entries(ICONS)) {
+  copyFileSync(join(BRAND, 'favicon', source), join(PUBLIC, target));
+  console.log(`copied brand/tilqaa-v2/favicon/${source} -> public/${target}`);
 }
 
-/** An ICO container holding PNG images (supported by every current browser). */
-function ico(images) {
-  const header = Buffer.alloc(6);
-  header.writeUInt16LE(0, 0);
-  header.writeUInt16LE(1, 2);
-  header.writeUInt16LE(images.length, 4);
-  const entries = [];
-  let offset = 6 + 16 * images.length;
-  for (const { size, data } of images) {
-    const entry = Buffer.alloc(16);
-    entry.writeUInt8(size >= 256 ? 0 : size, 0);
-    entry.writeUInt8(size >= 256 ? 0 : size, 1);
-    entry.writeUInt8(0, 2);
-    entry.writeUInt8(0, 3);
-    entry.writeUInt16LE(1, 4);
-    entry.writeUInt16LE(32, 6);
-    entry.writeUInt32LE(data.length, 8);
-    entry.writeUInt32LE(offset, 12);
-    offset += data.length;
-    entries.push(entry);
-  }
-  return Buffer.concat([header, ...entries, ...images.map((image) => image.data)]);
-}
-
-const favicon = markSvg({ size: 64, shape: 'disc', glyphShare: 0.62 });
-write('icons/icon.svg', Buffer.from(`${favicon}\n`));
-write('favicon.ico', ico([
-  { size: 16, data: await png(favicon, 16) },
-  { size: 32, data: await png(favicon, 32) },
-]));
-write('icons/icon-192.png', await png(markSvg({ size: 512, shape: 'disc', glyphShare: 0.62 }), 192));
-write('icons/icon-512.png', await png(markSvg({ size: 512, shape: 'disc', glyphShare: 0.62 }), 512));
-// Maskable: full-bleed square; the glyph stays well inside the 80% safe circle.
-write('icons/icon-maskable-512.png', await png(markSvg({ size: 512, shape: 'square', glyphShare: 0.46 }), 512));
-write('icons/apple-touch-icon.png', await png(markSvg({ size: 512, shape: 'square', glyphShare: 0.56 }), 180));
+/** The approved on-dark horizontal logo, sized by CSS (its viewBox keeps
+ *  the proportions). */
+const LOGO = readFileSync(join(BRAND, 'svg', 'tilqaa-horizontal--color-on-dark.svg'), 'utf8')
+  .replace(/ width="[^"]+" height="[^"]+"/, ' class="logo"');
 
 // --- Sharing image ------------------------------------------------------
 // The font CSS and files are fetched here and inlined, so the browser
@@ -125,24 +91,21 @@ try {
   html, body { margin: 0; width: 1200px; height: 630px; }
   body {
     display: grid; place-items: center;
-    background: linear-gradient(145deg, #07101c 0%, #17334a 100%);
-    color: #f3f6f8; font-family: Cairo, sans-serif;
-    border-bottom: 10px solid #C0532C; box-sizing: border-box;
+    background: ${NIGHT_OASIS};
+    color: ${SAND}; font-family: Cairo, sans-serif;
   }
-  .card { display: flex; align-items: center; gap: 56px; }
-  .mark { width: 220px; height: 220px; }
-  .words { display: grid; gap: 18px; }
-  .ar { font-size: 118px; font-weight: 800; line-height: 1.3; }
-  .en { font-family: Fraunces, serif; font-size: 52px; font-weight: 600; color: ${RING}; direction: ltr; text-align: right; }
-  .line { font-size: 34px; font-weight: 600; color: ${NEEDLE}; margin-top: 14px; }
+  .card { display: grid; justify-items: center; gap: 46px; }
+  .logo { display: block; width: 780px; height: auto; }
+  .lines { display: grid; justify-items: center; gap: 10px; opacity: 0.86; }
+  .ar { font-size: 44px; font-weight: 600; line-height: 1.4; }
+  .en { font-family: Fraunces, serif; font-size: 30px; font-weight: 600; direction: ltr; }
 </style></head><body>
   <div class="card">
-    <div class="words">
-      <div class="ar">تِلقاء</div>
-      <div class="en">TILQAA</div>
-      <div class="line">العالم في اتجاهك.</div>
+    ${LOGO}
+    <div class="lines">
+      <div class="ar">العالم في اتجاهك.</div>
+      <div class="en">The World Within Your Reach.</div>
     </div>
-    ${markSvg({ size: 220, shape: 'disc', glyphShare: 0.62 }).replace('<svg ', '<svg class="mark" ')}
   </div>
 </body></html>`, { waitUntil: 'load' });
   await page.evaluate(() => document.fonts.ready);

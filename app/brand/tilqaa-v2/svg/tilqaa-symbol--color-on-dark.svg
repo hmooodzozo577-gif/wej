@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="TILQAA">
+  <title>TILQAA</title>
+  <rect x="0" y="0" width="120" height="120" rx="31.2" fill="#F5EFE4"/>
+  <path transform="translate(60 67.84) scale(0.62)" d="M44 -30 L44 -22 Q44 0 22 0 L-22 0 Q-44 0 -44 -22 L-44 -56" fill="none" stroke="#0E3F3D" stroke-width="16.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M78.43 22.8 L67.65 45.42 L57.06 35.89 Z" fill="#C77524"/>
+  <path d="M45.28 59.62 L66.65 46.53 L56.07 37 Z" fill="#0E3F3D"/>
+  <path transform="translate(60 67.84) scale(0.62)" d="M11.12 26.85 L-7.12 39.15" fill="none" stroke="#0E3F3D" stroke-width="16.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
