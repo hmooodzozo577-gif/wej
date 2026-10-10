@@ -176,3 +176,18 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** For dialogs and focus traps: assert the handler's effect (event defaultPrevented via fireEvent's return value, focus moved by the handler), run a mutation check (delete the trap, the test must fail), and confirm backdrop/Escape/close focus restore in a real browser for mouse and touch.
 
 **Principle:** A test that passes with the feature deleted proves nothing; for browser-owned behaviour (focus, default actions) jsdom is not evidence.
+
+### Observation 12: Integrate supplied brand artwork by adapting, not copying, and pin it with a shape-for-shape test
+
+**Status:** OPEN
+**Date:** 2026-10-10
+**Session context:** Integrating an approved logo package (SVG masters + a generated React component + icons) into an existing typed React app.
+**Skill:** impeccable (asset integration) / New skill candidate: brand-asset-integration
+**Type:** open-source
+**Phase/Area:** Asset audit and integration
+
+**Issue:** The supplied component was untyped and bundled every variant; copying it in would have added dead variants and an untyped module. Adapting it (typed, only the used variants, colours as CSS custom properties so a theme can switch to the on-dark cut) plus a test that compares each rendered shape to the master SVG kept fidelity provable. The existing icon generator would have silently overwritten the approved icons on its next run; it had to be changed to copy, not redraw.
+
+**Suggested improvement:** Checklist for supplied brand assets: scan SVGs for active content; diff colour variants (often colour-only, so one inline SVG + CSS variables covers them); keep only used files as masters in the repo; test rendered artwork against masters and served icons byte-for-byte; find every generator that writes the same public paths.
+
+**Principle:** Approved artwork must be provably identical to its source, and every tool that writes the same files must be brought in line or it will undo the integration.

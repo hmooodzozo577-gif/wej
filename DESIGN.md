@@ -107,7 +107,7 @@ components:
 
 # Design System: تِلقاء / TILQAA
 
-The product was renamed from وجهتي / Wejhaty to تِلقاء / TILQAA on 2026-10-10. The visual system below is unchanged by the rename; "Wejhaty" in the narrative that follows refers to the same product. The brand mark in the header and footer is one component (`app/src/brand/BrandMark.tsx`) so the separately designed logo can replace the compass glyph in one place.
+The product was renamed from وجهتي / Wejhaty to تِلقاء / TILQAA on 2026-10-10. The visual system below is unchanged by the rename; "Wejhaty" in the narrative that follows refers to the same product. The header and footer show the approved TILQAA logo (logo package v2, `app/brand/tilqaa-v2`) through `app/src/brand/TilqaaLogo.tsx`: horizontal 40 px above 860px, compact 32 px from 360px, the small symbol below 360px; footer horizontal 34 px; the approved on-dark colours in dark theme via `--tq-*` custom properties. The brand palette (`--tq-oasis-ink`, `--tq-saffron`, `--tq-sand`, `--tq-night-oasis`) is used by the logo and the «قصة الاسم» dialog only; the rest of the interface keeps the palette below.
 
 ## Overview
 

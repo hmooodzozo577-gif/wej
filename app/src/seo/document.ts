@@ -142,7 +142,7 @@ export function headTags(meta: PageMeta, site: SiteInfo): string {
 export function identityTags(site: SiteInfo): string {
   const base = site.basePath;
   return [
-    `<link rel="icon" href="${base}favicon.ico" sizes="32x32" />`,
+    `<link rel="icon" href="${base}favicon.ico" sizes="16x16 32x32 48x48" />`,
     `<link rel="icon" href="${base}icons/icon.svg" type="image/svg+xml" />`,
     `<link rel="apple-touch-icon" href="${base}icons/apple-touch-icon.png" />`,
     `<link rel="manifest" href="${base}manifest.webmanifest" />`,

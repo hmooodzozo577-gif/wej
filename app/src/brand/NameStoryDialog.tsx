@@ -1,4 +1,6 @@
-// "قصة الاسم" — a quiet footer button that opens the story of the name.
+// "قصة الاسم" — a quiet footer button that opens the story of the name:
+// what the name means, what the symbol shows, and the promise (the tagline
+// in both languages). The footer is its only entry point.
 // Same modal conventions as FeedbackDialog: a labelled dialog with
 // aria-modal, a backdrop that blocks the page, Escape and the backdrop
 // close it, Tab stays inside, the page does not scroll behind it and focus
@@ -7,11 +9,16 @@ import { useEffect, useId, useRef, useState } from 'react';
 import type { Lang } from '../data/types';
 import { Icon } from '../components/Icon';
 import { NAME_STORY_COPY, NAME_STORY_REFERENCE, NAME_STORY_VERSE } from './nameStoryCopy';
+import { TilqaaLogo } from './TilqaaLogo';
 
 const FOCUSABLE = 'button:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])';
 
 export function NameStoryDialog({ lang }: { lang: Lang }) {
   const copy: (typeof NAME_STORY_COPY)[Lang] = NAME_STORY_COPY[lang];
+  // The promise in the other language too: the Arabic tagline is always shown.
+  const other = lang === 'ar'
+    ? { lang: 'en', dir: 'ltr', tagline: NAME_STORY_COPY.en.tagline }
+    : { lang: 'ar', dir: 'rtl', tagline: NAME_STORY_COPY.ar.tagline };
   const [open, setOpen] = useState(false);
   const opener = useRef<HTMLButtonElement | null>(null);
   const dialog = useRef<HTMLElement | null>(null);
@@ -79,19 +86,32 @@ export function NameStoryDialog({ lang }: { lang: Lang }) {
               </button>
             </div>
             <div className="name-story-body">
-              <p>{copy.intro}</p>
-              <p>{copy.verseLead}</p>
-              <figure className="name-story-verse">
-                <blockquote lang="ar" dir="rtl">{NAME_STORY_VERSE}</blockquote>
-                <figcaption>
-                  <cite lang="ar" dir="rtl">{NAME_STORY_REFERENCE}</cite>
-                  {'referenceLocator' in copy ? <span className="name-story-locator">{copy.referenceLocator}</span> : null}
-                </figcaption>
-              </figure>
-              <p>{copy.meaning}</p>
-              {'verseNote' in copy ? <p className="name-story-note">{copy.verseNote}</p> : null}
-              <p>{copy.inspiration}</p>
-              <p className="name-story-tagline">{copy.tagline}</p>
+              <section className="name-story-part" aria-labelledby={`${titleId}-name`}>
+                <h3 id={`${titleId}-name`}>{copy.nameHeading}</h3>
+                <p>{copy.intro}</p>
+                <p>{copy.verseLead}</p>
+                <figure className="name-story-verse">
+                  <blockquote lang="ar" dir="rtl">{NAME_STORY_VERSE}</blockquote>
+                  <figcaption>
+                    <cite lang="ar" dir="rtl">{NAME_STORY_REFERENCE}</cite>
+                    {'referenceLocator' in copy ? <span className="name-story-locator">{copy.referenceLocator}</span> : null}
+                  </figcaption>
+                </figure>
+                <p>{copy.meaning}</p>
+                {'verseNote' in copy ? <p className="name-story-note">{copy.verseNote}</p> : null}
+                <p>{copy.inspiration}</p>
+              </section>
+              <section className="name-story-part name-story-symbol" aria-labelledby={`${titleId}-symbol`}>
+                <TilqaaLogo variant="symbol" height={64} className="name-story-symbol-art" label={copy.symbolAlt} />
+                <div>
+                  <h3 id={`${titleId}-symbol`}>{copy.symbolHeading}</h3>
+                  <p>{copy.symbolText}</p>
+                </div>
+              </section>
+              <div className="name-story-promise">
+                <p className="name-story-tagline">{copy.tagline}</p>
+                <p className="name-story-tagline-alt" lang={other.lang} dir={other.dir}>{other.tagline}</p>
+              </div>
             </div>
           </section>
         </div>

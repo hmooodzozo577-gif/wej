@@ -9,7 +9,7 @@ import { useAppState, useI18n } from '../../state/hooks';
 import { LanguageSwitch } from '../LanguageSwitch';
 import { ThemeSwitch } from '../ThemeSwitch';
 import { FAVORITES_COPY } from '../../favorites/copy';
-import { BrandMark } from '../../brand/BrandMark';
+import { TilqaaLogo } from '../../brand/TilqaaLogo';
 import { BRAND_HOME_LABEL } from '../../brand/brand';
 
 export function Header() {
@@ -78,8 +78,12 @@ export function Header() {
     <header className="nav">
       <div className="container nav-row">
         <button type="button" className="brand" aria-label={BRAND_HOME_LABEL[lang]} onClick={goHome}>
-          <BrandMark size={20} />
-          <span className="brand-name">{t.brand}</span>
+          {/* The approved logo is the visible name. One cut shows at a time
+              (wejhaty.css): horizontal on wide headers, compact once the nav
+              collapses, the small symbol on very narrow screens. */}
+          <TilqaaLogo variant="horizontal" height={40} className="brand-logo brand-logo-horizontal" />
+          <TilqaaLogo variant="compact" height={32} className="brand-logo brand-logo-compact" />
+          <TilqaaLogo variant="symbolSmall" height={32} className="brand-logo brand-logo-symbol" />
         </button>
         <nav className="nav-links" aria-label="Primary">
           {navLinks}
