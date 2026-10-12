@@ -5,6 +5,22 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### Branded Cloudflare URL — 2026-10-12 (PENDING OWNER ACTION; nothing changed in Cloudflare)
+
+- Target: `https://tilqaa.pages.dev` via a second Pages project named
+  `tilqaa` (a project's `*.pages.dev` name cannot be renamed — Cloudflare
+  docs, not tested). Availability is UNKNOWN until Cloudflare assigns it at
+  creation; DNS (2026-10-12, runner `dig @1.1.1.1`) shows no records for
+  `tilqaa.pages.dev` while a control name also has none and `wej.pages.dev`
+  resolves. `tilqaa.com` is registered by someone else.
+- No agent Cloudflare access (no credentials; sandbox cannot reach
+  `api.cloudflare.com` / `*.pages.dev`). No Cloudflare configuration, DNS,
+  domain, Worker or app code changed. `wej.pages.dev` untouched.
+- Ready without code: `WEJHATY_SITE_ORIGIN=https://tilqaa.pages.dev` in the
+  new project yields a fully branded build (local build + SEO check
+  5224/5224). Owner steps and the one-constant follow-up:
+  `docs/SITE_ORIGIN.md` → "Branded Cloudflare URL".
+
 ### Release — 2026-10-10 (TILQAA rebrand + approved logo, DEPLOYED to both targets)
 
 - **Production branch** `claude/marhaba-kxry8l`: `dbfb977` → `2459885`
