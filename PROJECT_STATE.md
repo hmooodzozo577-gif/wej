@@ -5,7 +5,44 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-### Logo — 2026-10-10 (approved TILQAA logo package v2 integrated, in source, not deployed)
+### Release — 2026-10-10 (TILQAA rebrand + approved logo, DEPLOYED to both targets)
+
+- **Production branch** `claude/marhaba-kxry8l`: `dbfb977` → `2459885`
+  (rebrand, cherry-pick of `5d01cfe`) → `ffa1c62` (logo + «قصة الاسم»
+  symbol section, cherry-pick of `a10d30b`), fast-forward push, no force.
+  Cherry-picks instead of a fast-forward to `a10d30b` so the unrelated
+  agent-notes commit `84645b5` and the `skill-observations/log.md` hunks
+  stay out of production; `git diff a10d30b ffa1c62` = that log file only
+  (VERIFIED), so the released app tree is the tested one.
+- **Pre-push checks on `ffa1c62`** (VERIFIED): vitest 123 files / 1250
+  tests passed; `tsc -b` clean; oxlint exit 0; GitHub Pages build
+  (`/wej/assets/index-D_sHqLvh.js`, 616 files) and Cloudflare build
+  (`/assets/index-DI-WOGxk.js`, 616 files, no `/wej/` references) both
+  pass `verify-seo-build.mjs` 5224/5224; local production-smoke
+  (chromium) 73/73.
+- **GitHub Pages** (VERIFIED): `deploy-pages.yml` run 38052443183 build +
+  deploy success. Live checks from GitHub runners on
+  https://hmooodzozo577-gif.github.io/wej/: production smoke run
+  38052536070 — 4 engines 261/261 (the runner logged the deployed bundle
+  `assets/index-D_sHqLvh.js` / `index--AD5eC04.css`, identical to the
+  tested build), SEO 2182/2182 (icons and `og/tilqaa-share.png`), Worker
+  19/19, Admin 15/15, Safari 16/16, iOS Simulator 16/16, VoiceOver 4/4
+  (attempt 2; attempt 1 died in the runner's VoiceOver setup —
+  "Failed to enable Do not disturb mode" — before any check ran). Uptime
+  monitor run 38052537540: 4/4, home page contains تِلقاء; hourly runs
+  green since.
+- **Cloudflare Pages** (REPORTED by Cloudflare's GitHub check, not
+  independently verified): "Deployed successfully" for `ffa1c62`, preview
+  https://7cab6824.wej.pages.dev. The agent sandbox cannot reach
+  *.pages.dev or github.io, and the repository's live checks accept only
+  the GitHub Pages URL, so https://wej.pages.dev was not tested live.
+- **Logo and «قصة الاسم» on the live sites**: not checked by a live
+  browser test (no live check covers them yet); they ship in the bundle
+  above, which was browser-tested locally (header cuts, footer logo,
+  footer-only dialog, AR/EN, light/dark, 320–1440 px).
+- Worker, database, workflows and dependencies unchanged.
+
+### Logo — 2026-10-10 (approved TILQAA logo package v2 integrated; RELEASED — see the release entry above)
 
 - **Assets**: approved masters in `app/brand/tilqaa-v2` (used SVG cuts,
   favicon set, clear-space guide, the package README); the brand sheet,
@@ -28,10 +65,10 @@ configuration, and current Git state outrank this document when they differ.
   («إبرة تشير إلى وجهتك», the approved symbol at 64 px, design intent
   only), the promise (both taglines). Brand palette: Sand / Night Oasis
   surface, Oasis Ink headings; saffron only in the needle.
-- **Deploy**: committed to `claude/clever-galileo-39y1gk`; not on
-  `claude/marhaba-kxry8l`, so not served yet.
+- **Deploy**: released to `claude/marhaba-kxry8l` as `ffa1c62` (see the
+  release entry above).
 
-### Rebrand — 2026-10-10 (وجهتي / Wejhaty → تِلقاء / TILQAA, in source, not deployed)
+### Rebrand — 2026-10-10 (وجهتي / Wejhaty → تِلقاء / TILQAA; RELEASED — see the release entry above)
 
 - **Public name**: Arabic `تِلقاء` (kasra U+0650 under ت), Latin `TILQAA`.
   Tagline «تِلقاء — العالم في اتجاهك.» / "TILQAA — The World Within Your
@@ -74,9 +111,8 @@ configuration, and current Git state outrank this document when they differ.
   name in any built HTML or the manifest and requires `تِلقاء` in every
   title; `scripts/lib/uptime.mjs` and `production-smoke.mjs` expect the
   new name (deploy the site and these checks together).
-- **Deploy**: committed to `claude/clever-galileo-39y1gk` only; NOT on
-  `claude/marhaba-kxry8l`, so neither GitHub Pages nor Cloudflare Pages
-  serves it yet.
+- **Deploy**: released to `claude/marhaba-kxry8l` as `2459885` (see the
+  release entry above).
 
 ### Hosting addendum — 2026-10-09 (Cloudflare Pages blank screen fixed in source)
 
