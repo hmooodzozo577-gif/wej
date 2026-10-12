@@ -38,6 +38,75 @@ Worker-backed features need `VITE_TRAVEL_WORKER_URL` in the Cloudflare
 project **and** the `wej.pages.dev` origin in the Worker's CORS
 allow-list (`worker/src/shared.ts`); neither is set today.
 
+## Branded Cloudflare URL (`tilqaa.pages.dev`) — status: PENDING OWNER ACTION
+
+Goal: serve the Cloudflare build at a hostname that matches the brand,
+without downtime for `https://wej.pages.dev`.
+
+**Why it is an owner step.** A Pages project's `*.pages.dev` hostname
+comes from the project name chosen at creation; Cloudflare does not offer
+renaming a project (per Cloudflare's documentation — not tested here).
+So `wej.pages.dev` cannot be turned into `tilqaa.pages.dev`: a second Pages
+project named `tilqaa` is needed, and only Cloudflare decides, when the
+project is created, whether it gets `tilqaa.pages.dev` or a suffixed name.
+Agents in this repository have no Cloudflare credentials, and the agent
+sandbox cannot reach `api.cloudflare.com` or `*.pages.dev`.
+
+**Evidence, 2026-10-12** (`domain-status.yml` on a GitHub runner, `dig
+@1.1.1.1`, runs 38314917062–38314928059; DNS is NOT an authoritative
+availability check):
+
+| Name | DNS | Reading |
+|---|---|---|
+| `wej.pages.dev` | Cloudflare NS, A/AAAA | the current project answers in DNS |
+| `tilqaa.pages.dev` | no records | no live project uses it today |
+| `zz-tilqaa-control-93d1.pages.dev` | no records | `pages.dev` has no wildcard, so the empty answer above means something |
+| `tilqaa.com` | Google Cloud DNS NS, A records | registered and in use by someone else |
+| `tilqaa.app` | no records | possibly unregistered (no WHOIS check) |
+
+**No code change is needed for the new project.** The build already reads
+`WEJHATY_SITE_ORIGIN` (`app/build/site.ts`). Verified locally:
+`CF_PAGES=1 WEJHATY_SITE_ORIGIN=https://tilqaa.pages.dev npm run build`
+gives canonical, `og:url`, `og:image`, robots `Sitemap:`, sitemap `<loc>`s
+and the manifest on `https://tilqaa.pages.dev`, no `wej.pages.dev`
+anywhere, and `verify-seo-build.mjs … https://tilqaa.pages.dev/` passes
+5224/5224.
+
+**Owner steps (keeps `wej` untouched and live):**
+
+1. Cloudflare dashboard → Workers & Pages → Create → Pages → connect the
+   GitHub repository `hmooodzozo577-gif/wej`.
+2. Project name `tilqaa`. The subdomain Cloudflare shows for it is the
+   authoritative answer; if it is not exactly `tilqaa.pages.dev`, stop and
+   choose again (for example `tilqaa-travel`) rather than accept a random
+   suffix.
+3. Same settings as the `wej` project: production branch
+   `claude/marhaba-kxry8l`, root directory `app`, build command
+   `npm run build`, output `dist`, framework preset React (Vite).
+4. Production environment variables: `WEJHATY_SITE_ORIGIN` =
+   `https://tilqaa.pages.dev` (the exact hostname from step 2) and
+   `WEJHATY_BASE_PATH` = `/`. Without them the new project's canonical
+   links would point at `wej.pages.dev`.
+5. Save and deploy, then open `https://tilqaa.pages.dev`. Both projects now
+   build every push to the production branch; `wej.pages.dev` keeps
+   working.
+6. Tell the agent the confirmed hostname. Follow-up change (one constant
+   and its tests): `CLOUDFLARE_PAGES_SITE_ORIGIN` in `app/build/site.ts`
+   becomes the new origin, so the `wej` project's pages also declare the
+   branded URL as canonical (one search-engine identity, no redirect
+   needed); plus this document and `PROJECT_STATE.md`.
+7. Later, only on an explicit decision: retire or redirect the `wej`
+   project. Do not delete it before the new hostname is verified.
+
+Not affected: GitHub Pages (`/wej/`), the Worker (Cloudflare builds set no
+`VITE_TRAVEL_WORKER_URL`, so no Worker CORS change is needed today; adding
+the Worker there later needs the new origin in `worker/src/shared.ts`).
+
+A custom domain (option 1 in the brief) needs a domain the owner buys and
+controls; `tilqaa.com` is taken. Candidates to check with a registrar:
+`tilqaa.app`, `tilqaa.travel`, `tilqaa.sa`, `gotilqaa.com`. Then: Pages
+project → Custom domains → add it, and set `WEJHATY_SITE_ORIGIN` to it.
+
 ## The free domain — status: PENDING HUMAN APPROVAL
 
 Candidate: `wejhaty.eu.org` (EU.org, free of charge). Checked on
