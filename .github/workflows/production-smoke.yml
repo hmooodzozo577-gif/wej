@@ -1,7 +1,8 @@
 name: Production smoke test
 
-# Phase 20 — read-only check of the deployed GitHub Pages site from a
-# GitHub-hosted runner (the development sandbox cannot reach github.io).
+# Phase 20 — read-only check of the deployed site from a GitHub-hosted
+# runner (the development sandbox cannot reach it). Since 2026-10-16 the
+# site is https://tilqaa.pages.dev; GitHub Pages only redirects there.
 # Manual dispatch only. The script blocks every Worker request inside the
 # browser, so a run writes nothing to production data.
 on:
@@ -10,7 +11,7 @@ on:
       site:
         description: 'Site URL to check'
         required: false
-        default: 'https://hmooodzozo577-gif.github.io/wej'
+        default: 'https://tilqaa.pages.dev'
       engines:
         description: 'Browser engines (comma-separated: chromium,firefox,webkit,msedge)'
         required: false
@@ -81,7 +82,7 @@ jobs:
           ENGINES: ${{ inputs.engines }}
         run: |
           case "$SITE" in
-            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            https://tilqaa.pages.dev|https://tilqaa.pages.dev/) ;;
             *) echo "::error::Unsupported site URL"; exit 1 ;;
           esac
           if ! printf '%s' "$ENGINES" | grep -Eq '^(chromium|firefox|webkit|msedge)(,(chromium|firefox|webkit|msedge))*$'; then
@@ -96,7 +97,7 @@ jobs:
           SITE: ${{ inputs.site }}
         run: |
           case "$SITE" in
-            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            https://tilqaa.pages.dev|https://tilqaa.pages.dev/) ;;
             *) echo "::error::Unsupported site URL"; exit 1 ;;
           esac
           node scripts/seo-smoke.mjs "$SITE"
@@ -154,7 +155,7 @@ jobs:
           SITE: ${{ inputs.site }}
         run: |
           case "$SITE" in
-            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            https://tilqaa.pages.dev|https://tilqaa.pages.dev/) ;;
             *) echo "::error::Unsupported site URL"; exit 1 ;;
           esac
           node scripts/safari-smoke.mjs "$SITE"
@@ -224,7 +225,7 @@ jobs:
           IOS_UDID: ${{ steps.sim.outputs.udid }}
         run: |
           case "$SITE" in
-            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            https://tilqaa.pages.dev|https://tilqaa.pages.dev/) ;;
             *) echo "::error::Unsupported site URL"; exit 1 ;;
           esac
           node scripts/safari-smoke.mjs "$SITE"
@@ -236,7 +237,7 @@ jobs:
           UDID: ${{ steps.sim.outputs.udid }}
         run: |
           case "$SITE" in
-            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            https://tilqaa.pages.dev|https://tilqaa.pages.dev/) ;;
             *) echo "::error::Unsupported site URL"; exit 1 ;;
           esac
           SITE="${SITE%/}"
@@ -309,7 +310,7 @@ jobs:
           SITE: ${{ inputs.site }}
         run: |
           case "$SITE" in
-            https://hmooodzozo577-gif.github.io/wej|https://hmooodzozo577-gif.github.io/wej/) ;;
+            https://tilqaa.pages.dev|https://tilqaa.pages.dev/) ;;
             *) echo "::error::Unsupported site URL"; exit 1 ;;
           esac
           node scripts/voiceover-smoke.mjs "$SITE"

@@ -1,5 +1,31 @@
 # Site origin, base path and the free domain (v1.1)
 
+## Primary site and redirects — 2026-10-16
+
+**The site is `https://tilqaa.pages.dev`** (Cloudflare Pages project
+`tilqaa`). The other two hosts build the same source with
+`WEJHATY_REDIRECT_TO=https://tilqaa.pages.dev`, and the `postbuild` step
+(`app/scripts/redirect-site.mjs`, logic in `scripts/lib/redirectSite.mjs`)
+replaces their `dist/` with redirect documents only:
+
+| Host | Build | Set by |
+|---|---|---|
+| `tilqaa.pages.dev` | full site (no `WEJHATY_REDIRECT_TO`) | — |
+| `hmooodzozo577-gif.github.io/wej/` | redirect build | `deploy-pages.yml` |
+| `wej.pages.dev` | redirect build | owner: `WEJHATY_REDIRECT_TO` in the `wej` project (Production) |
+
+Each page document becomes a document at the same path with a canonical
+link, `<meta http-equiv="refresh" content="0; url=…">` (works without
+JavaScript) and `location.replace(…)` (keeps query and hash); `404.html`
+(noindex) moves any other path to the same path on the primary site;
+`robots.txt` allows crawling. A build that would redirect to its own origin
+fails. Ops scripts (`scripts/lib/productionUrls.mjs`: smoke, SEO, uptime)
+and the `production-smoke.yml` default/allow-list check `tilqaa.pages.dev`.
+Browser storage (favorites, theme) is per origin: visitors moved from
+github.io start with an empty favorites list on the primary site.
+To serve the full site on GitHub Pages again, remove the
+`WEJHATY_REDIRECT_TO` line from `deploy-pages.yml`.
+
 ## One site configuration
 
 `app/build/site.ts` is the only place the app's address is decided:

@@ -5,6 +5,21 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
+### One primary site — 2026-10-16 (`tilqaa.pages.dev`; others redirect)
+
+- `WEJHATY_REDIRECT_TO` + `postbuild` (`app/scripts/redirect-site.mjs`)
+  turn a build into redirect documents only (per-page meta refresh +
+  `location.replace` + canonical; 404.html keeps any path; self-redirect
+  fails the build). Set in `deploy-pages.yml` (GitHub Pages); the owner
+  sets it in the Cloudflare `wej` project. `tilqaa` builds the full site.
+- Monitoring/smoke default: `productionUrls.mjs` and `production-smoke.yml`
+  → `https://tilqaa.pages.dev` (allow-list now tilqaa only).
+- Local proof: redirect unit tests 7/7; Chromium redirects every page,
+  deep link with query/hash and an unknown path (JS on and off); production
+  smoke against a local root-served build 73/73; app 1257/1257 tests,
+  tsc + lint clean; full GitHub Pages-shaped build SEO 5224/5224.
+- Detail: `docs/SITE_ORIGIN.md` → "Primary site and redirects".
+
 ### Branded Cloudflare URL — 2026-10-16 (project `tilqaa` CREATED by the owner; canonical switched)
 
 - Owner created Pages project `tilqaa` → `https://tilqaa.pages.dev`; same
