@@ -5,7 +5,18 @@ configuration, and current Git state outrank this document when they differ.
 
 ## State metadata
 
-### Branded Cloudflare URL — 2026-10-12 (PENDING OWNER ACTION; nothing changed in Cloudflare)
+### Branded Cloudflare URL — 2026-10-16 (project `tilqaa` CREATED by the owner; canonical switched)
+
+- Owner created Pages project `tilqaa` → `https://tilqaa.pages.dev`; same
+  repo and production branch as `wej`. Cloudflare GitHub check on `d613cd5`
+  for it: deploy successful (2026-10-16). Not fetched live from the sandbox.
+- Code: `CLOUDFLARE_PAGES_SITE_ORIGIN` = `https://tilqaa.pages.dev`
+  (`app/build/site.ts` + tests), so both Cloudflare projects emit the
+  branded canonical/OG/sitemap. GitHub Pages `/wej/` unchanged. Worker
+  CORS still allows only the GitHub Pages origin (unchanged, as before).
+- `wej` project kept live; retire/redirect only on an explicit decision.
+
+### Branded Cloudflare URL — 2026-10-12 (superseded by the entry above)
 
 - Target: `https://tilqaa.pages.dev` via a second Pages project named
   `tilqaa` (a project's `*.pages.dev` name cannot be renamed — Cloudflare
