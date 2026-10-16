@@ -10,8 +10,9 @@ configuration, and current Git state outrank this document when they differ.
 - `WEJHATY_REDIRECT_TO` + `postbuild` (`app/scripts/redirect-site.mjs`)
   turn a build into redirect documents only (per-page meta refresh +
   `location.replace` + canonical; 404.html keeps any path; self-redirect
-  fails the build). Set in `deploy-pages.yml` (GitHub Pages); the owner
-  sets it in the Cloudflare `wej` project. `tilqaa` builds the full site.
+  fails the build). Set in `deploy-pages.yml` (GitHub Pages). `tilqaa`
+  builds the full site. The Cloudflare project `wej` (wej.pages.dev) was
+  DELETED by the owner (2026-10-16) — no redirect from that hostname.
 - Monitoring/smoke default: `productionUrls.mjs` and `production-smoke.yml`
   → `https://tilqaa.pages.dev` (allow-list now tilqaa only).
 - Local proof: redirect unit tests 7/7; Chromium redirects every page,
