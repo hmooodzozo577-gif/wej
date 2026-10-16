@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "postbuild": "node scripts/redirect-site.mjs",
     "lint": "oxlint",
     "data:featured-cities": "node scripts/generate-featured-cities.mjs",
     "preview": "vite preview"

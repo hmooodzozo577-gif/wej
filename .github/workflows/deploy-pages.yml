@@ -65,17 +65,23 @@ jobs:
           # (see docs/SITE_ORIGIN.md for everything else that must change).
           WEJHATY_SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
           WEJHATY_BASE_PATH: ${{ vars.SITE_BASE_PATH }}
+          # 2026-10-16 — the primary site is https://tilqaa.pages.dev
+          # (Cloudflare Pages). This deploy only redirects there: the
+          # postbuild step (scripts/redirect-site.mjs) replaces dist/ with
+          # one redirect document per page plus a 404.html that keeps any
+          # other path. Remove this line to serve the full site here again.
+          WEJHATY_REDIRECT_TO: https://tilqaa.pages.dev
 
-      # v1.1 — the build itself writes one document per page, a noindex
-      # 404.html, sitemap.xml, robots.txt and the manifest (build/seoPages.ts).
-      # Copying index.html over 404.html would give every unknown URL the
-      # home page's canonical link, so the build output is used as it is.
-      - name: Check the generated route documents
+      # The redirect build keeps one document per page (each pointing at the
+      # same page on the primary site), a noindex 404.html and robots.txt.
+      - name: Check the redirect documents
         working-directory: app
         run: |
           test -f dist/404.html && grep -q 'noindex' dist/404.html
-          test -f dist/destination/japan/index.html
-          test -f dist/sitemap.xml && test -f dist/robots.txt && test -f dist/manifest.webmanifest
+          grep -q '<link rel="canonical" href="https://tilqaa.pages.dev/destination/japan/">' dist/destination/japan/index.html
+          grep -q 'url=https://tilqaa.pages.dev/"' dist/index.html
+          test -f dist/robots.txt
+          test ! -e dist/assets
 
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
