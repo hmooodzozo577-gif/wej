@@ -3,7 +3,7 @@
 ## Primary site and redirects — 2026-10-16
 
 **The site is `https://tilqaa.pages.dev`** (Cloudflare Pages project
-`tilqaa`). The other two hosts build the same source with
+`tilqaa`). Any other host builds the same source with
 `WEJHATY_REDIRECT_TO=https://tilqaa.pages.dev`, and the `postbuild` step
 (`app/scripts/redirect-site.mjs`, logic in `scripts/lib/redirectSite.mjs`)
 replaces their `dist/` with redirect documents only:
@@ -12,7 +12,7 @@ replaces their `dist/` with redirect documents only:
 |---|---|---|
 | `tilqaa.pages.dev` | full site (no `WEJHATY_REDIRECT_TO`) | — |
 | `hmooodzozo577-gif.github.io/wej/` | redirect build | `deploy-pages.yml` |
-| `wej.pages.dev` | redirect build | owner: `WEJHATY_REDIRECT_TO` in the `wej` project (Production) |
+| `wej.pages.dev` | none — the owner DELETED the Cloudflare project `wej` (2026-10-16); the hostname no longer serves the site | — |
 
 Each page document becomes a document at the same path with a canonical
 link, `<meta http-equiv="refresh" content="0; url=…">` (works without
