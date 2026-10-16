@@ -18,6 +18,11 @@ configuration, and current Git state outrank this document when they differ.
   allow-list is now `ALLOWED_ORIGINS` = GitHub Pages + `tilqaa.pages.dev`
   (exact match, origin echoed with `Vary: Origin`). `wej.pages.dev` not
   allowed. Code/CORS change only — no D1/R2 schema, data or secret change.
+- Released: production `625daec`; Worker deploy run 38970750568 success
+  ("No migrations to apply!", version `9e22d6c9`); Cloudflare `tilqaa`
+  build success. Live Worker features on `tilqaa.pages.dev`: VERIFIED BY
+  THE OWNER (2026-10-16), not by an agent (sandbox cannot reach
+  `workers.dev` / `pages.dev`).
 - `wej` project kept live; retire/redirect only on an explicit decision.
 
 ### Branded Cloudflare URL — 2026-10-12 (superseded by the entry above)
