@@ -40,7 +40,10 @@ const RATING_REASONS = new Set(['relevant', 'easy_to_understand', 'unexpected', 
 
 function response(body: unknown, status: number, origin: string | null, extraHeaders: Record<string, string> = {}): Response {
   const headers: Record<string, string> = { 'Content-Type': 'application/json', ...extraHeaders };
-  if (isAllowedOrigin(origin)) headers['Access-Control-Allow-Origin'] = origin;
+  if (isAllowedOrigin(origin)) {
+    headers['Access-Control-Allow-Origin'] = origin;
+    headers.Vary = 'Origin';
+  }
   return new Response(JSON.stringify(body), { status, headers });
 }
 

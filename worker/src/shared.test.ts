@@ -2,11 +2,12 @@
 // and proof that every module now uses them rather than its own copy.
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { ALLOWED_ORIGIN, isAllowedOrigin, isExcludedCountry } from './shared';
+import { ALLOWED_ORIGINS, isAllowedOrigin, isExcludedCountry } from './shared';
 
 describe('isAllowedOrigin', () => {
-  it('accepts only the exact GitHub Pages origin', () => {
-    expect(isAllowedOrigin(ALLOWED_ORIGIN)).toBe(true);
+  it('accepts only the exact GitHub Pages and Cloudflare Pages origins', () => {
+    expect(ALLOWED_ORIGINS).toEqual(['https://hmooodzozo577-gif.github.io', 'https://tilqaa.pages.dev']);
+    for (const origin of ALLOWED_ORIGINS) expect(isAllowedOrigin(origin), origin).toBe(true);
     for (const origin of [
       null, undefined, '', 'null',
       'http://hmooodzozo577-gif.github.io',
@@ -15,6 +16,11 @@ describe('isAllowedOrigin', () => {
       'https://HMOOODZOZO577-GIF.github.io',
       'https://hmooodzozo577-gif.github.io.evil.example',
       'https://evil.example',
+      'https://wej.pages.dev',
+      'https://tilqaa.pages.dev/',
+      'http://tilqaa.pages.dev',
+      'https://evil.tilqaa.pages.dev',
+      'https://tilqaa.pages.dev.evil.example',
     ]) {
       expect(isAllowedOrigin(origin), String(origin)).toBe(false);
     }

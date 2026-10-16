@@ -12,8 +12,12 @@ configuration, and current Git state outrank this document when they differ.
   for it: deploy successful (2026-10-16). Not fetched live from the sandbox.
 - Code: `CLOUDFLARE_PAGES_SITE_ORIGIN` = `https://tilqaa.pages.dev`
   (`app/build/site.ts` + tests), so both Cloudflare projects emit the
-  branded canonical/OG/sitemap. GitHub Pages `/wej/` unchanged. Worker
-  CORS still allows only the GitHub Pages origin (unchanged, as before).
+  branded canonical/OG/sitemap. GitHub Pages `/wej/` unchanged.
+- Worker connected (owner request, 2026-10-16): the owner set
+  `VITE_TRAVEL_WORKER_URL` in the `tilqaa` project; the Worker's CORS
+  allow-list is now `ALLOWED_ORIGINS` = GitHub Pages + `tilqaa.pages.dev`
+  (exact match, origin echoed with `Vary: Origin`). `wej.pages.dev` not
+  allowed. Code/CORS change only — no D1/R2 schema, data or secret change.
 - `wej` project kept live; retire/redirect only on an explicit decision.
 
 ### Branded Cloudflare URL — 2026-10-12 (superseded by the entry above)

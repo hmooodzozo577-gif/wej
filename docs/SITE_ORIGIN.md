@@ -35,8 +35,12 @@ still override those defaults. Without this, the page loaded
 `/wej/assets/…`, got 404 and rendered blank.
 
 Worker-backed features need `VITE_TRAVEL_WORKER_URL` in the Cloudflare
-project **and** the `wej.pages.dev` origin in the Worker's CORS
-allow-list (`worker/src/shared.ts`); neither is set today.
+project **and** the site's origin in the Worker's CORS allow-list
+(`ALLOWED_ORIGINS`, `worker/src/shared.ts`). Since 2026-10-16 both are
+set for `tilqaa.pages.dev` (the variable by the owner in the `tilqaa`
+project, the origin in code). `wej.pages.dev` is deliberately NOT in the
+allow-list: its pages declare `tilqaa.pages.dev` as canonical, and it
+keeps working without the Worker-backed features.
 
 ## Branded Cloudflare URL (`tilqaa.pages.dev`) — status: PROJECT CREATED; canonical switched in code
 
@@ -110,9 +114,9 @@ anywhere, and `verify-seo-build.mjs … https://tilqaa.pages.dev/` passes
 7. Later, only on an explicit decision: retire or redirect the `wej`
    project. Do not delete it before the new hostname is verified.
 
-Not affected: GitHub Pages (`/wej/`), the Worker (Cloudflare builds set no
-`VITE_TRAVEL_WORKER_URL`, so no Worker CORS change is needed today; adding
-the Worker there later needs the new origin in `worker/src/shared.ts`).
+Not affected at the time: GitHub Pages (`/wej/`) and the Worker. Later
+(2026-10-16) the Worker was connected to `tilqaa.pages.dev` — see the note
+at the top of this file's Cloudflare section.
 
 A custom domain (option 1 in the brief) needs a domain the owner buys and
 controls; `tilqaa.com` is taken. Candidates to check with a registrar:
