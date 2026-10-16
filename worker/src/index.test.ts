@@ -202,6 +202,20 @@ describe('Phase 13.3 — Worker: handleRequest routing, method, CORS (no Amadeus
     expect(res.headers.get('Access-Control-Allow-Origin')).toBeNull();
   });
 
+  it('also allows the Cloudflare Pages origin, echoing it exactly with Vary: Origin', async () => {
+    stubAmadeusFetch({
+      '/v1/security/oauth2/token': () => jsonResponse(tokenResponse()),
+      '/v2/shopping/flight-offers': () => jsonResponse(OFFERS_RESPONSE),
+    });
+    const res = await handleRequest(post(validBody, 'https://tilqaa.pages.dev'), env);
+    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://tilqaa.pages.dev');
+    expect(res.headers.get('Vary')).toBe('Origin');
+    for (const lookalike of ['https://wej.pages.dev', 'https://evil.tilqaa.pages.dev', 'https://tilqaa.pages.dev/', 'http://tilqaa.pages.dev', 'https://tilqaa.pages.dev.evil.example']) {
+      const other = await handleRequest(post(validBody, lookalike), env);
+      expect(other.headers.get('Access-Control-Allow-Origin'), lookalike).toBeNull();
+    }
+  });
+
   it('handles an OPTIONS preflight for the allowed origin without touching Amadeus', async () => {
     const fetchSpy = vi.fn();
     vi.stubGlobal('fetch', fetchSpy);

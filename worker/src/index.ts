@@ -11,14 +11,15 @@ import { handleVisaRequest, type VisaEnv } from './visa';
 import { handleCityDescriptionRequest, type CityDescriptionEnv } from './cityDescriptions';
 import { handleIntelligenceRequest } from './intelligence';
 import { handleAdminRequest, type AdminEnv } from './admin';
-import { ALLOWED_ORIGIN, isAllowedOrigin } from './shared';
+import { isAllowedOrigin } from './shared';
 
 export type Env = AmadeusEnv & ProductEnv & VisaEnv & CityDescriptionEnv & AdminEnv;
 
 function corsHeaders(origin: string | null): HeadersInit {
   if (!isAllowedOrigin(origin)) return {};
   return {
-    'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+    'Access-Control-Allow-Origin': origin,
+    Vary: 'Origin',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };

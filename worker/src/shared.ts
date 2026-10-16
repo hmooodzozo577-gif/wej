@@ -1,12 +1,14 @@
 // Security Pass 2 (D1/D2) — values more than one Worker module must agree
 // on, kept in one place so they cannot drift apart.
 
-/** The only browser origin allowed to call this Worker cross-origin: the
- *  GitHub Pages site. Compared exactly (scheme, host, no path, no slash). */
-export const ALLOWED_ORIGIN = 'https://hmooodzozo577-gif.github.io';
+/** The browser origins allowed to call this Worker cross-origin: the
+ *  GitHub Pages site and the Cloudflare Pages site. Compared exactly
+ *  (scheme, host, no path, no slash). */
+export const ALLOWED_ORIGINS = ['https://hmooodzozo577-gif.github.io', 'https://tilqaa.pages.dev'] as const;
+export type AllowedOrigin = (typeof ALLOWED_ORIGINS)[number];
 
-export function isAllowedOrigin(origin: string | null | undefined): origin is typeof ALLOWED_ORIGIN {
-  return origin === ALLOWED_ORIGIN;
+export function isAllowedOrigin(origin: string | null | undefined): origin is AllowedOrigin {
+  return (ALLOWED_ORIGINS as readonly (string | null | undefined)[]).includes(origin);
 }
 
 /** Countries excluded from every effective path of the product (the
