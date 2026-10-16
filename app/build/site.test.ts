@@ -33,7 +33,7 @@ describe('resolveSite', () => {
     expect(resolveSite({ CF_PAGES: '1' })).toEqual({
       origin: CLOUDFLARE_PAGES_SITE_ORIGIN,
       basePath: CLOUDFLARE_PAGES_BASE_PATH,
-      url: 'https://wej.pages.dev/',
+      url: 'https://tilqaa.pages.dev/',
     });
     expect(resolveSite({ CF_PAGES: '1', WEJHATY_SITE_ORIGIN: '', WEJHATY_BASE_PATH: '' })).toEqual(resolveSite({ CF_PAGES: '1' }));
     expect(resolveSite({ CF_PAGES: '0' })).toEqual(resolveSite({}));

@@ -12,13 +12,13 @@
 //   WEJHATY_BASE_PATH=/  npm run build          https://example.org/
 //
 // Cloudflare Pages serves the same build from the domain root
-// (https://wej.pages.dev/). Its build environment sets CF_PAGES=1, which
+// (https://tilqaa.pages.dev/). Its build environment sets CF_PAGES=1, which
 // switches the defaults to that root site; the WEJHATY_* variables still
 // override either default.
 
 export const DEFAULT_SITE_ORIGIN = 'https://hmooodzozo577-gif.github.io';
 export const DEFAULT_BASE_PATH = '/wej/';
-export const CLOUDFLARE_PAGES_SITE_ORIGIN = 'https://wej.pages.dev';
+export const CLOUDFLARE_PAGES_SITE_ORIGIN = 'https://tilqaa.pages.dev';
 export const CLOUDFLARE_PAGES_BASE_PATH = '/';
 
 export interface SiteConfig {

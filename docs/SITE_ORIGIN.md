@@ -38,7 +38,19 @@ Worker-backed features need `VITE_TRAVEL_WORKER_URL` in the Cloudflare
 project **and** the `wej.pages.dev` origin in the Worker's CORS
 allow-list (`worker/src/shared.ts`); neither is set today.
 
-## Branded Cloudflare URL (`tilqaa.pages.dev`) — status: PENDING OWNER ACTION
+## Branded Cloudflare URL (`tilqaa.pages.dev`) — status: PROJECT CREATED; canonical switched in code
+
+**2026-10-16.** The owner created the Pages project `tilqaa` and confirmed
+the hostname `https://tilqaa.pages.dev`. Its first deploy (production
+`d613cd5`) is reported by Cloudflare's GitHub check as successful (preview
+`460dd540.tilqaa.pages.dev`); it was not fetched live from the agent
+sandbox, which cannot reach `*.pages.dev`. Follow-up done:
+`CLOUDFLARE_PAGES_SITE_ORIGIN` in `app/build/site.ts` is now
+`https://tilqaa.pages.dev`, so every Cloudflare build — the `tilqaa`
+project and the old `wej` project alike — declares the branded URL as
+canonical (Open Graph, robots, sitemap, manifest too). `wej.pages.dev`
+keeps serving the site; retiring or redirecting it is still a separate,
+explicit decision (step 7). The history below is kept as the record.
 
 Goal: serve the Cloudflare build at a hostname that matches the brand,
 without downtime for `https://wej.pages.dev`.

@@ -8,7 +8,7 @@ import { identityTags, webManifest, type SiteInfo } from '../seo/document';
 
 const APP = resolve(__dirname, '../..');
 const PAGES: SiteInfo = { origin: 'https://hmooodzozo577-gif.github.io', basePath: '/wej/', url: 'https://hmooodzozo577-gif.github.io/wej/' };
-const ROOT: SiteInfo = { origin: 'https://wej.pages.dev', basePath: '/', url: 'https://wej.pages.dev/' };
+const ROOT: SiteInfo = { origin: 'https://tilqaa.pages.dev', basePath: '/', url: 'https://tilqaa.pages.dev/' };
 
 const SERVED_FROM_MASTER: Record<string, string> = {
   'public/favicon.ico': 'favicon/favicon.ico',
