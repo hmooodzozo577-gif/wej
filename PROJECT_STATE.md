@@ -20,6 +20,14 @@ configuration, and current Git state outrank this document when they differ.
   smoke against a local root-served build 73/73; app 1257/1257 tests,
   tsc + lint clean; full GitHub Pages-shaped build SEO 5224/5224.
 - Detail: `docs/SITE_ORIGIN.md` → "Primary site and redirects".
+- RELEASED 2026-10-17: production `4e6b292` (+ `e1754be`, SEO smoke
+  accepts Cloudflare's 308). GitHub Pages deploy 39026213828 success
+  (redirect build). Live smoke on `tilqaa.pages.dev`, run 39026272794:
+  261/261 on Chromium/Firefox/WebKit/Edge, real Safari, iOS Simulator,
+  Worker 19/19 (CORS allows tilqaa), admin 15/15; VoiceOver failed once
+  (h1 not announced) and passed on the one re-run; SEO 2181/2182 (only
+  the 308) → run 39027592432 after the fix: success. Uptime 39026274499
+  success. The github.io redirect itself was not fetched live by an agent.
 
 ### Branded Cloudflare URL — 2026-10-16 (project `tilqaa` CREATED by the owner; canonical switched)
 
