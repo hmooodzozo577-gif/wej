@@ -74,9 +74,10 @@ for (let index = 0; index < destinationLocs.length; index += 8) {
 }
 console.log(`destinations checked: ${destinationLocs.length}`);
 
-// The slash-less form redirects to the canonical document.
+// The slash-less form redirects permanently to the canonical document
+// (GitHub Pages answers 301, Cloudflare Pages 308; both are permanent).
 const bare = await get(`${SITE}destination/japan`, { follow: false });
-check(bare.status === 301 && (bare.headers.get('location') ?? '').endsWith('/destination/japan/'), 'destination/japan: 301 to the canonical form', `${bare.status} ${bare.headers.get('location')}`);
+check((bare.status === 301 || bare.status === 308) && (bare.headers.get('location') ?? '').endsWith('/destination/japan/'), 'destination/japan: permanent redirect (301/308) to the canonical form', `${bare.status} ${bare.headers.get('location')}`);
 
 // Unknown destinations are real 404s and never indexable.
 const missing = await get(`${SITE}destination/not-a-country/`);
