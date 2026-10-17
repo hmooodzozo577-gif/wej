@@ -146,3 +146,48 @@ DECLINED = user decided not to pursue
 **Suggested improvement:** Apply every migration to an in-memory SQLite (Node's built-in `node:sqlite`) and assert metric values for named journeys; keep one metric dictionary (definition, numerator, denominator, window, limitation) as the single source for labels, docs and tests; run browser QA against the real runtime in local mode (`wrangler dev --local`) over a deterministic synthetic seed. Keep a guard on per-request query count when the platform caps it.
 
 **Principle:** A metric is only defined once it has a numerator, a denominator and a window written down — and it is only tested once a real query engine has computed it.
+
+### Observation 10: Reproduce hosting blank screens by matching built asset hashes to the host's log
+
+**Status:** OPEN
+**Date:** 2026-10-09
+**Session context:** Static SPA blank on a second static host after a successful build.
+**Skill:** systematic-debugging
+**Type:** open-source
+**Phase/Area:** Evidence gathering / reproduction
+
+**Issue:** Live site unreachable from sandbox. Rebuilding locally with the host's (empty) env reproduced the exact asset hashes from the host's build log, proving the same output; serving it from the root with a 404-fallback server plus a headless browser showed the asset 404 and empty root.
+
+**Suggested improvement:** Add to reproduction guidance: when the live target is unreachable, match content-hashed filenames from the deploy log to a local build to prove output equivalence, then emulate the host's serving rules locally.
+
+**Principle:** Content hashes turn a build log into a reproducibility oracle when live access is blocked.
+
+### Observation 11: jsdom cannot see browser focus steps — verify modal focus restore in a real browser
+
+**Status:** OPEN
+**Date:** 2026-10-10
+**Session context:** Adding an accessible modal dialog to a React app with unit tests in jsdom.
+**Skill:** test-driven-development (and web-design-guidelines for dialog reviews)
+**Type:** open-source
+**Phase/Area:** Verification of focus management
+
+**Issue:** Unit tests asserted that focus returned to the trigger after a backdrop close, and that Tab stayed trapped. Both passed in jsdom while the real browser put focus on <body> (the browser's own mousedown focus step runs after React restores focus), and the Tab assertions passed even with the trap code deleted (fireEvent does not move focus). An adversarial reviewer found both by driving real Chromium and by deleting the code under test.
+
+**Suggested improvement:** For dialogs and focus traps: assert the handler's effect (event defaultPrevented via fireEvent's return value, focus moved by the handler), run a mutation check (delete the trap, the test must fail), and confirm backdrop/Escape/close focus restore in a real browser for mouse and touch.
+
+**Principle:** A test that passes with the feature deleted proves nothing; for browser-owned behaviour (focus, default actions) jsdom is not evidence.
+
+### Observation 12: Integrate supplied brand artwork by adapting, not copying, and pin it with a shape-for-shape test
+
+**Status:** OPEN
+**Date:** 2026-10-10
+**Session context:** Integrating an approved logo package (SVG masters + a generated React component + icons) into an existing typed React app.
+**Skill:** impeccable (asset integration) / New skill candidate: brand-asset-integration
+**Type:** open-source
+**Phase/Area:** Asset audit and integration
+
+**Issue:** The supplied component was untyped and bundled every variant; copying it in would have added dead variants and an untyped module. Adapting it (typed, only the used variants, colours as CSS custom properties so a theme can switch to the on-dark cut) plus a test that compares each rendered shape to the master SVG kept fidelity provable. The existing icon generator would have silently overwritten the approved icons on its next run; it had to be changed to copy, not redraw.
+
+**Suggested improvement:** Checklist for supplied brand assets: scan SVGs for active content; diff colour variants (often colour-only, so one inline SVG + CSS variables covers them); keep only used files as masters in the repo; test rendered artwork against masters and served icons byte-for-byte; find every generator that writes the same public paths.
+
+**Principle:** Approved artwork must be provably identical to its source, and every tool that writes the same files must be brought in line or it will undo the integration.
