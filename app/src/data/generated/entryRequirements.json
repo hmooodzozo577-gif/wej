@@ -1,6 +1,6 @@
 {
  "methodologyVersion": "entry-sources-1.0",
- "generatedAt": "2026-09-23T15:49:45.515Z",
+ "generatedAt": "2026-10-19T09:42:58.677Z",
  "sources": {
   "uk-visa-nationals": {
    "authority": {
@@ -12,7 +12,7 @@
     "ar": "قواعد الهجرة البريطانية — قائمة الجنسيات التي تحتاج تأشيرة"
    },
    "url": "https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-visitor-visa-national-list",
-   "checkedAt": "2026-09-23T15:49:45.515Z",
+   "checkedAt": "2026-10-19T09:42:58.677Z",
    "sourceUpdatedAt": "2026-03-05T15:00:48+00:00"
   },
   "uk-eta-nationals": {
@@ -25,7 +25,7 @@
     "ar": "قواعد الهجرة البريطانية — قائمة جنسيات تصريح السفر الإلكتروني (ETA)"
    },
    "url": "https://www.gov.uk/guidance/immigration-rules/immigration-rules-appendix-eta-national-list",
-   "checkedAt": "2026-09-23T15:49:45.515Z",
+   "checkedAt": "2026-10-19T09:42:58.677Z",
    "sourceUpdatedAt": "2026-03-05T15:03:24+00:00"
   },
   "eu-regulation-2018-1806": {
@@ -38,7 +38,7 @@
     "ar": "اللائحة الأوروبية 2018/1806، الملحقان الأول والثاني (النص الموحّد بتاريخ 30 ديسمبر 2025)"
    },
    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02018R1806-20251230",
-   "checkedAt": "2026-09-23T15:49:45.515Z"
+   "checkedAt": "2026-10-19T09:42:58.677Z"
   },
   "eu-schengen-area": {
    "authority": {
@@ -50,7 +50,7 @@
     "ar": "منطقة شنغن"
    },
    "url": "https://home-affairs.ec.europa.eu/policies/schengen/schengen-area_en",
-   "checkedAt": "2026-09-23T15:49:45.515Z"
+   "checkedAt": "2026-10-19T09:42:58.677Z"
   },
   "ca-ircc-entry": {
    "authority": {
@@ -62,7 +62,7 @@
     "ar": "متطلبات دخول كندا"
    },
    "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/entry-requirements-country.html",
-   "checkedAt": "2026-09-23T15:49:45.515Z"
+   "checkedAt": "2026-10-19T09:42:58.677Z"
   },
   "sg-ica-visa": {
    "authority": {
@@ -74,7 +74,7 @@
     "ar": "هل تحتاج إلى تأشيرة لدخول سنغافورة؟"
    },
    "url": "https://www.ica.gov.sg/enter-transit-depart/entering-singapore/visa_requirements",
-   "checkedAt": "2026-09-23T15:49:45.515Z"
+   "checkedAt": "2026-10-19T09:42:58.677Z"
   },
   "sa-evisa": {
    "authority": {
@@ -86,7 +86,7 @@
     "ar": "التأشيرة السياحية الإلكترونية — الدول المؤهلة"
    },
    "url": "https://visa.visitsaudi.com/",
-   "checkedAt": "2026-09-23T15:49:45.515Z"
+   "checkedAt": "2026-10-19T09:42:58.677Z"
   },
   "mv-immigration": {
    "authority": {
@@ -98,7 +98,7 @@
     "ar": "التأشيرة السياحية عند الوصول"
    },
    "url": "https://www.immigration.gov.mv/visa/tourist-visa",
-   "checkedAt": "2026-09-23T15:49:45.515Z"
+   "checkedAt": "2026-10-19T09:42:58.677Z"
   }
  },
  "tables": {
